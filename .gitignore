@@ -53,3 +53,17 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# mac files
+.DS_Store
+
+# vscode
+.vscode/
+
+# CMake build trees
+/dist/
+/build/
+/CMakeUserPresets.json
+
+# starsbox tests
+tests/scaffold/starsbox/
