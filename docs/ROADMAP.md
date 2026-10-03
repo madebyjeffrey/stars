@@ -63,7 +63,7 @@ and order helpers as fixes need them.
 | ISB vs IT gate scanning | `SetVisPFFleets`, `SetVisPFPlanets`, `SetVisPFThings`: `lRadius2 * lVis2` overflows 32 bits before `/ 10000` | function | fixed (`test_save.c`) |
 | Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | turn | open |
 | Exploding minefield dodge | `ThingDecay` sets `fBombed` even when the fleet was immune | turn | open |
-| Colonization module check | `SatisfyOrders` colonize task doesn't test `cItem > 0` | function | open |
+| Colonization module check | `SatisfyOrders` colonize task doesn't test `cItem > 0` | turn | fixed (`test_turn3.c`) |
 | 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit | function | open |
 | "Stuck" pursuit | `MoveFleets` marks the pursued fleet `fDone` though it has its own pursuit | turn | open |
 | SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists from an enemy planet | turn | open |

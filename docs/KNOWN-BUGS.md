@@ -236,7 +236,7 @@ the owner's Mini Mine Layer and Super Mine Layer hulls from its own explosions.
 Consequently an immune encounter can consume the fleet's one explosion check.
 The exact player-number ordering depends on the `lpThings` traversal order.
 
-### Colonization Module Check — located
+### Colonization Module Check — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders` (colonize task); `ship2.c`: `FColonizer`;
 `build.c`: `IDropPart`, `SlotDlg`.
@@ -244,6 +244,10 @@ The host colonization check tests a slot's `grhst` and `iItem` against the two
 colonization modules without checking `cItem > 0`. An empty slot retaining its
 module identity can therefore qualify. `FColonizer` is a separate hull-based
 classification and is not proof that the host requires an installed module.
+
+**2.8:** confirmed by `tests/unit/test_turn3.c`: a copy of the colony ship
+with its module count set to 0 still colonized. The check now requires
+`cItem > 0`.
 
 ## Coding bugs
 

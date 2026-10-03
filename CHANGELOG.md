@@ -55,3 +55,6 @@ produce different results from a 2.6j host for the same turn.
   range-times-visibility product overflowed 32 bits, so lightly cloaked
   starbases were often only obscured (`SetVisPFFleets`, `SetVisPFPlanets`,
   `SetVisPFThings`). **Host results.**
+- Colonizing: a ship needs an installed colonization or orbital
+  construction module. A design slot that once held a module but now holds
+  none no longer counts (`SatisfyOrders`). **Host results.**

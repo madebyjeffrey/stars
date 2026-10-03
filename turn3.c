@@ -536,7 +536,8 @@ void SatisfyOrders(int16_t iPass) {
                             csh += lpfl->rgcsh[i];
                             MarkTechsSeen(&rglpshdef[lpfl->iPlayer][i].hul, lpfl->iPlayer);
                             for (j = 0; j < rglpshdef[lpfl->iPlayer][i].hul.chs; j++) {
-                                if (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].grhst == hstSpecialM &&
+                                /* cItem: the original accepted a slot that once held a module. */
+                                if (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].grhst == hstSpecialM && rglpshdef[lpfl->iPlayer][i].hul.rghs[j].cItem > 0 &&
                                     (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMColonizationModule ||
                                      rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMOrbitalConstructionModule)) {
                                     fColonize = TRUE;
