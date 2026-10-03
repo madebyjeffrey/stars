@@ -24,8 +24,8 @@ behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
   bug list to source and separates located mechanisms from candidates that
   still need reproduction.
 - **Tutorial drawing artifact:** an automated tutorial run sometimes draws
-  black squares on selected planets. The pre-cleanup build does it too, and it
-  hasn't been reproduced by hand. The likely draw sites are the
+  black squares on selected planets, around turn 26 (year 2426). The
+  pre-cleanup build does it too, and it hasn't been reproduced by hand. The likely draw sites are the
   selected-planet marker in `scan.c` `DrawScanner` (an 11×11 `SRCAND` mask,
   then an `SRCPAINT` color blit) and the starbase and stargate indicators (a
   5×5 `BLACKNESS` `PatBlt`, then a `PATCOPY` fill). Tracking it down needs
