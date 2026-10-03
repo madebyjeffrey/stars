@@ -19,3 +19,7 @@ produce different results from a 2.6j host for the same turn.
 - Macinti AI: deciding whether to build mine layers no longer reads past
   the start of its design list when it has no miner design; a missing design
   counts as zero ships (`DoMacintiAiTurn`). **Host results.**
+- Robotoid and Macinti AI: deciding whether an attack fleet joins up with
+  others no longer reads a fleet's position as a ship count when the AI has
+  no destroyer design (`DoRobotoidAiTurn`, `DoMacintiAiTurn`). **Host
+  results.**

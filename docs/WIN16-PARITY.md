@@ -18,18 +18,6 @@ divergences explicitly rather than hiding them in comparison rules.
 
 ## Original bugs emulated (revert when parity is no longer needed)
 
-### Negative-index reads return the Win16 neighbor
-
-- **Original:** a local that may be -1 indexes an array without a check.
-  Win16 read whatever its layout put just before the array.
-- **Parity repair:** each unguarded read becomes `i != -1 ? path : <alias>`,
-  where `<alias>` is the global or field the Win16 layout put before the array.
-  Current sites:
-  - `ai3.c` DoMacintiAiTurn and `ai.c` DoRobotoidAiTurn:
-    `lpfl->rgcsh[iLatestDestroyer]` with -1 reads `lpfl->pt.y`.
-- **Revert to:** drop the alias and handle -1 as "no such design" (count 0),
-  or skip the condition, whichever each caller intends.
-
 ### Cybertron mine-laying order carries leftover stack bytes
 
 - **Where:** `ai4.c` DoCyberAiTurn, `rgbOrdFrame`.
