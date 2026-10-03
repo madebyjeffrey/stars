@@ -122,11 +122,6 @@ results depend on them.
 - **x87 precision:** floating arithmetic keeps the original's extended
   precision. Casts that round an x87 result to double or float are preserved.
 
-## Known Win16 behavior not reproduced
-
-- **PszFormatString** `vrgszUnits[-1]`: display text only. The original read a
-  Win16 pointer.
-
 ## Regression harness tolerances
 
 `dist/stars-save save compare` treats storage the game never reads as warnings,

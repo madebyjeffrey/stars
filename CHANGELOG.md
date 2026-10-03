@@ -35,3 +35,6 @@ produce different results from a 2.6j host for the same turn.
   its actual strength when choosing whether to attack, retreat or wait. The
   original compared an uninitialized value (`FPotentMacWarFleet`,
   `TargetMacArmada`). **Host results.**
+- Message text: a quantity formatted without a preceding mineral no longer
+  reads a unit string from before the unit table; it gets no unit
+  (`PszFormatString`). Display only.

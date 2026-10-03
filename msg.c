@@ -2036,6 +2036,9 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 if (*pszFormat == 'V') {
                     iMineral = *pParams;
                 }
+                /* With no preceding \m or \V, iMineral is -1; the original read before vrgszUnits. */
+                if (iMineral < 0 || iMineral >= 6)
+                    break;
                 pchT = vrgszUnits[iMineral];
                 strcpy(pch, pchT);
                 pch += strlen(pchT);

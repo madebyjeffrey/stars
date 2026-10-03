@@ -22,7 +22,6 @@ behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
 
   | Site                                                 | Parity behavior                                                                                       | Revert to                                                                                                      |
   | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-  | `msg.c` `PszFormatString`                            | `vrgszUnits[-1]` reads before the array (display text only)                                           | Bounds-check the unit index                                                                                    |
   | `tutor.c` `FTutorialEnabledShipBuilder`              | Explicit `return TRUE` where the original fell off the end with TRUE in AX                            | Nothing; drop the `PARITY` marker                                                                              |
 
   The corruption guards, native record boundaries and toolchain parity
