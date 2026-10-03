@@ -14,8 +14,6 @@
 
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
-#undef CreateWindow
-#define CreateWindow CreateWindow16
 
 // shims
 
@@ -104,25 +102,6 @@ static inline DWORD GetTextExtent16(HDC hdc, LPCSTR str, int len) {
         return 0;
 
     return MAKELONG((WORD)size.cx, (WORD)size.cy);
-}
-
-/*
- * Win16 window creation
- *
- * Win16 CW_USEDEFAULT is the 16-bit 0x8000, which Stars stores in its window
- * rectangles as -32768 when Stars.ini holds no position. Win32 reads that as
- * a real coordinate and places the window far off screen, so it is mapped to
- * the native CW_USEDEFAULT.
- */
-
-// CreateWindow16 creates a window, mapping Win16 CW_USEDEFAULT positions and
-// sizes to the native value.
-static inline HWND CreateWindow16(LPCSTR cls, LPCSTR name, DWORD style, int x, int y, int cx, int cy, HWND parent, HMENU menu, HINSTANCE inst, LPVOID param) {
-    if (x == -32768 || x == 0x8000)
-        x = CW_USEDEFAULT;
-    if (cx == -32768 || cx == 0x8000)
-        cx = CW_USEDEFAULT;
-    return CreateWindowExA(0, cls, name, style, x, y, cx, cy, parent, menu, inst, param);
 }
 
 /*
