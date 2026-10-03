@@ -17,9 +17,6 @@
 
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
-#define MoveTo        MoveTo16
-#define SetWindowOrg  SetWindowOrg16
-#define SetBrushOrg   SetBrushOrg16
 #undef GetWindowLong
 #undef SetWindowLong
 #define GetWindowLong GetWindowLong16
@@ -172,41 +169,6 @@ static inline LRESULT CALLBACK FrameWndProc16(HWND hwnd, UINT msg, WPARAM wParam
         return FrameWndProc(hwnd, WM_SYSCOMMAND, wParam, lParam);
     }
     return FrameWndProc(hwnd, msg, wParam, lParam);
-}
-
-/*
- * Win16 GDI compatibility
- *
- * The Win32 Ex versions added an optional output parameter containing
- * the previous position/origin. The Win16 functions returned the
- * previous value packed into a DWORD.
- */
-
-static inline DWORD MoveTo16(HDC hdc, int x, int y) {
-    POINT old;
-
-    if (!MoveToEx(hdc, x, y, &old))
-        return 0;
-
-    return MAKELONG((WORD)old.x, (WORD)old.y);
-}
-
-static inline DWORD SetWindowOrg16(HDC hdc, int x, int y) {
-    POINT old;
-
-    if (!SetWindowOrgEx(hdc, x, y, &old))
-        return 0;
-
-    return MAKELONG((WORD)old.x, (WORD)old.y);
-}
-
-static inline DWORD SetBrushOrg16(HDC hdc, int x, int y) {
-    POINT old;
-
-    if (!SetBrushOrgEx(hdc, x, y, &old))
-        return 0;
-
-    return MAKELONG((WORD)old.x, (WORD)old.y);
 }
 
 /*

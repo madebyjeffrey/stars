@@ -1091,7 +1091,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     y -= max(1, (int16_t)(iEff * 4 * dyPct) / 100);
                 }
                 if (i == 0) {
-                    MoveTo(hdc, x, y);
+                    MoveToEx(hdc, x, y, NULL);
                 } else {
                     LineTo(hdc, x, y);
                 }
@@ -1912,7 +1912,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                         y -= LOWORD((int32_t)((1000000 - lpct) * dyPct) / 0x30d40);
                         lpct = (int32_t)(lpct * ldelta) / 1000;
                         if (i == 0) {
-                            MoveTo(hdc, x, y);
+                            MoveToEx(hdc, x, y, NULL);
                         } else {
                             LineTo(hdc, x, y);
                         }

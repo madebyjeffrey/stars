@@ -938,7 +938,7 @@ void DrawHistoryReport(HDC hdc) {
                         pt.x = LOWORD((int32_t)((int32_t)((uint32_t)dYear * dx) / cYears)) + rcChart.left;
                         pt.y = rcChart.bottom - LOWORD((int32_t)((int32_t)(cCur * dy) / cScaleMax));
                         if (cDrawn == 0) {
-                            MoveTo(hdc, pt.x, pt.y);
+                            MoveToEx(hdc, pt.x, pt.y, NULL);
                         } else {
                             LineTo(hdc, pt.x, pt.y);
                         }

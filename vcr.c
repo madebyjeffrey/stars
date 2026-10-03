@@ -1092,9 +1092,9 @@ void AnimateAttack(HDC hdc) {
             }
             if (grfWeapon & (bitFBeamLow | bitFBeamHigh)) {
                 SelectObject(hdc, !(grfWeapon & bitFBeamHigh) ? hpenEnemy : hpenStarbase);
-                MoveTo(hdc, ptBeam1.x, ptBeam1.y);
+                MoveToEx(hdc, ptBeam1.x, ptBeam1.y, NULL);
                 LineTo(hdc, ptDest.x, ptDest.y);
-                MoveTo(hdc, ptBeam2.x, ptBeam2.y);
+                MoveToEx(hdc, ptBeam2.x, ptBeam2.y, NULL);
                 LineTo(hdc, ptDest.x, ptDest.y);
                 DrawIcon(hdc, ptDest.x - 16, ptDest.y - 16, rghiconVCR[0]);
             }

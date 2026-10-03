@@ -45,9 +45,9 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             iRopSav = SetROP2(hdc, R2_XORPEN);
             hpenSav = SelectObject(hdc, hpenYellow);
             for (i = 0; i < 2; i++) {
-                MoveTo(hdc, pt.x - 300, pt.y - 300);
+                MoveToEx(hdc, pt.x - 300, pt.y - 300, NULL);
                 LineTo(hdc, pt.x + 300, pt.y + 300);
-                MoveTo(hdc, pt.x - 300, pt.y + 300);
+                MoveToEx(hdc, pt.x - 300, pt.y + 300, NULL);
                 LineTo(hdc, pt.x + 300, pt.y - 300);
                 if (i == 0) {
                     tick = GetTickCount();
@@ -481,7 +481,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
             hdcScreen = hdc;
             hdc = hdcMem;
             hbmpXSav = SelectObject(hdc, hbmpScreen);
-            SetWindowOrg(hdc, prc->left & 0xfff8, prc->top & 0xfff8);
+            SetWindowOrgEx(hdc, prc->left & 0xfff8, prc->top & 0xfff8, NULL);
             pt.y = 0;
             pt.x = 0;
             ClientToScreen16(hwndScanner, &pt);
@@ -703,7 +703,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         for (i = 0; i < 3; i++) {
             UnrealizeObject(rghbrPat[i]);
         }
-        SetBrushOrg(hdc, ptOrigin.x, ptOrigin.y);
+        SetBrushOrgEx(hdc, ptOrigin.x, ptOrigin.y, NULL);
         IntersectClipRect(hdc, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom);
         hbrSav = SelectObject(hdc, rghbrPat[0]);
         hpenSav = SelectObject(hdc, GetStockObject(NULL_PEN));
@@ -713,7 +713,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
             if ((j != 0 || (grbitScanMines & 1)) && (j != 1 || (grbitScanMines & 2)) && (j != 2 || (grbitScanMines & 0xc))) {
                 for (i = 0; i < 3; i++) {
                     for (fDetonating = FALSE; fDetonating <= (i == 0); fDetonating++) {
-                        SetBrushOrg(hdc, ptOrigin.x, ptOrigin.y);
+                        SetBrushOrgEx(hdc, ptOrigin.x, ptOrigin.y, NULL);
                         SelectObject(hdc, rghbrPat[i]);
                         SetTextColor(hdc, !fDetonating ? rgcrScanMine[j] : 16711935);
                         lpth = lpThings;
@@ -764,7 +764,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         if (sel.scan.grobj == grobjThing) {
             lpth = lpThings + sel.scan.ith;
             if (lpth->ith == ithMinefield) {
-                SetBrushOrg(hdc, ptOrigin.x, ptOrigin.y);
+                SetBrushOrgEx(hdc, ptOrigin.x, ptOrigin.y, NULL);
                 SelectObject(hdc, rghbrPat[lpth->thm.iType]);
                 SetTextColor(hdc, 16776960);
                 pt = lpth->pt;
@@ -797,7 +797,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                 if (lpth->ith == ithWormhole && lpth->idFull < lpth->thw.idPartner && (1 << idPlayer & lpth->thw.grbitPlrTrav)) {
                     lpthDest = LpthFromId(lpth->thw.idPartner);
                     if (lpthDest) {
-                        MoveTo(hdc, pt.x, pt.y);
+                        MoveToEx(hdc, pt.x, pt.y, NULL);
                         pt2 = lpthDest->pt;
                         LogicalToScan(&pt2);
                         LineTo(hdc, pt2.x, pt2.y);
@@ -821,7 +821,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     dx = dRange * 2 + 1;
                     if (lpth->thp.iWarp == 0) {
                         SelectObject(hdc, hpenYellow);
-                        MoveTo(hdc, pt.x, pt.y - dRange - 1);
+                        MoveToEx(hdc, pt.x, pt.y - dRange - 1, NULL);
                         LineTo(hdc, pt.x - dRange - 1, pt.y);
                         LineTo(hdc, pt.x, pt.y + dRange + 1);
                         LineTo(hdc, pt.x + dRange + 1, pt.y);
@@ -859,7 +859,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     pt.x = PtToScan(xOff + pt.x);
                     pt.y = PtToScan(yOff - pt.y);
                     if (iord == 0) {
-                        MoveTo(hdc, pt.x, pt.y);
+                        MoveToEx(hdc, pt.x, pt.y, NULL);
                     } else {
                         LineTo(hdc, pt.x, pt.y);
                     }
@@ -1231,7 +1231,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     SelectObject(hdcMem, hbmpSav);
     DeleteDC(hdcMem);
     if (hdcScreen) {
-        SetWindowOrg(hdc, 0, 0);
+        SetWindowOrgEx(hdc, 0, 0, NULL);
         BitBlt(hdcScreen, prc->left, prc->top, prc->right - prc->left, prc->bottom - prc->top, hdc, prc->left & 7, prc->top & 7, SRCCOPY);
         SelectObject(hdc, hbmpXSav);
         DeleteObject(hbmpScreen);
@@ -1565,7 +1565,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
         LogicalToScan(&ptCur);
         dx5 = PtToScan(dx5);
         dy5 = -PtToScan(dy5);
-        MoveTo(hdc, ptCur.x - dx5, ptCur.y - dy5);
+        MoveToEx(hdc, ptCur.x - dx5, ptCur.y - dy5, NULL);
         LineTo(hdc, ptCur.x + dx5, ptCur.y + dy5);
         if (dy == 0) {
             ptTick.x = 0;
@@ -1597,11 +1597,11 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                 pt.y = LOWORD((int32_t)(((int32_t)((uint32_t)(dy5 * i) * 2) + j) / 10)) + ptCur.y;
                 if (i > 0) {
                     for (j = 0; j < 2; j++) {
-                        MoveTo(hdc, pt.x + rgptArrow[j].x, pt.y - rgptArrow[j].y);
+                        MoveToEx(hdc, pt.x + rgptArrow[j].x, pt.y - rgptArrow[j].y, NULL);
                         LineTo(hdc, pt.x, pt.y);
                     }
                 } else {
-                    MoveTo(hdc, pt.x + ptTick.x, pt.y + ptTick.y);
+                    MoveToEx(hdc, pt.x + ptTick.x, pt.y + ptTick.y, NULL);
                     LineTo(hdc, pt.x - ptTick.x, pt.y - ptTick.y);
                     LineTo(hdc, pt.x - ptTick.x, pt.y - ptTick.y - 1);
                 }
@@ -1621,7 +1621,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                 ExcludeClipRect(hdc, rc.left, rc.bottom - dySBar, rc.right, rc.bottom);
                 pt = rgptPlan[sel.pl.id];
                 LogicalToScan(&pt);
-                MoveTo(hdc, pt.x, pt.y);
+                MoveToEx(hdc, pt.x, pt.y, NULL);
                 pt = rgptPlan[id];
                 LogicalToScan(&pt);
                 LineTo(hdc, pt.x, pt.y);
@@ -1668,7 +1668,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
                 pt = sel.fl.lpplord->rgord[0].pt;
                 LogicalToScan(&pt);
-                MoveTo(hdc, pt.x, pt.y);
+                MoveToEx(hdc, pt.x, pt.y, NULL);
                 for (i = 1; i < sel.fl.cord; i++) {
                     pt2 = sel.fl.lpplord->rgord[i].pt;
                     LogicalToScan(&pt2);
@@ -1683,14 +1683,14 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
             dRad = pt.x == sel.pt.x && pt.y == sel.pt.y ? 5 : 5;
             LogicalToScan(&pt);
             ExcludeClipRect(hdc, pt.x - dRad, pt.y - dRad, pt.x + dRad + 1, pt.y + dRad + 1);
-            MoveTo(hdc, pt.x, pt.y);
+            MoveToEx(hdc, pt.x, pt.y, NULL);
             for (i = 1; i < sel.fl.cord; i++) {
                 pt2 = sel.fl.lpplord->rgord[i].pt;
                 dRad = pt2.x == sel.pt.x && pt2.y == sel.pt.y ? 5 : 5;
                 LogicalToScan(&pt2);
                 ExcludeClipRect(hdc, pt2.x - dRad, pt2.y - dRad, pt2.x + dRad + 1, pt2.y + dRad + 1);
                 if (rgDup[i] == 2) {
-                    MoveTo(hdc, pt2.x, pt2.y);
+                    MoveToEx(hdc, pt2.x, pt2.y, NULL);
                 } else {
                     if (rgDup[i] == 1) {
                         SelectObject(hdc, (grbitScan & grbitScanFleetPaths) ? hpenYellow : GetStockObject(WHITE_PEN));
@@ -2508,7 +2508,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
             fDel = AlertSz(PszFormatIds(idsSureWantDeleteCurrentWaypoint, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) == IDYES;
             if (grbitScan & grbitScanFleetPaths) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
-                MoveTo(hdc, rgpt[2].x, rgpt[2].y);
+                MoveToEx(hdc, rgpt[2].x, rgpt[2].y, NULL);
                 LineTo(hdc, rgpt[0].x, rgpt[0].y);
                 if (cpt > 3) {
                     ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
@@ -2520,7 +2520,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
             rgpt[0] = rgpt[1];
             if (grbitScan & grbitScanFleetPaths) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
-                MoveTo(hdc, rgpt[2].x, rgpt[2].y);
+                MoveToEx(hdc, rgpt[2].x, rgpt[2].y, NULL);
                 LineTo(hdc, rgpt[0].x, rgpt[0].y);
                 if (cpt > 3) {
                     ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
@@ -2537,7 +2537,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         if (grbitScan & grbitScanFleetPaths) {
             ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
             hpenSav = SelectObject(hdc, hpenStarbase);
-            MoveTo(hdc, rgpt[2].x, rgpt[2].y);
+            MoveToEx(hdc, rgpt[2].x, rgpt[2].y, NULL);
             LineTo(hdc, rgpt[0].x, rgpt[0].y);
             if (cpt > 3) {
                 LineTo(hdc, rgpt[3].x, rgpt[3].y);
@@ -2549,7 +2549,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         if (grbitScan & grbitScanFleetPaths) {
             ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
             hpenSav = SelectObject(hdc, hpenStarbase);
-            MoveTo(hdc, rgpt[2].x, rgpt[2].y);
+            MoveToEx(hdc, rgpt[2].x, rgpt[2].y, NULL);
             LineTo(hdc, rgpt[0].x, rgpt[0].y);
             if (cpt > 3) {
                 LineTo(hdc, rgpt[3].x, rgpt[3].y);
@@ -2618,7 +2618,7 @@ void DrawScanXorLines(HDC hdc, POINT16 *rgpt, int16_t cpt) {
     }
     hpenSav = SelectObject(hdc, hpenSav);
     iRopSav = SetROP2(hdc, R2_XORPEN);
-    MoveTo(hdc, rgpt[2].x, rgpt[2].y);
+    MoveToEx(hdc, rgpt[2].x, rgpt[2].y, NULL);
     LineTo(hdc, rgpt->x, rgpt->y);
     if (cpt > 3) {
         LineTo(hdc, rgpt[3].x, rgpt[3].y);
@@ -2997,10 +2997,10 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
                     continue;
                 fVirgin = FALSE;
             } else {
-                MoveTo(hdc, ptBase.x, ptBase.y);
+                MoveToEx(hdc, ptBase.x, ptBase.y, NULL);
                 LineTo(hdc, pt.x, pt.y);
             }
-            MoveTo(hdc, ptBase.x, ptBase.y);
+            MoveToEx(hdc, ptBase.x, ptBase.y, NULL);
             LineTo(hdc, ptNew.x, ptNew.y);
             if (scan.grobj == grobjNone) {
                 sbar.id = -1;
@@ -3026,7 +3026,7 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
         }
     }
     if (!fVirgin) {
-        MoveTo(hdc, ptBase.x, ptBase.y);
+        MoveToEx(hdc, ptBase.x, ptBase.y, NULL);
         LineTo(hdc, pt.x, pt.y);
     }
     SetROP2(hdc, iropSav);
