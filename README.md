@@ -1,9 +1,20 @@
 # Stars!
+
 ![meme](docs/images/windows10stars.jpg)
 
 Stars! 4X game rebuilt from decompiled C sources using a custom [stars-asm](https://github.com/sirgwain/stars-asm/tree/main) win16 disassembler the decompiler.
 
 The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function names, variable names, symbol definitions, and even line numbers. The stars-asm project used that information to rebuild the Stars! source to be as close to the original as possible. That is what is in this repo.
+
+## Documentation
+
+- [Reconstruction](docs/RECONSTRUCTION.md): how the source was rebuilt from the
+  decompiler's output, and the conventions it follows.
+- [Native port](docs/NATIVE-PORT.md) and [Win16 parity](docs/WIN16-PARITY.md):
+  what the Win32/Win64 build changes, and the original behavior it reproduces.
+- [Known bugs](docs/KNOWN-BUGS.md): the original release bug list, mapped to
+  source.
+- [Roadmap](docs/ROADMAP.md): bug fixing after the `2.6jrc3` tag.
 
 ## Build
 
@@ -34,11 +45,42 @@ cmake --build --preset run-wine
 For a release build:
 
 ```sh
-cmake -S . -B dist/mingw-release -G Ninja \
-  -DCMAKE_TOOLCHAIN_FILE=toolchains/mingw-w64.cmake \
-  -DCMAKE_BUILD_TYPE=Release
-cmake --build dist/mingw-release
+cmake --preset mingw-release
+cmake --build --preset mingw-release
 ```
+
+This writes `dist/mingw-release/bin/stars.exe` with optimization enabled and
+debug data stripped. Test hooks are disabled in ordinary builds.
+
+## GitHub Actions
+
+Every push to `main` builds the optimized MinGW Release executable and updates
+the rolling [`latest` prerelease](https://github.com/sirgwain/stars/releases/tag/latest).
+Both `stars.exe` and `stars!.hlp` are attached; download them into the same
+directory. Superseded main builds remain available as workflow artifacts.
+
+Pushing a tag (for example `2.6jrc3`) builds that tag's source and publishes a
+release with the same two files. The rolling `latest` tag is excluded. To test
+the tagged release, include the workflows and `res/stars!.hlp` in the tagged
+commit, then push the tag:
+
+```sh
+git tag 2.6jrc3
+git push origin 2.6jrc3
+```
+
+Pull requests build and run the complete tutorial and the unfinished-turn
+rejection check under Wine/Xvfb. Diagnostic reports are retained even on failure.
+The tutorial uses the same Release preset as the published builds, with the
+read-only test observer enabled. The native regression workflow also builds in
+Release mode on pull requests and main pushes, comparing
+all checkpoints through turn 150 against checked-in original saves. It tests
+`noai`, `oneai1`–`oneai4`, and `smallai4`; `oneai5`, `oneai6`, and `smallai6`
+are excluded because their original bugs and planned fixes diverge.
+All workflows can also be run manually; the release workflow accepts `main`
+or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
+the tutorial uses read-only permissions. The optional repository variable
+`STARS_TUTORIAL_SERIAL` overrides the tutorial runner's default serial.
 
 ## Regression save tooling
 

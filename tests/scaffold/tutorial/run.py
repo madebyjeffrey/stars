@@ -126,6 +126,8 @@ def main():
     parser.add_argument("--ahk", help="Portable AutoHotkey64.exe (requires v2.0.28)")
     parser.add_argument("--download-ahk", action="store_true", help="Download and verify the pinned official runtime")
     parser.add_argument("--exe", type=Path, help="Existing STARS_TEST_TUTORIAL=ON executable; otherwise build one")
+    parser.add_argument("--build-preset", choices=("mingw-debug", "mingw-release"), default="mingw-debug",
+                        help="CMake preset for the test build (default: mingw-debug)")
     parser.add_argument("--ini", type=Path, help="Stars.ini supplying registration; other settings are reset")
     parser.add_argument("--work", type=Path, default=ROOT / "dist/scaffold/tutorial", help="Parent directory for retained, unique runs")
     parser.add_argument("--timeout", type=int, default=1800)
@@ -156,8 +158,8 @@ def main():
     interpreter = prepare_runtime(args.ahk, args.download_ahk)
     executable = args.exe
     if executable is None:
-        build = ROOT / "dist/tutorial-build"
-        subprocess.run(["cmake", "--preset", "mingw-debug", "-B", str(build), "-DSTARS_TEST_TUTORIAL=ON"], cwd=ROOT, check=True)
+        build = ROOT / ("dist/tutorial-release-build" if args.build_preset == "mingw-release" else "dist/tutorial-build")
+        subprocess.run(["cmake", "--preset", args.build_preset, "-B", str(build), "-DSTARS_TEST_TUTORIAL=ON"], cwd=ROOT, check=True)
         subprocess.run(["cmake", "--build", str(build), "--parallel", "4"], check=True)
         executable = build / "bin/stars.exe"
     executable = executable.resolve()
@@ -201,6 +203,8 @@ def main():
                    convert(stage / "tutorial.ahk"), convert(stage), convert(run),
                    str(args.until_year or 2437), args.scenario, str(int(bool(args.continue_run))), str(int(args.keep_game_on_failure))]
         metadata = {"ahk": AHK_VERSION, "wine": subprocess.check_output(["wine", "--version"], text=True).strip(),
+                    "build_preset": (previous_metadata.get("build_preset") if args.continue_run
+                                     else args.build_preset if args.exe is None else None),
                     "wine_prefix": str(prefix),
                     "executable_sha256": (previous_metadata["executable_sha256"]
                                           if args.continue_run else hashlib.sha256(executable.read_bytes()).hexdigest()),

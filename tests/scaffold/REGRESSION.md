@@ -7,6 +7,20 @@ CLI in `tests/savecli/`. No stars-asm binary or checkout is required.
 
 ## Scenarios
 
+GitHub Actions runs `noai`, `oneai1`–`oneai4`, and `smallai4` on pull requests
+and main pushes using `mingw-release` with the fixed seed. It generates native
+checkpoints at turns 0, 1, 10, 25, 50, 80, 100, and 150 and compares them
+against the existing original saves in
+`fixtures/regression/original/`. These fixtures need no starsbox installation.
+They contain save files, checkpoint manifests and the run metadata needed by
+`compare`, with no executables or logs. See the
+[fixture README](fixtures/regression/README.md) for provenance and test registration.
+
+CI intentionally excludes `oneai5`, `oneai6`, and `smallai6`. Their original
+uninitialized reads cause the [known divergences](#known-divergences), and their
+planned fixes will also differ from the original. The full set remains
+available for manual investigation with the local starsbox checkpoints.
+
 The active scenarios are `noai`, `oneai1`–`oneai6`, `smallai4`, and `smallai6`.
 Their definitions live in `tests/scaffold/fixtures/regression/`; the names and
 checkpoint boundaries are defined in `regression.py`.
@@ -164,6 +178,21 @@ and diagnostic logs are not treated as game-state files.
 
 ## Compare
 
+To compare a native run against the checked-in CI reference:
+
+```sh
+python3 tests/scaffold/regression.py compare \
+  tests/scaffold/fixtures/regression/original dist/scaffold/regression/native \
+  --scenario noai --scenario oneai1 --scenario oneai2 --scenario oneai3 \
+  --scenario oneai4 --scenario smallai4 \
+  --report dist/scaffold/regression/comparison.json
+```
+
+Use the same six `--scenario` arguments on `regression.py run` to generate
+only those scenarios. The existing `prepare` command stages all definitions;
+explicit scenario selection keeps the three divergent scenarios out of both
+execution and comparison.
+
 ```sh
 python3 tests/scaffold/regression.py compare \
   tests/scaffold/starsbox/c_drive/REGTEST dist/scaffold/regression/native
@@ -296,6 +325,24 @@ then replay the native seeds at nearby offsets to locate an extra or missing dra
 For confidence in the harness, first run the original twice into fresh folders
 and compare those runs. Matching original-to-original checkpoints establishes a
 baseline before interpreting original-to-native failures.
+
+## Known divergences
+
+These are the only mismatches with the original. Each comes from the original
+reading uninitialized stack memory, so the original value can't be reproduced
+deterministically. They are fixed after the `2.6jrc3` tag
+([ROADMAP.md](../../docs/ROADMAP.md)); remove each row when its fix lands.
+
+| Scenario | First diff | Cause | Where |
+| --- | --- | --- | --- |
+| oneai5 | t80 checkpoint, `rtOrderA tlm.cTime 0xa2e2 → 0x0001` | The Cybertron mine-laying `ORDER ord` never sets its task union. At turn 80 or earlier the slot holds stack residue that changes with the save path's length. | `ai4.c` `DoCyberAiTurn`, `rgbOrdFrame` |
+| smallai6 | t57 (t80 checkpoint) | `TargetMacArmada` compares an uninitialized `cshWar`. `FPotentMacWarFleet` returns without writing `*pcEquiv` for weak fleets. | `ai3.c` `TargetMacArmada`, `FPotentMacWarFleet` |
+| oneai6 | t68 (t80 checkpoint) | Same `cshWar` cause. With `cshWar = 1000` it matches to t84, then the RNG draw count drifts. | same |
+
+The oneai5 task-union words depend on the save path, so they can differ from
+the committed report in runs from other directories. For bisecting, use
+`crossfeed`/`bisect` (above), a `-DSTARS_TEST_TRACE=ON` build with
+`STARS_TRACE=trace.log`, and the `.xN` AI logs in each save directory.
 
 ## Harness tests
 

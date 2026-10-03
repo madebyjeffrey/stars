@@ -1,0 +1,11 @@
+{
+  "turn": 10,
+  "year": 2410,
+  "exit_code": 0,
+  "files": {
+    "game.m1": "b95836f14c8ee5fb1ac6184f9b280342067e23a7aaa008d83d2c446efe19ca65",
+    "game.xy": "32dc044f1d8150097e1f6cf9db46c483558c4819ccba09c14b23e24e47698bf8",
+    "game.hst": "8195ffb6c22bf19665e853226cc8f87c37a5f0c1b6d3947082879c3f61dbfeb6",
+    "game.h1": "fc96f5764fc661b9923f866a33e3691f5b89cc7c10e528d676290ab94dc1fdb1"
+  }
+}

@@ -15,6 +15,15 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
+    },
+    {
+      "name": "mingw-release",
+      "inherits": "mingw-debug",
+      "displayName": "MinGW / Wine (Release)",
+      "binaryDir": "${sourceDir}/dist/mingw-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
@@ -22,6 +31,11 @@
       "name": "mingw-debug",
       "displayName": "Build stars.exe (MinGW Debug)",
       "configurePreset": "mingw-debug"
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "Build stars.exe (MinGW Release)",
+      "configurePreset": "mingw-release"
     },
     {
       "name": "run-wine",

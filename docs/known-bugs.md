@@ -11,7 +11,7 @@ trigger remains unconfirmed. **Different here** identifies a material difference
 from the supplied description, including existing native repairs. Historical
 J/JRC3/JRC4 fix claims below come from the supplied list and are not independently
 verified release history. See [WIN16-PARITY.md](WIN16-PARITY.md) for native changes
-and [HANDOFF.md](../HANDOFF.md) for the regression divergences and post-tag work.
+and [ROADMAP.md](ROADMAP.md) for the post-tag work.
 
 ## Player-exploitable bugs / features
 

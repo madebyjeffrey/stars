@@ -50,7 +50,8 @@ When goals conflict, apply them in this order:
   wherever the 0/1 result is used as a value. Compare pointers and handles
   with `NULL`, never `0`, when the result is used as a value.
 - Don't fix original bugs in reconstructed code. A bug the original had is part
-  of the source. Keep it, and list it in `HANDOFF.md` if it matters.
+  of the source. Keep it, and list it in `docs/KNOWN-BUGS.md` or
+  `docs/ROADMAP.md` if it matters.
 - Don't add explanatory comments to reconstructed code unless the original
   probably had them. Keep comments for things a reader can't see in the code.
 
@@ -76,9 +77,10 @@ lives, what the original did, and what a revert should do.
   save file.
 - Element widths of fields, arrays and file records stay as they are. Don't
   widen `int16_t` to `BOOL`/`int` where storage, addresses (`&f…`) or file I/O
-  depend on the width. See `HANDOFF.md` §5.
-- Keep the x87 rounding casts, `qsort16`, and the guards listed in
-  `HANDOFF.md` §3.
+  depend on the width. See `docs/RECONSTRUCTION.md`, "Storage widths and
+  boolean conventions".
+- Keep the x87 rounding casts, `qsort16`, and the corruption guards and
+  native record boundaries listed in `docs/WIN16-PARITY.md`.
 - The tutorial observer depends on `InitInstance`, `ScannerWndProc`, the
   globals and struct layouts it reads, and the literal `tutor.c` signatures
   `int16_t FTutorTaskDone() {` and `int16_t FCheck`. Update the observer and
@@ -125,9 +127,10 @@ lives, what the original did, and what a revert should do.
   returns, uninitialized reads, conditions that look tautological, signedness,
   evaluation order of calls, and whether a temp was a real local or a compiler
   spill.
-- `HANDOFF.md` records what changed from the decompiled code, the native
-  port's state, and the work left for after the `2.6jrc3` tag. Update it when
-  an item is finished or found.
+- `docs/RECONSTRUCTION.md` records what changed from the decompiled code and
+  the reconstruction's conventions. `docs/NATIVE-PORT.md` covers the native
+  port's state. `docs/ROADMAP.md` lists the work left after the `2.6jrc3`
+  tag. Update them when an item is finished or found.
 
 ## Verification
 
@@ -141,7 +144,8 @@ edits:
    in `tests/scaffold/REGRESSION.md`.
 3. Before a batch is considered done, run the full native suite and compare it,
    then run the tutorial (`make tutorial`). The only accepted differences are
-   the three known divergences in `HANDOFF.md` §2.
+   the three known divergences in `tests/scaffold/REGRESSION.md`
+   ("Known divergences").
 
 Never regenerate the original DOSBox checkpoints (this takes hours) unless the
 fixtures change. Report regression results as they are: if a scenario

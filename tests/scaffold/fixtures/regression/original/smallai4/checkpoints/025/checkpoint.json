@@ -1,0 +1,19 @@
+{
+  "turn": 25,
+  "year": 2425,
+  "exit_code": 0,
+  "files": {
+    "game.h4": "2aa7735c9e3c1b5ba1cfcfe34e0d95d795bdf4c0cfea26a6831f5e6220e27c9d",
+    "game.h3": "07bd90564467b9a2c87bc1913b685e6f1bba96d64c3054ccd0ecca1e0af06dee",
+    "game.h2": "9bd0956fa3c255c6c9792a3fd698f200cdc21b23a369e86d3b87ab5d3ad1e1d1",
+    "game.h5": "054f802349763d06dc00b7738c68c4c3c9b31f5987d23b220782aa68ae050061",
+    "game.m1": "0b8f9c041e53bb20b6c106ca71e63292b57b6cd4d0e16b3ce5287d3705dddc6d",
+    "game.xy": "b65d8fb2b9496b9a32c68ca796c0136efdb4b65a6d0788a40badf8ae2cecba50",
+    "game.hst": "4dd49839c057214cba04d43c69d5ed99a856b510011dd79f21f3a1756170e78b",
+    "game.m3": "a9b1a9a7daa1404f70e77fc663a541e91912aec7c88b3c795601988607f163af",
+    "game.m4": "89f91b8ca108667f27027a999d5deb5d7d275bfced7f9f8e124f6dfd6481bfde",
+    "game.m5": "dd7a833b639b90878077d69412145cd24a9b3b0fc6f0623a5fbcdd92b137da52",
+    "game.m2": "1646fc8df3837f9eec8a63fed4f357e00dfa0f1858e86dc1e0f095cacfd6db1d",
+    "game.h1": "90253cf8295fac8f981183efa0b96c386a180c5d63265119d046b906ca82ccb5"
+  }
+}

@@ -1,0 +1,109 @@
+name: Build and release Stars!
+
+on:
+  push:
+    branches: [main]
+    tags: ['**', '!latest']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main' || (github.ref_type == 'tag' && github.ref_name != 'latest')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake ninja-build gcc-mingw-w64-x86-64
+
+      - name: Build stars.exe and stage help
+        run: |
+          cmake --preset mingw-release
+          cmake --build --preset mingw-release --parallel 2
+          test -s dist/mingw-release/bin/stars.exe
+          test -s 'res/stars!.hlp'
+          mkdir -p dist/release
+          cp dist/mingw-release/bin/stars.exe dist/release/
+          cp 'res/stars!.hlp' dist/release/
+
+      - name: Save build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stars-windows-x64-${{ github.sha }}
+          path: |
+            dist/release/stars.exe
+            dist/release/stars!.hlp
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          commit=$(git rev-parse HEAD)
+          if [[ "$GITHUB_REF_TYPE" == branch ]]; then
+            # An older queued build must not replace a newer main build.
+            main_commit=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
+            if [[ "$commit" != "$main_commit" ]]; then
+              echo "Main has advanced; retaining this build as an artifact only."
+              exit 0
+            fi
+            tag=latest
+            existing_ref=$(gh api "repos/$GH_REPO/git/matching-refs/tags/latest" \
+              --jq '.[] | select(.ref == "refs/tags/latest") | .ref')
+            if [[ -n "$existing_ref" ]]; then
+              gh api --method PATCH "repos/$GH_REPO/git/refs/tags/latest" \
+                -f sha="$commit" -F force=true --silent
+            else
+              gh api --method POST "repos/$GH_REPO/git/refs" \
+                -f ref=refs/tags/latest -f sha="$commit" --silent
+            fi
+            cat > dist/release/notes.md <<EOF
+          Windows x86-64 optimized Release build, built from main.
+
+          Download stars.exe and stars!.hlp into the same directory.
+
+          Commit: $commit
+          Build: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          EOF
+          else
+            tag="$GITHUB_REF_NAME"
+          fi
+
+          release_tags=$(gh api --paginate "repos/$GH_REPO/releases" --jq '.[].tag_name')
+          release_exists=false
+          if grep -Fxq -- "$tag" <<< "$release_tags"; then
+            release_exists=true
+          fi
+          if [[ "$tag" == latest ]]; then
+            if [[ "$release_exists" == true ]]; then
+              gh release edit "$tag" --title 'Latest development build' \
+                --prerelease --latest=false --notes-file dist/release/notes.md
+              gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
+            else
+              gh release create "$tag" --verify-tag --title 'Latest development build' \
+                --prerelease --latest=false --notes-file dist/release/notes.md \
+                dist/release/stars.exe 'dist/release/stars!.hlp'
+            fi
+          elif [[ "$release_exists" == true ]]; then
+            # Allow a failed tag run to be retried without creating another release.
+            gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
+          else
+            gh release create "$tag" --verify-tag --title "$tag" --generate-notes \
+              dist/release/stars.exe 'dist/release/stars!.hlp'
+          fi

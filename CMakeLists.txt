@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 project(stars LANGUAGES C RC)
 
 if(NOT MINGW)
-    message(FATAL_ERROR "Configure using the MinGW toolchain: cmake --preset mingw-debug")
+    message(FATAL_ERROR "Configure using the MinGW toolchain: cmake --preset mingw-debug or cmake --preset mingw-release")
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -57,6 +57,11 @@ target_compile_options(stars PRIVATE
     $<$<COMPILE_LANGUAGE:C>:-fsigned-char>
 )
 target_link_libraries(stars PRIVATE user32 gdi32 comdlg32)
+
+# MinGW runtime objects can contain debug data even in a Release build.
+target_link_options(stars PRIVATE
+    $<$<CONFIG:Release>:LINKER:--strip-debug>
+)
 
 # The tutorial runner reads this observer to drive real UI controls.
 option(STARS_TEST_TUTORIAL "Expose read-only tutorial state for AutoHotkey tests" OFF)

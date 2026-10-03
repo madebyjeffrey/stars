@@ -50,7 +50,8 @@ make tutorial-reject
 
 `checkpoints-compare` builds `dist/stars-save` automatically and compares existing
 runs. Differences produce a nonzero exit status, including the known baseline
-divergences recorded in `HANDOFF.md` and the regression report.
+divergences recorded in [REGRESSION.md](REGRESSION.md#known-divergences) and the
+regression report.
 
 `make checkpoints-native` builds with a fixed seed and replaces the native run.
 `make checkpoints-starsbox` replaces the original run and can take many hours;

@@ -19,7 +19,14 @@ python3 tests/scaffold/tutorial/run.py --ahk /path/to/AutoHotkey64.exe
 
 Startup waits for the serial dialog or an enabled title window. Registration events are recorded in `events.jsonl` without recording the serial itself. By default the runner reads registration from `tests/scaffold/starsbox/c_drive/WINDOWS/STARS.INI` when present; otherwise it enters the configured serial through the normal dialog.
 
-The runner builds `dist/tutorial-build/bin/stars.exe` with `STARS_TEST_TUTORIAL=ON`. The option defaults to OFF for normal builds. `--exe PATH` accepts a prebuilt executable with that option enabled. Each run copies the executable and scripts into a fresh directory and uses its own Wine prefix, INI settings and game files. Wine prefixes are created under `/tmp/stars-tutorial-*`, outside the repository so Wine’s filesystem symlinks are not scanned by workspace tools. The absolute prefix path is printed at startup and recorded as `wine_prefix` in `metadata.json`. The original registration and game files are never modified.
+The runner builds `dist/tutorial-build/bin/stars.exe` with `STARS_TEST_TUTORIAL=ON` using `mingw-debug` by default. To test the optimized Release build, as the GitHub workflow does:
+
+```sh
+make tutorial TUTORIAL_ARGS='--build-preset mingw-release'
+make tutorial-reject TUTORIAL_ARGS='--build-preset mingw-release'
+```
+
+This uses `dist/tutorial-release-build/bin/stars.exe` and records the selected preset in `metadata.json`. The observer option defaults to OFF for normal builds. `--exe PATH` accepts a prebuilt executable with that option enabled. Each run copies the executable and scripts into a fresh directory and uses its own Wine prefix, INI settings and game files. Wine prefixes are created under `/tmp/stars-tutorial-*`, outside the repository so Wine’s filesystem symlinks are not scanned by workspace tools. The absolute prefix path is printed at startup and recorded as `wine_prefix` in `metadata.json`. The original registration and game files are never modified.
 
 Linux runs need an X11 display. For unattended runs:
 
@@ -61,6 +68,6 @@ Each run is retained under `dist/scaffold/tutorial/<UTC timestamp>/`:
 - `wine.log` and `metadata.json`: interpreter diagnostics, versions and executable/source hashes.
 - `game/coverage.json`: required instruction inventory.
 
-By default, the runner closes only its own game and Wine server. The explicit debugging option retains a failed game. Prefixes contain registration data, remain in `/tmp` for debugging, and may be removed by the operating system; the manual GitHub workflow uploads diagnostic files only. The workflow uses the same default serial; optionally set the repository variable `STARS_TUTORIAL_SERIAL` to override it.
+By default, the runner closes only its own game and Wine server. The explicit debugging option retains a failed game. Prefixes contain registration data, remain in `/tmp` for debugging, and may be removed by the operating system; the GitHub workflow uploads diagnostic files only. It runs the full walkthrough and rejection check on pull requests and supports manual runs. The workflow uses the same default serial; optionally set the repository variable `STARS_TUTORIAL_SERIAL` to override it.
 
 A populated instruction dispatcher is a coverage inventory, not proof that every gesture works on every Wine driver. `result.json` is the runtime authority; a full walkthrough is validated only when it reports `passed` with 80 pages at the final year.

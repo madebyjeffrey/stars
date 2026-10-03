@@ -1,0 +1,55 @@
+name: Stars tutorial (Wine + AutoHotkey v2)
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tutorial-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tutorial:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      STARS_TUTORIAL_SERIAL: ${{ vars.STARS_TUTORIAL_SERIAL }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Install Wine, MinGW and virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wine64 wine gcc-mingw-w64-x86-64 cmake ninja-build xvfb xauth
+
+      - name: Walk every tutorial year
+        run: xvfb-run -a -s '-screen 0 1600x1200x24' make tutorial TUTORIAL_ARGS='--build-preset mingw-release'
+
+      - name: Check unfinished turn rejection
+        if: success() || failure()
+        run: xvfb-run -a -s '-screen 0 1600x1200x24' make tutorial-reject TUTORIAL_ARGS='--build-preset mingw-release'
+
+      - name: Retain diagnostic reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutorial-results-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            dist/scaffold/tutorial/*/result.json
+            dist/scaffold/tutorial/*/results.xml
+            dist/scaffold/tutorial/*/events.jsonl
+            dist/scaffold/tutorial/*/metadata.json
+            dist/scaffold/tutorial/*/year-*.txt
+            dist/scaffold/tutorial/*/game/coverage.json
+            dist/scaffold/tutorial/*/last-state.txt
+            dist/scaffold/tutorial/*/windows.txt
+            dist/scaffold/tutorial/*/wine.log
+            dist/scaffold/tutorial/*/screenshots/*
+          if-no-files-found: warn
+          retention-days: 30
