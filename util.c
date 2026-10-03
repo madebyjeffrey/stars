@@ -32,7 +32,7 @@ int16_t FDupPlanet(PLANET *lppl, PLANET *ppl) {
     } else if ((int16_t)ppl->lpplprod->iprodMax < lppl->lpplprod->iprodMac) {
         ppl->lpplprod = (PLPROD *)LpplReAlloc((PL *)ppl->lpplprod, lppl->lpplprod->iprodMax);
     }
-    fmemcpy(ppl->lpplprod->rgprod, lppl->lpplprod->rgprod, lppl->lpplprod->iprodMac * 4);
+    memcpy(ppl->lpplprod->rgprod, lppl->lpplprod->rgprod, lppl->lpplprod->iprodMac * 4);
     ppl->lpplprod->iprodMac = lppl->lpplprod->iprodMac;
     return TRUE;
 }
@@ -151,11 +151,11 @@ int16_t FLookupPlanet(int16_t iPlanet, PLANET *ppl) {
                 if ((int16_t)lpPl->lpplprod->iprodMax < ppl->lpplprod->iprodMac) {
                     lpPl->lpplprod = (PLPROD *)LpplReAlloc((PL *)lpPl->lpplprod, ppl->lpplprod->iprodMac + 2);
                 }
-                fmemcpy(lpPl->lpplprod->rgprod, ppl->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4);
+                memcpy(lpPl->lpplprod->rgprod, ppl->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4);
                 lpPl->lpplprod->iprodMac = ppl->lpplprod->iprodMac;
             }
         FinishCopy:
-            fmemcpy(lpPl, ppl, 52);
+            memcpy(lpPl, ppl, 52);
             if (gd.fTutorial && idPlayer == 0) {
                 AdvanceTutor();
             }
@@ -196,7 +196,7 @@ int16_t FLookupThing(int16_t idth, THING *pth) {
     if (lpth && pth) {
         if (fWrite) {
             LogChangeThing(lpth, pth);
-            fmemcpy(lpth, pth, sizeof(THING));
+            memcpy(lpth, pth, sizeof(THING));
             if (gd.fTutorial && idPlayer == 0) {
                 AdvanceTutor();
             }
@@ -687,10 +687,10 @@ int16_t FLookupFleet(int16_t idFleet, FLEET *pfl) {
                 if (lpfl->lpplord->iordMax < pfl->cord) {
                     lpfl->lpplord = (PLORD *)LpplReAlloc((PL *)lpfl->lpplord, pfl->cord + 3);
                 }
-                fmemcpy(lpfl->lpplord->rgord, pfl->lpplord->rgord, pfl->lpplord->iordMac * 18);
+                memcpy(lpfl->lpplord->rgord, pfl->lpplord->rgord, pfl->lpplord->iordMac * 18);
                 lpfl->lpplord->iordMac = pfl->lpplord->iordMac;
             }
-            fmemcpy(lpfl, pfl, 100);
+            memcpy(lpfl, pfl, 100);
             if (gd.fTutorial && idPlayer == 0) {
                 AdvanceTutor();
             }
@@ -723,7 +723,7 @@ int16_t FDupFleet(FLEET *lpfl, FLEET *pfl) {
     } else if ((int16_t)pfl->lpplord->iordMax < lpfl->lpplord->iordMac) {
         pfl->lpplord = (PLORD *)LpplReAlloc((PL *)pfl->lpplord, lpfl->lpplord->iordMax);
     }
-    fmemcpy(pfl->lpplord->rgord, lpfl->lpplord->rgord, lpfl->lpplord->iordMac * 18);
+    memcpy(pfl->lpplord->rgord, lpfl->lpplord->rgord, lpfl->lpplord->iordMac * 18);
     pfl->lpplord->iordMac = lpfl->lpplord->iordMac;
     return TRUE;
 }
@@ -848,7 +848,7 @@ char *PszGetFleetName(int16_t id) {
             if (ishdef == 16) {
                 lpsz = PszGetCompressedString(idsFleet);
             } else {
-                fstrcpy(szShdef, rglpshdef[iplr][ishdef].hul.szClass);
+                strcpy(szShdef, rglpshdef[iplr][ishdef].hul.szClass);
                 cch = strlen(szShdef);
                 if (cch > 28) {
                     cch = 28;
@@ -890,7 +890,7 @@ char *PszFleetNameFromWord(uint16_t w) {
     if (rglpshdef[idPlayer][ishdef].fFree) {
         lpsz = PszGetCompressedString(idsFleet);
     } else {
-        fstrcpy(szShdef, rglpshdef[idPlayer][ishdef].hul.szClass);
+        strcpy(szShdef, rglpshdef[idPlayer][ishdef].hul.szClass);
         cch = strlen(szShdef);
         if (cch > 28) {
             cch = 28;
@@ -971,7 +971,7 @@ int16_t FDeleteFleet(int16_t idFleet, GrobjClass grobjSel, int16_t idSel) {
         }
     }
     if (cFleet != i) {
-        fmemmove(rglpfl + i, rglpfl + (i + 1), (cFleet - i) * sizeof(FLEET *));
+        memmove(rglpfl + i, rglpfl + (i + 1), (cFleet - i) * sizeof(FLEET *));
     }
     FreeLp(lpfl, htFleets);
     gd.fFleetLinkValid = FALSE;
@@ -1018,12 +1018,12 @@ FLEET *LpflNew(int16_t iPlr, int16_t idPl) {
     }
     rglpfl = LpReAlloc(rglpfl, (cFleet + 1) * sizeof(FLEET *), htMisc);
     if (cFleet != i) {
-        fmemmove(rglpfl + (i + 1), rglpfl + i, (cFleet - i) * sizeof(FLEET *));
+        memmove(rglpfl + (i + 1), rglpfl + i, (cFleet - i) * sizeof(FLEET *));
     }
     rglpfl[i] = lpfl = LpAlloc(sizeof(FLEET), htFleets);
     cFleet++;
     rgplr[iPlr].cFleet++;
-    fmemset(lpfl, 0, sizeof(FLEET));
+    memset(lpfl, 0, sizeof(FLEET));
     lpfl->ifl = iflPrev + 1;
     lpfl->iPlayer = iPlr;
     lpfl->iplr = iPlr;
@@ -1066,7 +1066,7 @@ FLEET *LpflNewSplit(FLEET *pfl) {
     if (lpflNew->lpplord->iordMax < iordMac) {
         lpflNew->lpplord = (PLORD *)LpplReAlloc((PL *)lpflNew->lpplord, pfl->lpplord->iordMax);
     }
-    fmemcpy(lpflNew->lpplord->rgord, pfl->lpplord->rgord, iordMac * 18);
+    memcpy(lpflNew->lpplord->rgord, pfl->lpplord->rgord, iordMac * 18);
     lpflNew->lpplord->iordMac = iordMac;
     lpflNew->cord = pfl->cord;
     LogSplitFleet(pfl->id);
@@ -2002,12 +2002,12 @@ void DecorateHullName(int16_t iplr, int16_t ish, char *psz) {
     if (lpshdef->fFree) {
         *psz = 0;
     } else {
-        fstrcpy(psz, lpshdef->hul.szClass);
+        strcpy(psz, lpshdef->hul.szClass);
         if (iplr != idPlayer) {
             c = 0;
             iVal = 1;
             for (i = 0; i < 16; i++) {
-                if (i != ish && !rglpshdef[iplr][i].fFree && fstrcmp(psz, rglpshdef[iplr][i].hul.szClass) == 0) {
+                if (i != ish && !rglpshdef[iplr][i].fFree && strcmp(psz, rglpshdef[iplr][i].hul.szClass) == 0) {
                     c++;
                     if (i < ish) {
                         iVal++;
@@ -2624,12 +2624,12 @@ void OutputSz(int16_t dt, char *sz) {
     char szTemp[256];
 
     _wsprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
-    if (access(szFile, 0) == -1) {
+    if (_access(szFile, 0) == -1) {
         _wsprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
         OutputFileString(szFile, szTemp);
     }
-    strdate(szDate);
-    strtime(szTime);
+    _strdate(szDate);
+    _strtime(szTime);
     _wsprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
     OutputFileString(szFile, szTemp);
     return;

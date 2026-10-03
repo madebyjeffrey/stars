@@ -6,27 +6,10 @@
 #include <limits.h>
 #include <stdlib.h>
 
-// Old CRT names
-#define fmemcmp  memcmp
-#define fmemcpy  memcpy
-#define fmemmove memmove
-#define fmemset  memset
-#define fstrcat  strcat
-#define fstrcmp  strcmp
-#define fstrcpy  strcpy
-#define fstricmp stricmp
-#define fstrlen  strlen
-
-#define strtime         _strtime
-#define access          _access
 #define filelength      filelength16
 #define lseek           lseek16
-#define mkdir           _mkdir
 #define tell            tell16
-#define dos_getdiskfree _getdiskfree
 #define qsort           qsort16
-
-typedef struct _diskfree_t _diskfree_t;
 
 // SIGNHIWORD is the high word from signed 16-to-32 extension (the x86 CWD
 // instruction), not the upper half of an already-wide value.
@@ -128,15 +111,6 @@ static inline void qsort16(void *base, size_t count, size_t width, int (*compare
             hi = highs[pending];
         }
     }
-}
-
-static inline char *strdate(char *buf) {
-    time_t     t = time(NULL);
-    struct tm *tm = localtime(&t);
-
-    sprintf(buf, "%02d/%02d/%02d", tm->tm_mon + 1, tm->tm_mday, (tm->tm_year + 1900) % 100);
-
-    return buf;
 }
 
 static inline DWORD GetTextExtent16(HDC hdc, LPCSTR str, int len) {

@@ -1095,7 +1095,7 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                     i = 1000;
                     FDecompressUserString(lpmsgplr->rgbMsg, lpmsgplr->cLen, lpb2k + cch, &i);
                 } else {
-                    fstrcpy(lpb2k + cch, lpmsgplr->rgbMsg);
+                    strcpy(lpb2k + cch, lpmsgplr->rgbMsg);
                 }
                 lpsz = lpb2k;
             } else {
@@ -1118,10 +1118,10 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             }
             SetTextColor(hdc, crButtonText);
             rcActual = rc;
-            DrawText(hdc, lpsz, fstrlen(lpsz), &rcActual, DT_WORDBREAK | DT_CALCRECT | DT_NOPREFIX);
+            DrawText(hdc, lpsz, strlen(lpsz), &rcActual, DT_WORDBREAK | DT_CALCRECT | DT_NOPREFIX);
             if (rcActual.bottom <= rc.bottom && rcActual.right <= rc.right) {
                 ShowWindow(hwndMsgScroll, SW_HIDE);
-                DrawText(hdc, lpsz, fstrlen(lpsz), &rc, DT_WORDBREAK | DT_NOPREFIX);
+                DrawText(hdc, lpsz, strlen(lpsz), &rc, DT_WORDBREAK | DT_NOPREFIX);
             } else {
                 SetWindowText(hwndMsgScroll, lpsz);
                 ExpandRc(&rc, 4, 4);
@@ -1627,7 +1627,7 @@ int16_t FSendPlrMsg(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t p1, int1
         return FALSE;
     }
     lpb = (uint8_t *)lpMsg + imemMsgCur;
-    fmemmove(lpb, rgbWork, cbMsg);
+    memmove(lpb, rgbWork, cbMsg);
     imemMsgCur += cbMsg;
     cMsg++;
     return TRUE;
@@ -1644,8 +1644,8 @@ int16_t FSendPrependedPlrMsg(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t
         }
         return FALSE;
     }
-    fmemmove((uint8_t *)lpMsg + cbMsg, lpMsg, imemMsgCur);
-    fmemmove(lpMsg, rgbWork, cbMsg);
+    memmove((uint8_t *)lpMsg + cbMsg, lpMsg, imemMsgCur);
+    memmove(lpMsg, rgbWork, cbMsg);
     imemMsgCur += cbMsg;
     cMsg++;
     return TRUE;
@@ -1753,10 +1753,10 @@ int16_t FSendPlrMsg2XGen(int16_t fPrepend, MessageId iMsg, MsgGoto iObj, int16_t
     }
     cSize = pb - rgb;
     if (fPrepend) {
-        fmemmove((uint8_t *)lpMsg + cSize, lpMsg, imemMsgCur);
-        fmemmove(lpMsg, rgb, cSize);
+        memmove((uint8_t *)lpMsg + cSize, lpMsg, imemMsgCur);
+        memmove(lpMsg, rgb, cSize);
     } else {
-        fmemmove((uint8_t *)lpMsg + imemMsgCur, rgb, cSize);
+        memmove((uint8_t *)lpMsg + imemMsgCur, rgb, cSize);
     }
     imemMsgCur += cSize;
     cMsg++;
@@ -1985,8 +1985,8 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 part.hs.iItem = *pParams;
                 if (FLookupPart(&part) <= mdPartAvailInvalid) {
                 }
-                fstrcpy(pch, part.pcom->szName);
-                pch += fstrlen(part.pcom->szName);
+                strcpy(pch, part.pcom->szName);
+                pch += strlen(part.pcom->szName);
                 pParams++;
                 break;
             case 'g':
@@ -2055,7 +2055,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                     pchT = PszPlayerName(c, FALSE, FALSE, TRUE, 0, NULL);
                     _wsprintf(pch, "%s %s", pchT, lpshdef->hul.szClass);
                 } else {
-                    fstrcpy(pch, lpshdef->hul.szClass);
+                    strcpy(pch, lpshdef->hul.szClass);
                 }
                 pch += strlen(pch);
                 pParams++;
@@ -2266,7 +2266,7 @@ void WritePlayerMessages(int16_t iPlayer) {
                 cbMsg = 0;
             }
             if ((*lpb & 0xf) == iPlayer && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) != 0x1ff) {
-                fmemmove(&rgb[cbMsg], lpb + 1, (*lpb >> 4 & 0xf) + 4);
+                memmove(&rgb[cbMsg], lpb + 1, (*lpb >> 4 & 0xf) + 4);
                 cbMsg += (*lpb >> 4 & 0xf) + 4;
             }
         }
@@ -2277,7 +2277,7 @@ void WritePlayerMessages(int16_t iPlayer) {
             if ((lpmp->iPlrTo == 0 && lpmp->iPlrFrom != iPlayer) || lpmp->iPlrTo - 1 == iPlayer) {
                 /* NATIVE: serialize a zero Win16 link, then the fixed-width payload. */
                 memset(rgb, 0, 4);
-                fmemcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
+                memcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
                 WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, rgb);
             }
         }
@@ -2317,7 +2317,7 @@ void ReadPlayerMessages() {
     lpb = (uint8_t *)lpMsg + imemMsgCur;
     while (hdrCur.rt == rtMsg) {
         if (hdrCur.cb != 0 && (uint16_t)(imemMsgCur + imemMsgT) < (uint16_t)(0xffc8 - hdrCur.cb)) {
-            fmemmove(lpb + imemMsgT, rgbCur, hdrCur.cb);
+            memmove(lpb + imemMsgT, rgbCur, hdrCur.cb);
             imemMsgT += hdrCur.cb;
         }
         ReadRt();
@@ -2356,7 +2356,7 @@ void ReadPlayerMessages() {
         lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
         lpmp = lpmp->lpmsgplrNext;
         /* NATIVE: skip the serialized Win16 link pointer. */
-        fmemcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
+        memcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
         lpmp->lpmsgplrNext = NULL;
         vcmsgplrIn++;
     LOutOfMem:
@@ -2416,7 +2416,7 @@ int16_t FFinishPlrMsgEntry(int16_t dInc) {
     cbNew = abs(cb) + 12;
     iPlrTo = LOWORD(SendMessage(hwndMsgDrop, CB_GETCURSEL, 0, 0));
     if (lpmpCur) {
-        if (cb != lpmpCur->cLen || lpmpCur->iPlrTo != iPlrTo || fmemcmp(lpmpCur->rgbMsg, lpbMsg, cb) != 0) {
+        if (cb != lpmpCur->cLen || lpmpCur->iPlrTo != iPlrTo || memcmp(lpmpCur->rgbMsg, lpbMsg, cb) != 0) {
             DirtyGame(TRUE);
         }
         lpmpCur = LpReAlloc(lpmpCur, cbNew + (sizeof(MSGPLR) - 12), htPlrMsg);
@@ -2431,7 +2431,7 @@ int16_t FFinishPlrMsgEntry(int16_t dInc) {
     lpmpCur->iPlrFrom = idPlayer;
     lpmpCur->iPlrTo = iPlrTo;
     lpmpCur->cLen = cb;
-    fmemmove(lpmpCur->rgbMsg, lpbMsg, abs(cb));
+    memmove(lpmpCur->rgbMsg, lpbMsg, abs(cb));
     iMsgSendCur += dInc;
     if (iMsgSendCur < 0) {
         iMsgSendCur = 0;

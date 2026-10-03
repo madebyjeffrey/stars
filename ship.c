@@ -974,7 +974,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                     InvalidateRect(hwndMine, NULL, TRUE);
                 }
                 sel.fl.lpplord->rgord[sel.iwpAct].grTask = LOWORD(lSel);
-                fmemset((uint8_t *)&sel.fl.lpplord->rgord[sel.iwpAct] + 8, 0, 10);
+                memset((uint8_t *)&sel.fl.lpplord->rgord[sel.iwpAct] + 8, 0, 10);
                 switch (LOWORD(lSel)) {
                 case 7:
                     sel.fl.lpplord->rgord[sel.iwpAct].tptl.iDist = 0;
@@ -2906,7 +2906,7 @@ void FillBattleDD(int16_t iSel) {
     CchGetString(idsBattlePlans, szWork);
     SendMessage(hwndBattleDD, CB_ADDSTRING, 0, (LPARAM)szWork);
     for (i = 0; i < rgcbtlplan[idPlayer]; i++) {
-        fstrcpy(szWork, rglpbtlplan[idPlayer][i].szName);
+        strcpy(szWork, rglpbtlplan[idPlayer][i].szName);
         SendMessage(hwndBattleDD, CB_ADDSTRING, 0, (LPARAM)szWork);
     }
     SendMessage(hwndBattleDD, CB_SETCURSEL, iSel, 0);
@@ -2935,14 +2935,14 @@ void DeleteCurWayPoint(int16_t fBackup) {
             }
         }
         RedrawScanSel(NULL, 0);
-        fmemmove(&sel.fl.lpplord->rgord[sel.iwpAct], &sel.fl.lpplord->rgord[sel.iwpAct + 1], (sel.fl.cord - sel.iwpAct - 1) * sizeof(ORDER));
+        memmove(&sel.fl.lpplord->rgord[sel.iwpAct], &sel.fl.lpplord->rgord[sel.iwpAct + 1], (sel.fl.cord - sel.iwpAct - 1) * sizeof(ORDER));
         sel.fl.cord--;
         sel.fl.lpplord->iordMac--;
         sel.iwpAct--;
         if (sel.iwpAct < sel.fl.cord - 1) {
             pt = sel.fl.lpplord->rgord[sel.iwpAct].pt;
             if (pt.x == sel.fl.lpplord->rgord[sel.iwpAct + 1].pt.x && pt.y == sel.fl.lpplord->rgord[sel.iwpAct + 1].pt.y) {
-                fmemmove(&sel.fl.lpplord->rgord[sel.iwpAct + 1], &sel.fl.lpplord->rgord[sel.iwpAct + 2], (sel.fl.cord - sel.iwpAct - 2) * sizeof(ORDER));
+                memmove(&sel.fl.lpplord->rgord[sel.iwpAct + 1], &sel.fl.lpplord->rgord[sel.iwpAct + 2], (sel.fl.cord - sel.iwpAct - 2) * sizeof(ORDER));
                 sel.fl.cord--;
                 sel.fl.lpplord->iordMac--;
             }
@@ -2978,7 +2978,7 @@ void DeleteWpFar(FLEET *lpfl, int16_t iDel, int16_t fRecycle) {
             ord = lpfl->lpplord->rgord[iDel];
         }
     }
-    fmemmove(&lpfl->lpplord->rgord[iDel], &lpfl->lpplord->rgord[iDel + 1], (lpfl->cord - iDel - 1) * sizeof(ORDER));
+    memmove(&lpfl->lpplord->rgord[iDel], &lpfl->lpplord->rgord[iDel + 1], (lpfl->cord - iDel - 1) * sizeof(ORDER));
     if (fRecycle) {
         lpfl->lpplord->rgord[lpfl->cord - 1] = ord;
     } else {

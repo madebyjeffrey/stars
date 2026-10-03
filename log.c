@@ -77,7 +77,7 @@ void LogChangeName(GrobjClass grobj, int16_t id, char *szName) {
         } else {
             cOut = strlen(szName);
             lpfl->lpszName = LpAlloc(strlen(szName) + 1, htString);
-            fstrcpy(lpfl->lpszName, szName);
+            strcpy(lpfl->lpszName, szName);
             if (FCompressUserString(szName, &rtchgname.rgb[1], &cOut)) {
                 rtchgname.rgb[0] = cOut;
             } else {
@@ -161,7 +161,7 @@ void LogChangeFleet(FLEET *pfl, FLEET *pflNew) {
     }
     d = pflNew->cord - pfl->cord;
     for (iordOld = 0;
-         iordOld < pfl->cord && iordOld < pflNew->cord && fmemcmp(&pfl->lpplord->rgord[iordOld], &pflNew->lpplord->rgord[iordOld], sizeof(ORDER)) == 0;
+         iordOld < pfl->cord && iordOld < pflNew->cord && memcmp(&pfl->lpplord->rgord[iordOld], &pflNew->lpplord->rgord[iordOld], sizeof(ORDER)) == 0;
          iordOld++) {
     }
     iordNew = iordOld;
@@ -270,12 +270,12 @@ void LogChangePlanet(PLANET *ppl, PLANET *pplNew) {
             if (!pplNew->lpplprod && ppl->lpplprod) {
                 WriteMemRt(rtLogPlanetProdQ, 2, &lxNew);
             } else if (pplNew->lpplprod && (!ppl->lpplprod || ppl->lpplprod->iprodMac != pplNew->lpplprod->iprodMac ||
-                                            fmemcmp(ppl->lpplprod->rgprod, pplNew->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4) != 0)) {
+                                            memcmp(ppl->lpplprod->rgprod, pplNew->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4) != 0)) {
                 if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogPlanetProdQ && ((RTCHGPRODQ *)rgbCur)->id == ppl->id) {
                     imemLogCur = imemLogPrev;
                 }
                 ((RTCHGPRODQ *)rgbCur)->id = ppl->id;
-                fmemmove(&rgbCur[2], pplNew->lpplprod->rgprod, pplNew->lpplprod->iprodMac * 4);
+                memmove(&rgbCur[2], pplNew->lpplprod->rgprod, pplNew->lpplprod->iprodMac * 4);
                 WriteMemRt(rtLogPlanetProdQ, pplNew->lpplprod->iprodMac * 4 + 2, rgbCur);
             }
             if ((uint32_t)ppl->fNoResearch != pplNew->fNoResearch || ppl->idFling != pplNew->idFling || ppl->iWarpFling != pplNew->iWarpFling ||
@@ -500,7 +500,7 @@ void WriteMemRt(RecordType rt, int16_t cb, void *rg) {
         lpv += imemLogCur;
         RawStore16(lpv, *(uint16_t *)&hdr);
         if (cb > 0) {
-            fmemcpy(lpv + 2, rg, cb);
+            memcpy(lpv + 2, rg, cb);
         }
         imemLogCur += cb + 2;
         if (rt != rtEOF) {
@@ -529,7 +529,7 @@ int16_t FGetPrevLogRt(HDR *phdr, uint8_t *pb) {
     lpv = lpLog + imemLogPrev;
     *phdr = *(HDR *)lpv;
     if (phdr->cb > 0) {
-        fmemcpy(pb, lpv + 2, phdr->cb);
+        memcpy(pb, lpv + 2, phdr->cb);
     }
     return TRUE;
 }
@@ -614,7 +614,7 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
                         }
                     }
                 }
-                fmemmove(lppl->lpplprod->rgprod, ((RTCHGPRODQ *)lpb)->rgprod, i * 4);
+                memmove(lppl->lpplprod->rgprod, ((RTCHGPRODQ *)lpb)->rgprod, i * 4);
                 lppl->lpplprod->iprodMac = i;
             } else if (!lppl->lpplprod) {
                 return TRUE;
@@ -626,14 +626,14 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         }
         return FALSE;
     case rtLogRelations:
-        fmemcpy(rgplr[idPlayer].rgmdRelation, lpb, game.cPlayer);
+        memcpy(rgplr[idPlayer].rgmdRelation, lpb, game.cPlayer);
         break;
     case rtLogPlayerZpq1:
         if (gd.fGeneratingTurn) {
             if ((uint16_t)cb > 26) {
                 return FALSE;
             }
-            fmemcpy(&rgplr[idPlayer].zpq1, lpb, cb);
+            memcpy(&rgplr[idPlayer].zpq1, lpb, cb);
         }
         break;
     case rtLogFleetName:
@@ -647,12 +647,12 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         i = ((RTCHGNAME *)lpb)->rgb[0];
         if (i != 0 && FDecompressUserString(&((RTCHGNAME *)lpb)->rgb[1], i, szT, &cOut)) {
             lpfl->lpszName = LpAlloc(strlen(szT) + 1, htString);
-            fstrcpy(lpfl->lpszName, szT);
+            strcpy(lpfl->lpszName, szT);
         } else if (((RTCHGNAME *)lpb)->rgb[1] == 0) {
             lpfl->lpszName = NULL;
         } else {
-            lpfl->lpszName = LpAlloc(fstrlen(&((RTCHGNAME *)lpb)->rgb[1]) + 1, htString);
-            fstrcpy(lpfl->lpszName, &((RTCHGNAME *)lpb)->rgb[1]);
+            lpfl->lpszName = LpAlloc(strlen(&((RTCHGNAME *)lpb)->rgb[1]) + 1, htString);
+            strcpy(lpfl->lpszName, &((RTCHGNAME *)lpb)->rgb[1]);
         }
         break;
     case rtThing:
@@ -799,11 +799,11 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
                                 if (iPass == 1)
                                     goto StealCargo;
                                 if (!lpxfCur) {
-                                    for (lpxfCur = lpxf; lpxfCur < lpxfMax && fmemcmp(lpxfCur, lpb, 5) != 0; lpxfCur++) {
+                                    for (lpxfCur = lpxf; lpxfCur < lpxfMax && memcmp(lpxfCur, lpb, 5) != 0; lpxfCur++) {
                                     }
                                     if (lpxfCur == lpxfMax) {
                                         cXferFull++;
-                                        fmemset(lpxfCur, 0, sizeof(XFERFULL));
+                                        memset(lpxfCur, 0, sizeof(XFERFULL));
                                         lpxfCur->id1 = ((RTXFER *)lpb)->id1;
                                         lpxfCur->id2 = ((RTXFER *)lpb)->id2;
                                     }
@@ -952,7 +952,7 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         if (fExtra && iLook + 1 >= lpfl->cord) {
             return FALSE;
         }
-        fmemmove(&lpfl->lpplord->rgord[iLook], &lpfl->lpplord->rgord[iLook + fExtra + 1], (lpfl->cord - iLook - fExtra - 1) * sizeof(ORDER));
+        memmove(&lpfl->lpplord->rgord[iLook], &lpfl->lpplord->rgord[iLook + fExtra + 1], (lpfl->cord - iLook - fExtra - 1) * sizeof(ORDER));
         lpfl->cord -= fExtra + 1;
         lpfl->lpplord->iordMac -= fExtra + 1;
         break;
@@ -963,12 +963,12 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         if (lpfl->cord == lpfl->lpplord->iordMax) {
             lpfl->lpplord = (PLORD *)LpplReAlloc((PL *)lpfl->lpplord, lpfl->cord + 3);
         }
-        fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt + 1], &lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt],
+        memmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt + 1], &lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt],
                  (lpfl->cord - ((RTWAYPT *)lpb)->iWaypt) * sizeof(ORDER));
         if ((uint16_t)cb < 22) {
-            fmemset(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], 0, sizeof(ORDER));
+            memset(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], 0, sizeof(ORDER));
         }
-        fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], &((RTWAYPT *)lpb)->order, cb - 4);
+        memmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], &((RTWAYPT *)lpb)->order, cb - 4);
         lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt].fNoAutoTrack = FALSE;
         lpfl->cord++;
         lpfl->lpplord->iordMac++;
@@ -978,9 +978,9 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
             return FALSE;
         }
         if ((uint16_t)cb < 22) {
-            fmemset(&lpfl->lpplord->rgord[iLook], 0, sizeof(ORDER));
+            memset(&lpfl->lpplord->rgord[iLook], 0, sizeof(ORDER));
         }
-        fmemmove(&lpfl->lpplord->rgord[iLook], &((RTWAYPT *)lpb)->order, cb - 4);
+        memmove(&lpfl->lpplord->rgord[iLook], &((RTWAYPT *)lpb)->order, cb - 4);
         lpfl->lpplord->rgord[iLook].fNoAutoTrack = FALSE;
         break;
     case rtBtlPlan:
@@ -1137,16 +1137,16 @@ int16_t FLoadLogFile(char *pszLog) {
     ReadRt();
     cbLog = RawLoad16(rgbCur);
     if (gd.fGeneratingTurn && vrgts) {
-        fmemset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
+        memset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
         if (hdrCur.cb == 17) {
             vrgts[idPlayer].lSerialNumber = RawLoad32(&rgbCur[2]);
-            fmemcpy(vrgts[idPlayer].rgbConfig, &rgbCur[6], 11);
+            memcpy(vrgts[idPlayer].rgbConfig, &rgbCur[6], 11);
         }
     }
     for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
         ReadRt();
-        fmemmove(lpLog + iCur, &hdrCur, sizeof(HDR));
-        fmemmove(lpLog + (2 + iCur), rgbCur, hdrCur.cb);
+        memmove(lpLog + iCur, &hdrCur, sizeof(HDR));
+        memmove(lpLog + (2 + iCur), rgbCur, hdrCur.cb);
     }
     ReadRt();
     for (lpmp = (MSGPLR *)&vlpmsgplrOut; lpmp->lpmsgplrNext; lpmp = lpmp->lpmsgplrNext) {
@@ -1160,7 +1160,7 @@ int16_t FLoadLogFile(char *pszLog) {
         lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
         lpmp = lpmp->lpmsgplrNext;
         /* NATIVE: skip the serialized Win16 link pointer. */
-        fmemcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
+        memcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
         lpmp->lpmsgplrNext = NULL;
         vcmsgplrOut++;
         ReadRt();
@@ -1274,7 +1274,7 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     while (iCur-- != 0) {
         /* NATIVE: serialize a zero Win16 link, then the fixed-width payload. */
         memset(rgb, 0, 4);
-        fmemcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
+        memcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
         WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, rgb);
         lpmp = lpmp->lpmsgplrNext;
     }

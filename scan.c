@@ -2205,7 +2205,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
         lpord++;
     }
     if (sel.iwpAct != sel.fl.cord - 1) {
-        fmemmove(lpord + 1, lpord, (sel.fl.cord - sel.iwpAct - 1) * sizeof(ORDER));
+        memmove(lpord + 1, lpord, (sel.fl.cord - sel.iwpAct - 1) * sizeof(ORDER));
     }
     *lpord = *(lpord - 1);
     lpord->pt = pscan->pt;
@@ -2233,7 +2233,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     RedrawScanSel(NULL, 0);
     FLookupFleet(idWriteBack, &sel.fl);
     if (lpord[-1].grTask == grTaskLayMines && lpord[-1].tsell.iPlrX == 5) {
-        fmemset((uint8_t *)lpord - 10, 0, 10);
+        memset((uint8_t *)lpord - 10, 0, 10);
         lpord[-1].grTask = grTaskNone;
         FLookupFleet(idWriteBack, &sel.fl);
     }

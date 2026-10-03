@@ -533,7 +533,7 @@ void ReadIniSettings() {
     for (i = 0; i < 9; i++) {
         if (vrgszMRU[i * 256] != 0) {
             if (i != iPass) {
-                fstrcpy(vrgszMRU + 256 * iPass, vrgszMRU + 256 * i);
+                strcpy(vrgszMRU + 256 * iPass, vrgszMRU + 256 * i);
                 vrgszMRU[i * 256] = 0;
             }
             iPass++;
@@ -594,7 +594,7 @@ void ReadIniSettings() {
     }
     CchGetString(idsVcrspeed, szEntry);
     viSpeedVCR = GetPrivateProfileInt(szSection, szEntry, 1, szIniFile);
-    strdate(szWork);
+    _strdate(szWork);
     szWork[5] = 0;
     szWork[2] = 0;
     uDateCur = atoi(&szWork[3]) + atoi(szWork) * 31 + atoi(&szWork[6]) * 31 * 12;

@@ -1139,7 +1139,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             } else {
                 lpsz = rglpshdefSB[idPlayer][lppl->isb].hul.szClass;
             }
-            ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, lpsz, fstrlen(lpsz), NULL);
+            ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, lpsz, strlen(lpsz), NULL);
             break;
         case colPlanetRoutingDest:
             if (lppl->idRoute == 0) {
@@ -1307,7 +1307,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
         switch (icol) {
         case colFleetBattlePlan:
             i = lpfl->iplan;
-            fstrcpy(szT, rglpbtlplan[lpfl->iplr][lpfl->iplan].szName);
+            strcpy(szT, rglpbtlplan[lpfl->iplr][lpfl->iplan].szName);
             psz = szT;
             ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
             break;
@@ -1495,7 +1495,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 i = IshdefPrimaryFromLpfl(lpfl, &j);
                 prc->right -= 6 * dx;
                 lpsz = rglpshdef[lpfl->iPlayer][i].hul.szClass;
-                ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, lpsz, fstrlen(lpsz), NULL);
+                ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, lpsz, strlen(lpsz), NULL);
                 psz = szT;
                 cch = _wsprintf(psz, PCTD, lpfl->rgcsh[i]);
                 chT = '+';
@@ -1908,7 +1908,7 @@ void SortReportCache(ReportType irpt, int16_t icol) {
         }
         vprptCur->cRows = cRows;
         qsort(rgidRep, cRows, sizeof(uint16_t), (QSORTCOMPARE)ICompReport);
-        fmemcpy(vlprgidRep, rgidRep, cRows * 2);
+        memcpy(vlprgidRep, rgidRep, cRows * 2);
         vprptCur->fCached = TRUE;
     }
     return;
@@ -1970,7 +1970,7 @@ TryTier2:
                 iRet = -1;
                 break;
             }
-            iRet = fstrcmp(rglpshdefSB[idPlayer][lppl1->isb].hul.szClass, rglpshdefSB[idPlayer][lppl2->isb].hul.szClass);
+            iRet = strcmp(rglpshdefSB[idPlayer][lppl1->isb].hul.szClass, rglpshdefSB[idPlayer][lppl2->isb].hul.szClass);
             break;
         case colPlanetRoutingDest:
             if (lppl1->idRoute == 0) {
@@ -2369,7 +2369,7 @@ TryTier2:
                 if (l1 == l2) {
                     iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
                 } else {
-                    iRet = fstrcmp(rglpshdef[lpfl1->iPlayer][l1].hul.szClass, rglpshdef[lpfl2->iPlayer][l2].hul.szClass);
+                    iRet = strcmp(rglpshdef[lpfl1->iPlayer][l1].hul.szClass, rglpshdef[lpfl2->iPlayer][l2].hul.szClass);
                     if (iRet == 0) {
                         iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
                     }
@@ -2965,7 +2965,7 @@ void DumpPlanets() {
                 if (lppl->iPlayer == iplrNone || !lppl->fStarbase) {
                     cch = 1;
                 } else {
-                    fstrcpy(&szForm[1], rglpshdefSB[lppl->iPlayer][lppl->isb].hul.szClass);
+                    strcpy(&szForm[1], rglpshdefSB[lppl->iPlayer][lppl->isb].hul.szClass);
                     cch = strlen(szForm);
                 }
                 RgToStream(szForm, cch);
@@ -3212,7 +3212,7 @@ void DumpFleets() {
                 }
                 RgToStream(szForm, strlen(szForm));
                 if (rglpbtlplan[lpfl->iplr] != 0) {
-                    fstrcpy(&szForm[1], rglpbtlplan[lpfl->iplr][lpfl->iplan].szName);
+                    strcpy(&szForm[1], rglpbtlplan[lpfl->iplr][lpfl->iplan].szName);
                 } else {
                     szForm[1] = 0;
                 }

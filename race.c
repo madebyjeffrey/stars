@@ -152,7 +152,7 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         } else {
             for (i = 0; i < 7; i++) {
                 vplr.iPlrBmp = vrgplrDef[i].iPlrBmp;
-                if (fmemcmp(&vplr, &vrgplrDef[i], 128) == 0)
+                if (memcmp(&vplr, &vrgplrDef[i], 128) == 0)
                     break;
             }
             vplr.iPlrBmp = iPlrBmp;

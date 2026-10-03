@@ -471,10 +471,10 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                     } else {
                         lpshdef = &rgshdef[i];
                     }
-                    fmemset(lpshdef, 0, sizeof(SHDEF));
+                    memset(lpshdef, 0, sizeof(SHDEF));
                     lpshdef->hul = LphuldefFromId(j)->hul;
                     lpshdef->det = detAll;
-                    fmemset(lpshdef->hul.rghs, 0, 64);
+                    memset(lpshdef->hul.rghs, 0, 64);
                 }
                 CheckRadioButton(hwnd, IDC_DESIGNER_EXISTING, IDC_DESIGNER_COMPONENTS, IDC_DESIGNER_EXISTING);
                 lpshdef->turn = game.turn;
@@ -1127,7 +1127,7 @@ void DrawBuildSelComp(HWND hwnd, HDC hdc, int16_t iDraw) {
         } else {
             _wsprintf(szWord, "%d ", hsShip.cItem);
         }
-        fstrcat(szWord, part.pcom->szName);
+        strcat(szWord, part.pcom->szName);
         if (fPlural) {
             strcat(szWord, "s");
         }
@@ -1785,7 +1785,7 @@ void FillBuildPartsLB(HWND hwndLB, int16_t grbit) {
                     sz[1] = i + 'A';
                     sz[2] = part.pcom->ibmp % 26 + 'A';
                     sz[3] = part.pcom->ibmp / 26 + 'A';
-                    fstrcpy(&sz[4], part.pcom->szName);
+                    strcpy(&sz[4], part.pcom->szName);
                     SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM)sz);
                 }
                 i++;
@@ -1889,10 +1889,10 @@ LRESULT CALLBACK FakeListProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void MakeNewName(char *lpsz) {
     int16_t cLen;
 
-    cLen = fstrlen(lpsz);
+    cLen = strlen(lpsz);
     if (cLen <= 27) {
         if (lpsz[cLen - 1] != ')' || isdigit(lpsz[cLen - 2]) == 0 || lpsz[cLen - 3] != '(') {
-            fstrcpy(lpsz + cLen, " (2)");
+            strcpy(lpsz + cLen, " (2)");
         } else if (lpsz[cLen - 2] == '9') {
             lpsz[cLen - 2] = '0';
         } else {

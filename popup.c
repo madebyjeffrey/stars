@@ -145,7 +145,7 @@ void DrawPopup(HWND hwnd, HDC hdc) {
                 }
                 DecorateHullName(GlobalPD.lpfl->iplr, i, szTB);
                 lpsz = szTB;
-                TextOut(hdc, 4, yCur, lpsz, fstrlen(lpsz));
+                TextOut(hdc, 4, yCur, lpsz, strlen(lpsz));
                 c = _wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
                 RightTextOut(hdc, rc.right - 4 - GlobalPD.dxDamage, yCur, szWork, c, 0);
                 if (GlobalPD.fRedDamage && GlobalPD.lpfl->rgdv[i].dp != 0) {
@@ -215,7 +215,7 @@ void DrawPopup(HWND hwnd, HDC hdc) {
         rc.left += 6;
         SelectObject(hdc, rghfontArial8[1]);
         SetBkMode(hdc, TRANSPARENT);
-        fstrcpy(szWork, GlobalPD.lpshdef->hul.szClass);
+        strcpy(szWork, GlobalPD.lpshdef->hul.szClass);
         CtrTextOut(hdc, ((rc.right - 0x4c) >> 1) + 0x4c, 6, szWork, 0);
         DrawBuildSelHull(hwnd, hdc, -1, &rc);
     }
@@ -282,7 +282,7 @@ void Popup(HWND hwnd, int16_t x, int16_t y) {
                 dy += dyArial8;
                 DecorateHullName(GlobalPD.lpfl->iplr, i, szTB);
                 lpsz = szTB;
-                dx = LOWORD(GetTextExtent(hdc, lpsz, fstrlen(lpsz)));
+                dx = LOWORD(GetTextExtent(hdc, lpsz, strlen(lpsz)));
                 dxL = dxL <= dx ? dx : dxL;
                 c = _wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
                 dx = LOWORD(GetTextExtent(hdc, szWork, c));

@@ -41,16 +41,16 @@ THING *LpthNew(int16_t iplr, ThingType ith) {
         lpth = lpThings + i;
     }
     if (i < cThing) {
-        fmemmove(lpth + 1, lpth, (cThing - i) * sizeof(THING));
+        memmove(lpth + 1, lpth, (cThing - i) * sizeof(THING));
     }
     cThing++;
-    fmemcpy(lpth, &thNew, sizeof(THING));
+    memcpy(lpth, &thNew, sizeof(THING));
     return lpth;
 }
 
 void FreeLpth(THING *lpth) {
     if (lpth < lpThings + (cThing - 1)) {
-        fmemmove(lpth, lpth + 1, (cThing - (int16_t)((uint8_t *)lpth - (uint8_t *)lpThings) / 18 - 1) * sizeof(THING));
+        memmove(lpth, lpth + 1, (cThing - (int16_t)((uint8_t *)lpth - (uint8_t *)lpThings) / 18 - 1) * sizeof(THING));
     }
     cThing--;
     return;
@@ -409,7 +409,7 @@ void DoThingInteractions(int16_t fPostMove) {
                                         if (iOffset >= 1) {
                                             iOffset = Random(2) + 1;
                                         }
-                                        fmemmove(&shdef, LpshdefT() + (iOffset + 19), sizeof(SHDEF));
+                                        memmove(&shdef, LpshdefT() + (iOffset + 19), sizeof(SHDEF));
                                         ish = IshFindSimilarDesign(&shdef.hul, iplr);
                                         if (ish < 0) {
                                             do {

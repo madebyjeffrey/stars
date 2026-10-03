@@ -667,7 +667,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
             if (csh > 1) {
                 c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
             } else {
-                fstrcpy(szWork, lpshdef->hul.szClass);
+                strcpy(szWork, lpshdef->hul.szClass);
                 c = strlen(szWork);
             }
             TextOut(hdc, x, y, szWork, c);
@@ -691,7 +691,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 if (csh > 1) {
                     c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
                 } else {
-                    fstrcpy(szWork, lpshdef->hul.szClass);
+                    strcpy(szWork, lpshdef->hul.szClass);
                     c = strlen(szWork);
                 }
                 TextOut(hdc, x, y, szWork, c);
@@ -777,7 +777,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 if (csh > 1 || cshT != 0) {
                     c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
                 } else {
-                    fstrcpy(szWork, lpshdef->hul.szClass);
+                    strcpy(szWork, lpshdef->hul.szClass);
                     c = strlen(szWork);
                 }
                 if (cshT != 0) {

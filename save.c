@@ -81,16 +81,16 @@ void WriteRtShDef(SHDEF *lpshdef, uint8_t **ppbStore) {
         ((RTSHDEF *)rgb)->cBuilt = lpshdef->cBuilt;
         ((RTSHDEF *)rgb)->cExist = lpshdef->cExist;
         pb = (uint8_t *)&((RTSHDEF *)rgb)->rghs;
-        fmemmove(pb, lpshdef->hul.rghs, ((RTSHDEF *)rgb)->chs * 4);
+        memmove(pb, lpshdef->hul.rghs, ((RTSHDEF *)rgb)->chs * 4);
         pb += ((RTSHDEF *)rgb)->chs * 4;
     } else {
         ((RTSHDEF *)rgb)->wtEmpty = lpshdef->hul.wtEmpty;
         pb = &((RTSHDEF *)rgb)->chs;
     }
     if (lpshdef->det == detAll) {
-        fstrcpy(szHulName, lpshdef->hul.szClass);
+        strcpy(szHulName, lpshdef->hul.szClass);
     } else {
-        fstrcpy(szHulName, LphuldefFromId(lpshdef->hul.ihuldef)->hul.szClass);
+        strcpy(szHulName, LphuldefFromId(lpshdef->hul.ihuldef)->hul.szClass);
     }
     cOut = 31;
     if (szHulName[0] != 0 && FCompressUserString(szHulName, pb + 1, &cOut)) {
@@ -210,10 +210,10 @@ int16_t FWriteDataFile(char *pszFileBase, int16_t iPlayer, int16_t fAppend) {
                                 lpord = lpfl->lpplord->rgord;
                             }
                             if (lpfl->cord > 1) {
-                                fmemmove(lpord + 2, lpord + 1, (lpfl->cord - 1) * sizeof(ORDER));
+                                memmove(lpord + 2, lpord + 1, (lpfl->cord - 1) * sizeof(ORDER));
                             }
                             if (lpfl->cord == 1) {
-                                fmemset(lpord + 1, 0, sizeof(ORDER));
+                                memset(lpord + 1, 0, sizeof(ORDER));
                                 lpord[1].fValidTask = TRUE;
                                 lpord[1].grTask = grTaskPatrol;
                                 lpord[1].tptl = lpord->tptl;
@@ -696,7 +696,7 @@ void WritePlanet(PLANET *lppl, RecordType rt, int16_t fHistory) {
         if ((lppl->iPlayer != iplrNone && (lppl->iDeltaPop != 0 || lppl->fNoResearch)) ||
             (lppl->cMines != 0 || lppl->cFactories != 0 || lppl->cDefenses != 0 || lppl->iScanner != 31)) {
             ((RTPLANET *)rgb)->fIncImp = TRUE;
-            fmemmove(pb, lppl->rgbImp, 8);
+            memmove(pb, lppl->rgbImp, 8);
             pb += 8;
         }
         if (lppl->iPlayer != iplrNone) {
@@ -724,7 +724,7 @@ void WriteFleet(FLEET *lpfl) {
     uint16_t  grMask;
     int32_t   wt;
 
-    fmemmove(rgb, lpfl, 12);
+    memmove(rgb, lpfl, 12);
     fByte = TRUE;
     grMask = 1;
     us = 0;
@@ -844,9 +844,9 @@ void WriteRtString(char *lpsz) {
         if (FCompressUserString(lpsz, &rgb[1], &cOut)) {
             rgb[0] = cOut;
         } else {
-            fstrcpy(&rgb[1], lpsz);
+            strcpy(&rgb[1], lpsz);
             rgb[0] = 0;
-            cOut = fstrlen(lpsz) + 1;
+            cOut = strlen(lpsz) + 1;
         }
         WriteRt(rtString, cOut + 1, rgb);
     }
@@ -881,12 +881,12 @@ void WriteBattlePlan(BTLPLAN *lpbtlplan, int16_t fLog) {
     char     szPlanName[32];
     int16_t  cOut;
 
-    fmemmove(rgb, lpbtlplan, 4);
+    memmove(rgb, lpbtlplan, 4);
     if (lpbtlplan->fDelete) {
         pb = &rgb[2];
     } else {
         pb = &rgb[4];
-        fstrcpy(szPlanName, lpbtlplan->szName);
+        strcpy(szPlanName, lpbtlplan->szName);
         cOut = 31;
         if (szPlanName[0] != 0 && FCompressUserString(szPlanName, pb + 1, &cOut)) {
             *pb = cOut;
@@ -1119,7 +1119,7 @@ LBadFile:
 void WriteRt(RecordType rt, int16_t cb, void *rg) {
     HDR hdr;
 
-    fmemmove(rgbCur, rg, cb);
+    memmove(rgbCur, rg, cb);
     if (rt == rtBOF) {
         SetFileXorStream(((RTBOF *)rgbCur)->lidGame, ((RTBOF *)rgbCur)->lSaltTime, ((RTBOF *)rgbCur)->turn, ((RTBOF *)rgbCur)->iPlayer,
                          ((RTBOF *)rgbCur)->fCrippled);

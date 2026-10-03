@@ -405,7 +405,7 @@ void DoCyberAiTurn(PROD *rgprod) {
     cFlDestroyers = 0;
     lpiHistSize = (int16_t *)vlpbAiData;
     if (*lpiHistSize == 2) {
-        fmemset(vlpbAiData, 0, 0x2000);
+        memset(vlpbAiData, 0, 0x2000);
         *lpiHistSize = game.cPlanMax * 2 + 2;
     }
     fMarkedPlanets = FALSE;
@@ -495,7 +495,7 @@ void DoCyberAiTurn(PROD *rgprod) {
         SplitOutShdefs(rgRecycleSBShdef);
     }
     lpciPlanTemp = (CYBERINFOTEMP *)(vlpbAiData + dOffsetPlanTemp);
-    fmemset(lpciPlanTemp, 0, game.cPlanMax * sizeof(CYBERINFOTEMP));
+    memset(lpciPlanTemp, 0, game.cPlanMax * sizeof(CYBERINFOTEMP));
     lppl = lpPlanets;
     lpplMac = lpPlanets + cPlanet;
     for (; lppl < lpplMac; lppl++) {

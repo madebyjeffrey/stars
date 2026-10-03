@@ -215,7 +215,7 @@ void StartTutor(int16_t fRestart) {
             cch = CchGetString(idsTutorial, szBase);
             if (!fRestart) {
                 strcat(szBase, ".xy");
-                if (access(szBase, 0) != -1 &&
+                if (_access(szBase, 0) != -1 &&
                     AlertSz(PszFormatIds(idsTutorialHasRunBeforeWouldLikeDestroy, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) != IDYES) {
                     szBase[cch] = 0;
                     strcat(szBase, ".m1");
@@ -2354,7 +2354,7 @@ int16_t FCheckFleetName(int16_t id, StringId ids) {
         return FALSE;
     }
     CchGetString(ids, szT);
-    if (fstricmp(szT, lpfl->lpszName) == 0) {
+    if (_stricmp(szT, lpfl->lpszName) == 0) {
         tutor.idh = idhSav;
         return TRUE;
     }
@@ -2904,7 +2904,7 @@ int16_t FTutorialEnabledShipBuilder(TutorShipBuilderAction itutsbAction) {
                     TutorError(idsTutorialHaventAddedRightPartDesignVerify);
                     return FALSE;
                 }
-                if (fstricmp(PszGetCompressedString(idsGater), lpshdefBuild->hul.szClass) != 0) {
+                if (_stricmp(PszGetCompressedString(idsGater), lpshdefBuild->hul.szClass) != 0) {
                     TutorError(idsTutorialNameDesignEditboxMustGaterChange);
                     return FALSE;
                 }
@@ -2927,7 +2927,7 @@ int16_t FTutorialEnabledShipBuilder(TutorShipBuilderAction itutsbAction) {
                     TutorError(idsTutorialDontHaveRightPartsDesignVerify2);
                     return FALSE;
                 }
-                if (fstricmp(PszGetCompressedString(idsMineLayer), lpshdefBuild->hul.szClass) == 0)
+                if (_stricmp(PszGetCompressedString(idsMineLayer), lpshdefBuild->hul.szClass) == 0)
                     break;
                 TutorError(idsTutorialNameDesignEditboxMustMineLayer);
                 return FALSE;

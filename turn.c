@@ -68,7 +68,7 @@ int16_t FGenerateTurn() {
         lpcd = LpAlloc(1000 * sizeof(COLDROP), htMisc);
         lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
         vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
-        fmemset(vrgPlanResExtra, 0, game.cPlanMax * 2);
+        memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
         vrgts = LpAlloc(game.cPlayer * sizeof(TURNSERIAL), htMisc);
         UpdateProgressGauge(370);
         cColDrop = 0;
@@ -108,7 +108,7 @@ int16_t FGenerateTurn() {
                 rgplr[i].wFlags &= 0xfffb;
                 for (j = 0; j < i; j++) {
                     if (!rgplr[j].fCrippled && !rgplr[j].fAi && vrgts[i].lSerialNumber == vrgts[j].lSerialNumber &&
-                        fmemcmp(vrgts[i].rgbConfig, vrgts[j].rgbConfig, 11) != 0) {
+                        memcmp(vrgts[i].rgbConfig, vrgts[j].rgbConfig, 11) != 0) {
                         rgplr[j].wFlags = (rgplr[j].wFlags & 0xfffb) | 4;
                         rgplr[i].wFlags = (rgplr[i].wFlags & 0xfffb) | (1 & 1) * 4;
                     }
@@ -318,7 +318,7 @@ int16_t FGenerateTurn() {
                 _wsprintf(pchCur, ".x%d", i + 1);
                 strcpy(pchBak, pchCur);
                 remove(szT);
-                if (access(szBase, 0) == -1) {
+                if (_access(szBase, 0) == -1) {
                     rgfNoXFile[i] = TRUE;
                 } else {
                     rename(szBase, szT);

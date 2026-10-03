@@ -537,7 +537,7 @@ void DoAiTurn(int16_t iPlayer, uint16_t wMdPlr) {
     }
     if (!vlpbAiPlanet || !vlpbAiData || !vrglpplAi)
         goto Cleanup;
-    fmemset(vlpbAiPlanet, 0, game.cPlanMax * 16);
+    memset(vlpbAiPlanet, 0, game.cPlanMax * 16);
     ComputeShdefPowers();
     MarkPlanetsUnderAttack();
     IncreaseAIMinefieldSizes();

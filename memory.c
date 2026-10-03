@@ -179,7 +179,7 @@ LGrewHeap:
         goto LGrewHeap;
     } else {
         lpNew = LpAlloc(cb, ht);
-        fmemcpy(lpNew, lp, cbCur);
+        memcpy(lpNew, lp, cbCur);
         FreeLp(lp, ht);
         lp = lpNew;
     }

@@ -512,7 +512,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
         return FALSE;
     }
     lpPlanets = LpAlloc(cPlanMax * sizeof(PLANET), htPlanets);
-    fmemset(lpPlanets, 0, cPlanMax * sizeof(PLANET));
+    memset(lpPlanets, 0, cPlanMax * sizeof(PLANET));
     i = 0;
     lppl = lpPlanets;
     while (i < cPlanMax) {
@@ -895,8 +895,8 @@ RetryAll:
         }
         rgplr[i].cshdefSB = 1;
         lpshdef = LpAlloc(10 * sizeof(SHDEF), htShips);
-        fmemmove(lpshdef, LpshdefSBT(), 4 * sizeof(SHDEF));
-        fmemset(lpshdef + 4, 0, 6 * sizeof(SHDEF));
+        memmove(lpshdef, LpshdefSBT(), 4 * sizeof(SHDEF));
+        memset(lpshdef + 4, 0, 6 * sizeof(SHDEF));
         lpshdef->cBuilt = 1;
         lpshdef->cExist = 1;
         rglpshdefSB[i] = lpshdef;
@@ -941,7 +941,7 @@ RetryAll:
     for (i = 0; i < game.cPlayer; i++) {
         idPlayer = i;
         lpshdef = LpAlloc(16 * sizeof(SHDEF), htShips);
-        fmemset(lpshdef, 0, 16 * sizeof(SHDEF));
+        memset(lpshdef, 0, 16 * sizeof(SHDEF));
         for (j = 0; j < 16; j++) {
             lpshdef[j].wFlags = (lpshdef[j].wFlags & 0xfdff) | 0x200;
         }
@@ -1280,7 +1280,7 @@ int16_t CreateStartupShip(int16_t iplr, int16_t idPlanet, int16_t ishdef, int16_
 
     if (fAddShdef) {
         ishMac = (int16_t)(int8_t)rgplr[iplr].cShDef++;
-        fmemmove(rglpshdef[iplr] + ishMac, LpshdefT() + ishdef, sizeof(SHDEF));
+        memmove(rglpshdef[iplr] + ishMac, LpshdefT() + ishdef, sizeof(SHDEF));
         rglpshdef[iplr][ishMac].wFlags = (rglpshdef[iplr][ishMac].wFlags & 0x83ff) | (ishMac & 0x1f) * 0x400;
         ishdef = ishMac;
     }
@@ -1336,11 +1336,11 @@ int16_t GenNewGameFromFile(char *pszFile) {
     lpbDef[cb] = 0;
     lpb = lpbDef;
     lpbStart = PszGetLine(&lpb);
-    if (*lpbStart == 0 || fstrlen(lpbStart) > 31) {
+    if (*lpbStart == 0 || strlen(lpbStart) > 31) {
         AlertSz(PszFormatIds(idsIllegalGameTitle, NULL), MB_ICONHAND);
         goto LError;
     }
-    fstrcpy(game.szName, lpbStart);
+    strcpy(game.szName, lpbStart);
     if (lpb >= lpbDefMac) {
     LUniDefShort:
         AlertSz(PszFormatIds(idsUniverseDefinitionFileAppearsTooShort, NULL), MB_ICONHAND);
@@ -1422,7 +1422,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             idAi = LOWORD(rgl[0]);
             lvlAi = LOWORD(rgl[1]);
             if (cNum < 2 || (int16_t)idAi < idAiRobotoid || (int16_t)idAi > idAiRandom || lvlAi < 0 || lvlAi > 4) {
-                fstrcpy(szWork, lpbStart);
+                strcpy(szWork, lpbStart);
                 goto LCantGetRace;
             }
             if (lvlAi == 0) {
@@ -1440,7 +1440,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
             rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
         } else {
-            fstrcpy(szWork, lpbStart);
+            strcpy(szWork, lpbStart);
             if (!FWasRaceFile(szWork, FALSE)) {
             LCantGetRace:
                 _wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
@@ -1562,11 +1562,11 @@ int16_t GenNewGameFromFile(char *pszFile) {
         SetVCVal(&game, vcMinYearsBeforeWin, (int16_t)(LOWORD(rgl[1]) - 30) / 10);
     }
     lpbStart = PszGetLine(&lpb);
-    lpb = lpbStart + (-1 + fstrlen(lpbStart));
+    lpb = lpbStart + (-1 + strlen(lpbStart));
     if (lpb - lpbStart >= 3 && *lpb == 'y' && lpb[-1] == 'x' && lpb[-2] == '.') {
         lpb[-2] = 0;
     }
-    fstrcpy(szBase, lpbStart);
+    strcpy(szBase, lpbStart);
     if (lpb + 4 < lpbDefMac) {
         lpbDefUni = lpb;
     }

@@ -930,7 +930,7 @@ void MineClick(int16_t x, int16_t y, int16_t msg, int16_t sks) {
                 for (ishdef = 0; ishdef < 16; ishdef++) {
                     if (lpfl->rgcsh[ishdef] > 0) {
                         rgid[c] = ishdef;
-                        fstrcpy(rgsz[c], rglpshdef[lpfl->iPlayer][ishdef].hul.szClass);
+                        strcpy(rgsz[c], rglpshdef[lpfl->iPlayer][ishdef].hul.szClass);
                         rgpsz[c] = rgsz[c];
                         c++;
                     }

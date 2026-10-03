@@ -31,7 +31,7 @@ int16_t FReadShDef(RTSHDEF *lprt, SHDEF *lpshdef, int16_t iplrLoad) {
         shdef.cBuilt = lprt->cBuilt;
         shdef.cExist = lprt->cExist;
         lpb = (uint8_t *)lprt->rghs;
-        fmemmove(shdef.hul.rghs, lpb, lprt->chs * 4);
+        memmove(shdef.hul.rghs, lpb, lprt->chs * 4);
         lpb += 4 * lprt->chs;
     } else {
         shdef.hul.wtEmpty = lprt->wtEmpty;
@@ -44,13 +44,13 @@ int16_t FReadShDef(RTSHDEF *lprt, SHDEF *lpshdef, int16_t iplrLoad) {
     cch = *lpb;
     lpb++;
     if (cch == 0) {
-        fstrcpy(shdef.hul.szClass, lpb);
+        strcpy(shdef.hul.szClass, lpb);
     } else {
         cOut = 32;
         if (cch > 32) {
             return FALSE;
         }
-        fmemmove(szTemp, lpb, cch);
+        memmove(szTemp, lpb, cch);
         FDecompressUserString(szTemp, cch, shdef.hul.szClass, &cOut);
     }
     ishdef = shdef.ishdef;
@@ -347,11 +347,11 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
                         rgcsxPlr[iplr]++;
                     }
                 } else if (rgcsxPlr[iplr] < 101) {
-                    fmemmove(rgsxPlr[iplr] + (isx + 1), rgsxPlr[iplr] + isx, (rgcsxPlr[iplr] - isx) * sizeof(SCOREX));
+                    memmove(rgsxPlr[iplr] + (isx + 1), rgsxPlr[iplr] + isx, (rgcsxPlr[iplr] - isx) * sizeof(SCOREX));
                     rgcsxPlr[iplr]++;
                 } else if (isx > 0) {
                     if (isx > 1) {
-                        fmemmove(rgsxPlr[iplr], rgsxPlr[iplr] + 1, (isx - 1) * sizeof(SCOREX));
+                        memmove(rgsxPlr[iplr], rgsxPlr[iplr] + 1, (isx - 1) * sizeof(SCOREX));
                     }
                     isx--;
                 }
@@ -370,7 +370,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
                 }
                 lpb = vlpbAiData;
                 while (hdrCur.rt == rtAiData) {
-                    fmemmove(lpb, rgbCur, hdrCur.cb);
+                    memmove(lpb, rgbCur, hdrCur.cb);
                     lpb += hdrCur.cb;
                     ReadRt();
                 }
@@ -389,12 +389,12 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
             lpThings = LpAlloc(cThingAlloc * sizeof(THING), htThings);
             if (!lpThings)
                 goto CorruptHist;
-            fmemset(lpThings, 0, cThingAlloc * sizeof(THING));
+            memset(lpThings, 0, cThingAlloc * sizeof(THING));
             ReadRt();
             for (i = 0, lpth = lpThings; i < cThing; i++, lpth++) {
                 if (hdrCur.rt != rtThing)
                     goto CorruptHist;
-                fmemcpy(lpth, rgbCur, hdrCur.cb);
+                memcpy(lpth, rgbCur, hdrCur.cb);
                 ReadRt();
             }
         }
@@ -433,7 +433,7 @@ LNextTurn:
                 lpbBattleCur = LpAlloc(0xffc8, htBattle);
             }
         }
-        fmemmove(lpbBattleCur, rgbCur, hdrCur.cb);
+        memmove(lpbBattleCur, rgbCur, hdrCur.cb);
         lpbBattleCur += hdrCur.cb;
         ReadRt();
     }
@@ -495,7 +495,7 @@ LNextTurn:
                 lppl = lpPlanets + j;
             }
             if (j < cPlanetHist) {
-                fmemmove(lppl + 1, lppl, (cPlanetHist - j) * sizeof(PLANET));
+                memmove(lppl + 1, lppl, (cPlanetHist - j) * sizeof(PLANET));
             }
             cPlanetHist++;
         }
@@ -514,7 +514,7 @@ LNextTurn:
             if (!lppl->lpplprod) {
                 lppl->lpplprod = (PLPROD *)LpplAlloc(4, hdrCur.cb / 4 + 2, htOrd);
             }
-            fmemmove(lppl->lpplprod->rgprod, rgbCur, hdrCur.cb);
+            memmove(lppl->lpplprod->rgprod, rgbCur, hdrCur.cb);
             lppl->lpplprod->iprodMac = hdrCur.cb / 4;
             ReadRt();
         }
@@ -623,7 +623,7 @@ LNextTurn:
     }
     if (!vlprgScoreX) {
         vlprgScoreX = LpAlloc(game.cPlayer * sizeof(SCOREX), htMisc);
-        fmemset(vlprgScoreX, 0, game.cPlayer * sizeof(SCOREX));
+        memset(vlprgScoreX, 0, game.cPlayer * sizeof(SCOREX));
     }
     while (hdrCur.rt == rtScore) {
         iplr = RawLoad16(rgbCur) & 0x1f;
@@ -645,11 +645,11 @@ LNextTurn:
                     rgcsxPlr[iplr]++;
                 }
             } else if (rgcsxPlr[iplr] < 101) {
-                fmemmove(rgsxPlr[iplr] + (isx + 1), rgsxPlr[iplr] + isx, (rgcsxPlr[iplr] - isx) * sizeof(SCOREX));
+                memmove(rgsxPlr[iplr] + (isx + 1), rgsxPlr[iplr] + isx, (rgcsxPlr[iplr] - isx) * sizeof(SCOREX));
                 rgcsxPlr[iplr]++;
             } else if (isx > 0) {
                 if (isx > 1) {
-                    fmemmove(rgsxPlr[iplr], rgsxPlr[iplr] + 1, (isx - 1) * sizeof(SCOREX));
+                    memmove(rgsxPlr[iplr], rgsxPlr[iplr] + 1, (isx - 1) * sizeof(SCOREX));
                 }
                 isx--;
             }
@@ -672,7 +672,7 @@ LNextTurn:
             lpThings = LpAlloc(cThingAlloc * sizeof(THING), htThings);
             if (!lpThings)
                 goto LError;
-            fmemset(lpThings, 0, cThingAlloc * sizeof(THING));
+            memset(lpThings, 0, cThingAlloc * sizeof(THING));
         }
         ReadRt();
         lpth = lpThings;
@@ -693,13 +693,13 @@ LNextTurn:
                     lpth = lpThings + j;
                 }
                 if (j < cThing) {
-                    fmemmove(lpth + 1, lpth, (cThing - j) * sizeof(THING));
-                    fmemset(lpth, 0, sizeof(THING));
+                    memmove(lpth + 1, lpth, (cThing - j) * sizeof(THING));
+                    memset(lpth, 0, sizeof(THING));
                 }
             }
             cThing++;
         LFoundThing:
-            fmemcpy(lpth, rgbCur, hdrCur.cb);
+            memcpy(lpth, rgbCur, hdrCur.cb);
             lpth->turn = game.turn;
             lpth++;
             j++;
@@ -845,20 +845,20 @@ DoneNow:
         strcpy(szT, pszFileName);
         strcat(szT, ".");
         strcat(szT, pszExt);
-        if (fstricmp(szT, vrgszMRU) != 0) {
-            for (i = 1; i < 8 && fstricmp(szT, vrgszMRU + 256 * i) != 0; i++) {
+        if (_stricmp(szT, vrgszMRU) != 0) {
+            for (i = 1; i < 8 && _stricmp(szT, vrgszMRU + 256 * i) != 0; i++) {
             }
             for (; i >= 1; i--) {
-                fstrcpy(vrgszMRU + 256 * i, vrgszMRU + 256 * (i - 1));
+                strcpy(vrgszMRU + 256 * i, vrgszMRU + 256 * (i - 1));
             }
-            fstrcpy(vrgszMRU, szT);
+            strcpy(vrgszMRU, szT);
             CchGetString(idsStarsIni, szIniFile);
             CchGetString(idsFiles, szSection);
             CchGetString(idsFile1, szEntry);
             psz = &szEntry[strlen(szEntry) - 1];
             for (i = 0; i < 9; i++) {
                 *psz = i + '1';
-                fstrcpy(szT, vrgszMRU + 256 * i);
+                strcpy(szT, vrgszMRU + 256 * i);
                 WritePrivateProfileString(szSection, szEntry, szT, szIniFile);
             }
         }
@@ -878,7 +878,7 @@ int16_t FReadPlanet(int16_t iPlayer, PLANET *lppl, int16_t fHistory, int16_t fPr
 
     fFirstYear = FALSE;
     if (!fPreInited) {
-        fmemset(lppl, 0, sizeof(PLANET));
+        memset(lppl, 0, sizeof(PLANET));
     }
     if (fHistory || iPlayer == iplrNone) {
         lppl->fFirstYear = ((RTPLANET *)rgbCur)->fFirstYear;
@@ -979,7 +979,7 @@ int16_t FReadPlanet(int16_t iPlayer, PLANET *lppl, int16_t fHistory, int16_t fPr
         if (hdrCur.rt == rtPlanetB)
             goto LFinishBRecord;
         if (((RTPLANET *)rgbCur)->fIncImp != 0) {
-            fmemmove(lppl->rgbImp, pb, 8);
+            memmove(lppl->rgbImp, pb, 8);
             pb += 8;
         } else {
             lppl->fArtifact = ((RTPLANET *)rgbCur)->fIsArtifact;
@@ -1049,8 +1049,8 @@ int16_t FReadFleet(FLEET *lpfl) {
     int16_t   cOut;
 
     cish = 0;
-    fmemset(lpfl, 0, sizeof(FLEET));
-    fmemmove(lpfl, rgbCur, 12);
+    memset(lpfl, 0, sizeof(FLEET));
+    memmove(lpfl, rgbCur, 12);
     fByte = lpfl->fDone;
     us = RawLoad16(&rgbCur[12]);
     pb = &rgbCur[14];
@@ -1136,7 +1136,7 @@ int16_t FReadFleet(FLEET *lpfl) {
     lpfl->iplan = *pb++;
     lpfl->cord = *pb++;
     lpfl->lpplord = (PLORD *)LpplAlloc(18, lpfl->cord + 1, htOrd);
-    fmemset(lpfl->lpplord->rgord, 0, (lpfl->cord + 1) * 18);
+    memset(lpfl->lpplord->rgord, 0, (lpfl->cord + 1) * 18);
     cord = lpfl->cord;
     lpord = lpfl->lpplord->rgord;
     for (; cord != 0; cord--) {
@@ -1164,12 +1164,12 @@ int16_t FReadFleet(FLEET *lpfl) {
         cch = rgbCur[0];
         if (cch == 0) {
             lpfl->lpszName = LpAlloc(strlen(&rgbCur[1]) + 1, htString);
-            fstrcpy(lpfl->lpszName, &rgbCur[1]);
+            strcpy(lpfl->lpszName, &rgbCur[1]);
         } else {
             cOut = 32;
             FDecompressUserString(&rgbCur[1], cch, szT, &cOut);
             lpfl->lpszName = LpAlloc(strlen(szT) + 1, htString);
-            fstrcpy(lpfl->lpszName, szT);
+            strcpy(lpfl->lpszName, szT);
         }
         ReadRt();
     } else {
@@ -1184,17 +1184,17 @@ void UnpackBattlePlan(uint8_t *lpb, BTLPLAN *lpbtlplan, int16_t iplan) {
     int16_t cch;
     int16_t cOut;
 
-    fmemmove(lpbtlplan, lpb, 4);
+    memmove(lpbtlplan, lpb, 4);
     lpb += 4;
     cch = *lpb;
     lpb++;
     if (cch == 0) {
-        fstrcpy(lpbtlplan->szName, lpb);
+        strcpy(lpbtlplan->szName, lpb);
     } else {
         cOut = 32;
-        fmemmove(szTemp, lpb, cOut);
+        memmove(szTemp, lpb, cOut);
         FDecompressUserString(szTemp, cch, szName, &cOut);
-        fmemmove(lpbtlplan->szName, szName, cOut);
+        memmove(lpbtlplan->szName, szName, cOut);
     }
     lpbtlplan->iplan = iplan;
     return;
@@ -1435,7 +1435,7 @@ void FileError(MessageId ids) {
 
 void GetFileStatus(int16_t dt, int16_t iPlayer) {
     SetSzWorkFromDt(dt, iPlayer);
-    gd.fReadOnly = access(szWork, 2) != 0;
+    gd.fReadOnly = _access(szWork, 2) != 0;
     return;
 }
 
@@ -1683,7 +1683,7 @@ void StreamClose() {
 void RgFromStream(void *rg, uint16_t cb) {
     if (cb != 0) {
         if (vlpMemStream) {
-            fmemcpy(rg, vlpMemStream, cb);
+            memcpy(rg, vlpMemStream, cb);
             vlpMemStream += cb;
         } else if (_lread(hf, rg, cb) != cb) {
             FileError(idmGroundTroopsValiantlyDestroyedAttackingBarbarian);

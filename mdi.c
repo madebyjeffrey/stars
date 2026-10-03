@@ -1225,9 +1225,9 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             if ((gd.fTutorial && !FAskKillTutor()) || !vrgszMRU || vrgszMRU[(GET_WM_COMMAND_ID(wParam, 0) - 4300) * 256] == 0)
                 break;
             iplrOld = idPlayer;
-            fstrcpy(szT, vrgszMRU + 256 * (GET_WM_COMMAND_ID(wParam, 0) - 4300));
+            strcpy(szT, vrgszMRU + 256 * (GET_WM_COMMAND_ID(wParam, 0) - 4300));
             psz = strrchr(szT, 46);
-            if (psz && access(szT, 0) != -1) {
+            if (psz && _access(szT, 0) != -1) {
                 ini.fStartupFile = TRUE;
                 DestroyCurGame();
                 strcpy(szBase, szT);
@@ -1899,7 +1899,7 @@ void InitializeMenu(HMENU hmenu) {
         szWork[0] = '&';
         szWork[1] = i + '1';
         szWork[2] = ' ';
-        fstrcpy(&szWork[3], vrgszMRU + 256 * i);
+        strcpy(&szWork[3], vrgszMRU + 256 * i);
         InsertMenu(hmenuSub, i + 9, MF_BYPOSITION, i + 4300, szWork);
     }
     EnableMenuItem(hmenu, 106, szBase[0] != 0 && !game.fSinglePlr ? MF_ENABLED : MF_GRAYED | MF_DISABLED);
@@ -2334,7 +2334,7 @@ void VerifyTurns() {
     lpcd = LpAlloc(1000 * sizeof(COLDROP), htMisc);
     lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
     vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
-    fmemset(vrgPlanResExtra, 0, game.cPlanMax * 2);
+    memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
     vrgts = LpAlloc(game.cPlayer * sizeof(TURNSERIAL), htMisc);
     cColDrop = 0;
     cXferFull = 0;
@@ -3183,7 +3183,7 @@ LRESULT CALLBACK TitleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             psz = PszGetCompressedString(i + 479);
             rghwndBtnSplash[i] = CreateWindow("BUTTON", psz, WS_CHILD | WS_VISIBLE, xCur, rc.bottom - dy - (int16_t)(5 * dyArial8) / 2, dx, dy, hwnd,
                                               (HMENU)(uintptr_t)i, hInst, NULL);
-            if (i == 2 && (szBase[0] == 0 || access(szBase, 0) == -1)) {
+            if (i == 2 && (szBase[0] == 0 || _access(szBase, 0) == -1)) {
                 EnableWindow(rghwndBtnSplash[2], FALSE);
             }
             if (rc.bottom < 500) {

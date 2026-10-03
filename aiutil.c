@@ -349,7 +349,7 @@ void PickANameAndBmp(SHDEF *pshdef, StringId ids, int16_t cids, int16_t ibmpStar
         CchGetString(Random(cids) + ids, pshdef->hul.szClass);
         if (pshdef->ishdef >= 16) {
             for (ishdef = 0; ishdef < 10 && (rglpshdefSB[idPlayer][ishdef].fFree || rglpshdefSB[idPlayer][ishdef].hul.ihuldef != pshdef->hul.ihuldef ||
-                                             fstrcmp(pshdef->hul.szClass, rglpshdefSB[idPlayer][ishdef].hul.szClass) != 0);
+                                             strcmp(pshdef->hul.szClass, rglpshdefSB[idPlayer][ishdef].hul.szClass) != 0);
                  ishdef++) {
             }
             if (ishdef == 10) {
@@ -760,7 +760,7 @@ void AddMinesToBlockedQueues() {
                         sel.pl.lpplprod->rgprod[0].iItem = mdIdleMine;
                         if (etaFirst < etaBetterMines || cBuild <= 0) {
                             sel.pl.lpplprod->iprodMac--;
-                            fmemmove(sel.pl.lpplprod->rgprod, &sel.pl.lpplprod->rgprod[1], sel.pl.lpplprod->iprodMac * sizeof(PROD));
+                            memmove(sel.pl.lpplprod->rgprod, &sel.pl.lpplprod->rgprod[1], sel.pl.lpplprod->iprodMac * sizeof(PROD));
                         } else {
                             sel.pl.lpplprod->rgprod[0].cItem = LOWORD(cBuild);
                         }
@@ -1375,8 +1375,8 @@ void AddItemToQueue(uint16_t iItem, uint16_t cItem, GrobjClass grobj, AddItemMod
                 break;
             case addItemFront:
                 iprod = 0;
-                fmemmove(&lpplProdGlob->rgprod[1], lpplProdGlob->rgprod, lpplProdGlob->iprodMac * sizeof(PROD));
-                fmemset(lpplProdGlob->rgprod, 0, 4);
+                memmove(&lpplProdGlob->rgprod[1], lpplProdGlob->rgprod, lpplProdGlob->iprodMac * sizeof(PROD));
+                memset(lpplProdGlob->rgprod, 0, 4);
             }
             lpplProdGlob->rgprod[iprod].cItem = cItem;
             lpplProdGlob->rgprod[iprod].iItem = iItem;

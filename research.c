@@ -290,7 +290,7 @@ DrawComingAttractions:
                             rc.top += dyArial8;
                             if (rc.top + dyArial8 > rc.bottom)
                                 goto TooManyToFinish;
-                            fstrcpy(szWork, part.pcom->szName);
+                            strcpy(szWork, part.pcom->szName);
                             TextOut(hdc, rc.left + 8, rc.top, szWork, strlen(szWork));
                             if (cFutureTech < 8) {
                                 rghsFutureTech[cFutureTech++] = part.hs;
@@ -865,7 +865,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
         DiaganolTextOut(hdc, &rcData, szWork, c);
     } else {
         SelectObject(hdc, rghfontArial10[1]);
-        fstrcpy(szWork, ppart->pcom->szName);
+        strcpy(szWork, ppart->pcom->szName);
         CtrTextOut(hdc, dx >> 1, 3, szWork, 0);
         if (ppart->hs.grhst == hstHull || ppart->hs.grhst == hstSBHull) {
             DrawFleetBitmap(NULL, hdc, 5, dyArial10 + 5, FALSE, ppart->pcom->ibmp, 0, FALSE, -1, 0);

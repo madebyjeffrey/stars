@@ -465,7 +465,7 @@ void OutputFileString(char *szFile, char *sz) {
     int16_t  hf;
 
     w = 2;
-    if (access(szFile, 0) == -1) {
+    if (_access(szFile, 0) == -1) {
         w |= 0x1000;
     }
     hf = OpenFile(szFile, &of, w);
@@ -1298,7 +1298,7 @@ int16_t FStringFitsScreen(char *lpsz, int16_t dxMax) {
 
     fFit = TRUE;
     hdc = GetDC(hwndFrame);
-    c = fstrlen(lpsz);
+    c = strlen(lpsz);
     hfontSav = SelectObject(hdc, rghfontArial8[0]);
     while (c > 0 && LOWORD(GetTextExtent(hdc, lpsz, c)) > (uint16_t)dxMax) {
         fFit = FALSE;
@@ -1398,7 +1398,7 @@ int16_t FCompressUserString(char *szIn, char *szOut, int16_t *pcOut) {
         return FALSE;
     }
     *pcOut = pchOut - szWork;
-    fmemcpy(szOut, szWork, *pcOut);
+    memcpy(szOut, szWork, *pcOut);
     return TRUE;
 }
 
@@ -1448,7 +1448,7 @@ int16_t FDecompressUserString(char *szIn, int16_t cIn, char *szOut, int16_t *pcO
         }
     }
     *pchOut = 0;
-    fstrcpy(szOut, szWork);
+    strcpy(szOut, szWork);
     return TRUE;
 }
 
@@ -1553,7 +1553,7 @@ HPALETTE HpalFromDib(HGLOBAL hdib) {
     ppal = LocalAlloc(64, cColors * 4 + 8);
     ppal->palNumEntries = cColors;
     ppal->palVersion = 768;
-    fmemcpy(ppal->palPalEntry, lpb + 40, cColors * 4);
+    memcpy(ppal->palPalEntry, lpb + 40, cColors * 4);
     for (i = 0; i < cColors; i++) {
         bT = ppal->palPalEntry[i].peRed;
         ppal->palPalEntry[i].peRed = ppal->palPalEntry[i].peBlue;
@@ -2006,7 +2006,7 @@ uint32_t GetDiskSerialNumber() {
     uint8_t     uDefault;
     uint16_t    uDate;
     int32_t     l;
-    _diskfree_t df;
+    struct _diskfree_t df;
 
     iWork = 0;
     memset(vrgbEnvCur, 0, 11);
@@ -2054,7 +2054,7 @@ uint32_t GetDiskSerialNumber() {
         if (GetDriveType(i + 2) != 3) {
             l = 1;
         } else {
-            l = (uint32_t)dos_getdiskfree(i + 3, &df);
+            l = (uint32_t)_getdiskfree(i + 3, &df);
         }
         if (l == 0) {
             l = (int32_t)((uint32_t)df.total_clusters * (uint32_t)df.bytes_per_sector) / 0x200;

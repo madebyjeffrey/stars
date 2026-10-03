@@ -142,7 +142,7 @@ void Produce() {
                             break;
                         }
                         if (iprodCur < lppl->lpplprod->iprodMac - 1) {
-                            fmemmove(lppl->lpplprod + (1 + (iprodCur - fPrevProdIsAlch)), lppl->lpplprod + (1 + (iprodCur + 1)),
+                            memmove(lppl->lpplprod + (1 + (iprodCur - fPrevProdIsAlch)), lppl->lpplprod + (1 + (iprodCur + 1)),
                                      (lppl->lpplprod->iprodMac - iprodCur - 1) * 4);
                         }
                         lppl->lpplprod->iprodMac -= fPrevProdIsAlch + 1;
@@ -152,7 +152,7 @@ void Produce() {
                             if (lppl->lpplprod->iprodMac == lppl->lpplprod->iprodMax) {
                                 lppl->lpplprod = (PLPROD *)LpplReAlloc((PL *)lppl->lpplprod, lppl->lpplprod->iprodMac + 1);
                             }
-                            fmemmove(&lppl->lpplprod->rgprod[1], lppl->lpplprod->rgprod, lppl->lpplprod->iprodMac * sizeof(PROD));
+                            memmove(&lppl->lpplprod->rgprod[1], lppl->lpplprod->rgprod, lppl->lpplprod->iprodMac * sizeof(PROD));
                             lppl->lpplprod->rgprod[0] = prodPartial;
                             lppl->lpplprod->iprodMac++;
                         }
@@ -1736,7 +1736,7 @@ void CreateBackupDir() {
     } else {
         _wsprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
     }
-    mkdir(szBackup);
+    _mkdir(szBackup);
     strcat(szBackup, "\\");
     return;
 }

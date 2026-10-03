@@ -518,7 +518,7 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
             dRange = 0;
         } else {
             LookupBestPlanetaryScanner(&part);
-            fstrcpy(szWork, part.pcom->szName);
+            strcpy(szWork, part.pcom->szName);
             dRange = GetPlanetScannerRange(&sel.pl, &dRangeP);
         }
         RightTextOut(hdc, xRight, yTop, szWork, 0, dxRight);
@@ -571,7 +571,7 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
             dRange = 0;
         } else {
             FGetBestDefensePart(&part);
-            fstrcpy(szWork, part.pcom->szName);
+            strcpy(szWork, part.pcom->szName);
             dRange = 1;
         }
         RightTextOut(hdc, xRight, yTop, szWork, 0, dxRight);
@@ -650,7 +650,7 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
     }
     if (sel.pl.fStarbase) {
         lpshdef = rglpshdefSB[idPlayer] + sel.pl.isb;
-        fstrcpy(szWork, lpshdef->hul.szClass);
+        strcpy(szWork, lpshdef->hul.szClass);
         psz = szWork;
     } else {
         psz = PszGetCompressedString(idsStarbase2);

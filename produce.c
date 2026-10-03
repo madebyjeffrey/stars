@@ -63,7 +63,7 @@ void InitProduction(PROD *rgprod) {
     }
     lpplProdGlob = (PLPROD *)LpplAlloc(4, i, htOrd);
     if (sel.pl.lpplprod) {
-        fmemcpy(lpplProdGlob->rgprod, sel.pl.lpplprod->rgprod, i * 4);
+        memcpy(lpplProdGlob->rgprod, sel.pl.lpplprod->rgprod, i * 4);
     } else {
         i = 0;
     }
@@ -163,7 +163,7 @@ void InitProduction(PROD *rgprod) {
         }
         if (iSrc >= cProdGlob) {
             if (ipl + 1 < lpplProdGlob->iprodMac) {
-                fmemcpy(lpprod, lpprod + 1, (lpplProdGlob->iprodMac - (ipl + 1)) * sizeof(PROD));
+                memcpy(lpprod, lpprod + 1, (lpplProdGlob->iprodMac - (ipl + 1)) * sizeof(PROD));
                 ipl--;
             }
             lpplProdGlob->iprodMac--;
@@ -463,7 +463,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             lpplProdGlob = (PLPROD *)LpplReAlloc((PL *)lpplProdGlob, iMac + 4);
         }
         if (iDst != iMac) {
-            fmemmove(lpplProdGlob + (1 + (iDst + 1)), &lpplProdGlob->rgprod[iDst], (iMac - iDst) * 4);
+            memmove(lpplProdGlob + (1 + (iDst + 1)), &lpplProdGlob->rgprod[iDst], (iMac - iDst) * 4);
         }
         lpplProdGlob->rgprod[iDst] = prod;
         lpplProdGlob->iprodMac++;
@@ -506,7 +506,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         lpplProdGlob->rgprod[lSel].cItem -= c;
         if (lpplProdGlob->rgprod[lSel].cItem == 0) {
             if ((int32_t)(lSel + 1) < iMac) {
-                fmemmove(&lpplProdGlob->rgprod[lSel], &lpplProdGlob->rgprod[lSel + 1], (iMac - LOWORD(lSel) - 1) * sizeof(PROD));
+                memmove(&lpplProdGlob->rgprod[lSel], &lpplProdGlob->rgprod[lSel + 1], (iMac - LOWORD(lSel) - 1) * sizeof(PROD));
             } else {
                 lSel--;
             }
@@ -539,7 +539,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 cMax = 1;
             }
             lpplprodT = (PLPROD *)LpplAlloc(4, cMax, htOrd);
-            fmemset(lpplprodT->rgprod, 0, cMax * 4);
+            memset(lpplprodT->rgprod, 0, cMax * 4);
             iDst = 0;
             for (iSrc = 0; iSrc < lpplProdGlob->iprodMac; iSrc++) {
                 if (lpplProdGlob->rgprod[iSrc].grobj != grobjPlanet || lpplProdGlob->rgprod[iSrc].iItem >= mdIdleFactory) {
@@ -798,7 +798,7 @@ char *PszNameProdItem(PROD *lpprod) {
                 szWork[0] = 0;
                 return szWork;
             }
-            fstrcpy(szWork, rglpshdefSB[idPlayer][iItem].hul.szClass);
+            strcpy(szWork, rglpshdefSB[idPlayer][iItem].hul.szClass);
             if (!sel.pl.fStarbase) {
                 return szWork;
             }
@@ -820,7 +820,7 @@ char *PszNameProdItem(PROD *lpprod) {
         }
     }
     if (iItem >= iobjPlanetaryScannerFirst && iItem <= iobjPlanetaryScannerLast) {
-        fstrcpy(szWork, LpplanetaryFromId(LOWORD(iItem) - iobjPlanetaryScannerFirst)->szName);
+        strcpy(szWork, LpplanetaryFromId(LOWORD(iItem) - iobjPlanetaryScannerFirst)->szName);
     } else if (iItem == iobjPlanetaryScanner) {
         CchGetString(idsPlanetaryScanner, szWork);
     } else {
@@ -1079,7 +1079,7 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
     }
     pl = *lppl;
     pl.lpplprod = (PLPROD *)LpplAlloc(4, lpplprod->iprodMax, htOrd);
-    fmemcpy(pl.lpplprod->rgprod, lpplprod->rgprod, lpplprod->iprodMac * 4);
+    memcpy(pl.lpplprod->rgprod, lpplprod->rgprod, lpplprod->iprodMac * 4);
     pl.lpplprod->iprodMac = lpplprod->iprodMac;
     iMac = lpplprod->iprodMac;
     prodPartial.cItem = 0;

@@ -209,7 +209,7 @@ int16_t IPlrAlsoCheater(int16_t iplr) {
     }
     for (i = 0; i < game.cPlayer; i++) {
         if (i != iplr && rgplr[i].fCheater && vrgts[iplr].lSerialNumber == vrgts[i].lSerialNumber &&
-            fmemcmp(vrgts[iplr].rgbConfig, vrgts[i].rgbConfig, 11) != 0) {
+            memcmp(vrgts[iplr].rgbConfig, vrgts[i].rgbConfig, 11) != 0) {
             return i;
         }
     }

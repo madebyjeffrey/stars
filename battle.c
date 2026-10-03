@@ -2494,7 +2494,7 @@ int16_t FDamageTok(TOK *ptok, int16_t itok, int32_t *pdpBeam, int32_t dpTorp, Gr
     uint16_t  pctDpNew;
 
     dp = *pdpBeam;
-    fmemset(lpbBattleCur, 0, 8);
+    memset(lpbBattleCur, 0, 8);
     ((KILL *)lpbBattleCur)->itok = itok;
     ((KILL *)lpbBattleCur)->grfWeapon = grfWeapon;
     if (ptok->dpShield != 0) {
@@ -2736,7 +2736,7 @@ int16_t FDoCoolBattle(FLEET *lpfl, int16_t cplr, uint16_t *rggrfAttack, uint16_t
     memset(rgPlrLosses, 0, 0x200);
     vrgPlrLosses = rgPlrLosses;
     memset(rgfInit, 0, 64);
-    fmemset(vrgtok, 0, 256 * sizeof(TOK));
+    memset(vrgtok, 0, 256 * sizeof(TOK));
     vctok = 0;
     lpbtldata = (BTLDATA *)lpbBattleCur;
     lpbBattleCur += 14;
@@ -2915,7 +2915,7 @@ int16_t FDoCoolBattle(FLEET *lpfl, int16_t cplr, uint16_t *rggrfAttack, uint16_t
         RawStore16(lpbSav, 0xffff);
         lpbBattleT = NULL;
     } else {
-        fmemmove(lpbSav, lpbtldata, lpbtldata->cbData);
+        memmove(lpbSav, lpbtldata, lpbtldata->cbData);
         lpbBattleCur = lpbSav + lpbtldata->cbData;
     }
     return 1;
