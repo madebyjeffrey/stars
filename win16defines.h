@@ -14,8 +14,6 @@
 
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
-#undef GetDriveType
-#define GetDriveType  GetDriveType16
 #define AllocResource AllocResource16
 #undef CreateWindow
 #define CreateWindow CreateWindow16
@@ -236,57 +234,7 @@ static inline int MapWindowPoints16(HWND hwndFrom, HWND hwndTo, POINT16 *ppt, UI
  * GlobalLock and GlobalUnlock then all behave as they did on Win16.
  */
 
-static inline UINT GetDriveType16(int drive) {
-    char root[] = "A:\\";
-
-    root[0] = (char)('A' + drive);
-    return GetDriveTypeA(root);
-}
-
 static inline HGLOBAL AllocResource16(HINSTANCE hinst, HRSRC hrsrc, DWORD cb) { return GlobalAlloc(GMEM_FIXED, cb ? cb : SizeofResource(hinst, hrsrc)); }
-
-// _find_t provides the DOS search fields consumed by GetDiskSerialNumber.
-typedef struct _find_t {
-    unsigned char reserved[21];
-    unsigned char attrib;
-    uint16_t      wr_time;
-    uint16_t      wr_date;
-    uint32_t      size;
-    char          name[13];
-} _find_t;
-
-// dos_findfirst supports Stars' volume-label search (attribute 0x08).
-// Win32 exposes the label but not its DOS directory-entry timestamp; those
-// fields are zero, so the legacy disk fingerprint will differ from Win16.
-static inline unsigned dos_findfirst(const char *path, unsigned attrib, _find_t *info) {
-    char root[] = "A:\\";
-    char label[MAX_PATH + 1];
-
-    if (attrib != 0x08)
-        return ERROR_NOT_SUPPORTED;
-    if (path[0] == '\0' || path[1] != ':')
-        return ERROR_INVALID_DRIVE;
-    root[0] = path[0];
-    if (!GetVolumeInformationA(root, label, sizeof(label), NULL, NULL, NULL, NULL, 0))
-        return GetLastError();
-    if (label[0] == '\0')
-        return ERROR_NO_MORE_FILES;
-
-    memset(info, 0, sizeof(*info));
-    info->attrib = 0x08;
-    // DOS returns a volume label as an 8.3 name, with a dot after byte eight.
-    size_t len = strlen(label);
-    if (len > 11)
-        len = 11;
-    if (len > 8) {
-        memcpy(info->name, label, 8);
-        info->name[8] = '.';
-        memcpy(info->name + 9, label + 8, len - 8);
-    } else {
-        memcpy(info->name, label, len);
-    }
-    return 0;
-}
 
 // AccessResource opens the module's PE file at the resource's raw data offset
 // for the existing _lread/_lclose callers. The module must be a loaded PE image.

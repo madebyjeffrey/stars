@@ -2018,7 +2018,7 @@ uint32_t GetDiskSerialNumber() {
     int16_t            j;
     int16_t            drive;
     char               fn[13];
-    _find_t            fi;
+    char               szLabel[MAX_PATH + 1];
     int16_t            i;
     int16_t            iWork;
     uint8_t            uDefault;
@@ -2028,28 +2028,24 @@ uint32_t GetDiskSerialNumber() {
 
     iWork = 0;
     memset(vrgbEnvCur, 0, 11);
-    CchGetString(idsC, fn);
+    strcpy(fn, "A:\\");
     for (i = 0; i < 2; i++) {
         drive = i + 2;
         fn[0] = drive + 'A';
         l = 0;
         uDate = 0;
-        if (GetDriveType(i + 2) != 3)
+        if (GetDriveTypeA(fn) != DRIVE_FIXED)
             goto NoDrive;
-        if (dos_findfirst(fn, 8, &fi) == 0) {
-            for (j = 0; j < 8 && fi.name[j] != 0; j++) {
+        if (GetVolumeInformationA(fn, szLabel, sizeof(szLabel), NULL, NULL, NULL, NULL, 0) && szLabel[0] != 0) {
+            for (j = 0; j < 8 && szLabel[j] != 0; j++) {
                 if (i == 0) {
-                    l = (int32_t)(l << 4) | (int16_t)(fi.name[j] & 0xf);
+                    l = (int32_t)(l << 4) | (int16_t)(szLabel[j] & 0xf);
                 } else {
-                    l = (int32_t)(l << 3) | (int16_t)(fi.name[j] & 7);
+                    l = (int32_t)(l << 3) | (int16_t)(szLabel[j] & 7);
                 }
             }
-            if (i == 0) {
-                uDate =
-                    (fi.wr_date & 0xf) << 0xc | (fi.wr_date >> 5 & 7) << 9 | (fi.wr_time & 0xf) << 5 | (fi.wr_time >> 5 & 0xf) << 1 | (fi.wr_time >> 0xb & 1);
-            } else {
-                uDate = (fi.wr_date & 3) << 6 | (fi.wr_time & 7) << 3 | (fi.wr_time >> 5 & 7);
-            }
+            /* The original also mixed in the volume label's DOS timestamp,
+               which Win32 doesn't expose; uDate stays 0 as in earlier native builds. */
         } else {
         NoDrive:
             uDate = 0xc57a;
@@ -2069,7 +2065,8 @@ uint32_t GetDiskSerialNumber() {
     uDefault = 0;
     for (i = 0; i < 2; i++) {
         uDefault *= 16;
-        if (GetDriveType(i + 2) != 3) {
+        fn[0] = i + 2 + 'A';
+        if (GetDriveTypeA(fn) != DRIVE_FIXED) {
             l = 1;
         } else {
             l = (uint32_t)_getdiskfree(i + 3, &df);
