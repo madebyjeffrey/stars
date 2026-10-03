@@ -46,3 +46,7 @@ produce different results from a 2.6j host for the same turn.
   design once that design passes the recycle age. After checking its
   defender designs it protected the newest destroyer design again instead
   (`DoCyberAiTurn`). **Host results.**
+- Ship design: with Regenerating Shields, a large armor slot (such as 24
+  Superlatanium on a Space Dock) no longer overflows into a huge armor
+  value; it gets half its armor like any other (`UpdateShdefCost`).
+  **Host results.**

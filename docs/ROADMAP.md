@@ -59,7 +59,7 @@ and order helpers as fixes need them.
 | --- | --- | --- | --- |
 | Cybertron starbase defenders | `ai4.c` `DoCyberAiTurn`: after `CheckAiShdefStatus(14, 15, …, &iLatestSBDefender, …)` the recycle clear tests and clears `iLatestDestroyer` again | turn | fixed (`test_ai4.c`) |
 | North/South minefield immunity | `FIntersectCircleLine`: for a vertical route `yI = ptL1.y` instead of `ptC.y` | function | fixed (`test_utilgen.c`) |
-| Space Dock armor overflow | `UpdateShdefCost`: armor slot strength overflows signed 16-bit `dpT` before the RS halving | function | open |
+| Space Dock armor overflow | `UpdateShdefCost`: armor slot strength overflows signed 16-bit `dpT` before the RS halving | function | fixed (`test_util.c`) |
 | ISB vs IT gate scanning | `SetVisPFPlanets`, `FGenerateTurn`: `lRadius2 * lVis2` overflows 32 bits before `/ 10000` | function | open |
 | Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | turn | open |
 | Exploding minefield dodge | `ThingDecay` sets `fBombed` even when the fleet was immune | turn | open |

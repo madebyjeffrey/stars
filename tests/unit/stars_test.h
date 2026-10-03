@@ -24,6 +24,10 @@ int16_t FStarsTestNewGame(const char *szDir, uint32_t lSeed, const char **rgszAi
 // FStarsTestLoadHost unloads the current game and loads szBase's host file.
 int16_t FStarsTestLoadHost(void);
 
+// FStarsTestLoadPlayer unloads the current game and loads player iPlr's
+// turn file (game.m<iPlr + 1>) as that player.
+int16_t FStarsTestLoadPlayer(int16_t iPlr);
+
 // LpplStarsTestHomeworld returns iPlr's homeworld in the loaded game, or NULL.
 PLANET *LpplStarsTestHomeworld(int16_t iPlr);
 

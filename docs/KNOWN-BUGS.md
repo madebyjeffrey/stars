@@ -162,7 +162,7 @@ Objects beyond the popup limit cannot be chosen through those menus.
 `scan.c`'s `FGetNextObjHere` provides a separate selection traversal, explaining
 why viewing another fleet need not imply it can be selected as a popup target.
 
-### Space Dock Armor Slot Buffer Overflow — located arithmetic overflow
+### Space Dock Armor Slot Buffer Overflow — fixed in 2.8
 
 `util.c`: `UpdateShdefCost`; `parts.c`: armor and Space Dock definitions.
 Armor-slot strength is first assigned to signed 16-bit `dpT`. With RS,
@@ -173,6 +173,9 @@ armor. The frozen `UpdateShdefCost` assembly confirms a signed `SAR` instruction
 This is integer overflow rather than an identified overwrite of a buffer.
 The reported Space Dock/ISB combination supplies the large armor slot; ISB is
 not an explicit condition in this arithmetic.
+
+**2.8:** confirmed by `tests/unit/test_util.c`: an RS Space Dock with 24
+Superlatanium had 51018 dp instead of 18250. `dpT` is now 32-bit.
 
 ### ISB Trumps IT Gate Scanning — located overflow path
 

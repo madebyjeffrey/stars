@@ -1518,7 +1518,7 @@ int16_t FFindNearestObject(POINT16 pt, GrobjClass grobj, SCAN *pscan) {
 }
 
 void UpdateShdefCost(SHDEF *lpshdef) {
-    int16_t  dpT;
+    int32_t  dpT;
     uint32_t wt;
     int16_t  k;
     int16_t  c;
@@ -1559,7 +1559,9 @@ void UpdateShdefCost(SHDEF *lpshdef) {
             default:
                 break;
             case hstArmor:
-                dpT = lphul->rghs[c].cItem * part.parmor->dp;
+                /* 32-bit: the original's int16_t overflowed for large slots
+                   (24 Superlatanium), and RS then halved the negative value. */
+                dpT = (int32_t)lphul->rghs[c].cItem * part.parmor->dp;
                 if (fWeakArmor) {
                     dpT >>= 1;
                 }

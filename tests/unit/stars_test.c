@@ -82,6 +82,15 @@ int16_t FStarsTestLoadHost(void) {
     return FLoadGame(szBase, "hst");
 }
 
+int16_t FStarsTestLoadPlayer(int16_t iPlr) {
+    char szExt[4];
+
+    DestroyCurGame();
+    idPlayer = iPlr;
+    snprintf(szExt, sizeof(szExt), "m%d", iPlr + 1);
+    return FLoadGame(szBase, szExt);
+}
+
 PLANET *LpplStarsTestHomeworld(int16_t iPlr) {
     int16_t i;
 
