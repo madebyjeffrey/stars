@@ -139,11 +139,6 @@ results depend on them.
   the decisions didn't, and the wormhole jumps showed the shifted RNG.
   Making it `static` did not match either. **Revert to:** initialize `cshWar`
   to 0, or have FPotentMacWarFleet always store `cEquiv`.
-- **Macinti mine-laying order** (`ai3.c` DoMacintiAiTurn): the local
-  `ORDER ord` never sets its task union, so `tlm.cTime` (the laying
-  countdown) is whatever the stack held. Its `tlm.cTime` slot (BP-0xba) overlaps the far-pointer
-  segment of block local `lpplBest` and the tail of `shdef`, so the original
-  value depends on a Win16 selector and cannot be reproduced deterministically.
 - **PszFormatString** `vrgszUnits[-1]`: display text only. The original read a
   Win16 pointer.
 

@@ -797,6 +797,8 @@ void DoMacintiAiTurn(PROD *rgprod) {
                     ord.grobj = grobjPlanet;
                     ord.pt = rgptPlan[idPlanDst];
                     ord.grTask = grTaskLayMines;
+                    ord.tlm.cTime = 5;
+                    ord.tlm.cTimeOld = 5;
                     ord.fValidTask = TRUE;
                     ord.iWarp = 4;
                     FMoveAiFleet(lpfl, &ord, FALSE);

@@ -28,3 +28,6 @@ produce different results from a 2.6j host for the same turn.
   left the order's countdown as uninitialized stack bytes, so whether the
   fleet laid at all depended on the save path and, after turn 80, it
   usually stopped on arrival (`DoCyberAiTurn`). **Host results.**
+- Macinti AI: the same fix for its mine-laying fleets, whose order's
+  countdown was uninitialized stack bytes (`DoMacintiAiTurn`). **Host
+  results.**
