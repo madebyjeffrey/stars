@@ -5,7 +5,7 @@ the `2.6j` branch keeps it. `main` is the 2.8 line. Work proceeds in this
 order:
 
 1. Native regression baseline and 2.8 repository rules (done).
-2. Product versioning from git tags and build numbers.
+2. Product versioning from git tags and build numbers (done).
 3. The parity reverts below, one commit each.
 4. Replacing the `win16defines.h` shims with native Win32 code, one group at
    a time, behavior-neutral.

@@ -23,6 +23,8 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
 - [Known bugs](docs/KNOWN-BUGS.md): the original release bug list, mapped to
   source.
 - [Roadmap](docs/ROADMAP.md): the work planned for 2.8.
+- [Changelog](CHANGELOG.md) and [versioning](docs/VERSIONING.md): what 2.8
+  changes from 2.6j, and how versions and build numbers are assigned.
 
 ## Build
 
@@ -67,14 +69,15 @@ the rolling [`latest` prerelease](https://github.com/sirgwain/stars/releases/tag
 Both `stars.exe` and `stars!.hlp` are attached; download them into the same
 directory. Superseded main builds remain available as workflow artifacts.
 
-Pushing a tag (for example `2.6jrc3`) builds that tag's source and publishes a
-release with the same two files. The rolling `latest` tag is excluded. To test
-the tagged release, include the workflows and `res/stars!.hlp` in the tagged
-commit, then push the tag:
+Pushing a version tag (for example `v2.8.0`) builds that tag's source, checks
+that it reports exactly that version, and publishes a release with the same
+two files. Other tags (such as `2.6jrc3`) publish releases named after the
+tag. The rolling `latest` tag is excluded. See
+[versioning](docs/VERSIONING.md) for how build numbers are derived:
 
 ```sh
-git tag 2.6jrc3
-git push origin 2.6jrc3
+git tag v2.8.0
+git push origin v2.8.0
 ```
 
 Pull requests build and run the complete tutorial and the unfinished-turn

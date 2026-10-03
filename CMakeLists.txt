@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
-project(stars LANGUAGES C RC)
+# The version this line is building toward. Tags (vX.Y.Z) and build numbers
+# come from git; see cmake/version.cmake and docs/VERSIONING.md.
+project(stars VERSION 2.8.0 LANGUAGES C RC)
 
 if(NOT MINGW)
     message(FATAL_ERROR "Configure using the MinGW toolchain: cmake --preset mingw-debug or cmake --preset mingw-release")
@@ -41,6 +43,24 @@ add_executable(stars WIN32
     res/stars.rc
 )
 
+# version.h is regenerated on every build so the build number follows HEAD;
+# it is rewritten only when the version changes.
+set(STARS_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(STARS_VERSION_COMMAND "${CMAKE_COMMAND}"
+    -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -DOUTPUT=${STARS_GENERATED_DIR}/version.h
+    -DVERSION_BASE=${PROJECT_VERSION}
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cmake")
+file(MAKE_DIRECTORY "${STARS_GENERATED_DIR}")
+execute_process(COMMAND ${STARS_VERSION_COMMAND})
+add_custom_target(stars_version
+    COMMAND ${STARS_VERSION_COMMAND}
+    BYPRODUCTS "${STARS_GENERATED_DIR}/version.h"
+    COMMENT "Checking Stars! version"
+    VERBATIM
+)
+add_dependencies(stars stars_version)
+
 set_target_properties(stars PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
@@ -48,6 +68,7 @@ set_target_properties(stars PROPERTIES
 target_include_directories(stars PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/res"
+    "${STARS_GENERATED_DIR}"
 )
 
 # Match the existing MinGW compile-analysis flags. Plain char is signed, as
@@ -85,7 +106,7 @@ list(REMOVE_ITEM STARS_RESOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/res/stars.rc"
 )
 set_source_files_properties(res/stars.rc PROPERTIES
-    OBJECT_DEPENDS "${STARS_RESOURCE_FILES}"
+    OBJECT_DEPENDS "${STARS_RESOURCE_FILES};${STARS_GENERATED_DIR}/version.h"
 )
 
 # Wine is needed only to run the Windows executable on the build host.

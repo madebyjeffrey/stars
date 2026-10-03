@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include "resource.h"
+#include "version.h"
 
 /* Icons */
 STARSICO ICON "icons/starsico.ico"
@@ -782,4 +783,32 @@ BEGIN
     CONTROL "&Switch", IDC_SCORE_SWITCH, "Button", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 15, 180, 32, 14
     CONTROL "Done", IDCANCEL, "Button", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 65, 180, 32, 14
     CONTROL "&Help", IDC_HELP, "Button", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 115, 180, 32, 14
+END
+
+/* Not in the original NE resources: Win32 file version from cmake/version.cmake. */
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION STARS_VERSION_MAJOR, STARS_VERSION_MINOR, STARS_VERSION_PATCH, STARS_VERSION_BUILD
+PRODUCTVERSION STARS_VERSION_MAJOR, STARS_VERSION_MINOR, STARS_VERSION_PATCH, STARS_VERSION_BUILD
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "FileDescription", "Stars!"
+            VALUE "FileVersion", STARS_VERSION_STRING
+            VALUE "InternalName", "stars"
+            VALUE "OriginalFilename", "stars.exe"
+            VALUE "ProductName", "Stars!"
+            VALUE "ProductVersion", STARS_VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
 END

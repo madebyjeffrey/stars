@@ -24,6 +24,9 @@ jobs:
         uses: actions/checkout@v5
         with:
           persist-credentials: false
+          # cmake/version.cmake numbers builds from the last vX.Y.Z tag.
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Install build tools
         run: |
@@ -39,6 +42,14 @@ jobs:
           mkdir -p dist/release
           cp dist/mingw-release/bin/stars.exe dist/release/
           cp 'res/stars!.hlp' dist/release/
+          version=$(sed -n 's/^#define STARS_VERSION_STRING "\(.*\)"$/\1/p' dist/mingw-release/generated/version.h)
+          echo "Built Stars! $version"
+          echo "STARS_VERSION=$version" >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF_TYPE" == tag && "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ \
+                && "v$version" != "$GITHUB_REF_NAME" ]]; then
+            echo "::error::tag $GITHUB_REF_NAME built version $version"
+            exit 1
+          fi
 
       - name: Save build artifacts
         uses: actions/upload-artifact@v4
@@ -74,7 +85,7 @@ jobs:
                 -f ref=refs/tags/latest -f sha="$commit" --silent
             fi
             cat > dist/release/notes.md <<EOF
-          Windows x86-64 optimized Release build, built from main.
+          Stars! $STARS_VERSION: Windows x86-64 optimized Release build, built from main.
 
           Download stars.exe and stars!.hlp into the same directory.
 
@@ -92,11 +103,11 @@ jobs:
           fi
           if [[ "$tag" == latest ]]; then
             if [[ "$release_exists" == true ]]; then
-              gh release edit "$tag" --title 'Latest development build' \
+              gh release edit "$tag" --title "Latest development build ($STARS_VERSION)" \
                 --prerelease --latest=false --notes-file dist/release/notes.md
               gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
             else
-              gh release create "$tag" --verify-tag --title 'Latest development build' \
+              gh release create "$tag" --verify-tag --title "Latest development build ($STARS_VERSION)" \
                 --prerelease --latest=false --notes-file dist/release/notes.md \
                 dist/release/stars.exe 'dist/release/stars!.hlp'
             fi
@@ -104,6 +115,10 @@ jobs:
             # Allow a failed tag run to be retried without creating another release.
             gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
           else
-            gh release create "$tag" --verify-tag --title "$tag" --generate-notes \
+            title="$tag"
+            if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              title="Stars! $STARS_VERSION"
+            fi
+            gh release create "$tag" --verify-tag --title "$title" --generate-notes \
               dist/release/stars.exe 'dist/release/stars!.hlp'
           fi

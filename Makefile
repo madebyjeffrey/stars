@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all save-cli compile run-wine fmt compile-check res resources checkpoints-starsbox checkpoints-native checkpoints-compare tutorial tutorial-reject clean
+.PHONY: help all version-header save-cli compile run-wine fmt compile-check res resources checkpoints-starsbox checkpoints-native checkpoints-compare tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -48,17 +48,25 @@ run-wine:
 fmt:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)
 
-compile-check:
+# Direct compiles need the generated version.h that CMake builds normally make.
+VERSION_DIR := $(abspath $(DIST_DIR))/generated
+version-header:
+	@mkdir -p "$(VERSION_DIR)"
+	@$(CMAKE) -DSOURCE_DIR="$(CURDIR)" -DOUTPUT="$(VERSION_DIR)/version.h" \
+		-DVERSION_BASE=$$(sed -n 's/^project(stars VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt) \
+		-P cmake/version.cmake
+
+compile-check: version-header
 	@set -e; for f in $(FILES); do \
-		$(MINGW_CC) -std=gnu11 -fsigned-char -fsyntax-only -fmax-errors=0 -Wno-pointer-sign -I. "$$f"; \
+		$(MINGW_CC) -std=gnu11 -fsigned-char -fsyntax-only -fmax-errors=0 -Wno-pointer-sign -I. -I"$(VERSION_DIR)" "$$f"; \
 	done
-	cd res && $(MINGW_RC) stars.rc -O res -o /dev/null
+	cd res && $(MINGW_RC) -I"$(VERSION_DIR)" stars.rc -O res -o /dev/null
 
 res: resources
 
-resources:
+resources: version-header
 	@mkdir -p "$(DIST_DIR)"
-	cd res && $(MINGW_RC) stars.rc -O coff -o "$(abspath $(DIST_DIR))/stars_res.o"
+	cd res && $(MINGW_RC) -I"$(VERSION_DIR)" stars.rc -O coff -o "$(abspath $(DIST_DIR))/stars_res.o"
 
 # Preparing checkpoints requires fresh work directories.
 checkpoints-starsbox: save-cli
