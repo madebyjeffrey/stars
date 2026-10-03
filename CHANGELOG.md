@@ -13,3 +13,9 @@ produce different results from a 2.6j host for the same turn.
   splash screen and report headers, and stored in a `VERSIONINFO` resource.
   The save-file format version is unchanged (2.83). See
   [docs/VERSIONING.md](docs/VERSIONING.md).
+
+### Fixed
+
+- Macinti AI: deciding whether to build mine layers no longer reads past
+  the start of its design list when it has no miner design; a missing design
+  counts as zero ships (`DoMacintiAiTurn`). **Host results.**

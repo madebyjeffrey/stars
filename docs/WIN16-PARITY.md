@@ -25,8 +25,6 @@ divergences explicitly rather than hiding them in comparison rules.
 - **Parity repair:** each unguarded read becomes `i != -1 ? path : <alias>`,
   where `<alias>` is the global or field the Win16 layout put before the array.
   Current sites:
-  - `ai3.c` DoMacintiAiTurn: `rgshdef[iLatestMiner].cExist` with
-    iLatestMiner -1 reads `vtimer.mdForce | vtimer.fAutoGenWhenIn << 16`.
   - `ai3.c` DoMacintiAiTurn and `ai.c` DoRobotoidAiTurn:
     `lpfl->rgcsh[iLatestDestroyer]` with -1 reads `lpfl->pt.y`.
 - **Revert to:** drop the alias and handle -1 as "no such design" (count 0),

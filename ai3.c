@@ -648,9 +648,7 @@ void DoMacintiAiTurn(PROD *rgprod) {
                     }
                 TryShip2b:
                     if (rgshdef[0].hul.ihuldef == ihuldefFrigate && cFlMineLayers < 60 &&
-                        (iLatestMiner != ishdefNone
-                             ? rgshdef[iLatestMiner].cExist
-                             : (uint32_t)((uint32_t)(uint16_t)vtimer.mdForce | (uint32_t)(uint16_t)vtimer.fAutoGenWhenIn << 16)) < 7500 &&
+                        (iLatestMiner != ishdefNone ? rgshdef[iLatestMiner].cExist : 0) < 7500 &&
                         Random(4) == 0) {
                         id = lppl->id;
                         cFr = 0;
