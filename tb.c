@@ -73,12 +73,12 @@ LRESULT CALLBACK TbWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 SendMessage(hwndTBRadar, CB_SETCURSEL, iSel, 0);
                 wsprintf(szWork, PCTDPCTPCT, vpctRadarView);
                 SetWindowText(hwndTBRadar, szWork);
-                lpfnRealComboProc = GetWindowLong(hwndTBRadar, GWL_WNDPROC);
-                SetWindowLong(hwndTBRadar, GWL_WNDPROC, lpfnFakeComboProc);
+                lpfnRealComboProc = (WNDPROC)GetWindowLongPtr(hwndTBRadar, GWLP_WNDPROC);
+                SetWindowLongPtr(hwndTBRadar, GWLP_WNDPROC, (LONG_PTR)lpfnFakeComboProc);
                 hwndCE = GetWindow(hwndTBRadar, GW_CHILD);
                 if (hwndCE) {
-                    lpfnRealCEProc = GetWindowLong(hwndCE, GWL_WNDPROC);
-                    SetWindowLong(hwndCE, GWL_WNDPROC, lpfnFakeCEProc);
+                    lpfnRealCEProc = (WNDPROC)GetWindowLongPtr(hwndCE, GWLP_WNDPROC);
+                    SetWindowLongPtr(hwndCE, GWLP_WNDPROC, (LONG_PTR)lpfnFakeCEProc);
                 }
             }
             x += dx;

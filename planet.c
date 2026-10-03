@@ -34,8 +34,8 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         hwndOrderED = CreateWindow(szEdit, NULL, ES_RIGHT | WS_CHILD | WS_BORDER, 100, 100, 200, 50, hwnd, NULL, hInst, NULL);
         SendMessage(hwndOrderED, EM_LIMITTEXT, 4, 0);
         SendMessage(hwndOrderED, WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
-        lpfnRealEditProc = GetWindowLong(hwndOrderED, GWL_WNDPROC);
-        SetWindowLong(hwndOrderED, GWL_WNDPROC, lpfnFakeEditProc);
+        lpfnRealEditProc = (WNDPROC)GetWindowLongPtr(hwndOrderED, GWLP_WNDPROC);
+        SetWindowLongPtr(hwndOrderED, GWLP_WNDPROC, (LONG_PTR)lpfnFakeEditProc);
         hwndBattleDD = CreateWindow(szCombobox, "BattleDD", CBS_DROPDOWNLIST | WS_CHILD | WS_VSCROLL, 100, 100, 200, 80, hwnd, NULL, hInst, NULL);
         SendMessage(hwndBattleDD, WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
         hwndShipDD = CreateWindow(szCombobox, "ShipDD", CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_CHILD | WS_VSCROLL, 100, 100, 200, 80, hwnd,

@@ -17,10 +17,6 @@
 
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
-#undef GetWindowLong
-#undef SetWindowLong
-#define GetWindowLong GetWindowLong16
-#define SetWindowLong SetWindowLong16
 #undef GetDriveType
 #define GetDriveType  GetDriveType16
 #define AllocResource AllocResource16
@@ -255,21 +251,6 @@ static inline int MapWindowPoints16(HWND hwndFrom, HWND hwndTo, POINT16 *ppt, UI
 }
 
 /*
- * Win16 window longs
- *
- * Stars only uses the window long to subclass controls through
- * GWL_WNDPROC. Win16 indexes are 16-bit, so the negative GWL_ indexes arrive
- * as 0xfffc and are narrowed back here; the procedure pointer is stored at
- * full native width because Win64 has no 32-bit GWL_WNDPROC.
- */
-
-// GetWindowLong16 retrieves the window procedure using the Win16 index.
-static inline WNDPROC GetWindowLong16(HWND hwnd, short index) { return (WNDPROC)GetWindowLongPtrA(hwnd, index); }
-
-// SetWindowLong16 replaces the window procedure and returns its predecessor.
-static inline WNDPROC SetWindowLong16(HWND hwnd, short index, WNDPROC lpfn) { return (WNDPROC)SetWindowLongPtrA(hwnd, index, (LONG_PTR)lpfn); }
-
-/*
  * Win16 drive and resource APIs
  *
  * Win16 GetDriveType took a 0-based drive number; Win32 takes a root path.
@@ -394,7 +375,6 @@ static inline HFILE AccessResource(HINSTANCE instance, HRSRC resource) {
 }
 
 // Win16 constants that windows.h no longer provides.
-#define GWL_WNDPROC (-4)
 
 // Application messages (WM_USER + 0x64...).
 #define WM_STARS_STARTUP  0x0464
