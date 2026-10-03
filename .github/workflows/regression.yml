@@ -23,7 +23,7 @@ jobs:
       matrix:
         # Scenarios covered by the checked-in native baseline
         # (tests/scaffold/fixtures/regression/native/run.json).
-        scenario: [noai, oneai1, oneai2, oneai3, oneai4, oneai5, smallai4]
+        scenario: [noai, oneai1, oneai2, oneai3, oneai4, oneai5, oneai6, smallai4, smallai6]
     env:
       SCENARIO: ${{ matrix.scenario }}
       WINEDEBUG: '-all'

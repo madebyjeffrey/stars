@@ -357,21 +357,18 @@ For confidence in the harness, first run the original twice into fresh folders
 and compare those runs. Matching original-to-original checkpoints establishes a
 baseline before interpreting original-to-native failures.
 
-## Known divergences
+## Divergences from the original
 
-These are the only mismatches with the original. Each comes from the original
-reading uninitialized stack memory, so the original value can't be reproduced
-deterministically. They are fixed after the `2.6jrc3` tag
-([ROADMAP.md](../../docs/ROADMAP.md)); remove each row when its fix lands.
-
-| Scenario | First diff | Cause | Where |
-| --- | --- | --- | --- |
-| smallai6 | t57 (t80 checkpoint) | `TargetMacArmada` compares an uninitialized `cshWar`. `FPotentMacWarFleet` returns without writing `*pcEquiv` for weak fleets. | `ai3.c` `TargetMacArmada`, `FPotentMacWarFleet` |
-| oneai6 | t68 (t80 checkpoint) | Same `cshWar` cause. With `cshWar = 1000` it matches to t84, then the RNG draw count drifts. | same |
-
-For bisecting, use
-`crossfeed`/`bisect` (above), a `-DSTARS_TEST_TRACE=ON` build with
-`STARS_TRACE=trace.log`, and the `.xN` AI logs in each save directory.
+The native build at `2.6jrc3` matched the original in every scenario except
+three, each caused by the original reading uninitialized stack memory:
+`oneai5` (the Cybertron mine-laying order's countdown, from the t80
+checkpoint) and `oneai6`/`smallai6` (`TargetMacArmada`'s `cshWar`, from t57
+and t68). 2.8 fixes those reads, so all nine scenarios are deterministic and
+in the native baseline. Comparisons against `fixtures/regression/original/`
+are expected to differ from the point each 2.8 behavior change takes effect;
+see `CHANGELOG.md`. For bisecting a native change, use `crossfeed`/`bisect`
+(above), a `-DSTARS_TEST_TRACE=ON` build with `STARS_TRACE=trace.log`, and
+the `.xN` AI logs in each save directory.
 
 ## Harness tests
 

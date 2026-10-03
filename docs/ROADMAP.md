@@ -16,17 +16,12 @@ Each fix changes behavior, so the native baseline moves with it
 in its own commit, remove it from this list when it lands, and, for Win16
 behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
 
-- **Regression divergences** (see
-  [REGRESSION.md](../tests/scaffold/REGRESSION.md#known-divergences)): fix
-  `cshWar`, then add `oneai6`
-  and `smallai6` to the native baseline.
 - **Parity sites:** revert the items under "Original bugs emulated" and
   "Known Win16 behavior not reproduced" in
   [WIN16-PARITY.md](WIN16-PARITY.md), as each entry describes:
 
   | Site                                                 | Parity behavior                                                                                       | Revert to                                                                                                      |
   | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-  | `ai3.c` `TargetMacArmada`                            | `cshWar` uninitialized (not reproduced)                                                               | Initialize to 0, or make `FPotentMacWarFleet` always store `*pcEquiv`                                          |
   | `msg.c` `PszFormatString`                            | `vrgszUnits[-1]` reads before the array (display text only)                                           | Bounds-check the unit index                                                                                    |
   | `tutor.c` `FTutorialEnabledShipBuilder`              | Explicit `return TRUE` where the original fell off the end with TRUE in AX                            | Nothing; drop the `PARITY` marker                                                                              |
 

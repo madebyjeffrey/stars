@@ -16,8 +16,8 @@ is retained because the harness checks that map against the native run.
 Executables, logs, live saves, and DOSBox configuration are not included.
 
 `oneai5`, `oneai6`, and `smallai6` are excluded from `original/`. Their
-results depend on original uninitialized reads, so they are added to
-`native/` only once those reads are fixed (`oneai5` is). Their definitions remain
+results depend on original uninitialized reads. 2.8 fixes those reads, so
+`native/` covers all nine scenarios. Their definitions remain
 available for manual investigation with the local starsbox reference.
 
 `Stars.ini` is a minimal unattended test registration for native CLI runs.

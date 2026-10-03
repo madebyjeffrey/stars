@@ -124,21 +124,6 @@ results depend on them.
 
 ## Known Win16 behavior not reproduced
 
-- **Macinti armada strength** (`ai3.c` TargetMacArmada): `FPotentMacWarFleet`
-  returns 0 without writing `*pcEquiv` for a weak fleet, and TargetMacArmada
-  ignores the result and compares `cshWar` (BP-0x20) against the armada
-  potency thresholds anyway. The original's value is whatever the fleet loop
-  in DoMacintiAiTurn last left at that stack address. TargetMacArmada's own
-  callees run below it and never touch it, but other calls from the loop do.
-  The value chooses between returning and targeting, and it also sets how many
-  `Random(10)` draws are made, so a wrong guess shifts the RNG stream for the
-  rest of the turn. This is the cause of the oneai6 and smallai6 divergences
-  (first seen at smallai6 t57, oneai6 t68). In a test build, setting
-  `cshWar = 1000` (above every threshold) matched smallai6 through t150 and
-  oneai6 through t84. Oneai6 then drifted at t85: the draw counts differed but
-  the decisions didn't, and the wormhole jumps showed the shifted RNG.
-  Making it `static` did not match either. **Revert to:** initialize `cshWar`
-  to 0, or have FPotentMacWarFleet always store `cEquiv`.
 - **PszFormatString** `vrgszUnits[-1]`: display text only. The original read a
   Win16 pointer.
 

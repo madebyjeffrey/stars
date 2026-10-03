@@ -31,3 +31,7 @@ produce different results from a 2.6j host for the same turn.
 - Macinti AI: the same fix for its mine-laying fleets, whose order's
   countdown was uninitialized stack bytes (`DoMacintiAiTurn`). **Host
   results.**
+- Macinti AI: an armada too weak to count as a war fleet is now judged by
+  its actual strength when choosing whether to attack, retreat or wait. The
+  original compared an uninitialized value (`FPotentMacWarFleet`,
+  `TargetMacArmada`). **Host results.**

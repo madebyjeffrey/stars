@@ -1393,5 +1393,9 @@ int16_t FPotentMacWarFleet(FLEET *lpfl, int16_t *pcEquiv) {
         return TRUE;
     }
 
+    /* The original returned without storing, leaving TargetMacArmada's cshWar uninitialized. */
+    if (pcEquiv) {
+        *pcEquiv = cEquiv;
+    }
     return FALSE;
 }
