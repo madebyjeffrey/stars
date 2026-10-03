@@ -964,7 +964,7 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
             lpfl->lpplord = (PLORD *)LpplReAlloc((PL *)lpfl->lpplord, lpfl->cord + 3);
         }
         memmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt + 1], &lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt],
-                 (lpfl->cord - ((RTWAYPT *)lpb)->iWaypt) * sizeof(ORDER));
+                (lpfl->cord - ((RTWAYPT *)lpb)->iWaypt) * sizeof(ORDER));
         if ((uint16_t)cb < 22) {
             memset(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], 0, sizeof(ORDER));
         }

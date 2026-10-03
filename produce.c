@@ -321,8 +321,7 @@ INT_PTR CALLBACK ProductionDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     case WM_CTLCOLORDLG:
     case WM_CTLCOLORSCROLLBAR:
     case WM_CTLCOLORSTATIC:
-        if ((HWND)lParam == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) ||
-            message == WM_CTLCOLORSTATIC) {
+        if ((HWND)lParam == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) || message == WM_CTLCOLORSTATIC) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -1275,8 +1274,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 &&
-            LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 && LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
             iResTechNow = LOWORD(wParam) - 1073;
             EnableZipProdBtns(hwnd, iResTechNow);
             FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);

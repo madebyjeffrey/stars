@@ -2348,8 +2348,7 @@ INT_PTR CALLBACK NewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     case WM_CTLCOLORSTATIC:
         for (i = 1000; i <= 1021 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
-        if (i <= 1021 || message == WM_CTLCOLORSTATIC ||
-            (HWND)lParam == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
+        if (i <= 1021 || message == WM_CTLCOLORSTATIC || (HWND)lParam == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }

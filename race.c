@@ -304,8 +304,7 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             EndDialog(hwnd, i);
             return 1;
         }
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HUMANOID &&
-            LOWORD(wParam) <= IDC_RACE_CUSTOM) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HUMANOID && LOWORD(wParam) <= IDC_RACE_CUSTOM) {
             memset(vplr.szName, 0, 32);
             GetDlgItemText(hwnd, IDC_RACE_NAME, vplr.szName, 32);
             memset(vplr.szNames, 0, 32);
@@ -793,8 +792,7 @@ INT_PTR CALLBACK RaceWizardDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     case WM_CTLCOLORDLG:
     case WM_CTLCOLORSCROLLBAR:
     case WM_CTLCOLORSTATIC:
-        if ((HWND)lParam == GetDlgItem(hwnd, IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) ||
-            message == WM_CTLCOLORSTATIC) {
+        if ((HWND)lParam == GetDlgItem(hwnd, IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) || message == WM_CTLCOLORSTATIC) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -1104,8 +1102,7 @@ INT_PTR CALLBACK RaceWizardDlg4(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             EndDialog(hwnd, i);
             return 1;
         }
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HYPER_EXPANSION &&
-            LOWORD(wParam) <= IDC_RACE_JACK_OF_ALL_TRADES) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HYPER_EXPANSION && LOWORD(wParam) <= IDC_RACE_JACK_OF_ALL_TRADES) {
             i = LOWORD(wParam) - 271;
             SetRaceStat(&vplr, rsMajorAdv, i);
             if (GetRaceStat(&vplr, rsMajorAdv) == raMacintosh) {
@@ -1254,8 +1251,7 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     case WM_CTLCOLORSTATIC:
         for (i = 271; i <= 288 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
-        if (i <= 288 || (HWND)lParam == GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH) ||
-            message == WM_CTLCOLORSTATIC) {
+        if (i <= 288 || (HWND)lParam == GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH) || message == WM_CTLCOLORSTATIC) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -1293,8 +1289,7 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             EndDialog(hwnd, i);
             return 1;
         }
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_ENERGY_COST_EXTRA &&
-            LOWORD(wParam) <= IDC_RACE_BIOTECH_COST_LESS) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_ENERGY_COST_EXTRA && LOWORD(wParam) <= IDC_RACE_BIOTECH_COST_LESS) {
             i = LOWORD(wParam) - 271;
             SetRaceStat(&vplr, i / 3 + 8, i % 3);
             InvalidateAdvPtsRect(hwnd);

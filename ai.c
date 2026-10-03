@@ -1032,8 +1032,7 @@ AtkMissions:
             }
             if (i > 10 && FIsAiAttack(lpfl) && (lpfl->cord <= 1 || lpfl->lpplord->rgord[1].grobj != grobjFleet) &&
                 ((cFlDestroyers <= (game.turn <= 120 ? 70 : 50) && (cFlDestroyers <= (game.turn <= 120 ? 60 : 40) || Random(3) != 0)) ||
-                 ((iLatestDestroyer != ishdefNone && lpfl->rgcsh[iLatestDestroyer] >= 20 && Random(20) != 0) ||
-                  !FFindBuddyAndJoinUp(lpfl, 14, 15, 36, 72)))) {
+                 ((iLatestDestroyer != ishdefNone && lpfl->rgcsh[iLatestDestroyer] >= 20 && Random(20) != 0) || !FFindBuddyAndJoinUp(lpfl, 14, 15, 36, 72)))) {
                 IdTargetAttack(lpfl, lpflAttack, lpflEnemy, game.fAisBand);
             }
         }

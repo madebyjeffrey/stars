@@ -143,7 +143,7 @@ void Produce() {
                         }
                         if (iprodCur < lppl->lpplprod->iprodMac - 1) {
                             memmove(lppl->lpplprod + (1 + (iprodCur - fPrevProdIsAlch)), lppl->lpplprod + (1 + (iprodCur + 1)),
-                                     (lppl->lpplprod->iprodMac - iprodCur - 1) * 4);
+                                    (lppl->lpplprod->iprodMac - iprodCur - 1) * 4);
                         }
                         lppl->lpplprod->iprodMac -= fPrevProdIsAlch + 1;
                         iprodCur -= fPrevProdIsAlch + 1;

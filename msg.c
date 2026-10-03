@@ -1095,8 +1095,8 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 if (CchGetString(idsSCC2, szT) >= 32) {
                 }
                 cch += wsprintf(lpb2k + cch, szT,
-                                 lpmsgplr->iPlrTo == 0 ? PszGetCompressedString(idsEverybody) : PszPlayerName(lpmsgplr->iPlrTo - 1, TRUE, TRUE, TRUE, 0, NULL),
-                                 13, 10);
+                                lpmsgplr->iPlrTo == 0 ? PszGetCompressedString(idsEverybody) : PszPlayerName(lpmsgplr->iPlrTo - 1, TRUE, TRUE, TRUE, 0, NULL),
+                                13, 10);
                 if (lpmsgplr->cLen >= 0) {
                     i = 1000;
                     FDecompressUserString(lpmsgplr->rgbMsg, lpmsgplr->cLen, lpb2k + cch, &i);

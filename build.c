@@ -62,7 +62,7 @@ int16_t FCheckQueuedShip(HWND hwnd, SHDEF *lpshdef, int16_t fEdit) {
         CchGetString(idsWorkDone, rgch);
         if (lpshdef->cExist > 0 && cshQueued != 0) {
             wsprintf(szWork, PszGetCompressedString(ids), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s", cshQueued,
-                      !fProgress ? "" : rgch);
+                     !fProgress ? "" : rgch);
         } else if (cshQueued != 0) {
             wsprintf(szWork, PszGetCompressedString(ids + 1), cshQueued, lpshdef->hul.szClass, cshQueued == 1 ? "" : "s", !fProgress ? "" : rgch);
         } else {
@@ -225,8 +225,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     case WM_RBUTTONDOWN:
         return FTrackSlot(hwnd, LOWORD(lParam), HIWORD(lParam), wParam, FALSE, message == WM_RBUTTONDOWN);
     case WM_COMMAND:
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_SHIPS &&
-            LOWORD(wParam) <= IDC_DESIGNER_STARBASES) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_SHIPS && LOWORD(wParam) <= IDC_DESIGNER_STARBASES) {
             fStarbaseMode = LOWORD(wParam) - 2064;
             wParam = mdBuild + 2066;
             GetClientRect(hwnd, &rc);
@@ -240,8 +239,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             FillBuildDD(hwndItem, mdBuild);
             SendMessage(hwndItem, CB_SETCURSEL, 0, 0);
             goto FixupShip;
-        } else if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_EXISTING &&
-                   LOWORD(wParam) <= IDC_DESIGNER_COMPONENTS) {
+        } else if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_EXISTING && LOWORD(wParam) <= IDC_DESIGNER_COMPONENTS) {
             lSel = 0;
         LRestart:
             lpshdefBuild = NULL;
@@ -251,8 +249,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             UpdateSlotGlobals();
             FillBuildDD(hwndItem, mdBuild);
             SendMessage(hwndItem, CB_SETCURSEL, LOWORD(lSel), 0);
-            SetWindowPos(hwndItem, NULL, ptslotGlob.x - 256 - (LOWORD(wParam) == IDC_DESIGNER_COMPONENTS ? 0 : 8), 8, 0, 0,
-                         SWP_NOSIZE | SWP_NOZORDER);
+            SetWindowPos(hwndItem, NULL, ptslotGlob.x - 256 - (LOWORD(wParam) == IDC_DESIGNER_COMPONENTS ? 0 : 8), 8, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
             GetClientRect(hwnd, &rc);
             left = rc.left;
             rc.left = rc.right >> 1 >= rc.right - 352 ? rc.right - 352 : rc.right >> 1;

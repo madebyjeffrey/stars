@@ -2741,7 +2741,7 @@ void FillFleetCompLB() {
         if (sel.fl.rgcsh[i] > 0) {
             pctDmg = (int32_t)((uint32_t)(sel.fl.rgdv[i].pctSh * sel.fl.rgdv[i].pctDp) + 250) / 500;
             wsprintf(szWork, "%c%c%5d%s", pctDmg == 0 ? 81 : 80, pctDmg == 0 ? 32 : (int16_t)(int8_t)LOBYTE(LOWORD(pctDmg)), sel.fl.rgcsh[i],
-                      rgshdef[i].hul.szClass);
+                     rgshdef[i].hul.szClass);
             SendMessage(hwndFleetCompLB, LB_ADDSTRING, 0, (LPARAM)szWork);
         }
     }

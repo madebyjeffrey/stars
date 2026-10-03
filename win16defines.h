@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#define qsort           qsort16
+#define qsort qsort16
 
 // SIGNHIWORD is the high word from signed 16-to-32 extension (the x86 CWD
 // instruction), not the upper half of an already-wide value.

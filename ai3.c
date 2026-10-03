@@ -648,8 +648,7 @@ void DoMacintiAiTurn(PROD *rgprod) {
                     }
                 TryShip2b:
                     if (rgshdef[0].hul.ihuldef == ihuldefFrigate && cFlMineLayers < 60 &&
-                        (iLatestMiner != ishdefNone ? rgshdef[iLatestMiner].cExist : 0) < 7500 &&
-                        Random(4) == 0) {
+                        (iLatestMiner != ishdefNone ? rgshdef[iLatestMiner].cExist : 0) < 7500 && Random(4) == 0) {
                         id = lppl->id;
                         cFr = 0;
                         for (ifl = 0; ifl < cFleet; ifl++) {
@@ -989,8 +988,7 @@ void DoMacintiAiTurn(PROD *rgprod) {
             }
             if (i > 9 && FIsAiAttack(lpfl) && (lpfl->cord <= 1 || lpfl->lpplord->rgord[1].grobj != grobjFleet) &&
                 ((cFlDestroyers <= (game.turn <= 120 ? 70 : 50) && (cFlDestroyers <= (game.turn <= 120 ? 60 : 40) || Random(3) != 0)) ||
-                 ((iLatestDestroyer != ishdefNone && lpfl->rgcsh[iLatestDestroyer] >= 20 && Random(20) != 0) ||
-                  !FFindBuddyAndJoinUp(lpfl, 12, 13, 36, 72)))) {
+                 ((iLatestDestroyer != ishdefNone && lpfl->rgcsh[iLatestDestroyer] >= 20 && Random(20) != 0) || !FFindBuddyAndJoinUp(lpfl, 12, 13, 36, 72)))) {
                 IdTargetAttack(lpfl, lpflAttack, lpflEnemy, game.fAisBand);
             }
         }

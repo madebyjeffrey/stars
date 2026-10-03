@@ -935,8 +935,8 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
 }
 
 void Delay(int16_t ctick) {
-    uint32_t     dwTickLast;
-    uint32_t     dwTickCur;
+    uint32_t dwTickLast;
+    uint32_t dwTickCur;
 
     dwTickLast = GetTickCount();
     do {
@@ -946,40 +946,40 @@ void Delay(int16_t ctick) {
 }
 
 void AnimateAttack(HDC hdc) {
-    TOK         *ptokSrc;
-    TOK         *ptokAttack;
-    POINT16      ptBeam1;
-    int16_t      cFrame;
-    int16_t      dyFrame;
-    POINT16      ptRay2;
-    POINT16      ptTop;
-    uint32_t     dwTickLast;
-    int16_t      dxFrame;
-    uint32_t     dwTickCur;
-    POINT16      ptBase;
-    int16_t      dy;
-    POINT16      ptRay1;
-    int16_t      y;
-    POINT16      ptRight;
-    POINT16      ptDest;
-    int16_t      iHit;
-    GrfWeapon    grfWeapon;
-    POINT16      ptSrc;
-    POINT16      ptTorp;
-    POINT16      ptLeft;
-    int16_t      iFrame;
-    int16_t      dx;
-    int16_t      fKill;
-    POINT16      ptDestBottom;
-    POINT16      ptBeam2;
-    POINT16      ptBottom;
-    POINT16      ptDestTop;
-    POINT16      ptDestRight;
-    POINT16      ptDestLeft;
-    int16_t      x;
-    HDC          hdcMem;
-    HBITMAP      hbmpSav;
-    HBITMAP      hbmpScreen;
+    TOK      *ptokSrc;
+    TOK      *ptokAttack;
+    POINT16   ptBeam1;
+    int16_t   cFrame;
+    int16_t   dyFrame;
+    POINT16   ptRay2;
+    POINT16   ptTop;
+    uint32_t  dwTickLast;
+    int16_t   dxFrame;
+    uint32_t  dwTickCur;
+    POINT16   ptBase;
+    int16_t   dy;
+    POINT16   ptRay1;
+    int16_t   y;
+    POINT16   ptRight;
+    POINT16   ptDest;
+    int16_t   iHit;
+    GrfWeapon grfWeapon;
+    POINT16   ptSrc;
+    POINT16   ptTorp;
+    POINT16   ptLeft;
+    int16_t   iFrame;
+    int16_t   dx;
+    int16_t   fKill;
+    POINT16   ptDestBottom;
+    POINT16   ptBeam2;
+    POINT16   ptBottom;
+    POINT16   ptDestTop;
+    POINT16   ptDestRight;
+    POINT16   ptDestLeft;
+    int16_t   x;
+    HDC       hdcMem;
+    HBITMAP   hbmpSav;
+    HBITMAP   hbmpScreen;
 
     grfWeapon = 0;
     fKill = FALSE;

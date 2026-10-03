@@ -2015,15 +2015,15 @@ INT_PTR CALLBACK NewPasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 }
 
 uint32_t GetDiskSerialNumber() {
-    int16_t     j;
-    int16_t     drive;
-    char        fn[13];
-    _find_t     fi;
-    int16_t     i;
-    int16_t     iWork;
-    uint8_t     uDefault;
-    uint16_t    uDate;
-    int32_t     l;
+    int16_t            j;
+    int16_t            drive;
+    char               fn[13];
+    _find_t            fi;
+    int16_t            i;
+    int16_t            iWork;
+    uint8_t            uDefault;
+    uint16_t           uDate;
+    int32_t            l;
     struct _diskfree_t df;
 
     iWork = 0;

@@ -139,8 +139,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         /* fallthrough */
     case WM_COMMAND:
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RESEARCH_ENERGY &&
-            LOWORD(wParam) <= IDC_RESEARCH_BIOTECH) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RESEARCH_ENERGY && LOWORD(wParam) <= IDC_RESEARCH_BIOTECH) {
             if (IsDlgButtonChecked(hwnd, LOWORD(wParam)) != 0) {
                 iResTechNow = LOWORD(wParam) - 1073;
                 GetClientRect(hwnd, &rc);
@@ -1703,7 +1702,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     c = wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktCanSuccessfullyGatedExceeding), 5 * ppart->pspecialsb->grAbility);
                 } else {
                     c = wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktMightSuccessfullyGatedD), 5 * ppart->pspecialsb->grAbility,
-                                  5 * ppart->pspecialsb->grAbility2);
+                                 5 * ppart->pspecialsb->grAbility2);
                 }
             }
             if (idsT == idsNoString)

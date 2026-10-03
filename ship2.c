@@ -101,8 +101,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 &&
-            LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 && LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
             iResTechNow = LOWORD(wParam) - 1073;
             EnableZipBtns(hwnd, iResTechNow);
             InvalidateRect(hwnd, NULL, TRUE);
