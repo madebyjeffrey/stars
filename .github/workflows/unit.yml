@@ -1,0 +1,41 @@
+name: Stars unit tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      WINEDEBUG: '-all'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Install Wine, MinGW and virtual display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wine64 wine gcc-mingw-w64-x86-64 cmake ninja-build xvfb xauth
+
+      - name: Build and run unit tests
+        env:
+          WINEPREFIX: ${{ runner.temp }}/stars-unit
+        run: |
+          mkdir -p "$WINEPREFIX"
+          xvfb-run -a -s '-screen 0 1600x1200x24' bash -e -o pipefail -c '
+            wineboot -u > /dev/null 2>&1
+            make test-unit
+          '

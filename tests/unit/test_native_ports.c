@@ -1,7 +1,14 @@
-#ifdef STARS_TEST_NATIVE_PORTS
-#include <assert.h>
+// Native-port checks: player-message serialization and both readers,
+// legacy link bytes, recipient filtering, maximum text length, static-control
+// color dispatch, and the Win16 battle heap rollover boundary. CMake links
+// this test with --wrap for WriteRt, ReadRt, FCreateFile, StreamOpen,
+// StreamClose and DirtyGame.
+
+#include "acutest.h"
+
 #include <stdlib.h>
-#include "common.h"
+
+#include "stars_test.h"
 
 static uint8_t rgRecord[4][1024];
 static int16_t rgcbRecord[4];
@@ -12,7 +19,7 @@ static int     fLogRead;
 void __wrap_WriteRt(RecordType rt, int16_t cb, void *rg) {
     if (rt != rtPlrMsg)
         return;
-    assert(cRecord < 4 && cb >= 12 && cb <= 1023);
+    TEST_ASSERT(cRecord < 4 && cb >= 12 && cb <= 1023);
     rgcbRecord[cRecord] = cb;
     memcpy(rgRecord[cRecord++], rg, cb);
 }
@@ -49,7 +56,7 @@ static MSGPLR *MakeMessage(int16_t from, int16_t to, int16_t len) {
     int     i;
 
     mp = malloc(sizeof(MSGPLR) + abs(len));
-    assert(mp != NULL);
+    TEST_ASSERT(mp != NULL);
     mp->lpmsgplrNext = NULL;
     mp->iPlrFrom = from;
     mp->iPlrTo = to;
@@ -61,19 +68,19 @@ static MSGPLR *MakeMessage(int16_t from, int16_t to, int16_t len) {
 }
 
 static void CheckRecord(int i, MSGPLR *mp) {
-    assert(rgcbRecord[i] == abs(mp->cLen) + 12);
-    assert(RawLoad32(rgRecord[i]) == 0);
-    assert(memcmp(rgRecord[i] + 4, &mp->iPlrFrom, 8) == 0);
-    assert(memcmp(rgRecord[i] + 12, mp->rgbMsg, abs(mp->cLen)) == 0);
+    TEST_ASSERT(rgcbRecord[i] == abs(mp->cLen) + 12);
+    TEST_ASSERT(RawLoad32(rgRecord[i]) == 0);
+    TEST_ASSERT(memcmp(rgRecord[i] + 4, &mp->iPlrFrom, 8) == 0);
+    TEST_ASSERT(memcmp(rgRecord[i] + 12, mp->rgbMsg, abs(mp->cLen)) == 0);
 }
 
 static void CheckReadMessage(MSGPLR *actual, MSGPLR *expected) {
-    assert(actual != NULL);
-    assert(actual->iPlrFrom == expected->iPlrFrom);
-    assert(actual->iPlrTo == expected->iPlrTo);
-    assert(actual->iInRe == expected->iInRe);
-    assert(actual->cLen == expected->cLen);
-    assert(memcmp(actual->rgbMsg, expected->rgbMsg, abs(expected->cLen)) == 0);
+    TEST_ASSERT(actual != NULL);
+    TEST_ASSERT(actual->iPlrFrom == expected->iPlrFrom);
+    TEST_ASSERT(actual->iPlrTo == expected->iPlrTo);
+    TEST_ASSERT(actual->iInRe == expected->iInRe);
+    TEST_ASSERT(actual->cLen == expected->cLen);
+    TEST_ASSERT(memcmp(actual->rgbMsg, expected->rgbMsg, abs(expected->cLen)) == 0);
 }
 
 static void TestMessages(void) {
@@ -83,8 +90,8 @@ static void TestMessages(void) {
     uint8_t rgbMsgBuffer[16];
 
     mp = MakeMessage(0, 0, 31);
-    assert(sizeof(mp->iPlrFrom) == 2 && sizeof(mp->cLen) == 2);
-    assert((uint8_t *)mp->rgbMsg - (uint8_t *)&mp->iPlrFrom == 8);
+    TEST_ASSERT(sizeof(mp->iPlrFrom) == 2 && sizeof(mp->cLen) == 2);
+    TEST_ASSERT((uint8_t *)mp->rgbMsg - (uint8_t *)&mp->iPlrFrom == 8);
     mp2 = MakeMessage(1, 2, -1000);
     mp3 = MakeMessage(2, 3, 7);
     mp->lpmsgplrNext = mp2;
@@ -99,18 +106,18 @@ static void TestMessages(void) {
 
     cRecord = 0;
     WritePlayerMessages(1);
-    assert(cRecord == 2);
+    TEST_ASSERT(cRecord == 2);
     CheckRecord(0, mp);
     CheckRecord(1, mp2);
     cRecord = 0;
     WritePlayerMessages(0);
-    assert(cRecord == 0);
+    TEST_ASSERT(cRecord == 0);
     WritePlayerMessages(-1);
-    assert(cRecord == 0);
+    TEST_ASSERT(cRecord == 0);
 
     cRecord = 0;
-    assert(FWriteLogFile("native-port-test", 0) == TRUE);
-    assert(cRecord == 3);
+    TEST_ASSERT(FWriteLogFile("native-port-test", 0) == TRUE);
+    TEST_ASSERT(cRecord == 3);
     CheckRecord(0, mp);
     CheckRecord(1, mp2);
     CheckRecord(2, mp3);
@@ -125,22 +132,22 @@ static void TestMessages(void) {
     vcmsgplrIn = 0;
     cMsg = 0;
     ReadPlayerMessages();
-    assert(vcmsgplrIn == 3);
+    TEST_ASSERT(vcmsgplrIn == 3);
     CheckReadMessage(vlpmsgplrIn, mp);
     CheckReadMessage(vlpmsgplrIn->lpmsgplrNext, mp2);
     CheckReadMessage(vlpmsgplrIn->lpmsgplrNext->lpmsgplrNext, mp3);
-    assert(vlpmsgplrIn->lpmsgplrNext->lpmsgplrNext->lpmsgplrNext == NULL);
+    TEST_ASSERT(vlpmsgplrIn->lpmsgplrNext->lpmsgplrNext->lpmsgplrNext == NULL);
 
     vlpmsgplrOut = NULL;
     vcmsgplrOut = 0;
     iRead = -2;
     fLogRead = TRUE;
-    assert(FLoadLogFile("native-port-test") == TRUE);
-    assert(vcmsgplrOut == 3);
+    TEST_ASSERT(FLoadLogFile("native-port-test") == TRUE);
+    TEST_ASSERT(vcmsgplrOut == 3);
     CheckReadMessage(vlpmsgplrOut, mp);
     CheckReadMessage(vlpmsgplrOut->lpmsgplrNext, mp2);
     CheckReadMessage(vlpmsgplrOut->lpmsgplrNext->lpmsgplrNext, mp3);
-    assert(vlpmsgplrOut->lpmsgplrNext->lpmsgplrNext->lpmsgplrNext == NULL);
+    TEST_ASSERT(vlpmsgplrOut->lpmsgplrNext->lpmsgplrNext->lpmsgplrNext == NULL);
     free(mp);
     free(mp2);
     free(mp3);
@@ -151,8 +158,8 @@ static void TestMessages(void) {
 
 static void TestStaticColor(void) {
     hbrButtonFace = (HBRUSH)(uintptr_t)0x1234;
-    assert(RandomSeedDlg(NULL, WM_CTLCOLORSTATIC, 0, 0x1234) == (INT_PTR)hbrButtonFace);
-    assert(RandomSeedDlg(NULL, WM_CTLCOLORMSGBOX, 0, 0x60001) == 0);
+    TEST_ASSERT(RandomSeedDlg(NULL, WM_CTLCOLORSTATIC, 0, 0x1234) == (INT_PTR)hbrButtonFace);
+    TEST_ASSERT(RandomSeedDlg(NULL, WM_CTLCOLORMSGBOX, 0, 0x60001) == 0);
 }
 
 static void TestBattleRollover(void) {
@@ -174,25 +181,21 @@ static void TestBattleRollover(void) {
 
     /* Win16: data starts at offset 18, leaving 65462 bytes to the limit. */
     lpbBattleCur = lpbStart + 65448;
-    assert(FDoCoolBattle(&fl, 0, grfAttack, 0, 0) == 1);
-    assert(lpbBattleT == lpbScratch);
-    assert(lpbBattleCur == lpbStart + 65462);
-    assert(((BTLDATA *)(lpbStart + 65448))->cbData == 14);
-    assert(FDoCoolBattle(&fl, 0, grfAttack, 0, 0) == 1);
-    assert(lpbBattleT == NULL);
-    assert(RawLoad16(lpbStart + 65462) == 0xffff);
-    assert(lpbBattleCur == lpbScratch + 14);
+    TEST_ASSERT(FDoCoolBattle(&fl, 0, grfAttack, 0, 0) == 1);
+    TEST_ASSERT(lpbBattleT == lpbScratch);
+    TEST_ASSERT(lpbBattleCur == lpbStart + 65462);
+    TEST_ASSERT(((BTLDATA *)(lpbStart + 65448))->cbData == 14);
+    TEST_ASSERT(FDoCoolBattle(&fl, 0, grfAttack, 0, 0) == 1);
+    TEST_ASSERT(lpbBattleT == NULL);
+    TEST_ASSERT(RawLoad16(lpbStart + 65462) == 0xffff);
+    TEST_ASSERT(lpbBattleCur == lpbScratch + 14);
     FreeHb(rglphb[htBattle]);
     rglphb[htBattle] = NULL;
     lpbBattleLog = lpbBattleCur = lpbBattleT = NULL;
     vrgtok = NULL;
 }
 
-int main(void) {
-    TestMessages();
-    TestStaticColor();
-    TestBattleRollover();
-    puts("PASS: player-message writers/readers, legacy links, filtering, 1000-byte text, static colors, battle rollover");
-    return 0;
-}
-#endif
+TEST_LIST = {{"player messages", TestMessages},
+             {"static control color", TestStaticColor},
+             {"battle heap rollover", TestBattleRollover},
+             {NULL, NULL}};

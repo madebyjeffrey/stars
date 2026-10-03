@@ -112,7 +112,8 @@ After each batch of edits:
    `tests/scaffold/fixtures/regression/native/`. Commands are in
    `tests/scaffold/REGRESSION.md`. A quick check is one scenario through
    checkpoint 10; a batch is done only after the full suite.
-3. Run the tutorial (`make tutorial`).
+3. Run the unit tests (`make test-unit`, `tests/unit/README.md`).
+4. Run the tutorial (`make tutorial`).
 
 Behavior-neutral changes must match the baseline exactly (unused-storage
 warnings excepted). A behavior change regenerates the baseline with

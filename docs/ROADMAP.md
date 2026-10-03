@@ -35,24 +35,22 @@ dodge, battle board overload, 0.2% minimum damage, profitable scrapping,
 false public scores, mine damage allocation) are reference only and are not
 planned.
 
-### 5.1 Unit test harness
+### 5.1 Unit test harness (done)
 
-Port the acutest setup from the earlier `stars-decompile` effort:
+Ported the acutest setup from the earlier `stars-decompile` effort; see
+[tests/unit/README.md](../tests/unit/README.md). The game sources build once
+as the `stars_core` object library, linked into `stars.exe` and into one
+acutest executable per `tests/unit/test_<file>.c`. CTest runs the tests
+under Wine (`make test-unit`, and the unit-test CI workflow). Acutest runs
+each test in its own process, so tests start from fresh globals.
 
-- `tests/unit/acutest.h` (MIT, single header) and one `test_<file>.c` per
-  game source file, each built as its own executable.
-- Split the game sources into a CMake object library shared by `stars.exe`
-  and the tests. Tests are Windows executables; CTest runs them through the
-  Wine `CROSSCOMPILING_EMULATOR` the build already sets. Add a `make test-unit`
-  target and a CI job.
-- Two levels of test:
-  - **Function tests** call one function with crafted inputs
-    (`FIntersectCircleLine`, `UpdateShdefCost`, `Merge2Fleets`).
-  - **Turn tests** create a small game from a `.def` (`GenNewGameFromFile`),
-    load it (`FLoadGame`), place fleets, planets, minefields and orders in
-    memory with shared setup helpers, run `FGenerateTurn`, and check the
-    result. Snapshot and restore the globals each test touches.
-- Move the existing `tests/scaffold/native_ports.c` checks into the suite.
+- Function tests call one function with crafted inputs.
+- Turn tests use `stars_test.h` to create a tiny game (optionally with AI
+  players), load the host file and generate turns.
+- The native-port checks moved into `test_native_ports.c`.
+
+Still to add, with the first turn-test fix: setup helpers that place
+fleets, planets, minefields and orders in the loaded game.
 
 First worked example: the North/South minefield fix (function test).
 

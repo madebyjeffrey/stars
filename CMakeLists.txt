@@ -38,10 +38,15 @@ if(NOT STARS_TEST_SEED STREQUAL "")
     list(APPEND STARS_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/stars-seeded.c")
 endif()
 
-add_executable(stars WIN32
-    ${STARS_SOURCES}
-    res/stars.rc
-)
+# Settings every target that compiles game code shares.
+add_library(stars_options INTERFACE)
+
+# The game code, built once for stars.exe and the unit tests.
+add_library(stars_core OBJECT ${STARS_SOURCES})
+target_link_libraries(stars_core PUBLIC stars_options)
+
+add_executable(stars WIN32 res/stars.rc)
+target_link_libraries(stars PRIVATE stars_core)
 
 # version.h is regenerated on every build so the build number follows HEAD;
 # it is rewritten only when the version changes.
@@ -59,13 +64,13 @@ add_custom_target(stars_version
     COMMENT "Checking Stars! version"
     VERBATIM
 )
-add_dependencies(stars stars_version)
+add_dependencies(stars_core stars_version)
 
 set_target_properties(stars PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-target_include_directories(stars PRIVATE
+target_include_directories(stars_options INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/res"
     "${STARS_GENERATED_DIR}"
@@ -73,11 +78,11 @@ target_include_directories(stars PRIVATE
 
 # Match the existing MinGW compile-analysis flags. Plain char is signed, as
 # in the original MSC build; the decompiler relies on it to drop char casts.
-target_compile_options(stars PRIVATE
+target_compile_options(stars_options INTERFACE
     $<$<COMPILE_LANGUAGE:C>:-Wno-pointer-sign>
     $<$<COMPILE_LANGUAGE:C>:-fsigned-char>
 )
-target_link_libraries(stars PRIVATE user32 gdi32 comdlg32)
+target_link_libraries(stars_options INTERFACE user32 gdi32 comdlg32)
 
 # MinGW runtime objects can contain debug data even in a Release build.
 target_link_options(stars PRIVATE
@@ -122,4 +127,33 @@ if(WINE_EXECUTABLE)
     )
 else()
     message(STATUS "Wine not found; stars.exe can still be built, but run_in_wine is unavailable")
+endif()
+
+# Unit tests (tests/unit): one acutest executable per test_*.c, linked with
+# the game code and its resources. They are Windows console programs; CTest
+# runs them through Wine when it is available.
+option(STARS_BUILD_TESTS "Build the unit tests in tests/unit" ON)
+if(STARS_BUILD_TESTS)
+    enable_testing()
+    set(STARS_TEST_DIR "${CMAKE_BINARY_DIR}/tests")
+    file(MAKE_DIRECTORY "${STARS_TEST_DIR}/data")
+    configure_file(tests/scaffold/fixtures/newgame/tiny/humanoid.r1 "${STARS_TEST_DIR}/data/humanoid.r1" COPYONLY)
+    file(GLOB STARS_UNIT_TESTS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_*.c")
+    foreach(STARS_UNIT_TEST ${STARS_UNIT_TESTS})
+        get_filename_component(STARS_TEST_NAME "${STARS_UNIT_TEST}" NAME_WE)
+        add_executable(${STARS_TEST_NAME} "${STARS_UNIT_TEST}" tests/unit/stars_test.c res/stars.rc)
+        target_link_libraries(${STARS_TEST_NAME} PRIVATE stars_core)
+        target_include_directories(${STARS_TEST_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
+        set_target_properties(${STARS_TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
+        if(WINE_EXECUTABLE)
+            set_property(TARGET ${STARS_TEST_NAME} PROPERTY CROSSCOMPILING_EMULATOR "${WINE_EXECUTABLE}")
+        endif()
+        add_test(NAME ${STARS_TEST_NAME} COMMAND ${STARS_TEST_NAME})
+        set_tests_properties(${STARS_TEST_NAME} PROPERTIES
+            WORKING_DIRECTORY "${STARS_TEST_DIR}"
+            ENVIRONMENT "WINEDEBUG=-all")
+    endforeach()
+    # The native-port test replaces file I/O with in-memory records.
+    target_link_options(test_native_ports PRIVATE
+        "LINKER:--wrap=WriteRt,--wrap=ReadRt,--wrap=FCreateFile,--wrap=StreamOpen,--wrap=StreamClose,--wrap=DirtyGame")
 endif()
