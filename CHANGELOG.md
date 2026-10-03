@@ -42,3 +42,7 @@ produce different results from a 2.6j host for the same turn.
   their route. The route/field intersection measured a vertical route from
   its start point instead of its closest point to the field
   (`FIntersectCircleLine`). **Host results.**
+- Cybertron AI: no longer scraps the ships of its newest starbase-defender
+  design once that design passes the recycle age. After checking its
+  defender designs it protected the newest destroyer design again instead
+  (`DoCyberAiTurn`). **Host results.**

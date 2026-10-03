@@ -24,8 +24,11 @@ fixture race to `data/humanoid.r1`.
   `work/<name>` directory), `FStarsTestNewGame` (a tiny universe with the
   test race and any AI players), `FStarsTestLoadHost` and
   `FStarsTestGenerate`. Between loading the host and generating, a test can
-  change the loaded game in memory; save it with the game's own writers
-  before generating. `test_turn.c` shows the plumbing.
+  change the loaded game (`LpplStarsTestHomeworld`, `LpflStarsTestAddFleet`,
+  or directly) and save it with `FStarsTestSaveHost`. AI players give their
+  orders while one turn generates and the next turn carries them out, so AI
+  behavior needs two generations. `test_turn.c` shows the plumbing and
+  `test_ai4.c` a full example.
 
 ## Bug fixes
 

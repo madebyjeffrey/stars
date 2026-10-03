@@ -82,6 +82,31 @@ int16_t FStarsTestLoadHost(void) {
     return FLoadGame(szBase, "hst");
 }
 
+PLANET *LpplStarsTestHomeworld(int16_t iPlr) {
+    int16_t i;
+
+    for (i = 0; i < cPlanet; i++) {
+        if (lpPlanets[i].iPlayer == iPlr && lpPlanets[i].fHomeworld)
+            return &lpPlanets[i];
+    }
+    return NULL;
+}
+
+FLEET *LpflStarsTestAddFleet(int16_t iPlr, int16_t idPlanet, int16_t ishdef, int16_t csh) {
+    FLEET *lpfl;
+
+    lpfl = LpflNew(iPlr, idPlanet);
+    lpfl->rgcsh[ishdef] = csh;
+    rglpshdef[iPlr][ishdef].cExist += csh;
+    rglpshdef[iPlr][ishdef].cBuilt += csh;
+    return lpfl;
+}
+
+int16_t FStarsTestSaveHost(void) {
+    idPlayer = iplrNone;
+    return FWriteDataFile(szBase, -1, FALSE);
+}
+
 int16_t FStarsTestGenerate(void) {
     DestroyCurGame();
     idPlayer = iplrNone;

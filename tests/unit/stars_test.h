@@ -24,6 +24,17 @@ int16_t FStarsTestNewGame(const char *szDir, uint32_t lSeed, const char **rgszAi
 // FStarsTestLoadHost unloads the current game and loads szBase's host file.
 int16_t FStarsTestLoadHost(void);
 
+// LpplStarsTestHomeworld returns iPlr's homeworld in the loaded game, or NULL.
+PLANET *LpplStarsTestHomeworld(int16_t iPlr);
+
+// LpflStarsTestAddFleet adds a fleet of csh ships of iPlr's design ishdef
+// orbiting planet idPlanet in the loaded game, with no orders.
+FLEET *LpflStarsTestAddFleet(int16_t iPlr, int16_t idPlanet, int16_t ishdef, int16_t csh);
+
+// FStarsTestSaveHost writes the loaded game back to szBase's host file, so a
+// following FStarsTestGenerate sees the test's changes.
+int16_t FStarsTestSaveHost(void);
+
 // FStarsTestGenerate generates one turn from szBase's host file and turn
 // files, as the -g command line does.
 int16_t FStarsTestGenerate(void);

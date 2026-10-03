@@ -452,8 +452,8 @@ void DoCyberAiTurn(PROD *rgprod) {
         rgRecycleShdef[iLatestDestroyer] = 0;
     }
     CheckAiShdefStatus(14, 15, cRecyclePeriod, &iLatestSBDefender, rgRecycleShdef);
-    if (iLatestDestroyer != ishdefNone) {
-        rgRecycleShdef[iLatestDestroyer] = 0;
+    if (iLatestSBDefender != ishdefNone) {
+        rgRecycleShdef[iLatestSBDefender] = 0;
     }
     cExistCargo = CheckAiShdefStatus(2, 3, cRecyclePeriod, &iLatestCargo, rgRecycleShdef);
     if (iLatestCargo != ishdefNone) {
