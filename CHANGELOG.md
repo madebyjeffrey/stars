@@ -23,3 +23,8 @@ produce different results from a 2.6j host for the same turn.
   others no longer reads a fleet's position as a ship count when the AI has
   no destroyer design (`DoRobotoidAiTurn`, `DoMacintiAiTurn`). **Host
   results.**
+- Cybertron AI: mine-laying fleets sent to a random planet now lay mines
+  there indefinitely, like the AI's other mine-laying orders. The original
+  left the order's countdown as uninitialized stack bytes, so whether the
+  fleet laid at all depended on the save path and, after turn 80, it
+  usually stopped on arrival (`DoCyberAiTurn`). **Host results.**

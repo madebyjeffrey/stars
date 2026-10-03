@@ -259,25 +259,32 @@ def compare(args):
 
 
 def export(args):
-    """export copies a completed run's checkpoints into a baseline fixture directory."""
+    """export copies completed scenarios into a baseline fixture directory.
+
+    Only the named scenarios are written; others already in the baseline are
+    kept, so unchanged scenarios don't churn with native stale bytes.
+    """
     work = args.work.resolve()
     dest = args.dest.resolve()
     manifest = json.loads((work / "run.json").read_text())
-    if dest.exists() and any(dest.iterdir()) and not args.replace:
-        raise ValueError(f"baseline already exists: {dest}; pass --replace to regenerate it")
     names = args.scenario or SCENARIOS
     for name in names:
         snapshots = work / name / "checkpoints"
         missing = [t for t in CHECKPOINTS if not (snapshots / f"{t:03}" / "checkpoint.json").is_file()]
         if missing:
             raise ValueError(f"{name}: missing checkpoints {missing}; run through 150 first")
-    if dest.exists():
-        shutil.rmtree(dest)
-    dest.mkdir(parents=True)
-    keep = {key: manifest[key] for key in ("engine", "seed", "exe_sha256", "fixtures", "race_sha256")}
-    keep["scenarios"] = list(names)
-    (dest / "run.json").write_text(json.dumps(keep, indent=2) + "\n")
+    baseline = {}
+    if (dest / "run.json").is_file():
+        baseline = json.loads((dest / "run.json").read_text())
+        if any(baseline[key] != manifest[key] for key in ("seed", "fixtures", "race_sha256")):
+            raise ValueError("baseline seed or fixtures differ from this run")
+    scenarios = dict(baseline.get("scenarios", {}))
+    present = [name for name in names if name in scenarios or (dest / name).exists()]
+    if present and not args.replace:
+        raise ValueError(f"baseline already has {', '.join(present)}; pass --replace to regenerate")
     for name in names:
+        if (dest / name).exists():
+            shutil.rmtree(dest / name)
         for turn in CHECKPOINTS:
             source = work / name / "checkpoints" / f"{turn:03}"
             saved = json.loads((source / "checkpoint.json").read_text())
@@ -288,7 +295,12 @@ def export(args):
             saved.pop("command", None)
             saved.pop("source_checkpoint", None)
             (target / "checkpoint.json").write_text(json.dumps(saved, indent=2) + "\n")
-    print(f"Exported {len(names)} scenarios to {dest}")
+        scenarios[name] = manifest["exe_sha256"]
+    keep = {key: manifest[key] for key in ("engine", "seed", "fixtures", "race_sha256")}
+    # Executable that produced each scenario's checkpoints.
+    keep["scenarios"] = {name: scenarios[name] for name in SCENARIOS if name in scenarios}
+    (dest / "run.json").write_text(json.dumps(keep, indent=2) + "\n")
+    print(f"Exported {', '.join(names)} to {dest}")
 
 
 def summarize(results, report):

@@ -18,25 +18,6 @@ divergences explicitly rather than hiding them in comparison rules.
 
 ## Original bugs emulated (revert when parity is no longer needed)
 
-### Cybertron mine-laying order carries leftover stack bytes
-
-- **Where:** `ai4.c` DoCyberAiTurn, `rgbOrdFrame`.
-- **Original:** DoCyberAiTurn's random mine-laying move builds a local
-  `ORDER ord` without setting its task union, so `tlm.cTime` (also read as
-  `tsell.iPlrX`, the laying countdown: 0 stops, 5 lays forever) is whatever
-  the stack slot held. MSVC overlapped block-scoped `shdef`,
-  `rgRecycleSBShdef`, and `ord` in the frame. After turn 80, the recycle
-  clears zero that slot and the fleet stops laying on arrival.
-- **Parity repair:** the three locals share one `rgbOrdFrame` byte array laid
-  out like the Win16 frame (`shdef` +0, `ord` +0x84, `rgRecycleSBShdef` +0x86).
-- **Revert to:** remove the overlay and set `ord.tlm.cTime = 5` and
-  `ord.tlm.cTimeOld = 5`, like the AI's other LayMines orders (lay forever).
-- **Not reproduced:** at turn 80 or earlier, with no design scrapped that
-  turn, the slot holds residue from functions called before DoCyberAiTurn.
-  In the original it is a stack address that shifts with the save path
-  length (for example 0xa2e2), and native's frame is uninitialized. The
-  regression report shows this as a `tlm.cTime` difference (oneai5, turn 80).
-
 ### Tutorial ship builder falls off the end of the function
 
 - **Where:** `tutor.c` FTutorialEnabledShipBuilder, `case tutsbEdit`, marked
@@ -158,8 +139,9 @@ results depend on them.
   the decisions didn't, and the wormhole jumps showed the shifted RNG.
   Making it `static` did not match either. **Revert to:** initialize `cshWar`
   to 0, or have FPotentMacWarFleet always store `cEquiv`.
-- **Macinti mine-laying order** (`ai3.c` DoMacintiAiTurn): same unset task
-  union as Cybertron. Its `tlm.cTime` slot (BP-0xba) overlaps the far-pointer
+- **Macinti mine-laying order** (`ai3.c` DoMacintiAiTurn): the local
+  `ORDER ord` never sets its task union, so `tlm.cTime` (the laying
+  countdown) is whatever the stack held. Its `tlm.cTime` slot (BP-0xba) overlaps the far-pointer
   segment of block local `lpplBest` and the tail of `shdef`, so the original
   value depends on a Win16 selector and cannot be reproduced deterministically.
 - **PszFormatString** `vrgszUnits[-1]`: display text only. The original read a

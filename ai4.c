@@ -396,7 +396,6 @@ void DoCyberAiTurn(PROD *rgprod) {
     int16_t        cFr;
     int16_t        iSBDef;
     PLANET        *lpplEnemy;
-    uint8_t        rgbOrdFrame[150];
 
     dOffsetPlanTemp = game.cPlanMax * 2 + 2;
     cSBDefenderFleets = 0;
@@ -467,9 +466,9 @@ void DoCyberAiTurn(PROD *rgprod) {
             for (j = i * 4 + 9; j >= i * 4 + 6; j--) {
                 if (!rgshdef[j].fFree) {
                     if (rgshdef[j].cExist == 0 && (fScrap || j != i * 4 + 6)) {
-                        *(SHDEF *)rgbOrdFrame = rgshdef[j];
-                        (*(SHDEF *)rgbOrdFrame).fFree = TRUE;
-                        FChangeAiShdef((SHDEF *)rgbOrdFrame, j);
+                        shdef = rgshdef[j];
+                        shdef.fFree = TRUE;
+                        FChangeAiShdef(&shdef, j);
                     } else {
                         rgRecycleShdef[j] = 1;
                         fScrap = FALSE;
@@ -484,16 +483,16 @@ void DoCyberAiTurn(PROD *rgprod) {
     cExistColony = rgshdef[1].cExist;
     if (game.turn > 80) {
         SplitOutShdefs(rgRecycleShdef);
-        memset(&rgbOrdFrame[134], 0, 16);
-        rgbOrdFrame[134] = 2;
-        SplitOutShdefs(&rgbOrdFrame[134]);
-        memset(&rgbOrdFrame[134], 0, 16);
-        rgbOrdFrame[135] = 2;
-        SplitOutShdefs(&rgbOrdFrame[134]);
-        memset(&rgbOrdFrame[134], 0, 16);
-        rgbOrdFrame[137] = 2;
-        rgbOrdFrame[136] = 2;
-        SplitOutShdefs(&rgbOrdFrame[134]);
+        memset(rgRecycleSBShdef, 0, 16);
+        rgRecycleSBShdef[0] = 2;
+        SplitOutShdefs(rgRecycleSBShdef);
+        memset(rgRecycleSBShdef, 0, 16);
+        rgRecycleSBShdef[1] = 2;
+        SplitOutShdefs(rgRecycleSBShdef);
+        memset(rgRecycleSBShdef, 0, 16);
+        rgRecycleSBShdef[3] = 2;
+        rgRecycleSBShdef[2] = 2;
+        SplitOutShdefs(rgRecycleSBShdef);
     }
     lpciPlanTemp = (CYBERINFOTEMP *)(vlpbAiData + dOffsetPlanTemp);
     fmemset(lpciPlanTemp, 0, game.cPlanMax * sizeof(CYBERINFOTEMP));
@@ -688,13 +687,15 @@ void DoCyberAiTurn(PROD *rgprod) {
                                     idPlanDst = IdRandomPlanetNearby(lpfl->pt, 105, TRUE);
                                     if (idPlanDst != idplNone && idPlanDst != lpfl->idPlanet) {
                                         ClearAiCurrentTask(lpfl, TRUE);
-                                        (*(ORDER *)&rgbOrdFrame[132]).id = idPlanDst;
-                                        (*(ORDER *)&rgbOrdFrame[132]).grobj = grobjPlanet;
-                                        (*(ORDER *)&rgbOrdFrame[132]).pt = rgptPlan[idPlanDst];
-                                        (*(ORDER *)&rgbOrdFrame[132]).grTask = grTaskLayMines;
-                                        (*(ORDER *)&rgbOrdFrame[132]).fValidTask = TRUE;
-                                        (*(ORDER *)&rgbOrdFrame[132]).iWarp = 4;
-                                        FMoveAiFleet(lpfl, (ORDER *)&rgbOrdFrame[132], FALSE);
+                                        ord.id = idPlanDst;
+                                        ord.grobj = grobjPlanet;
+                                        ord.pt = rgptPlan[idPlanDst];
+                                        ord.grTask = grTaskLayMines;
+                                        ord.tlm.cTime = 5;
+                                        ord.tlm.cTimeOld = 5;
+                                        ord.fValidTask = TRUE;
+                                        ord.iWarp = 4;
+                                        FMoveAiFleet(lpfl, &ord, FALSE);
                                         continue;
                                     }
                                 }

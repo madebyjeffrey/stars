@@ -366,12 +366,10 @@ deterministically. They are fixed after the `2.6jrc3` tag
 
 | Scenario | First diff | Cause | Where |
 | --- | --- | --- | --- |
-| oneai5 | t80 checkpoint, `rtOrderA tlm.cTime 0xa2e2 → 0x0001` | The Cybertron mine-laying `ORDER ord` never sets its task union. At turn 80 or earlier the slot holds stack residue that changes with the save path's length. | `ai4.c` `DoCyberAiTurn`, `rgbOrdFrame` |
 | smallai6 | t57 (t80 checkpoint) | `TargetMacArmada` compares an uninitialized `cshWar`. `FPotentMacWarFleet` returns without writing `*pcEquiv` for weak fleets. | `ai3.c` `TargetMacArmada`, `FPotentMacWarFleet` |
 | oneai6 | t68 (t80 checkpoint) | Same `cshWar` cause. With `cshWar = 1000` it matches to t84, then the RNG draw count drifts. | same |
 
-The oneai5 task-union words depend on the save path, so they can differ from
-the committed report in runs from other directories. For bisecting, use
+For bisecting, use
 `crossfeed`/`bisect` (above), a `-DSTARS_TEST_TRACE=ON` build with
 `STARS_TRACE=trace.log`, and the `.xN` AI logs in each save directory.
 

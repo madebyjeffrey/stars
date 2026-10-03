@@ -1,7 +1,6 @@
 {
   "engine": "native",
   "seed": 12345,
-  "exe_sha256": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
   "fixtures": {
     "noai": "897af216a9ac6f0bddc42d4f5c2447ccd15f554a770f407c967933da4aa04e70",
     "oneai1": "29bc88896fad8db7ed649c16cbc8cd2396e1e58b54a2499c345153c459ec30d5",
@@ -14,12 +13,13 @@
     "smallai6": "dc138e23f6827942c4ef2720cc2b06a3c34a7cfe875e761067ed1f080f41121f"
   },
   "race_sha256": "babfcf251d4c186c1a44d5d9a4b895d6e35f4ce694bb27fa0ff50eef354bd3a1",
-  "scenarios": [
-    "noai",
-    "oneai1",
-    "oneai2",
-    "oneai3",
-    "oneai4",
-    "smallai4"
-  ]
+  "scenarios": {
+    "noai": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
+    "oneai1": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
+    "oneai2": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
+    "oneai3": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
+    "oneai4": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93",
+    "oneai5": "b1da09a54e73c0157794e7c19ba3bf850d33a88050843f8d2cb30370827ed25e",
+    "smallai4": "4c03f404d9f7686ee99e2ea4f0c5f681c8a8df7e0e3faff4bfc8496845e27b93"
+  }
 }

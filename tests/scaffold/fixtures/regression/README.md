@@ -4,8 +4,8 @@ The `.def` files configure the fixed-seed scenarios. `original/` contains
 existing DOSBox REGTEST checkpoints for `noai`, `oneai1`, `oneai2`, `oneai3`,
 `oneai4`, and `smallai4`: the record of the original game's behavior.
 `native/` contains the native build's checkpoints, the baseline CI compares
-against. Its `run.json` lists its scenarios and the executable hash that
-produced it. `regression.py export` writes it from a completed run.
+against. Its `run.json` lists its scenarios and the hash of the executable
+that produced each one. `regression.py export` writes it from a completed run.
 
 Each scenario has checkpoints at turns 0, 1, 10, 25, 50, 80, 100, and 150.
 The save bytes are copied unchanged. Each `checkpoint.json` retains the turn,
@@ -17,7 +17,7 @@ Executables, logs, live saves, and DOSBox configuration are not included.
 
 `oneai5`, `oneai6`, and `smallai6` are excluded from `original/`. Their
 results depend on original uninitialized reads, so they are added to
-`native/` only once those reads are fixed. Their definitions remain
+`native/` only once those reads are fixed (`oneai5` is). Their definitions remain
 available for manual investigation with the local starsbox reference.
 
 `Stars.ini` is a minimal unattended test registration for native CLI runs.

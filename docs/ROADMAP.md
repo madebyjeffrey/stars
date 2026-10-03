@@ -18,14 +18,14 @@ behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
 
 - **Regression divergences** (see
   [REGRESSION.md](../tests/scaffold/REGRESSION.md#known-divergences)): fix the
-  Cybertron and Macinti mine-laying task unions and initialize `cshWar`.
+  Macinti mine-laying task union and initialize `cshWar`, then add `oneai6`
+  and `smallai6` to the native baseline.
 - **Parity sites:** revert the items under "Original bugs emulated" and
   "Known Win16 behavior not reproduced" in
   [WIN16-PARITY.md](WIN16-PARITY.md), as each entry describes:
 
   | Site                                                 | Parity behavior                                                                                       | Revert to                                                                                                      |
   | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-  | `ai4.c` `DoCyberAiTurn` `rgbOrdFrame[150]`           | `shdef`, `ord` (+0x84) and `rgRecycleSBShdef` (+0x86) overlaid like the Win16 frame                   | Separate locals again, with `ord.tlm.cTime = 5; ord.tlm.cTimeOld = 5;` as in the AI's other mine-laying orders |
   | `ai3.c` `DoMacintiAiTurn` mine-laying order          | Task union never set (not reproducible)                                                               | Set `tlm.cTime`/`cTimeOld = 5`                                                                                 |
   | `ai3.c` `TargetMacArmada`                            | `cshWar` uninitialized (not reproduced)                                                               | Initialize to 0, or make `FPotentMacWarFleet` always store `*pcEquiv`                                          |
   | `msg.c` `PszFormatString`                            | `vrgszUnits[-1]` reads before the array (display text only)                                           | Bounds-check the unit index                                                                                    |

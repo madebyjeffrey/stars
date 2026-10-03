@@ -25,15 +25,12 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 - **Toolchain parity (keep):** `qsort16` (`win16defines.h`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.
-- **Warnings kept** (`-Wall -Wextra -Wno-unused-parameter`, 120):
+- **Warnings kept** (`-Wall -Wextra -Wno-unused-parameter`, 117):
   - **Unused-but-set (79):** debug-info locals the original also stores to,
     probably for asserts or debug output that was compiled out.
   - **Sign-compare (22):** casts such as `(uint32_t)(dx * dx)` record the
     original's unsigned arithmetic.
   - **Type-limits (14):** enum range checks on unsigned fields.
-  - **Unused variables (3):** `ai4.c` `DoCyberAiTurn`'s `shdef`,
-    `rgRecycleSBShdef` and `ord`, which the `rgbOrdFrame` parity overlay
-    leaves unused. Remove them when that overlay is reverted.
   - **Tautological compare (1):** `aiutil.c` `IroEnsureAi`
     `(iTechCur & 0xf) == 0x1a` is an original dead branch.
   - **Function cast (1):** `ship.c` `TransferStuff` casts
