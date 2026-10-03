@@ -59,8 +59,8 @@ When goals conflict, apply them in this order:
   64-bit (pointer size, `POINT16`, heap headers, CRT differences). As shims
   are replaced with plain Win32 code, the marker and its
   `docs/WIN16-PARITY.md` or `docs/NATIVE-PORT.md` entry go with them.
-- `/* PARITY: ... */` marks remaining Win16 behavior reproductions. Each has
-  an entry in `docs/WIN16-PARITY.md`; remove both when the fix lands.
+- Don't add `/* PARITY: ... */` markers on `main`. Reproducing Win16 bugs
+  for the regression belongs on the `2.6j` branch.
 - `#ifdef STARS_TEST_*` marks test-harness code.
 
 ## Things that must not change
@@ -98,7 +98,7 @@ When goals conflict, apply them in this order:
   the original did before changing it, especially for bug fixes. If they're
   missing, use `stars-asm dasm asm|sem -n <Func>`.
 - `docs/KNOWN-BUGS.md` maps reported original bugs to source.
-  `docs/WIN16-PARITY.md` lists Win16 behavior still reproduced or guarded.
+  `docs/WIN16-PARITY.md` lists the remaining Win16 guards and boundaries.
   `docs/NATIVE-PORT.md` covers the native port. `docs/ROADMAP.md` lists the
   work left. Update them when an item is finished or found.
 

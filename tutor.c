@@ -2867,8 +2867,8 @@ int16_t FTutorialEnabledShipBuilder(TutorShipBuilderAction itutsbAction) {
     case tutsbEdit:
         if (game.turn != 25 || tutor.idt != idtReadFirstTwoMessages)
             goto NoCustom;
-        /* PARITY: original broke out of the switch and fell off the end,
-           returning FCheckShipBuilder's TRUE in AX; see WIN16-PARITY.md */
+        /* The original broke out of the switch and fell off the end of the
+           function, returning FCheckShipBuilder's TRUE in AX. */
         if (FCheckShipBuilder(0, 2))
             return TRUE;
         TutorError(idsTutorialDontHaveCorrectShipSelectedShip);

@@ -6,7 +6,7 @@ order:
 
 1. Native regression baseline and 2.8 repository rules (done).
 2. Product versioning from git tags and build numbers (done).
-3. The parity reverts below, one commit each.
+3. Reverting the Win16 parity emulation, one commit each (done).
 4. Replacing the `win16defines.h` shims with native Win32 code, one group at
    a time, behavior-neutral.
 5. Original bug fixes from [KNOWN-BUGS.md](KNOWN-BUGS.md), and 2.7 features.
@@ -16,17 +16,10 @@ Each fix changes behavior, so the native baseline moves with it
 in its own commit, remove it from this list when it lands, and, for Win16
 behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
 
-- **Parity sites:** revert the items under "Original bugs emulated" and
-  "Known Win16 behavior not reproduced" in
-  [WIN16-PARITY.md](WIN16-PARITY.md), as each entry describes:
-
-  | Site                                                 | Parity behavior                                                                                       | Revert to                                                                                                      |
-  | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-  | `tutor.c` `FTutorialEnabledShipBuilder`              | Explicit `return TRUE` where the original fell off the end with TRUE in AX                            | Nothing; drop the `PARITY` marker                                                                              |
-
+- **Win16 shims:** replace the `win16defines.h` aliases and wrappers with
+  native Win32/CRT code, one group at a time, without moving the baseline.
   The corruption guards, native record boundaries and toolchain parity
   (`qsort16`, x87 rounding casts) stay.
-
 - **Original release bugs:** [KNOWN-BUGS.md](KNOWN-BUGS.md) maps the supplied
   bug list to source and separates located mechanisms from candidates that
   still need reproduction.

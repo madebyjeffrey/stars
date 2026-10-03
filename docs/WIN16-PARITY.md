@@ -1,37 +1,17 @@
 # Win16 Parity Repairs
 
-The native build reproduces some behavior of the original Stars! 2.6jrc3 that
+The `2.6j` branch reproduces behavior of the original Stars! 2.6jrc3 that
 depends on Win16 memory layout, uninitialized stack bytes, or the original
-compiler and runtime. These repairs exist only so fixed-seed regression runs
-(`tests/scaffold/REGRESSION.md`) can show that native and original match turn
-for turn, which in turn shows the reconstruction is faithful.
+compiler and runtime, so the fixed-seed regression
+(`tests/scaffold/REGRESSION.md`) could show native and original matching
+turn for turn. On `main` those emulated bugs are fixed (see
+`CHANGELOG.md`); this document lists what remains: guards against native
+corruption, native record and message boundaries, and toolchain behavior
+the game's results still depend on.
 
-Once parity is no longer needed, the items under **Original bugs emulated**
-can be reverted to the behavior the code evidently intended. Each entry lists
-where the repair lives, what the original did, and what a revert should do.
-
-The sources in this checkout are maintained manually. Change the `.c`/`.h`
-files directly when modifying or reverting a repair, and update this document
-in the same change with the affected site, original behavior, and new behavior.
-Build and run the regression comparisons after each change; retain any accepted
-divergences explicitly rather than hiding them in comparison rules.
-
-## Original bugs emulated (revert when parity is no longer needed)
-
-### Tutorial ship builder falls off the end of the function
-
-- **Where:** `tutor.c` FTutorialEnabledShipBuilder, `case tutsbEdit`, marked
-  `PARITY`.
-- **Original:** the success test was `if (FCheckShipBuilder(0, 2)) break;`
-  (tutor.c:3557). The `switch` is the function's last statement and there is
-  no final `return`, so the jump goes straight to the epilogue (tutor.c:3732)
-  and the function returns whatever AX holds: FCheckShipBuilder's result,
-  which is always TRUE on that path.
-- **Parity repair:** `if (FCheckShipBuilder(0, 2) != 0) return TRUE;`. Falling
-  off the end of a non-void function is undefined in native C, so the return
-  value is made explicit.
-- **Revert to:** nothing; this is already the evident intent. Drop the marker
-  if parity tracking is dropped.
+Change the `.c`/`.h` files directly when modifying one of these, and update
+this document in the same change with the affected site, original behavior,
+and new behavior. Build and run the regression comparisons after each change.
 
 ## Corruption guards (keep)
 
