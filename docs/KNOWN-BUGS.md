@@ -2,7 +2,11 @@
 
 This maps the user-supplied release bug list to the current reconstructed
 sources. Locations use filenames and original function names, not line numbers.
-These are preservation notes, not instructions to fix the original game.
+The bugs planned for 2.8, and their status, are tracked in
+[ROADMAP.md](ROADMAP.md), step 5. The balance items (chaff, split fleet dodge,
+battle board overload, 0.2% minimum damage, profitable scrapping, false public
+scores, mine damage allocation) are kept here for reference only; 2.8 doesn't
+change them.
 
 **Located** means the relevant mechanism is visible in the source; it does not
 mean the complete player-reported scenario has been reproduced in a test.
