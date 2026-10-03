@@ -245,25 +245,6 @@ static inline UINT GetDriveType16(int drive) {
 
 static inline HGLOBAL AllocResource16(HINSTANCE hinst, HRSRC hrsrc, DWORD cb) { return GlobalAlloc(GMEM_FIXED, cb ? cb : SizeofResource(hinst, hrsrc)); }
 
-// tagTIMERINFO retains the 12-byte ToolHelp layout from utils/TOOLHELP.H.
-typedef struct tagTIMERINFO {
-    DWORD dwSize;
-    DWORD dwmsSinceStart;
-    DWORD dwmsThisVM;
-} tagTIMERINFO, TIMERINFO;
-
-// TimerCount reports elapsed system milliseconds. Win32 has no separate
-// Win16 VM clock, so both counters use the same tick count.
-static inline BOOL TimerCount(TIMERINFO *timer) {
-    if (timer->dwSize != sizeof(*timer)) {
-        SetLastError(ERROR_BAD_LENGTH);
-        return FALSE;
-    }
-    timer->dwmsSinceStart = GetTickCount();
-    timer->dwmsThisVM = timer->dwmsSinceStart;
-    return TRUE;
-}
-
 // _find_t provides the DOS search fields consumed by GetDiskSerialNumber.
 typedef struct _find_t {
     unsigned char reserved[21];

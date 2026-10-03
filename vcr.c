@@ -937,14 +937,10 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
 void Delay(int16_t ctick) {
     uint32_t     dwTickLast;
     uint32_t     dwTickCur;
-    tagTIMERINFO ti;
 
-    ti.dwSize = 12;
-    TimerCount(&ti);
-    dwTickLast = ti.dwmsSinceStart;
+    dwTickLast = GetTickCount();
     do {
-        TimerCount(&ti);
-        dwTickCur = ti.dwmsSinceStart;
+        dwTickCur = GetTickCount();
     } while (dwTickCur >= dwTickLast && dwTickCur < ctick + dwTickLast);
     return;
 }
@@ -971,7 +967,6 @@ void AnimateAttack(HDC hdc) {
     POINT16      ptSrc;
     POINT16      ptTorp;
     POINT16      ptLeft;
-    tagTIMERINFO ti;
     int16_t      iFrame;
     int16_t      dx;
     int16_t      fKill;
@@ -1113,15 +1108,12 @@ void AnimateAttack(HDC hdc) {
                     ptBase = ptTorp;
                     dxFrame = ptTorp.x - ptDest.x;
                     dyFrame = ptTorp.y - ptDest.y;
-                    ti.dwSize = 12;
-                    TimerCount(&ti);
-                    dwTickLast = ti.dwmsSinceStart;
+                    dwTickLast = GetTickCount();
                     for (iFrame = 0; iFrame < cFrame; iFrame++) {
                         BitBlt(hdcMem, 0, 0, 32, 32, hdc, ptTorp.x - 16, ptTorp.y - 16, SRCCOPY);
                         DrawIcon(hdc, ptTorp.x - 16, ptTorp.y - 16, rghiconVCR[(iFrame & 3) + 3]);
                         do {
-                            TimerCount(&ti);
-                            dwTickCur = ti.dwmsSinceStart;
+                            dwTickCur = GetTickCount();
                         } while (dwTickCur >= dwTickLast && dwTickCur < dwTickLast + 35 - (int16_t)(10 * viSpeedVCR));
                         dwTickLast = dwTickCur;
                         BitBlt(hdc, ptTorp.x - 16, ptTorp.y - 16, 32, 32, hdcMem, 0, 0, SRCCOPY);

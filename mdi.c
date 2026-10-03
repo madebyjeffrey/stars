@@ -1167,7 +1167,6 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
     int32_t      x;
     int16_t      idCur;
     HCURSOR      hcurSav;
-    tagTIMERINFO ti;
     uint32_t     dwTickCur;
     uint32_t     dwTickBase;
     int16_t      mf;
@@ -1497,13 +1496,10 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                     remove(szWork);
                     DirtyGame(FALSE);
                     ShowProgressGauge();
-                    ti.dwSize = 12;
-                    TimerCount(&ti);
-                    dwTickBase = ti.dwmsSinceStart;
+                    dwTickBase = GetTickCount();
                     do {
                         UpdateProgressGauge((LOWORD(dwTickCur) - LOWORD(dwTickBase)) * 2);
-                        TimerCount(&ti);
-                        dwTickCur = ti.dwmsSinceStart;
+                        dwTickCur = GetTickCount();
                     } while (dwTickCur >= dwTickBase && dwTickCur < dwTickBase + 500);
                     goto LTutorialFinishUp;
                 }
