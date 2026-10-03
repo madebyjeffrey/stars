@@ -382,7 +382,7 @@ void DrawPlanetMinSum(HDC hdc, TILE *ptile, OBJ obj) {
             }
             SelectObject(hdc, rghfontArial8[0]);
             SetTextColor(hdc, crButtonText);
-            c = _wsprintf(szWork, PszGetCompressedString(idsLdkt), ppl->rgwtMin[i]);
+            c = wsprintf(szWork, PszGetCompressedString(idsLdkt), ppl->rgwtMin[i]);
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
             yTop += dyArial8;
         }
@@ -397,9 +397,9 @@ void DrawPlanetMinSum(HDC hdc, TILE *ptile, OBJ obj) {
             SelectObject(hdc, rghfontArial8[0]);
         }
         if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsD), CMinesOperating(ppl));
+            c = wsprintf(szWork, PszGetCompressedString(idsD), CMinesOperating(ppl));
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsDD), ppl->cMines, CMaxOperableMines(ppl, idPlayer, FALSE));
+            c = wsprintf(szWork, PszGetCompressedString(idsDD), ppl->cMines, CMaxOperableMines(ppl, idPlayer, FALSE));
         }
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight * 2);
         yTop += dyArial8;
@@ -412,7 +412,7 @@ void DrawPlanetMinSum(HDC hdc, TILE *ptile, OBJ obj) {
         if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
             c = CchGetString(idsN, szWork);
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsDD), ppl->cFactories, CMaxOperableFactories(ppl, idPlayer, FALSE));
+            c = wsprintf(szWork, PszGetCompressedString(idsDD), ppl->cFactories, CMaxOperableFactories(ppl, idPlayer, FALSE));
         }
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight * 2);
         yTop += dyArial8;
@@ -497,7 +497,7 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
         if (!sel.pl.fNoResearch) {
             cResAvail -= MulDiv(cRes, rgplr[idPlayer].pctResearch, 100);
         }
-        c = _wsprintf(szWork, PszGetCompressedString(idsDD), cResAvail, cRes);
+        c = wsprintf(szWork, PszGetCompressedString(idsDD), cResAvail, cRes);
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         yTop += dyArial8;
         hbrSav = SelectObject(hdc, hbrButtonHilite);
@@ -531,11 +531,11 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
         }
         if (dRange > 0) {
             if (dRangeP > 0) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsDDLY), dRangeP, dRange);
+                c = wsprintf(szWork, PszGetCompressedString(idsDDLY), dRangeP, dRange);
             } else if (dRange < 100) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsDLightYears), dRange);
+                c = wsprintf(szWork, PszGetCompressedString(idsDLightYears), dRange);
             } else {
-                c = _wsprintf(szWork, PszGetCompressedString(idsDLY), dRange);
+                c = wsprintf(szWork, PszGetCompressedString(idsDLY), dRange);
             }
         } else {
             CchGetString(idsNone4, szWork);
@@ -556,7 +556,7 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
         if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
             c = CchGetString(idsN, szWork);
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsDD), sel.pl.cDefenses, CMaxOperableDefenses(&sel.pl, idPlayer, FALSE));
+            c = wsprintf(szWork, PszGetCompressedString(idsDD), sel.pl.cDefenses, CMaxOperableDefenses(&sel.pl, idPlayer, FALSE));
         }
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         yTop += dyArial8;
@@ -585,7 +585,7 @@ void DrawPlanetStats(HDC hdc, TILE *ptile, OBJ obj) {
         if (dRange != 0) {
             CalcPctSurvive(&sel.pl, &pct, NULL);
             pct = (float)((long double)1.0 - pct);
-            c = _wsprintf(szWork, PCTDXPCTDPCTPCT, LOWORD((int32_t)((long double)pct * 100)),
+            c = wsprintf(szWork, PCTDXPCTDPCTPCT, LOWORD((int32_t)((long double)pct * 100)),
                           LOWORD((int32_t)((pct - (long double)(int16_t)LOWORD((int32_t)((long double)pct * 100)) / 100.0) * 10000)));
         } else {
             c = CchGetString(GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh ? idsN : idsNone4, szWork);
@@ -679,7 +679,7 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
             } else if ((uint32_t)w == 0xffff) {
                 c = CchGetString(idsUnlimited, szWork);
             } else {
-                c = _wsprintf(szWork, PCTDKT, w);
+                c = wsprintf(szWork, PCTDKT, w);
             }
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
             yTop += dyArial8;
@@ -690,7 +690,7 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
             if (w == 0) {
                 c = CchGetString(idsNone4, szWork);
             } else {
-                c = _wsprintf(szWork, PszGetCompressedString(idsLddp), w, 0);
+                c = wsprintf(szWork, PszGetCompressedString(idsLddp), w, 0);
             }
             SelectObject(hdc, rghfontArial8[0]);
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
@@ -702,7 +702,7 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
             if (l == 0) {
                 c = CchGetString(idsNone4, szWork);
             } else {
-                c = _wsprintf(szWork, PszGetCompressedString(idsLddp), l);
+                c = wsprintf(szWork, PszGetCompressedString(idsLddp), l);
             }
             SelectObject(hdc, rghfontArial8[0]);
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
@@ -716,7 +716,7 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
                 if (w < 5) {
                     w = 5;
                 }
-                c = _wsprintf(szWork, PCTDPCTPCT, (uint32_t)w / 5);
+                c = wsprintf(szWork, PCTDPCTPCT, (uint32_t)w / 5);
                 crForeSav = SetTextColor(hdc, 127);
             } else {
                 c = CchGetString(idsNone4, szWork);
@@ -735,12 +735,12 @@ void DrawPlanetStarbase(HDC hdc, TILE *ptile, OBJ obj) {
             TextOut(hdc, xLeft, yTop, szWork, c);
             iWarp = IWarpMAFromLppl(&sel.pl, &fTwo);
             if (iWarp > 0) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsWarpD), iWarp);
+                c = wsprintf(szWork, PszGetCompressedString(idsWarpD), iWarp);
                 if (fTwo) {
                     szWork[c++] = '+';
                 }
             } else {
-                c = _wsprintf(szWork, PszGetCompressedString(idsNone4));
+                c = wsprintf(szWork, PszGetCompressedString(idsNone4));
             }
             SelectObject(hdc, rghfontArial8[0]);
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
@@ -805,7 +805,7 @@ void DrawMassWarpGauge(HDC hdc, RECT *prc, int16_t iBest, int16_t iCur) {
     lCur = (int16_t)(iCur - 4);
     l = LDrawGauge(hdc, prc, 1, &lCur, &hbr, lMax);
     iMode = SetBkMode(hdc, TRANSPARENT);
-    c = _wsprintf(szWork, PszGetCompressedString(idsWarpLd), l + 4);
+    c = wsprintf(szWork, PszGetCompressedString(idsWarpLd), l + 4);
     l = GetTextExtent(hdc, szWork, c);
     RcCtrTextOut(hdc, prc, szWork, c);
     SetBkMode(hdc, iMode);
@@ -932,14 +932,14 @@ char *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16
         }
         c = CchGetString(ids, szWork);
     } else if (iTurnEnd == 100) {
-        c = _wsprintf(szWork, PszGetCompressedString(idsDYears), iTurnBegin);
+        c = wsprintf(szWork, PszGetCompressedString(idsDYears), iTurnBegin);
     } else if (iTurnBegin == iTurnEnd) {
         if (iTurnBegin == 0) {
             c = CchGetString(idsSkipped, szWork);
         } else if (iTurnBegin == -1) {
             c = CchGetString(idsNeeded, szWork);
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsDYear), iTurnBegin);
+            c = wsprintf(szWork, PszGetCompressedString(idsDYear), iTurnBegin);
             if (iTurnBegin != 1) {
                 szWork[c] = 's';
                 c++;
@@ -947,7 +947,7 @@ char *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16
             }
         }
     } else {
-        c = _wsprintf(szWork, PszGetCompressedString(idsDDYears), iTurnBegin, iTurnEnd);
+        c = wsprintf(szWork, PszGetCompressedString(idsDDYears), iTurnBegin, iTurnEnd);
     }
     if (etaFirst) {
         *etaFirst = iTurnBegin;
@@ -1875,10 +1875,10 @@ char *PszCalcEnvVar(EnvType iEnv, int16_t iVar) {
     default:
         return PszCalcGravity(iVar);
     case Temperature:
-        _wsprintf(szWork, "%d%cC", iVar * 4 - 200, 186);
+        wsprintf(szWork, "%d%cC", iVar * 4 - 200, 186);
         break;
     case Radiation:
-        _wsprintf(szWork, "%dmR", iVar);
+        wsprintf(szWork, "%dmR", iVar);
     }
     return szWork;
 }
@@ -1896,7 +1896,7 @@ char *PszCalcGravity(int16_t iGravity) {
     if (iGravity < 50) {
         iVal = 10000 / iVal;
     }
-    _wsprintf(szWork, "%d.%02dg", iVal / 100, iVal % 100);
+    wsprintf(szWork, "%d.%02dg", iVal / 100, iVal % 100);
     return szWork;
 }
 
@@ -2140,7 +2140,7 @@ NoMsg:
                 ch = '!';
             }
             cItem = lpprod->cItem;
-            _wsprintf(szTemp, "%c%5d%s", ch, cItem, psz);
+            wsprintf(szTemp, "%c%5d%s", ch, cItem, psz);
             if (lpprod->grobj == grobjPlanet) {
                 if (lpprod->iItem < mdIdleFactory) {
                     szTemp[1] += 2;

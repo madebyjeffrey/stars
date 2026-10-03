@@ -15,9 +15,6 @@
 // instruction), not the upper half of an already-wide value.
 #define SIGNHIWORD(value) ((int16_t)(((uint16_t)(value) & 0x8000) ? -1 : 0))
 
-// Old Windows names
-#define _wsprintf wsprintfA
-
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
 #define MoveTo        MoveTo16

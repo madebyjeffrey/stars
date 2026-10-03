@@ -89,7 +89,7 @@ int16_t FGenerateTurn() {
         }
         for (i = 0; i < game.cPlayer; i++) {
             j = mpiplr2[i];
-            _wsprintf(szWork, "%s.x%d", szBase, j + 1);
+            wsprintf(szWork, "%s.x%d", szBase, j + 1);
             idPlayer = j;
             vrgts[j].lSerialNumber = -1;
             if (FLoadLogFile(szWork) && !FRunLogFile()) {
@@ -315,7 +315,7 @@ int16_t FGenerateTurn() {
                 fDone = TRUE;
             }
             if (i >= 0) {
-                _wsprintf(pchCur, ".x%d", i + 1);
+                wsprintf(pchCur, ".x%d", i + 1);
                 strcpy(pchBak, pchCur);
                 remove(szT);
                 if (_access(szBase, 0) == -1) {

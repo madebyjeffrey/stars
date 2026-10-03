@@ -1085,10 +1085,10 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 }
                 if (CchGetString(idsSCC, szT) >= 32) {
                 }
-                cch = _wsprintf(lpb2k, szT, PszPlayerName(lpmsgplr->iPlrFrom, TRUE, TRUE, TRUE, 0, NULL), 13, 10);
+                cch = wsprintf(lpb2k, szT, PszPlayerName(lpmsgplr->iPlrFrom, TRUE, TRUE, TRUE, 0, NULL), 13, 10);
                 if (CchGetString(idsSCC2, szT) >= 32) {
                 }
-                cch += _wsprintf(lpb2k + cch, szT,
+                cch += wsprintf(lpb2k + cch, szT,
                                  lpmsgplr->iPlrTo == 0 ? PszGetCompressedString(idsEverybody) : PszPlayerName(lpmsgplr->iPlrTo - 1, TRUE, TRUE, TRUE, 0, NULL),
                                  13, 10);
                 if (lpmsgplr->cLen >= 0) {
@@ -1352,7 +1352,7 @@ void SetMsgTitle(HWND hwnd) {
         i = gd.fSendMsgMode ? 738 : iMsgCur >= cMsg ? 1360 : gd.fGotoVCR ? 741 : 1357;
         SetWindowText(rghwndMsgBtn[1], PszGetCompressedString(i));
         if (gd.fSendMsgMode) {
-            _wsprintf(szWork, PszGetCompressedString(idsSendMessagesDD), iMsgSendCur + 1, vcmsgplrOut);
+            wsprintf(szWork, PszGetCompressedString(idsSendMessagesDD), iMsgSendCur + 1, vcmsgplrOut);
             rc = rcMsgText;
             ExpandRc(&rc, -4, -4);
             SetWindowPos(hwndMsgDrop, NULL, rc.left + 30, rc.top, rc.right - rc.left - 84, rc.bottom - rc.top, SWP_NOZORDER | SWP_SHOWWINDOW);
@@ -1386,10 +1386,10 @@ void SetMsgTitle(HWND hwnd) {
         }
         if (cMsgTot != 0) {
             CchGetString(idsYearDCMessagesDD, szT);
-            _wsprintf(szWork, szT, game.turn + 2400, ch, iMsgCur + 1, cMsgTot);
+            wsprintf(szWork, szT, game.turn + 2400, ch, iMsgCur + 1, cMsgTot);
         } else {
             CchGetString(idsYearDCMessagesNone, szT);
-            _wsprintf(szWork, szT, game.turn + 2400, ch);
+            wsprintf(szWork, szT, game.turn + 2400, ch);
         }
         EnableWindow(rghwndMsgBtn[0], IMsgPrev(FALSE) != imsgNone);
         EnableWindow(rghwndMsgBtn[2], IMsgNext(FALSE) != imsgNone);
@@ -1858,13 +1858,13 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 switch (*pszFormat) {
                 case 'f':
                     if (idPlayer != iplrNone) {
-                        c = _wsprintf(pch, ".x%d", idPlayer + 1);
+                        c = wsprintf(pch, ".x%d", idPlayer + 1);
                         goto DoInt;
                     }
                     /* fallthrough */
                 case 't':
                     if (idPlayer != iplrNone) {
-                        c = _wsprintf(pch, ".m%d", idPlayer + 1);
+                        c = wsprintf(pch, ".m%d", idPlayer + 1);
                         goto DoInt;
                     }
                     /* fallthrough */
@@ -1873,7 +1873,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                     pch += 4;
                     break;
                 case 'r':
-                    c = _wsprintf(pch, ".h%d", idPlayer + 1);
+                    c = wsprintf(pch, ".h%d", idPlayer + 1);
                     goto DoInt;
                 case 'y':
                     strcat(pch, ".xy");
@@ -1890,7 +1890,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszGetCompressedString(*pParams + 1348);
                 goto FinishString;
             case 'i':
-                c = _wsprintf(pch, PCTD, *pParams);
+                c = wsprintf(pch, PCTD, *pParams);
             DoInt:
                 pch += c;
                 pParams++;
@@ -1950,9 +1950,9 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 goto FinishString;
             case 'P':
                 if ((long double)(int16_t)(*pParams / 100) >= (long double)10.0) {
-                    c = _wsprintf(pch, PCTDPCTPCT, *pParams / 100);
+                    c = wsprintf(pch, PCTDPCTPCT, *pParams / 100);
                 } else {
-                    c = _wsprintf(pch, PCTDXPCTDPCTPCT, *pParams / 100, *pParams - *pParams / 100 * 100);
+                    c = wsprintf(pch, PCTDXPCTDPCTPCT, *pParams / 100, *pParams - *pParams / 100 * 100);
                 }
                 pch += c;
                 pParams++;
@@ -2020,7 +2020,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszPlayerName(w, FALSE, FALSE, FALSE, 0, NULL);
                 goto FinishString;
             case 'u':
-                c = _wsprintf(pch, "%u", *pParams);
+                c = wsprintf(pch, "%u", *pParams);
                 pch += c;
                 pParams++;
                 break;
@@ -2029,7 +2029,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
             case 'v':
                 l = (int32_t)((uint32_t)pParams[1] << 0x10) | (uint32_t)*pParams;
                 pParams += 2;
-                c = _wsprintf(pch, PCTLD, l);
+                c = wsprintf(pch, PCTLD, l);
                 pch += c;
                 if (*pszFormat == 'v')
                     break;
@@ -2053,7 +2053,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 }
                 if (c != idPlayer) {
                     pchT = PszPlayerName(c, FALSE, FALSE, TRUE, 0, NULL);
-                    _wsprintf(pch, "%s %s", pchT, lpshdef->hul.szClass);
+                    wsprintf(pch, "%s %s", pchT, lpshdef->hul.szClass);
                 } else {
                     strcpy(pch, lpshdef->hul.szClass);
                 }

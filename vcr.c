@@ -372,7 +372,7 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
             while (FTrackBtn(&btnt)) {
                 if ((iDir == -1 && iCur > 0) || (iDir == 1 && iCur < 4)) {
                     iCur += iDir;
-                    bt = _wsprintf(szWork, PszGetCompressedString(idsPlaybackSpeedD), iCur + 1);
+                    bt = wsprintf(szWork, PszGetCompressedString(idsPlaybackSpeedD), iCur + 1);
                     TextOut(hdc, ptSpeedVCR.x, ptSpeedVCR.y, szWork, bt);
                 }
             }
@@ -636,10 +636,10 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
         x = dxyVCRBoard + 14;
         y = 8;
         SelectObject(hdc, rghfontArial8[1]);
-        c = _wsprintf(szWork, PszGetCompressedString(idsPhaseDDRoundDD), viStepVCRCur + 2, vcStepVCR + 2, viRound + 1, vcRound + 1);
+        c = wsprintf(szWork, PszGetCompressedString(idsPhaseDDRoundDD), viStepVCRCur + 2, vcStepVCR + 2, viRound + 1, vcRound + 1);
         TextOut(hdc, x, y, szWork, c);
         y += dyArial8 + 4;
-        c = _wsprintf(szWork, PszGetCompressedString(idsPlaybackSpeedD), viSpeedVCR + 1);
+        c = wsprintf(szWork, PszGetCompressedString(idsPlaybackSpeedD), viSpeedVCR + 1);
         dx = LOWORD(GetTextExtent(hdc, szWork, c));
         TextOut(hdc, x, y, szWork, c);
         ptSpeedVCR.x = x;
@@ -665,7 +665,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
             }
             csh = vrgtok[vlpbrVCR->itok].csh;
             if (csh > 1) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
+                c = wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
             } else {
                 strcpy(szWork, lpshdef->hul.szClass);
                 c = strlen(szWork);
@@ -676,7 +676,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
             fJam = 0;
             if (vlpbrVCR->ctok > 0) {
                 psz = PszPlayerName(vrgtok[vlpbrVCR->itokAttack].iplr, FALSE, TRUE, TRUE, 0, NULL);
-                c = _wsprintf(szT, PszGetCompressedString(idsAttacksS), psz);
+                c = wsprintf(szT, PszGetCompressedString(idsAttacksS), psz);
                 TextOut(hdc, x, y, szT, c);
                 y += dyArial8;
                 if (vlpbrVCR->rgkill[0].dv.dp != 0) {
@@ -689,7 +689,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 }
                 csh = vrgtok[vlpbrVCR->itokAttack].csh;
                 if (csh > 1) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
+                    c = wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
                 } else {
                     strcpy(szWork, lpshdef->hul.szClass);
                     c = strlen(szWork);
@@ -714,17 +714,17 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                         dpShields += dpShT;
                     }
                 }
-                c = _wsprintf(szWork, PszGetCompressedString(idsDDDoing), brcT & 0xf, brcT >> 4);
+                c = wsprintf(szWork, PszGetCompressedString(idsDDDoing), brcT & 0xf, brcT >> 4);
                 TextOut(hdc, x, y, szWork, c);
                 y += dyArial8;
                 if (dpShields != 0) {
                     CchGetString(idsAnd, szT);
-                    c = _wsprintf(szWork, PszGetCompressedString(idsLdDamageShieldsS), dpShields, dpArmor > 0 ? szT : j > 0 ? "," : ".");
+                    c = wsprintf(szWork, PszGetCompressedString(idsLdDamageShieldsS), dpShields, dpArmor > 0 ? szT : j > 0 ? "," : ".");
                     TextOut(hdc, x, y, szWork, c);
                     y += dyArial8;
                 }
                 if (dpArmor != 0) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsLdDamageArmorC), dpArmor, j <= 0 ? 46 : 44);
+                    c = wsprintf(szWork, PszGetCompressedString(idsLdDamageArmorC), dpArmor, j <= 0 ? 46 : 44);
                     TextOut(hdc, x, y, szWork, c);
                     y += dyArial8;
                 }
@@ -734,7 +734,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     y += dyArial8;
                 }
                 if (j > 0) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsDestroyingDShip), j);
+                    c = wsprintf(szWork, PszGetCompressedString(idsDestroyingDShip), j);
                     if (j == 1) {
                         strcpy(&szWork[c], ".");
                         c++;
@@ -756,7 +756,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
         }
         if (vbrcVCRFocus != 0xff) {
             y = 200;
-            c = _wsprintf(szWork, PszGetCompressedString(idsSelectionDD), vbrcVCRFocus & 0xf, vbrcVCRFocus >> 4);
+            c = wsprintf(szWork, PszGetCompressedString(idsSelectionDD), vbrcVCRFocus & 0xf, vbrcVCRFocus >> 4);
             TextOut(hdc, x, y, szWork, c);
             y += dyArial8;
             if (viVCRFocus >= 0) {
@@ -775,13 +775,13 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 cshNew = cshT;
                 cshT = csh - cshT;
                 if (csh > 1 || cshT != 0) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
+                    c = wsprintf(szWork, PszGetCompressedString(idsSD), lpshdef->hul.szClass, csh);
                 } else {
                     strcpy(szWork, lpshdef->hul.szClass);
                     c = strlen(szWork);
                 }
                 if (cshT != 0) {
-                    c += _wsprintf(&szWork[c], " (-%d)", cshT);
+                    c += wsprintf(&szWork[c], " (-%d)", cshT);
                 }
                 SetTextColor(hdc, 8323072);
                 TextOut(hdc, x, y, szWork, c);
@@ -794,12 +794,12 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     } else {
                         i = vrgtok[viVCRFocus].spd + 1;
                     }
-                    c = _wsprintf(szWork, PszGetCompressedString(idsInitiativeD), vrgtok[viVCRFocus].initMin >= 0xff ? 0 : vrgtok[viVCRFocus].initMin);
+                    c = wsprintf(szWork, PszGetCompressedString(idsInitiativeD), vrgtok[viVCRFocus].initMin >= 0xff ? 0 : vrgtok[viVCRFocus].initMin);
                     TextOut(hdc, x, y, szWork, c);
-                    c = _wsprintf(szWork, PszGetCompressedString(idsMovementS), &rgszSpeed[i * 3]);
+                    c = wsprintf(szWork, PszGetCompressedString(idsMovementS), &rgszSpeed[i * 3]);
                     TextOut(hdc, xT, y, szWork, c);
                     y += dyArial8;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsArmorLd), dpT);
+                    c = wsprintf(szWork, PszGetCompressedString(idsArmorLd), dpT);
                     TextOut(hdc, x, y, szWork, c);
                     if (dv.dp == 0) {
                         c = CchGetString(idsDamageNone, szWork);
@@ -815,9 +815,9 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                         }
                         SetTextColor(hdc, 127);
                         if (vrgtok[viVCRFocus].grobj == grobjPlanet) {
-                            c = _wsprintf(szWork, PszGetCompressedString(idsDamageD), LOWORD(dpT));
+                            c = wsprintf(szWork, PszGetCompressedString(idsDamageD), LOWORD(dpT));
                         } else {
-                            c = _wsprintf(szWork, PszGetCompressedString(idsDamageLdD), csh, LOWORD(dpT));
+                            c = wsprintf(szWork, PszGetCompressedString(idsDamageLdD), csh, LOWORD(dpT));
                         }
                     }
                     TextOut(hdc, xT, y, szWork, c);
@@ -826,12 +826,12 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     if ((uint32_t)((uint32_t)vrgtok[viVCRFocus].dpShield * cshNew) - dpShields <= 0) {
                         c = CchGetString(idsShieldsNone, szWork);
                     } else {
-                        c = _wsprintf(szWork, PszGetCompressedString(idsShieldsLd), (uint32_t)((uint32_t)vrgtok[viVCRFocus].dpShield * cshNew) - dpShields);
+                        c = wsprintf(szWork, PszGetCompressedString(idsShieldsLd), (uint32_t)((uint32_t)vrgtok[viVCRFocus].dpShield * cshNew) - dpShields);
                     }
                     TextOut(hdc, x, y, szWork, c);
                     y += dyArial8;
                     if (vrgtok[viVCRFocus].pctJam != 0) {
-                        c = _wsprintf(szWork, PszGetCompressedString(idsJammingD), vrgtok[viVCRFocus].pctJam);
+                        c = wsprintf(szWork, PszGetCompressedString(idsJammingD), vrgtok[viVCRFocus].pctJam);
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
                     }
@@ -843,10 +843,10 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                         }
                         if (i == 408) {
                             CchGetString(idsTacticSDMoves, szT);
-                            c = _wsprintf(szWork, szT, PszGetCompressedString(i), vrgtok[viVCRFocus].dzDis);
+                            c = wsprintf(szWork, szT, PszGetCompressedString(i), vrgtok[viVCRFocus].dzDis);
                         } else {
                             CchGetString(idsTacticS, szT);
-                            c = _wsprintf(szWork, szT, PszGetCompressedString(i));
+                            c = wsprintf(szWork, szT, PszGetCompressedString(i));
                         }
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
@@ -854,12 +854,12 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     if (i != 414) {
                         CchGetString(idsPrimayTargetS, szT);
                         i = vrgtok[viVCRFocus].mdTarget1 + 400;
-                        c = _wsprintf(szWork, szT, PszGetCompressedString(i));
+                        c = wsprintf(szWork, szT, PszGetCompressedString(i));
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
                         CchGetString(idsSecondaryTargetS, szT);
                         i = vrgtok[viVCRFocus].mdTarget2 + 400;
-                        c = _wsprintf(szWork, szT, PszGetCompressedString(i));
+                        c = wsprintf(szWork, szT, PszGetCompressedString(i));
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
                     }
@@ -1181,7 +1181,7 @@ int16_t PopupVCRMenu(HWND hwnd, int16_t x, int16_t y, uint8_t brc) {
             } else {
                 lpshdef = rglpshdef[vrgtok[i].iplr] + vrgtok[i].ishdef;
             }
-            cch += _wsprintf(&szWork[cch], " %s * %d", lpshdef->hul.szClass, vrgtok[i].csh);
+            cch += wsprintf(&szWork[cch], " %s * %d", lpshdef->hul.szClass, vrgtok[i].csh);
             if (fAttack && vlpbrVCR->ctok > 0 && viStepVCRCur >= 0) {
                 cKilled = 0;
                 for (j = 0; j < vlpbrVCR->ctok; j++) {
@@ -1190,7 +1190,7 @@ int16_t PopupVCRMenu(HWND hwnd, int16_t x, int16_t y, uint8_t brc) {
                     }
                 }
                 if (cKilled > 0) {
-                    cch += _wsprintf(&szWork[cch], " (-%d)", cKilled);
+                    cch += wsprintf(&szWork[cch], " (-%d)", cKilled);
                 }
             }
             if (psz + (cch + 1) >= &rgch[1535] || c >= 40)

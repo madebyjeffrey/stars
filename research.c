@@ -239,7 +239,7 @@ void DrawResearchDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t grbitDraw) {
     PatBlt(hdc, rc.left + 8, rc.top + dyArial8, rc.right - rc.left - 16, 1, BLACKNESS);
     rc.top += (dyArial8 >> 2) + dyArial8 + 2;
     for (i = 0; i < 6; i++) {
-        c = _wsprintf(szWork, PCTD, rgplr[idPlayer].rgTech[i]);
+        c = wsprintf(szWork, PCTD, rgplr[idPlayer].rgTech[i]);
         CtrTextOut(hdc, xCtr, rc.top, szWork, c);
         rc.top += (int16_t)(3 * dyArial8) / 2;
     }
@@ -342,14 +342,14 @@ DrawRightSide:
         rc.top += dyArial8;
         CchGetString(iResTechNow + 84, szTemp);
         CchGetString(idsSTechLevelD, szTemp2);
-        c = _wsprintf(szWork, szTemp2, szTemp, rgplr[idPlayer].rgTech[iResTechNow] + 1);
+        c = wsprintf(szWork, szTemp2, szTemp, rgplr[idPlayer].rgTech[iResTechNow] + 1);
         RightTextOut(hdc, xCtr, rc.top, szWork, c, 0);
         rc.top += (int16_t)(3 * dyArial8) / 2;
         RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsResourcesNeededComplete), 0, 0);
         if (l == -1) {
             c = CchGetString(idsMaxed, szWork);
         } else {
-            c = _wsprintf(szWork, PCTLD, l);
+            c = wsprintf(szWork, PCTLD, l);
         }
         TextOut(hdc, xCtr, rc.top, szWork, c);
         rc.top += (int16_t)(3 * dyArial8) / 2;
@@ -372,7 +372,7 @@ DrawYearComplete:
         }
         l = (int32_t)((l + lRBEffective - 1) / lRBEffective);
     PrintYear:
-        c = _wsprintf(szWork, PszGetCompressedString(idsLdYearC), l, l == 1 ? 32 : 115);
+        c = wsprintf(szWork, PszGetCompressedString(idsLdYearC), l, l == 1 ? 32 : 115);
         TextOut(hdc, xCtr, rc.top, szWork, c);
     }
     RightTextOut(hdc, xCtr - 60, rc.top + dyArial8 + 5, PszGetCompressedString(idsFieldResearch), 0, 0);
@@ -399,7 +399,7 @@ DrawAnnualRes:
         goto DrawTotalSpent;
 
     RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsAnnualResourcesPlanets), 0, 0);
-    c = _wsprintf(szWork, PCTLD, lResTotal);
+    c = wsprintf(szWork, PCTLD, lResTotal);
     RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
 
 DrawTotalSpent:
@@ -408,7 +408,7 @@ DrawTotalSpent:
         goto DrawBudget;
 
     RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsTotalResourcesSpentResearchLastYear), 0, 0);
-    c = _wsprintf(szWork, PCTLD, rgplr[idPlayer].lResLastYear);
+    c = wsprintf(szWork, PCTLD, rgplr[idPlayer].lResLastYear);
     RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
 
 DrawBudget:
@@ -421,7 +421,7 @@ DrawBudget:
         goto DrawResPct;
     }
 DrawResPct:
-    c = _wsprintf(szWork, PCTD, pctResGlob);
+    c = wsprintf(szWork, PCTD, pctResGlob);
     RightTextOut(hdc, xNum, rc.top, szWork, c, dx);
     if ((grbitDraw & 0x4000) && !(grbitDraw & 0xf))
         goto DrawProjBudg;
@@ -445,7 +445,7 @@ DrawProjBudg:
     RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsYearsProjectedResearchBudget), 0, 0);
 
 DrawProjBudgData:
-    c = _wsprintf(szWork, PCTLD, lResBudget);
+    c = wsprintf(szWork, PCTLD, lResBudget);
     RightTextOut(hdc, xNum, rc.top, szWork, c, xNum - xCtr);
     if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0 || GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) != 0) {
         cch = CchGetString(idsRaceHas, szTemp);
@@ -897,7 +897,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 c = CchGetString(i + 91, szWork);
                 RightTextOut(hdc, dxStr, yCur, szWork, c, 0);
                 SetTextColor(hdc, 0);
-                c = _wsprintf(szWork, PCTD, ppart->pcom->rgTech[i]);
+                c = wsprintf(szWork, PCTD, ppart->pcom->rgTech[i]);
                 RightTextOut(hdc, xNum, yCur, szWork, c, 0);
                 fReq = TRUE;
             }
@@ -913,10 +913,10 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             l = CostOfDevelopingItem(ppart->pcom->rgTech);
         }
         if (l > 99999) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsCostLdk), (int32_t)((l + 500) / 1000));
+            c = wsprintf(szWork, PszGetCompressedString(idsCostLdk), (int32_t)((l + 500) / 1000));
             TextOut(hdc, 5, yCur + dyArial8 + 4, szWork, c);
         } else if (l > 0) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsCostLd), l);
+            c = wsprintf(szWork, PszGetCompressedString(idsCostLd), l);
             TextOut(hdc, 5, yCur + dyArial8 + 4, szWork, c);
         } else if (l == -1) {
             SetTextColor(hdc, 127);
@@ -954,7 +954,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 if (ppart->hs.grhst == hstSBHull || ppart->hs.grhst == hstSpecialSB) {
                     c -= c / 2;
                 }
-                c = _wsprintf(szWork, PCTD, c);
+                c = wsprintf(szWork, PCTD, c);
                 RightTextOut(hdc, dxStr + dxMaxMineralQuan, yCur, szWork, c, 0);
                 if (i < 5) {
                     TextOut(hdc, dxStr + dxMaxMineralQuan, yCur, "kT", 2);
@@ -964,7 +964,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
         }
         SelectObject(hdc, rghfontArial8[1]);
         if (ppart->pcom->cMass != 0) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsMassDkt), ppart->pcom->cMass);
+            c = wsprintf(szWork, PszGetCompressedString(idsMassDkt), ppart->pcom->cMass);
             TextOut(hdc, dxStr + dxMaxMineralQuan + 32, yStart, szWork, c);
         }
         SetRect(&rcData, 73 <= xNum + 4 ? xNum + 4 : 73, dyArial10 + 71, dx - 5, dy - 5 - dyArial8 * 2 - 4);
@@ -1008,7 +1008,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     SelectObject(hdc, hbrGray);
                     PatBlt(hdc, x + 4, y, rcData.right - rcData.left - dxStr - 4, 1, PATCOPY);
                 }
-                c = _wsprintf(szWork, PCTDPCTPCT, pct);
+                c = wsprintf(szWork, PCTDPCTPCT, pct);
                 RightTextOut(hdc, x, y - (dyArial8 >> 1), szWork, c, 0);
                 PatBlt(hdc, x + 4, y, 5, 1, BLACKNESS);
                 pct >>= 1;
@@ -1120,7 +1120,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 c = CchGetString(idsEnemyFleetsCannotDetectedScannerUnlessSame, szWork);
             } else {
                 c = CchGetString(idsEnemyFleetsOrbitingPlanetCanDetectedD, szT);
-                c = _wsprintf(szWork, szT, i);
+                c = wsprintf(szWork, szT, i);
             }
             dyText = DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
             rcData.top += (dyArial8 >> 1) + dyText;
@@ -1129,7 +1129,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 c = CchGetString(idsScannerCapableDeterminingPlanetsEnvironmentCompo, szWork);
             } else if (i != 4) {
                 c = CchGetString(idsScannerCanDeterminePlanetsBasicStatsDistance, szT);
-                c = _wsprintf(szWork, szT, i == 1 ? 50 : i == 2 ? 100 : 200);
+                c = wsprintf(szWork, szT, i == 1 ? 50 : i == 2 ? 100 : 200);
                 ids = idsScannerWillUnavailableIfHaveLesserRacial;
             } else {
                 if (ppart->hs.iItem == iscannerPickPocketScanner) {
@@ -1193,16 +1193,16 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 SelectObject(hdc, rghfontArial8[0]);
                 switch (i) {
                 case 0:
-                    c = _wsprintf(szWork, "%dmg", ppart->phul->wtFuelMax);
+                    c = wsprintf(szWork, "%dmg", ppart->phul->wtFuelMax);
                     break;
                 case 1:
-                    c = _wsprintf(szWork, PCTDKT, ppart->phul->wtCargoMax);
+                    c = wsprintf(szWork, PCTDKT, ppart->phul->wtCargoMax);
                     break;
                 case 2:
-                    c = _wsprintf(szWork, PCTD, ppart->phul->dp);
+                    c = wsprintf(szWork, PCTD, ppart->phul->dp);
                     break;
                 case 3:
-                    c = _wsprintf(szWork, PCTD, LphuldefFromId(ppart->phul->ihuldef)->init);
+                    c = wsprintf(szWork, PCTD, LphuldefFromId(ppart->phul->ihuldef)->init);
                 }
                 TextOut(hdc, xText, rcData.top, szWork, c);
                 i++;
@@ -1218,7 +1218,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 } else {
                     pct = 10;
                 }
-                c = _wsprintf(szWork, psz, pct);
+                c = wsprintf(szWork, psz, pct);
                 SelectObject(hdc, rghfontArial8[0]);
                 xText = rcData.left;
                 yText = rcData.top;
@@ -1257,7 +1257,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 RightTextOut(hdc, xText, yText, szWork, c, 0);
                 SelectObject(hdc, rghfontArial8[0]);
                 if (ppart->phul->wtCargoMax != 0xffff) {
-                    c = _wsprintf(szWork, PCTDKT, ppart->phul->wtCargoMax);
+                    c = wsprintf(szWork, PCTDKT, ppart->phul->wtCargoMax);
                 } else {
                     c = CchGetString(idsUnlimited, szWork);
                 }
@@ -1276,9 +1276,9 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 RightTextOut(hdc, xText, yText, szWork, c, 0);
                 SelectObject(hdc, rghfontArial8[0]);
                 if (i == 0) {
-                    c = _wsprintf(szWork, PCTD, ppart->phul->dp);
+                    c = wsprintf(szWork, PCTD, ppart->phul->dp);
                 } else if (i == 1) {
-                    c = _wsprintf(szWork, PCTD, LphuldefFromId(ppart->phul->ihuldef)->init);
+                    c = wsprintf(szWork, PCTD, LphuldefFromId(ppart->phul->ihuldef)->init);
                 }
                 TextOut(hdc, xText, yText, szWork, c);
                 i++;
@@ -1292,7 +1292,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             xText = rcData.left;
             DxStreamTextOut(hdc, &xText, rcData.top, PszGetCompressedString(idsShieldStrength), 0, TRUE);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->pshield->dp);
+            c = wsprintf(szWork, PCTD, ppart->pshield->dp);
             DxStreamTextOut(hdc, &xText, rcData.top, szWork, c, TRUE);
             if (ppart->hs.iItem == ishieldShadowShield) {
                 ids = idsArmorShieldRequiresPrimaryRacialTraitSuper;
@@ -1319,7 +1319,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             xText = rcData.left;
             DxStreamTextOut(hdc, &xText, rcData.top, PszGetCompressedString(idsArmorStrength2), 0, TRUE);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->parmor->dp);
+            c = wsprintf(szWork, PCTD, ppart->parmor->dp);
             DxStreamTextOut(hdc, &xText, rcData.top, szWork, c, TRUE);
             if (ppart->hs.iItem == iarmorDepletedNeutronium) {
                 ids = idsArmorShieldRequiresPrimaryRacialTraitSuper;
@@ -1350,21 +1350,21 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->pbeam->dp);
+            c = wsprintf(szWork, PCTD, ppart->pbeam->dp);
             TextOut(hdc, xText, yText, szWork, c);
             yText += dyArial8;
             c = CchGetString(idsRange, szWork);
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->pbeam->dRangeMax);
+            c = wsprintf(szWork, PCTD, ppart->pbeam->dRangeMax);
             TextOut(hdc, xText, yText, szWork, c);
             yText += dyArial8;
             c = CchGetString(idsInitiative, szWork);
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->pbeam->init);
+            c = wsprintf(szWork, PCTD, ppart->pbeam->init);
             TextOut(hdc, xText, yText, szWork, c);
             yText += (int16_t)(3 * dyArial8) / 2;
             rcData.top = yText;
@@ -1377,7 +1377,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 if (ppart->pbeam->grfAbilities & beamGatling) {
                     c = CchGetString(idsWeaponHitsTargetsRangeEachTimeFired, szWork);
                     rcData.top += DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
-                    c = _wsprintf(szWork, PszGetCompressedString(idsWeaponAlsoMakesExcellentMineSweeperCapable), ppart->pbeam->dp * 16);
+                    c = wsprintf(szWork, PszGetCompressedString(idsWeaponAlsoMakesExcellentMineSweeperCapable), ppart->pbeam->dp * 16);
                     DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
                 }
                 SelectObject(hdc, rghfontArial8[0]);
@@ -1406,28 +1406,28 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->ptorp->dp);
+            c = wsprintf(szWork, PCTD, ppart->ptorp->dp);
             TextOut(hdc, xText, yText, szWork, c);
             yText += dyArial8;
             c = CchGetString(idsRange, szWork);
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->ptorp->dRangeMax);
+            c = wsprintf(szWork, PCTD, ppart->ptorp->dRangeMax);
             TextOut(hdc, xText, yText, szWork, c);
             yText += dyArial8;
             c = CchGetString(idsInitiative, szWork);
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->ptorp->init);
+            c = wsprintf(szWork, PCTD, ppart->ptorp->init);
             TextOut(hdc, xText, yText, szWork, c);
             yText += dyArial8;
             c = CchGetString(idsAccuracy, szWork);
             SelectObject(hdc, rghfontArial8[1]);
             RightTextOut(hdc, xText, yText, szWork, c, 0);
             SelectObject(hdc, rghfontArial8[0]);
-            c = _wsprintf(szWork, PCTD, ppart->ptorp->dHitChance);
+            c = wsprintf(szWork, PCTD, ppart->ptorp->dHitChance);
             TextOut(hdc, xText, yText, szWork, c);
             yText += (int16_t)(3 * dyArial8) / 2;
             if (ppart->hs.iItem == itorpAntiMatterTorpedo) {
@@ -1450,7 +1450,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 c = CchGetString(idsBombWillKillAnyPlanetsPopulation, szWork);
             } else {
                 CchGetString(idsBombWillKillApproximatelyDDPlanets, szWork);
-                c = _wsprintf(szT, szWork, ppart->pbomb->dDmgCol / 10, ppart->pbomb->dDmgCol % 10);
+                c = wsprintf(szT, szWork, ppart->pbomb->dDmgCol / 10, ppart->pbomb->dDmgCol % 10);
                 if (ppart->hs.iItem >= ibombLadyFingerBomb && ppart->hs.iItem <= ibombCherryBomb) {
                     dmgFloor = 3;
                 } else if (ppart->hs.iItem >= ibombSmartBomb && ppart->hs.iItem <= ibombAnnihilatorBomb) {
@@ -1460,7 +1460,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 }
                 if (dmgFloor > 0) {
                     CchGetString(dmgFloor == 999 ? idsSmartBombsStrictlyAdditiveHaveMinimumKill : idsIfPlanetHasDefensesBombGuaranteedKill, szWork);
-                    c += _wsprintf(&szT[c], szWork, 100 * dmgFloor);
+                    c += wsprintf(&szT[c], szWork, 100 * dmgFloor);
                 }
                 strcpy(szWork, szT);
             }
@@ -1475,7 +1475,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 c = CchGetString(idsBombWillDamagePlanetsMinesFactories, szWork);
             } else {
                 CchGetString(idsBombWillDestroyApproximatelyDPlanetsMines, szT);
-                c = _wsprintf(szWork, szT, ppart->pbomb->dDmgBldg);
+                c = wsprintf(szWork, szT, ppart->pbomb->dDmgBldg);
             }
             WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, TRUE, TRUE);
             if (ppart->hs.iItem >= ibombSmartBomb && ppart->hs.iItem <= ibombAnnihilatorBomb) {
@@ -1510,7 +1510,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     idsT = ppart->hs.iItem == ispecialEStealthCloak ? idsWarningColonizeMissionCannotCarriedBecauseNone
                                                                     : idsScannerCanDeterminePlanetsStatsDistance120;
                 }
-                c = _wsprintf(szWork, PszGetCompressedString(idsCloaksAnyShipReducingRangeWhichScanners), idsT);
+                c = wsprintf(szWork, PszGetCompressedString(idsCloaksAnyShipReducingRangeWhichScanners), idsT);
                 goto PrintSpecial;
             case ispecialEMultiFunctionPod:
                 idsT = idsCloaksAnyShip30Acts10Jammer;
@@ -1532,7 +1532,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 ids = idsDeviceRequiresPrimaryRacialTraitHyperExpansion;
                 /* fallthrough */
             case ispecialEEnergyCapacitor:
-                c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesDamageDoneBeamWeaponsShipD), ppart->hs.iItem == ispecialEEnergyCapacitor ? 10 : 20);
+                c = wsprintf(szWork, PszGetCompressedString(idsIncreasesDamageDoneBeamWeaponsShipD), ppart->hs.iItem == ispecialEEnergyCapacitor ? 10 : 20);
                 goto PrintSpecial;
             case ispecialEJammer10:
             case ispecialEJammer50:
@@ -1541,13 +1541,13 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             case ispecialEJammer20:
             case ispecialEJammer30:
                 idsT = idsHasDChanceDeflectingIncomingTorpedoesDeflected;
-                c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility);
+                c = wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility);
                 goto PrintSpecial;
             case ispecialEBattleComputer:
             case ispecialEBattleSuperComputer:
             case ispecialEBattleNexus:
                 idsT = idsModuleIncreasesAccuracyTorpedoesDIncreasesInitia;
-                c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility, ppart->hs.iItem - 4);
+                c = wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility, ppart->hs.iItem - 4);
                 goto PrintSpecial;
             }
             if (idsT == idsNoString)
@@ -1570,15 +1570,15 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 break;
             case ispecialMManeuveringJet:
             case ispecialMOverthruster:
-                c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesSpeedBattle1DSquareMovement), ppart->hs.iItem == ispecialMManeuveringJet ? 4 : 2);
+                c = wsprintf(szWork, PszGetCompressedString(idsIncreasesSpeedBattle1DSquareMovement), ppart->hs.iItem == ispecialMManeuveringJet ? 4 : 2);
                 goto PrintSpecial;
             case ispecialMFuelTank:
             case ispecialMSuperFuelTank:
-                c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesFuelCapacityShipDmg), ppart->hs.iItem == ispecialMFuelTank ? 250 : 500);
+                c = wsprintf(szWork, PszGetCompressedString(idsPodIncreasesFuelCapacityShipDmg), ppart->hs.iItem == ispecialMFuelTank ? 250 : 500);
                 goto PrintSpecial;
             case ispecialMCargoPod:
             case ispecialMSuperCargoPod:
-                c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesCargoCapacityShipDkt), ppart->hs.iItem == ispecialMCargoPod ? 50 : 100);
+                c = wsprintf(szWork, PszGetCompressedString(idsPodIncreasesCargoCapacityShipDkt), ppart->hs.iItem == ispecialMCargoPod ? 50 : 100);
                 goto PrintSpecial;
             case ispecialMMultiCargoPod:
                 idsT = idsPodIncreasesCargoCapacityShip250ktProvides;
@@ -1650,7 +1650,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     SelectObject(hdc, rghfontArial8[1]);
                     DxStreamTextOut(hdc, &xText, yText, PszGetCompressedString(idsWarp), 0, TRUE);
                     SelectObject(hdc, rghfontArial8[0]);
-                    c = _wsprintf(szWork, PCTD, ppart->pspecialsb->grAbility);
+                    c = wsprintf(szWork, PCTD, ppart->pspecialsb->grAbility);
                     DxStreamTextOut(hdc, &xText, yText, szWork, c, TRUE);
                     xText = rcData.left;
                     yText += dyArial8;
@@ -1667,7 +1667,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 if (ppart->pspecialsb->grAbility == -1) {
                     c = CchGetString(idsUnlimited, szWork);
                 } else {
-                    c = _wsprintf(szWork, PCTDKT, ppart->pspecialsb->grAbility);
+                    c = wsprintf(szWork, PCTDKT, ppart->pspecialsb->grAbility);
                 }
                 DxStreamTextOut(hdc, &xText, yText, szWork, c, TRUE);
                 xText = rcData.left;
@@ -1678,19 +1678,19 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 if (ppart->pspecialsb->grAbility2 == -1) {
                     c = CchGetString(idsUnlimited, szWork);
                 } else {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsDLightYears), ppart->pspecialsb->grAbility2);
+                    c = wsprintf(szWork, PszGetCompressedString(idsDLightYears), ppart->pspecialsb->grAbility2);
                 }
                 DxStreamTextOut(hdc, &xText, yText, szWork, c, TRUE);
                 if (ppart->pspecialsb->grAbility == -1) {
                     if (ppart->pspecialsb->grAbility2 == -1) {
                         idsT = idsNoString;
                     } else {
-                        c = _wsprintf(szWork, PszGetCompressedString(idsWarningShipsCanSuccessfullyGatedDL), 5 * ppart->pspecialsb->grAbility2);
+                        c = wsprintf(szWork, PszGetCompressedString(idsWarningShipsCanSuccessfullyGatedDL), 5 * ppart->pspecialsb->grAbility2);
                     }
                 } else if (ppart->pspecialsb->grAbility2 == -1) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktCanSuccessfullyGatedExceeding), 5 * ppart->pspecialsb->grAbility);
+                    c = wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktCanSuccessfullyGatedExceeding), 5 * ppart->pspecialsb->grAbility);
                 } else {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktMightSuccessfullyGatedD), 5 * ppart->pspecialsb->grAbility,
+                    c = wsprintf(szWork, PszGetCompressedString(idsWarningShipsDktMightSuccessfullyGatedD), 5 * ppart->pspecialsb->grAbility,
                                   5 * ppart->pspecialsb->grAbility2);
                 }
             }
@@ -1765,19 +1765,19 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     }
                 }
             }
-            c = _wsprintf(szWork, PCTD, 10 * ppart->pmines->grAbility);
+            c = wsprintf(szWork, PCTD, 10 * ppart->pmines->grAbility);
             TextOut(hdc, rcData.left + dxLabel + 4, rcData.top, szWork, c);
             rcData.top += dyArial8;
-            c = _wsprintf(szWork, PszGetCompressedString(idsWarpD2), iWarp);
+            c = wsprintf(szWork, PszGetCompressedString(idsWarpD2), iWarp);
             TextOut(hdc, rcData.left + dxLabel + 4, rcData.top, szWork, c);
             rcData.top += dyArial8;
-            c = _wsprintf(szWork, PszGetCompressedString(idsDD2), pctHit / 10, pctHit % 10);
+            c = wsprintf(szWork, PszGetCompressedString(idsDD2), pctHit / 10, pctHit % 10);
             TextOut(hdc, rcData.left + dxLabel + 4, rcData.top, szWork, c);
             rcData.top += dyArial8;
-            c = _wsprintf(szWork, PszGetCompressedString(idsDDEngine), dmgShip, dmgShipRam);
+            c = wsprintf(szWork, PszGetCompressedString(idsDDEngine), dmgShip, dmgShipRam);
             TextOut(hdc, rcData.left + dxLabel + 4, rcData.top, szWork, c);
             rcData.top += dyArial8;
-            c = _wsprintf(szWork, PszGetCompressedString(idsDD3), dmgMin, dmgMinRam);
+            c = wsprintf(szWork, PszGetCompressedString(idsDD3), dmgMin, dmgMinRam);
             TextOut(hdc, rcData.left + dxLabel + 4, rcData.top, szWork, c);
             rcData.top += dyArial8;
             SelectObject(hdc, rghfontArial7[0]);
@@ -1807,7 +1807,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             case iminingRoboMiniMiner:
             case iminingAlienMiner:
                 c = CchGetString(idsModuleContainsRobotsCapableMining, szWork);
-                c += _wsprintf(&szWork[c], PCTD, ppart->pmining->grAbility);
+                c += wsprintf(&szWork[c], PCTD, ppart->pmining->grAbility);
                 c += CchGetString(idsKtEachMineralDependingConcentrationUninhabitedPl, &szWork[c]);
                 if (ppart->hs.iItem != iminingAlienMiner)
                     break;
@@ -1829,10 +1829,10 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             if (ppart->hs.iItem <= iterraTotalTerraform30) {
                 ids = idsTotalTerraformingRequiresLesserRacialTraitTotal;
                 c = CchGetString(idsAllowsModifyAnyPlanetsThreeEnvironmentVariables, szT);
-                c = _wsprintf(szWork, szT, ppart->pterra->grAbility);
+                c = wsprintf(szWork, szT, ppart->pterra->grAbility);
             } else {
                 c = CchGetString(idsAllowsModifyPlanetsSDOriginalValue, szT);
-                c = _wsprintf(szWork, szT, rgszPlanetAttr[(int16_t)(ppart->hs.iItem - 8) / 4], ppart->pterra->grAbility);
+                c = wsprintf(szWork, szT, rgszPlanetAttr[(int16_t)(ppart->hs.iItem - 8) / 4], ppart->pterra->grAbility);
             }
             if (c <= 0)
                 break;
@@ -1868,7 +1868,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 pct = 100;
                 SetTextColor(hdc, 0);
                 while (pct > 0) {
-                    c = _wsprintf(szWork, PCTDPCTPCT, pct);
+                    c = wsprintf(szWork, PCTDPCTPCT, pct);
                     RightTextOut(hdc, x, y - (dyArial8 >> 1), szWork, c, 0);
                     PatBlt(hdc, x + 4, y, 5, 1, BLACKNESS);
                     pct -= 20;
@@ -1880,7 +1880,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 dxDigit = LOWORD(GetTextExtent(hdc, "0", 1));
                 ch = '0';
                 for (i = 0; i <= 5; i++) {
-                    cch = _wsprintf(szWork, PCTD, 20 * i);
+                    cch = wsprintf(szWork, PCTD, 20 * i);
                     TextOut(hdc, x - (i == 0 ? dxDigit >> 1 : i == 5 ? (int16_t)(3 * dxDigit) / 2 : dxDigit), y, szWork, cch);
                     if (i > 0) {
                         PatBlt(hdc, x, y - 6, 1, 5, BLACKNESS);
@@ -1918,13 +1918,13 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             } else if (ppart->hs.iItem >= iplanetaryViewer50 && ppart->hs.iItem <= iplanetarySnooper620X) {
                 i = ppart->pplanetary->grAbility;
                 c = CchGetString(idsEnemyFleetsOrbitingPlanetCanDetectedD, szT);
-                c = _wsprintf(szWork, szT, abs(i));
+                c = wsprintf(szWork, szT, abs(i));
                 if (i < 0) {
                     WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, FALSE, TRUE);
                     xText = rcData.left;
                     yText += (int16_t)(3 * dyArial8) / 2;
                     c = CchGetString(idsScannerCanDeterminePlanetsBasicStatsDistance, szT);
-                    c = _wsprintf(szWork, szT, -i >> 1);
+                    c = wsprintf(szWork, szT, -i >> 1);
                     ids = idsScannerWillUnavailableIfHaveLesserRacial;
                 } else {
                     ids = idsPlanetaryScannersDefensesAvailableAlternateReali;

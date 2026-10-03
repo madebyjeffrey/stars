@@ -651,7 +651,7 @@ void InitializeProductionDlg(HWND hwnd) {
     PROD   *lpprod;
 
     iSel = -1;
-    _wsprintf(rgch, PszGetCompressedString(idsProductionQueueS), PszGetPlanetName(sel.pl.id));
+    wsprintf(rgch, PszGetCompressedString(idsProductionQueueS), PszGetPlanetName(sel.pl.id));
     SetWindowText(hwnd, rgch);
     FillProdSrcLB(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), -1);
     SendMessage(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), LB_SETCURSEL, 0, 0);
@@ -724,7 +724,7 @@ void DrawProductionDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
                 TextOut(hdc, rc.left, rc.bottom, rgszMinerals[c], lstrlen(rgszMinerals[c]));
                 SelectObject(hdc, rghfontArial8[0]);
                 SetTextColor(hdc, crWindowText);
-                c = _wsprintf(szWork, PCTLD, rgCost[k]);
+                c = wsprintf(szWork, PCTLD, rgCost[k]);
                 RightTextOut(hdc, rc.right - dxkT - 2, rc.bottom, szWork, c, dxMaxMineralQuan);
                 if (k <= 2) {
                     TextOut(hdc, rc.right - dxkT, rc.bottom, PszGetCompressedString(idsKt), 2);
@@ -733,7 +733,7 @@ void DrawProductionDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
             if (i != 0) {
                 rc.bottom += (int16_t)(3 * dyArial8) / 2;
                 SelectObject(hdc, rghfontArial8[1]);
-                c = _wsprintf(szT, PszGetCompressedString(idsDDoneCompletion), prod.pct);
+                c = wsprintf(szT, PszGetCompressedString(idsDDoneCompletion), prod.pct);
                 if (PszProductionETA(&sel.pl, lpplProdGlob, LOWORD(lSel), NULL, NULL) != szWork) {
                 }
                 strcpy(&szT[c], szWork);
@@ -1217,7 +1217,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                 psz = szWork;
             } else {
                 psz = PszGetCompressedString(idsUnusedD);
-                _wsprintf(szWork, psz, iBase + 1);
+                wsprintf(szWork, psz, iBase + 1);
                 psz = szWork;
             }
             hwndRad = GetDlgItem(hwnd, i);
@@ -1284,14 +1284,14 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                 if (vrgZipProd[iResTechNow].fValid) {
                     strcpy(szWork, vrgZipProd[iResTechNow].szName);
                 } else {
-                    _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
+                    wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                 }
                 lpProc = MakeProcInstance(RenameZipDlg, hInst);
                 if (iResTechNow == Energy)
                     goto LDontRename;
                 if (DialogBox(hInst, MAKEINTRESOURCE(IDD_RENAME), hwndFrame, lpProc) != 0) {
                     if (szWork[0] == 0) {
-                        _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
+                        wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                     }
                     strcpy(vrgZipProd[iResTechNow].szName, szWork);
                     pszT = &szWork[64];
@@ -1328,7 +1328,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                 break;
             case IDC_DELETE:
                 vrgZipProd[iResTechNow].fValid = FALSE;
-                _wsprintf(szWork, PszGetCompressedString(idsUnusedD), iResTechNow + 1);
+                wsprintf(szWork, PszGetCompressedString(idsUnusedD), iResTechNow + 1);
                 SetWindowText(GetDlgItem(hwnd, iResTechNow + 1073), szWork);
                 FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);
                 gd.fChgZipProd = TRUE;
@@ -1373,7 +1373,7 @@ void FillZipProdLB(HWND hwndDlg, ZIPPRODQ *pzpq) {
             if (pzpq->rgpq[i].cQuan == 1 || pzpq->rgpq[i].mdIdle == iobjAlchemy) {
                 strcpy(szWork, szAuto);
             } else {
-                _wsprintf(szWork, szFormat, szAuto, pzpq->rgpq[i].cQuan);
+                wsprintf(szWork, szFormat, szAuto, pzpq->rgpq[i].cQuan);
             }
             SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM)szWork);
         }

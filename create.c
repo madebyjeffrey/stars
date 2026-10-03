@@ -1231,7 +1231,7 @@ RetryAll:
     if (!game.fTutorial) {
         game.lid = GetTickCount();
     }
-    _wsprintf(szWork, "%s.xy", szBase);
+    wsprintf(szWork, "%s.xy", szBase);
     if (!FCreateFile(dtXY, iplrNone, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateUniverseDefinitionFile, NULL), MB_ICONHAND);
         DestroyCurGame();
@@ -1258,7 +1258,7 @@ RetryAll:
     }
     if (game.fSinglePlr) {
         DestroyCurGame();
-        _wsprintf(szExt, MPCTD, iplrSingle + 1);
+        wsprintf(szExt, MPCTD, iplrSingle + 1);
         if (!FLoadGame(szBase, szExt)) {
             AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
             return FALSE;
@@ -1443,7 +1443,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             strcpy(szWork, lpbStart);
             if (!FWasRaceFile(szWork, FALSE)) {
             LCantGetRace:
-                _wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
+                wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
                 AlertSz(szWork, MB_ICONHAND);
                 goto LError;
             }
@@ -1458,7 +1458,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1) {
     LBadDefVc:
         i += cPlr + 5;
-        _wsprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
+        wsprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
         AlertSz(szWork, MB_ICONHAND);
         goto LError;
     }
@@ -1577,7 +1577,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
         }
         if (rgplr[i].szName[0] == 0) {
             CchGetString(Random(24) + 1390, rgplr[i].szName);
-            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+            wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
         }
     }
     for (i = 1; i < game.cPlayer; i++) {
@@ -1661,7 +1661,7 @@ void CreateTutorWorld() {
     CchGetString(idsTutorialGame, game.szName);
     rgplr[0] = vrgplrDef[0];
     CchGetString(idsHumanoid, rgplr[0].szName);
-    _wsprintf(rgplr[0].szNames, "%ss", rgplr[0].szName);
+    wsprintf(rgplr[0].szNames, "%ss", rgplr[0].szName);
     rgplr[1] = *LpplrComp(idAiTurinDrone, lvlAiEasy);
     rgplr[1].fAi = TRUE;
     rgplr[1].lvlAi = lvlAiEasy;
@@ -1669,9 +1669,9 @@ void CreateTutorWorld() {
     CchGetString(idsBerserker, rgplr[1].szName);
     Randomize(1234567890);
     for (i = 1; i <= 2; i++) {
-        _wsprintf(szWork, PszGetCompressedString(idsSHD), szBase, i);
+        wsprintf(szWork, PszGetCompressedString(idsSHD), szBase, i);
         remove(szWork);
-        _wsprintf(szWork, PszGetCompressedString(idsSXD), szBase, i);
+        wsprintf(szWork, PszGetCompressedString(idsSXD), szBase, i);
         remove(szWork);
     }
     GenerateWorld(FALSE);
@@ -1846,7 +1846,7 @@ Finish:
                 rgplr[i] = vrgplrDef[c];
             }
             CchGetString(c + 1383, rgplr[i].szName);
-            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+            wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
             break;
         case 2:
             rgplr[i] = rgplrLocal[vrgplrTypeNew[i] >> 2];
@@ -1876,7 +1876,7 @@ Finish:
             CchGetString(Random(24) + 1390, rgplr[i].szName);
         }
         if (rgplr[i].szNames[0] == 0) {
-            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+            wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
         }
     }
     for (i = 1; i < game.cPlayer; i++) {
@@ -2263,7 +2263,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             if (game.turn < 7) {
                 vplr = vrgplrDef[game.turn];
                 CchGetString(game.turn + 1383, vplr.szName);
-                _wsprintf(vplr.szNames, "%ss", vplr.szName);
+                wsprintf(vplr.szNames, "%ss", vplr.szName);
             } else {
                 vplr = *vrgplrNew;
             }
@@ -2564,7 +2564,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             if (iPopMenuSel == 0) {
                 vplr = vrgplrDef[0];
                 CchGetString(idsHumanoid, vplr.szName);
-                _wsprintf(vplr.szNames, "%ss", vplr.szName);
+                wsprintf(vplr.szNames, "%ss", vplr.szName);
                 prcSav = vrgrcRCW;
                 if (RaceCreationWizard(hwnd, FALSE, FALSE) != 0) {
                     vrgrcRCW = prcSav;
@@ -2593,7 +2593,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 if ((iCurVal & 3) == 1) {
                     vplr = vrgplrDef[iCurVal >> 2];
                     CchGetString((iCurVal >> 2) + 0x567, vplr.szName);
-                    _wsprintf(vplr.szNames, "%ss", vplr.szName);
+                    wsprintf(vplr.szNames, "%ss", vplr.szName);
                 } else {
                     vplr = vrgplrNew[iCurVal >> 2];
                     strcpy(szRaceFile, vrgszFileNew + (iCurVal >> 2) * 13);
@@ -2693,7 +2693,7 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
     yCur = 6;
     SetRect(&rcDiamond, xNewGameDiamond, yCur, xNewGameDiamond + dyArial8 + 1, yCur + dyArial8 + 1);
     for (i = 0; i < 16 && (!fRCWReadOnly || i < game.cPlayer); i++) {
-        cch = _wsprintf(szWork, PszGetCompressedString(idsPlayerD), i + 1);
+        cch = wsprintf(szWork, PszGetCompressedString(idsPlayerD), i + 1);
         szWork[cch++] = ':';
         szWork[cch] = 0;
         RightTextOut(hdc, xNewGameDiamond - 6, yCur, szWork, cch, 0);
@@ -2704,7 +2704,7 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
                 PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL);
                 if (!rgplr[i].fDead)
                     goto DisplayName;
-                _wsprintf(&szWork[strlen(szWork)], " (%s)", PszGetCompressedString(idsDeceased));
+                wsprintf(&szWork[strlen(szWork)], " (%s)", PszGetCompressedString(idsDeceased));
                 SetTextColor(hdc, 127);
                 goto DisplayName;
             }
@@ -2722,21 +2722,21 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
                 break;
             }
             CchGetString(idsS, szT);
-            _wsprintf(szWork, szT, PszGetCompressedString(iPlr + 1383));
+            wsprintf(szWork, szT, PszGetCompressedString(iPlr + 1383));
             break;
         case 2:
             if (!fRCWReadOnly && gd.fNoHostNames && vrgszFileNew[iPlr * 13] != 0) {
-                _wsprintf(szWork, " %s", vrgszFileNew + iPlr * 13);
+                wsprintf(szWork, " %s", vrgszFileNew + iPlr * 13);
                 break;
             }
             if (vrgszFileNew[iPlr * 13] != 0) {
-                _wsprintf(szWork, PszGetCompressedString(!fRCWReadOnly ? idsSS2 : idsS), vrgplrNew[iPlr].szNames, vrgszFileNew + iPlr * 13);
+                wsprintf(szWork, PszGetCompressedString(!fRCWReadOnly ? idsSS2 : idsS), vrgplrNew[iPlr].szNames, vrgszFileNew + iPlr * 13);
                 break;
             }
-            _wsprintf(szWork, PszGetCompressedString(idsS), vrgplrNew[iPlr].szNames);
+            wsprintf(szWork, PszGetCompressedString(idsS), vrgplrNew[iPlr].szNames);
             break;
         case 3:
-            _wsprintf(szWork, PszGetCompressedString(idsSSComputerPlayer), vrgszComputerPlayers[iPlr & 7], vrgszComputerLevel[vrgplrTypeNew[i] >> 5]);
+            wsprintf(szWork, PszGetCompressedString(idsSSComputerPlayer), vrgszComputerPlayers[iPlr & 7], vrgszComputerLevel[vrgplrTypeNew[i] >> 5]);
         }
     DisplayName:
         TextOut(hdc, rcDiamond.right + 6, yCur, szWork, strlen(szWork));
@@ -2876,7 +2876,7 @@ void DrawNewGame3(HWND hwnd, HDC hdc, int16_t iDraw) {
                 ids++;
                 break;
             }
-            _wsprintf(szWork, PCTD, GetVCVal(&game, vcCur, FALSE));
+            wsprintf(szWork, PCTD, GetVCVal(&game, vcCur, FALSE));
             if (rgNG3Width[i][j] < 0) {
                 dxItem += (int16_t)(3 * dxDig) / 2;
                 strcat(szWork, "%");
@@ -2955,7 +2955,7 @@ void SetNGWTitle(HWND hwnd, int16_t iStep) {
     char    szBuf[50];
 
     cch = CchGetString(fRCWReadOnly + 272, szBuf);
-    cch = _wsprintf(szWork, szBuf, iStep);
+    cch = wsprintf(szWork, szBuf, iStep);
     SetWindowText(hwnd, szWork);
     return;
 }

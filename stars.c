@@ -453,7 +453,7 @@ void FreeStuff() {
 
 char *SzVersion() {
     /* The original formatted idsVersionD02dC ("Version %d.%02d%c") with 2, 60, 'j'. */
-    _wsprintf(szWork, "Version %s", STARS_VERSION_STRING);
+    wsprintf(szWork, "Version %s", STARS_VERSION_STRING);
     return szWork;
 }
 

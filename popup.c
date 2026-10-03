@@ -88,7 +88,7 @@ void DrawPopup(HWND hwnd, HDC hdc) {
         dx = LOWORD(GetTextExtent(hdc, psz, strlen(psz))) + 4;
         RightTextOut(hdc, dx, dyArial8 + 4, PszGetCompressedString(idsSurface), 0, 0);
         if (GlobalPD.rgi[2] >= 0) {
-            c = _wsprintf(szWork, "%ldkT", GlobalPD.rgi[2]);
+            c = wsprintf(szWork, "%ldkT", GlobalPD.rgi[2]);
         } else {
             strcpy(szWork, PszGetCompressedString(idsUnknown2));
             c = strlen(szWork);
@@ -96,24 +96,24 @@ void DrawPopup(HWND hwnd, HDC hdc) {
         TextOut(hdc, dx, dyArial8 + 4, szWork, c);
         RightTextOut(hdc, dx, dyArial8 * 2 + 4, PszGetCompressedString(idsMineralConcentration), 0, 0);
         if (GlobalPD.rgi[3] > 0) {
-            c = _wsprintf(szWork, PCTLD, GlobalPD.rgi[3]);
+            c = wsprintf(szWork, PCTLD, GlobalPD.rgi[3]);
             if (GlobalPD.rgi[1] != 0) {
-                c += _wsprintf(&szWork[c], PszGetCompressedString(GlobalPD.rgi[3] < 30 ? idsN30 : idsHw));
+                c += wsprintf(&szWork[c], PszGetCompressedString(GlobalPD.rgi[3] < 30 ? idsN30 : idsHw));
             }
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsUnknown2));
+            c = wsprintf(szWork, PszGetCompressedString(idsUnknown2));
         }
         TextOut(hdc, dx, dyArial8 * 2 + 4, szWork, c);
         if (GlobalPD.rgi[4] < 0)
             break;
         RightTextOut(hdc, dx, 3 * dyArial8 + 4, PszGetCompressedString(idsMiningRate), 0, 0);
         CchGetString(idsLdktYr, szT);
-        c = _wsprintf(szWork, szT, GlobalPD.rgi[4]);
+        c = wsprintf(szWork, szT, GlobalPD.rgi[4]);
         TextOut(hdc, dx, 3 * dyArial8 + 4, szWork, c);
         break;
     case grPopupPlayer:
         CtrTextOut(hdc, rc.right >> 1, 4, PszPlayerName(GlobalPD.iPlayer, TRUE, TRUE, TRUE, 0, NULL), 0);
-        c = _wsprintf(szWork, PszGetCompressedString(idsPlayerD), GlobalPD.iPlayer + 1);
+        c = wsprintf(szWork, PszGetCompressedString(idsPlayerD), GlobalPD.iPlayer + 1);
         CtrTextOut(hdc, rc.right >> 1, dyArial8 + 4, szWork, c);
         break;
     case grPopupFleet:
@@ -146,7 +146,7 @@ void DrawPopup(HWND hwnd, HDC hdc) {
                 DecorateHullName(GlobalPD.lpfl->iplr, i, szTB);
                 lpsz = szTB;
                 TextOut(hdc, 4, yCur, lpsz, strlen(lpsz));
-                c = _wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
+                c = wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
                 RightTextOut(hdc, rc.right - 4 - GlobalPD.dxDamage, yCur, szWork, c, 0);
                 if (GlobalPD.fRedDamage && GlobalPD.lpfl->rgdv[i].dp != 0) {
                     csh = GlobalPD.lpfl->rgcsh[i];
@@ -158,7 +158,7 @@ void DrawPopup(HWND hwnd, HDC hdc) {
                     if (dpT == 0) {
                         dpT = 1;
                     }
-                    c = _wsprintf(szWork, "%d@%d%%", csh, dpT);
+                    c = wsprintf(szWork, "%d@%d%%", csh, dpT);
                     RightTextOut(hdc, rc.right - 4, yCur, szWork, c, 0);
                 }
                 yCur += dyArial8;
@@ -179,11 +179,11 @@ void DrawPopup(HWND hwnd, HDC hdc) {
         psz = PszGetPlanetName(sel.scan.idpl);
         SelectObject(hdc, rghfontArial8[0]);
         TextOut(hdc, dx, 4, psz, strlen(psz));
-        c = _wsprintf(szWork, PCTD, sel.scan.idpl + 1);
+        c = wsprintf(szWork, PCTD, sel.scan.idpl + 1);
         TextOut(hdc, dx, dyArial8 + 4, szWork, c);
-        c = _wsprintf(szWork, PCTD, sel.scan.pt.x);
+        c = wsprintf(szWork, PCTD, sel.scan.pt.x);
         TextOut(hdc, dx, dyArial8 * 2 + 4, szWork, c);
-        c = _wsprintf(szWork, PCTD, sel.scan.pt.y);
+        c = wsprintf(szWork, PCTD, sel.scan.pt.y);
         TextOut(hdc, dx, 3 * dyArial8 + 4, szWork, c);
         break;
     case grPopupPlanetEnv:
@@ -284,7 +284,7 @@ void Popup(HWND hwnd, int16_t x, int16_t y) {
                 lpsz = szTB;
                 dx = LOWORD(GetTextExtent(hdc, lpsz, strlen(lpsz)));
                 dxL = dxL <= dx ? dx : dxL;
-                c = _wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
+                c = wsprintf(szWork, PCTD, GlobalPD.lpfl->rgcsh[i]);
                 dx = LOWORD(GetTextExtent(hdc, szWork, c));
                 dxR = dxR <= dx ? dx : dxR;
                 if (GlobalPD.fRedDamage && (GlobalPD.lpfl->rgdv[i].dp >> 7 & 0x1ff) && dxDamage == 0) {
@@ -594,7 +594,7 @@ POINT16 PtDisplayPlanetStateInfo(HDC hdc, int16_t fPrint) {
                 cch = CchGetString(idsPlanetsValueWouldImprove, szWork);
                 WrapTextOut(hdc, &x, &y, szWork, cch, 4, xMax - 4, NULL, FALSE, fPrint);
                 SelectObject(hdc, rghfontArial8[1]);
-                cch = _wsprintf(szWork, "%d%%.  ", pctDesire);
+                cch = wsprintf(szWork, "%d%%.  ", pctDesire);
                 WrapTextOut(hdc, &x, &y, szWork, cch, 4, xMax - 4, NULL, FALSE, fPrint);
             }
         }
@@ -614,7 +614,7 @@ POINT16 PtDisplayPlanetStateInfo(HDC hdc, int16_t fPrint) {
             ids = idsValueDOutsideHabitableRangeRace;
         }
         CchGetString(ids, szWork);
-        cch = _wsprintf(szOut, szWork, dChg);
+        cch = wsprintf(szOut, szWork, dChg);
         SelectObject(hdc, rghfontArial8[0]);
         WrapTextOut(hdc, &x, &y, szOut, cch, 4, xMax - 4, NULL, FALSE, fPrint);
     }
@@ -651,7 +651,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         SelectObject(hdc, rghfontArial8[0]);
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsIs), 0, fPrint);
         SelectObject(hdc, rghfontArial8[1]);
-        _wsprintf(szWork, PCTLD00, pl.rgwtMin[3]);
+        wsprintf(szWork, PCTLD00, pl.rgwtMin[3]);
         if (pl.rgwtMin[3] == 0) {
             szWork[1] = 0;
         }
@@ -666,7 +666,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         if (pl.det >= detSome) {
             DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsApproximately), 0, fPrint);
             SelectObject(hdc, rghfontArial8[1]);
-            _wsprintf(szWork, "%d00", pl.uPopGuess * 4);
+            wsprintf(szWork, "%d00", pl.uPopGuess * 4);
             if (pl.uPopGuess == 0) {
                 szWork[1] = 0;
             }
@@ -697,7 +697,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         SelectObject(hdc, rghfontArial8[0]);
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsWillKillOffApproximately), 0, fPrint);
         SelectObject(hdc, rghfontArial8[1]);
-        c = _wsprintf(szWork, PCTDXPCTDPCTPCT, (int16_t)-pctDesire / 10, (int16_t)-pctDesire % 10);
+        c = wsprintf(szWork, PCTDXPCTDPCTPCT, (int16_t)-pctDesire / 10, (int16_t)-pctDesire % 10);
         DxStreamTextOut(hdc, &x, y, szWork, c, fPrint);
         SelectObject(hdc, rghfontArial8[0]);
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsOf), 0, fPrint);
@@ -722,7 +722,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         x = 4;
         y += dyArial8;
         SelectObject(hdc, rghfontArial8[1]);
-        c = _wsprintf(szWork, PCTLD00, lMax);
+        c = wsprintf(szWork, PCTLD00, lMax);
         DxStreamTextOut(hdc, &x, y, szWork, c, fPrint);
         SelectObject(hdc, rghfontArial8[0]);
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsColonists3), 0, fPrint);
@@ -740,7 +740,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         y += dyArial8;
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsSupport), 0, fPrint);
         SelectObject(hdc, rghfontArial8[1]);
-        c = _wsprintf(szWork, PCTLD00, lMax);
+        c = wsprintf(szWork, PCTLD00, lMax);
         DxStreamTextOut(hdc, &x, y, szWork, c, fPrint);
         SelectObject(hdc, rghfontArial8[0]);
         DxStreamTextOut(hdc, &x, y, PszGetCompressedString(idsColonists3), 0, fPrint);
@@ -764,7 +764,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
             c = CchGetString(idsWillGrowYear, szT);
         } else {
             psz = PszGetCompressedString(idsWillGrowLd00Ld00Year);
-            c = _wsprintf(szT, psz, lPopChg, pl.rgwtMin[3] + lPopChg);
+            c = wsprintf(szT, psz, lPopChg, pl.rgwtMin[3] + lPopChg);
         }
         WrapTextOut(hdc, &x, &y, szT, c, 4, xMax, NULL, FALSE, fPrint);
         x = 4;
@@ -781,7 +781,7 @@ POINT16 PtDisplayPlanetPopInfo(HDC hdc, int16_t fPrint) {
         c = CchGetString(idsAppearsHavePlanetaryDefenses, szWork);
     } else {
         psz = PszGetCompressedString(idsHasPlanetaryDefensesApproximatelyDCoverage);
-        c = _wsprintf(szT, psz, pl.uDefGuess * 6 + 3);
+        c = wsprintf(szT, psz, pl.uDefGuess * 6 + 3);
         psz = szT;
     }
     WrapTextOut(hdc, &x, &y, psz, c, 4, xMax, NULL, FALSE, fPrint);
@@ -904,7 +904,7 @@ POINT16 PtDisplayFactoryMineInfo(HDC hdc, int16_t dx, int16_t fPrint) {
     SelectObject(hdc, rghfontArial8[1]);
     if (fPrint) {
         CchGetString(idsSInfo, szT);
-        c = _wsprintf(szWork, szT, pszType);
+        c = wsprintf(szWork, szT, pszType);
         CtrTextOut(hdc, dx >> 1, y, szWork, c);
     }
     y += dyArial8 + 4;
@@ -929,7 +929,7 @@ POINT16 PtDisplayFactoryMineInfo(HDC hdc, int16_t dx, int16_t fPrint) {
         case 1:
             cnt = GlobalPD.cCur;
         SetQuan:
-            _wsprintf(szWork, "%d %s", cnt, cnt == 1 ? pszType : pszTypes);
+            wsprintf(szWork, "%d %s", cnt, cnt == 1 ? pszType : pszTypes);
             psz = szWork;
             break;
         case 3:
@@ -939,7 +939,7 @@ POINT16 PtDisplayFactoryMineInfo(HDC hdc, int16_t dx, int16_t fPrint) {
             cnt = GlobalPD.cMax;
             goto SetQuan;
         case 7:
-            _wsprintf(szWork, PCTD, GlobalPD.cOperate);
+            wsprintf(szWork, PCTD, GlobalPD.cOperate);
             psz = szWork;
             break;
         }
@@ -993,7 +993,7 @@ POINT16 PtDisplayResourceInfo(HDC hdc, int16_t dx, int16_t fPrint) {
         case 2:
             cnt = GlobalPD.iPlanetVar;
         SetQuan:
-            _wsprintf(szWork, PCTD, cnt);
+            wsprintf(szWork, PCTD, cnt);
             psz = szWork;
             break;
         case 0:

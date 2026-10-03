@@ -1732,9 +1732,9 @@ void CreateBackupDir() {
     if (vcBackupDirs <= 1) {
         strcpy(pchT, "backup");
     } else if (vcBackupDirs <= 99) {
-        _wsprintf(pchT, "backup%d", (uint32_t)game.turn % vcBackupDirs);
+        wsprintf(pchT, "backup%d", (uint32_t)game.turn % vcBackupDirs);
     } else {
-        _wsprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
+        wsprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
     }
     _mkdir(szBackup);
     strcat(szBackup, "\\");

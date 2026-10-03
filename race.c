@@ -88,7 +88,7 @@ Finish:
     }
     cpts = CAdvantagePoints(&vplr);
     if (cpts < 0) {
-        _wsprintf(szWork, PszGetCompressedString(idsAdvantagePointsCurrentlyHoleDPointsCannot), -cpts);
+        wsprintf(szWork, PszGetCompressedString(idsAdvantagePointsCurrentlyHoleDPointsCannot), -cpts);
         AlertSz(szWork, MB_ICONHAND);
         switch (iPanelActive) {
         default:
@@ -561,7 +561,7 @@ void DrawRace2(HWND hwnd, HDC hdc, int16_t iDraw) {
             SelectObject(hdc, hbrButtonFace);
             PatBlt(hdc, vrgrcRCW[15].left - 4 - dx, vrgrcRCW[15].top + 3, dx, dyArial8, PATCOPY);
         }
-        cch = _wsprintf(szWork, PCTDPCTPCT, vplr.pctIdealGrowth);
+        cch = wsprintf(szWork, PCTDPCTPCT, vplr.pctIdealGrowth);
         RightTextOut(hdc, vrgrcRCW[15].left - 4, vrgrcRCW[15].top + 3, szWork, cch, 0);
     }
     if (iDraw & 7) {
@@ -599,7 +599,7 @@ void DrawRace2(HWND hwnd, HDC hdc, int16_t iDraw) {
                 cch = CchGetString(l == 1000000 ? idsPlanetsWillHabitableRace : idsVirtuallyPlanetsWillHabitableRace, szWork);
             } else {
                 CchGetString(idsCanExpect1DPlanetsWillHabitable, szT);
-                cch = _wsprintf(szWork, szT, l2);
+                cch = wsprintf(szWork, szT, l2);
             }
             rc.left = vrgrcRCW->left;
             rc.top = vrgrcRCW[15].top + dyArial8 + 8;
@@ -878,7 +878,7 @@ void DrawRace3(HWND hwnd, HDC hdc, int16_t iDraw) {
         }
         dx = LOWORD(GetTextExtent(hdc, szWork, cch)) + 6;
         dxItem = abs(rgRW3Width[i]) * dxDig;
-        _wsprintf(szWork, PCTD, GetRaceStat(&vplr, rgRW3IStat[i]));
+        wsprintf(szWork, PCTD, GetRaceStat(&vplr, rgRW3IStat[i]));
         if (rgRW3Width[i] < 0 && (i > 0 || !fMacintosh)) {
             dxItem += dxkT;
             if (i == 0) {
@@ -1203,7 +1203,7 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 EnableWindow(GetDlgItem(hwnd, i), FALSE);
             }
         }
-        _wsprintf(szWork, PszGetCompressedString(idsCosts75ExtraResearchFieldsStartTech), (GetRaceStat(&vplr, rsMajorAdv) == raNone) + 3);
+        wsprintf(szWork, PszGetCompressedString(idsCosts75ExtraResearchFieldsStartTech), (GetRaceStat(&vplr, rsMajorAdv) == raNone) + 3);
         SetWindowText(GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH), szWork);
         SendMessage(GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH), BM_SETCHECK, GetRaceGrbit(&vplr, ibitRaceTech3), 0);
         if (fRCWReadOnly) {
@@ -1761,7 +1761,7 @@ void DrawRaceAdvantagePoints(HDC hdc, RECT *prc, PLAYER *pplr) {
     bkMode = SetBkMode(hdc, OPAQUE);
     crSav = SetTextColor(hdc, iPts < 0 ? 127 : 0);
     crBkSav = SetBkColor(hdc, crButtonFace);
-    c = _wsprintf(szWork, PCTD, iPts);
+    c = wsprintf(szWork, PCTD, iPts);
     RcCtrTextOut(hdc, &rc, szWork, -1);
     SetTextColor(hdc, 0);
     SelectObject(hdc, rghfontArial8[1]);
@@ -1852,7 +1852,7 @@ void SetRCWTitle(HWND hwnd, int16_t iStep) {
     int16_t cch;
 
     cch = CchGetString(fRCWReadOnly + 270, szBuf);
-    cch = _wsprintf(szWork, szBuf, iStep);
+    cch = wsprintf(szWork, szBuf, iStep);
     SetWindowText(hwnd, szWork);
     return;
 }

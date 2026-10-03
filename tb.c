@@ -66,12 +66,12 @@ LRESULT CALLBACK TbWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     if (pct == vpctRadarView) {
                         iSel = j;
                     }
-                    _wsprintf(szWork, PCTDPCTPCT, pct);
+                    wsprintf(szWork, PCTDPCTPCT, pct);
                     SendMessage(hwndTBRadar, CB_ADDSTRING, 0, (LPARAM)szWork);
                 }
                 SendMessage(hwndTBRadar, CB_SETEXTENDEDUI, 4, 0);
                 SendMessage(hwndTBRadar, CB_SETCURSEL, iSel, 0);
-                _wsprintf(szWork, PCTDPCTPCT, vpctRadarView);
+                wsprintf(szWork, PCTDPCTPCT, vpctRadarView);
                 SetWindowText(hwndTBRadar, szWork);
                 lpfnRealComboProc = GetWindowLong(hwndTBRadar, GWL_WNDPROC);
                 SetWindowLong(hwndTBRadar, GWL_WNDPROC, lpfnFakeComboProc);
@@ -542,7 +542,7 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
         c = 0;
         for (i = 0; i < 9; i++) {
             rgid[c] = (uint32_t)(iScanZoom + 4 == i);
-            _wsprintf(&szWork[i * 8], PCTDPCTPCT, vrgpctZoom[i]);
+            wsprintf(&szWork[i * 8], PCTDPCTPCT, vrgpctZoom[i]);
             rgszScan[c++] = &szWork[i * 8];
         }
         GetCursorPos16(&pt);
@@ -587,7 +587,7 @@ void TerminateToolbarFocus(int16_t fCancel) {
         pct = 100;
     }
     SendMessage(hwndTBRadar, CB_SETCURSEL, (int16_t)(100 - pct) / 10, 0);
-    _wsprintf(szWork, PCTDPCTPCT, pct);
+    wsprintf(szWork, PCTDPCTPCT, pct);
     SetWindowText(hwndTBRadar, szWork);
     if (pct != vpctRadarView) {
         vpctRadarView = pct;

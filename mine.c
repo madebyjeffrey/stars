@@ -267,7 +267,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             cShip += lpfl->rgcsh[i];
         }
         CchGetString(idsShipCountLd, szT);
-        c = _wsprintf(szWork, szT, cShip);
+        c = wsprintf(szWork, szT, cShip);
         TextOut(hdc, prc->left + 86, yTop, szWork, c);
         yTop += dyArial8 + 2;
         if (lpfl->det == detAll || lpfl->det == detMore) {
@@ -293,7 +293,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             cMass = lpfl->wtFleet;
         }
         c = CchGetString(!gd.fSmallTileMode ? idsFleetMassLdkt : idsMassLdkt, szT);
-        c = _wsprintf(szWork, szT, cMass);
+        c = wsprintf(szWork, szT, cMass);
         TextOut(hdc, prc->left + 86, yTop, szWork, c);
         yTop += dyArial8 + 2;
         if (lpfl->det == detAll) {
@@ -303,14 +303,14 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             }
             CchGetString(!gd.fSmallTileMode ? idsWaypointS : idsWpS, szWP);
             if (lpfl->cord == 1) {
-                c = _wsprintf(szT, szWP, PszGetCompressedString(idsNone));
+                c = wsprintf(szT, szWP, PszGetCompressedString(idsNone));
             } else {
-                c = _wsprintf(szT, szWP, PszGetLocName(lpord->grobj, lpord->id, lpord->pt.x, lpord->pt.y));
+                c = wsprintf(szT, szWP, PszGetLocName(lpord->grobj, lpord->id, lpord->pt.x, lpord->pt.y));
             }
             TextOut(hdc, prc->left + 86, yTop, szT, c);
             yTop += dyArial8 + 2;
             CchGetString(!gd.fSmallTileMode ? idsWaypointTaskS : idsTaskS, szT);
-            c = _wsprintf(szWork, szT, PszGetCompressedString(lpord->grTask + 99));
+            c = wsprintf(szWork, szT, PszGetCompressedString(lpord->grTask + 99));
             TextOut(hdc, prc->left + 86, yTop, szWork, c);
             yTop += dyArial8 + 2;
             if (lpfl->cord > 1) {
@@ -318,7 +318,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                     c = CchGetString(idsUseStargate, szWork);
                 } else {
                     CchGetString(!gd.fSmallTileMode ? idsWarpSpeedD : idsWarpD, szT);
-                    c = _wsprintf(szWork, szT, lpord->iWarp);
+                    c = wsprintf(szWork, szT, lpord->iWarp);
                 }
             } else {
                 c = CchGetString(!gd.fSmallTileMode ? idsWarpSpeedStopped : idsWarpStopped, szWork);
@@ -329,7 +329,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             if (l <= 0)
                 goto FinishUp;
             pszT = PszGetCompressedString(idsFleetCanDestroyLdMinesPerYear);
-            c = _wsprintf(szWork, pszT, l);
+            c = wsprintf(szWork, pszT, l);
             TextOut(hdc, prc->left + 86, yTop, szWork, c);
             yTop += dyArial8 + 2;
             goto FinishUp;
@@ -338,7 +338,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             goto FinishUp;
         if (lpfl->iwarpFlt != 0) {
             CchGetString(!gd.fSmallTileMode ? idsWarpSpeedD : idsWarpD, szT);
-            c = _wsprintf(szWork, szT, lpfl->iwarpFlt);
+            c = wsprintf(szWork, szT, lpfl->iwarpFlt);
         } else {
             c = CchGetString(!gd.fSmallTileMode ? idsWarpSpeedStopped : idsWarpStopped, szWork);
         }
@@ -401,7 +401,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             SelectObject(hdc, rghfontArial8[1]);
             if (lpth->thp.iWarp != 0) {
                 CchGetString(idsTravelingWarpD, szT);
-                c = _wsprintf(szWork, szT, lpth->thp.iWarp + 4);
+                c = wsprintf(szWork, szT, lpth->thp.iWarp + 4);
                 TextOut(hdc, xLeft, yTop, szWork, c);
                 yTop += dyArial8 + 2;
                 CchGetString(idsDestination, szT);
@@ -412,9 +412,9 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             yTop += (int16_t)(3 * dyArial8) / 2;
             xLeft += LOWORD(GetTextExtent(hdc, rgszMinerals[2], strlen(rgszMinerals[2])));
             for (i = 0; i < 3; i++) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsS2), rgszMinerals[i]);
+                c = wsprintf(szWork, PszGetCompressedString(idsS2), rgszMinerals[i]);
                 RightTextOut(hdc, xLeft, yTop, szWork, c, 0);
-                c = _wsprintf(szWork, PCTDKT, lpth->thp.rgwtMin[i]);
+                c = wsprintf(szWork, PCTDKT, lpth->thp.rgwtMin[i]);
                 TextOut(hdc, xLeft, yTop, szWork, c);
                 yTop += dyArial8 + 2;
             }
@@ -428,13 +428,13 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             xLeft += LOWORD(GetTextExtent(hdc, szT, cch)) + 20;
             RightTextOut(hdc, xLeft - 4, yTop, szT, cch, 0);
             cch = CchGetString(idsDD5, szT);
-            c = _wsprintf(szWork, szT, lpth->pt.x, lpth->pt.y);
+            c = wsprintf(szWork, szT, lpth->pt.x, lpth->pt.y);
             TextOut(hdc, xLeft, yTop, szWork, c);
             yTop += (int16_t)(3 * dyArial8) / 2;
             c = CchGetString(idsDestination2, szWork);
             RightTextOut(hdc, xLeft - 4, yTop, szWork, c, 0);
             if ((1 << idPlayer & lpth->thw.grbitPlrTrav) && (lpthDest = LpthFromId(lpth->thw.idPartner)) != 0) {
-                c = _wsprintf(szWork, szT, lpthDest->pt.x, lpthDest->pt.y);
+                c = wsprintf(szWork, szT, lpthDest->pt.x, lpthDest->pt.y);
             } else {
                 c = CchGetString(idsUnknown2, szWork);
             }
@@ -455,7 +455,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                 psz = PszGetCompressedString(idsTraderRequestsInterestedPartiesSendFleetLeast);
                 yTop += DrawText(hdc, psz, strlen(psz), &rc, DT_WORDBREAK | DT_NOPREFIX) + 8;
             }
-            cch = _wsprintf(szWork, PszGetCompressedString(idsTraderTravelingWarpD), lpth->tht.iWarp);
+            cch = wsprintf(szWork, PszGetCompressedString(idsTraderTravelingWarpD), lpth->tht.iWarp);
             TextOut(hdc, xLeft, yTop, szWork, cch);
             goto FinishUp;
         }
@@ -466,15 +466,15 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
         SetBkColor(hdc, crButtonFace);
         SelectObject(hdc, rghfontArial8[1]);
         CchGetString(idsLocationDD, szT);
-        c = _wsprintf(szWork, szT, lpth->pt.x, lpth->pt.y);
+        c = wsprintf(szWork, szT, lpth->pt.x, lpth->pt.y);
         TextOut(hdc, xLeft, yTop, szWork, c);
         yTop += dyArial8 + 2;
         CchGetString(idsFieldTypeS, szT);
-        c = _wsprintf(szWork, szT, rgszMineField[lpth->thm.iType]);
+        c = wsprintf(szWork, szT, rgszMineField[lpth->thm.iType]);
         TextOut(hdc, xLeft, yTop, szWork, c);
         yTop += dyArial8 + 2;
         CchGetString(idsFieldRadiusDLYLdMines, szT);
-        c = _wsprintf(szWork, szT, LOWORD((int32_t)sqrt((double)lpth->thm.cMines)), lpth->thm.cMines);
+        c = wsprintf(szWork, szT, LOWORD((int32_t)sqrt((double)lpth->thm.cMines)), lpth->thm.cMines);
         TextOut(hdc, xLeft, yTop, szWork, c);
         yTop += dyArial8 + 2;
         pctDecay = (int16_t)(((GetRaceStat(&rgplr[lpth->iplr], rsMajorAdv) != raMines) * 3 + 1) * CPlanetsInCircle(lpth->pt, lpth->thm.cMines) + 2);
@@ -492,14 +492,14 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             lDecay = 10 <= lDecay ? lDecay : 10;
         }
         CchGetString(idsDecayRateLdYear, szT);
-        c = _wsprintf(szWork, szT, lDecay);
+        c = wsprintf(szWork, szT, lDecay);
         TextOut(hdc, xLeft, yTop, szWork, c);
         yTop += dyArial8 + 2;
         if (lpth->iplr != idPlayer)
             goto FinishUp;
         GetMineFieldCounts(lpth->idFull, &i, &c2);
         CchGetString(idsFieldDD, szT);
-        c = _wsprintf(szWork, szT, i, c2);
+        c = wsprintf(szWork, szT, i, c2);
         TextOut(hdc, xLeft, yTop, szWork, c);
         yTop += dyArial8 + 2;
         goto FinishUp;
@@ -549,7 +549,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                 SetTextColor(hdc, crButtonText);
                 TextOut(hdc, xL, yCur, szWork, c);
                 dNum = PctPlanetDesirability(&pl, idPlayer);
-                c = _wsprintf(szWork, PCTDPCTPCT, dNum);
+                c = wsprintf(szWork, PCTDPCTPCT, dNum);
                 SetTextColor(hdc, dNum >= 0 ? 32512 : 0xff);
                 TextOut(hdc, xL + dx, yCur, szWork, c);
                 if (!fShortLabels) {
@@ -559,7 +559,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                         if (dBest > 0) {
                             SetTextColor(hdc, dBest > 10 ? 32512 : 32639);
                         }
-                        c = _wsprintf(szWork, " (%d%%)", dBest);
+                        c = wsprintf(szWork, " (%d%%)", dBest);
                         TextOut(hdc, xL + dx, yCur, szWork, c);
                     }
                 }
@@ -581,7 +581,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                     strcpy(szWork, szT);
                     c = strlen(szT);
                     if (l > 0) {
-                        c += _wsprintf(&szWork[c], PszGetCompressedString(idsCLd00), 177, l);
+                        c += wsprintf(&szWork[c], PszGetCompressedString(idsCLd00), 177, l);
                     } else {
                         c += CchGetString(idsMsg1264, &szWork[c]);
                     }
@@ -593,11 +593,11 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             yCur += dyArial8 - 2;
             dNum = game.turn - pl.turn;
             if (dNum == 0) {
-                c = _wsprintf(szWork, PszGetCompressedString(!fShortLabels ? idsReportCurrent : idsCurrent));
+                c = wsprintf(szWork, PszGetCompressedString(!fShortLabels ? idsReportCurrent : idsCurrent));
             } else if (fShortLabels) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsOld2), dNum);
+                c = wsprintf(szWork, PszGetCompressedString(idsOld2), dNum);
             } else {
-                c = _wsprintf(szWork, PszGetCompressedString(idsReportDYear), dNum);
+                c = wsprintf(szWork, PszGetCompressedString(idsReportDYear), dNum);
                 if (dNum > 1) {
                     strcat(szWork, "s");
                     c++;
@@ -689,7 +689,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             PatBlt(hdc, xR - 1, yCur + 1, 1, 3 * dyRow + 2, PATCOPY);
             PatBlt(hdc, xL, 3 * dyRow + yCur + 2, xR - xL, 1, PATCOPY);
             SelectObject(hdc, rghfontArial7[0]);
-            c = _wsprintf(szWork, PCTD, cMinGrafMax);
+            c = wsprintf(szWork, PCTD, cMinGrafMax);
             dxNum = LOWORD(GetTextExtent(hdc, szWork, c));
             dxBar = xR - xL - 3;
             cNum = dxBar / ((dxNum >> 1) + dxNum);
@@ -713,7 +713,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             for (i = 0; i <= cNum; i++) {
                 xBeg = LOWORD((int32_t)((int32_t)((uint32_t)(i * dNum) * dxBar) / cMinGrafMax)) + xL;
                 PatBlt(hdc, xBeg, yCur + 2, 1, 3 * dyRow - 1, PATCOPY);
-                c = _wsprintf(szWork, PCTD, i * dNum);
+                c = wsprintf(szWork, PCTD, i * dNum);
                 CtrTextOut(hdc, xBeg, dy, szWork, c);
             }
             RightTextOut(hdc, xL - 4, dy, "kT", 2, 0);
@@ -1101,7 +1101,7 @@ void MineClick(int16_t x, int16_t y, int16_t msg, int16_t sks) {
             rgi[7] = 20000;
             rgi[8] = 30000;
             for (i = 0; i < 9; i++) {
-                _wsprintf(rgsz[i], PCTDKT, rgi[i]);
+                wsprintf(rgsz[i], PCTDKT, rgi[i]);
                 psz[i] = rgsz[i];
                 if (rgi[i] == cMinGrafMax) {
                     iChecked = i;

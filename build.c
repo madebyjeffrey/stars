@@ -61,12 +61,12 @@ int16_t FCheckQueuedShip(HWND hwnd, SHDEF *lpshdef, int16_t fEdit) {
         }
         CchGetString(idsWorkDone, rgch);
         if (lpshdef->cExist > 0 && cshQueued != 0) {
-            _wsprintf(szWork, PszGetCompressedString(ids), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s", cshQueued,
+            wsprintf(szWork, PszGetCompressedString(ids), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s", cshQueued,
                       !fProgress ? "" : rgch);
         } else if (cshQueued != 0) {
-            _wsprintf(szWork, PszGetCompressedString(ids + 1), cshQueued, lpshdef->hul.szClass, cshQueued == 1 ? "" : "s", !fProgress ? "" : rgch);
+            wsprintf(szWork, PszGetCompressedString(ids + 1), cshQueued, lpshdef->hul.szClass, cshQueued == 1 ? "" : "s", !fProgress ? "" : rgch);
         } else {
-            _wsprintf(szWork, PszGetCompressedString(ids + 2), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s");
+            wsprintf(szWork, PszGetCompressedString(ids + 2), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s");
         }
         id = MessageBox(GetFocus(), szWork, PszGetCompressedString(fEdit + 742), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
         SetFocus(hwnd);
@@ -692,13 +692,13 @@ void DrawSlotDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
             rc.bottom = (int16_t)(rc.bottom - rc.top) / 2 + rc.top;
             if (!fStarbaseMode) {
                 RcCtrTextOut(hdc, &rc, PszGetCompressedString(idsCargo3), 0);
-                c = _wsprintf(szWork, PCTDKT, WtMaxShdefStat(lpshdefBuild, 2));
+                c = wsprintf(szWork, PCTDKT, WtMaxShdefStat(lpshdefBuild, 2));
                 RcCtrTextOut(hdc, &rcCargo, szWork, 0);
             } else {
                 if ((uint32_t)lphuldef->hul.wtCargoMax == 0xffff) {
                     RcCtrTextOut(hdc, &rc, PszGetCompressedString(idsUnlimited), 0);
                 } else {
-                    c = _wsprintf(szWork, PCTDKT, lphuldef->hul.wtCargoMax);
+                    c = wsprintf(szWork, PCTDKT, lphuldef->hul.wtCargoMax);
                     RcCtrTextOut(hdc, &rc, szWork, 0);
                 }
                 RcCtrTextOut(hdc, &rcCargo, PszGetCompressedString(idsSpace), 0);
@@ -731,7 +731,7 @@ void DrawSlotDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
                     szWork[0] = 0;
                     c = 0;
                 } else {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsDD), cItem, lphuldef->hul.rghs[i].cItem);
+                    c = wsprintf(szWork, PszGetCompressedString(idsDD), cItem, lphuldef->hul.rghs[i].cItem);
                 }
             } else {
                 SelectObject(hdcMem, hbmpBackBld);
@@ -739,9 +739,9 @@ void DrawSlotDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
                 BitBlt(hdc, vrgrcSlot[i].left, vrgrcSlot[i].top, 64, 64, hdcMem, (ibmp & 7) * 0x40, (ibmp >> 3 & 3) * 0x40, SRCCOPY);
                 iInventSel = -1;
                 if (lphuldef->hul.rghs[i].grhst & hstEngine) {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsNeedsD), lphuldef->hul.rghs[i].cItem);
+                    c = wsprintf(szWork, PszGetCompressedString(idsNeedsD), lphuldef->hul.rghs[i].cItem);
                 } else {
-                    c = _wsprintf(szWork, PszGetCompressedString(idsD3), lphuldef->hul.rghs[i].cItem);
+                    c = wsprintf(szWork, PszGetCompressedString(idsD3), lphuldef->hul.rghs[i].cItem);
                 }
             }
             CtrTextOut(hdc, vrgrcSlot[i].left + 32, vrgrcSlot[i].bottom - dyArial6 - 4, szWork, c);
@@ -759,7 +759,7 @@ void DrawSlotDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
             SelectPalette(hdc, vhpal, FALSE);
             RealizePalette(hdc);
             DibBlt(hdc, ptPlaque.x, ptPlaque.y, 60, 30, hdibPlaque, 0, 0, 60, 30, 13369376);
-            c = _wsprintf(szWork, PszGetCompressedString(idsLdLd), lpshdefBuild->cExist, lpshdefBuild->cBuilt);
+            c = wsprintf(szWork, PszGetCompressedString(idsLdLd), lpshdefBuild->cExist, lpshdefBuild->cBuilt);
             SelectObject(hdc, rghfontArial8[1]);
             if (LOWORD(GetTextExtent(hdc, szWork, c)) > 50) {
                 SelectObject(hdc, rghfontArial7[0]);
@@ -1073,7 +1073,7 @@ void DrawBuildSelComp(HWND hwnd, HDC hdc, int16_t iDraw) {
                 if (!fPlural) {
                     i += CchGetString(idsOne, &szWork[i]);
                 } else {
-                    i += _wsprintf(&szWork[i], "%d ", hsHul.cItem);
+                    i += wsprintf(&szWork[i], "%d ", hsHul.cItem);
                 }
                 grhst = hsHul.grhst;
                 while (grhst != 0) {
@@ -1125,13 +1125,13 @@ void DrawBuildSelComp(HWND hwnd, HDC hdc, int16_t iDraw) {
         if (!fPlural) {
             CchGetString(idsOne, szWord);
         } else {
-            _wsprintf(szWord, "%d ", hsShip.cItem);
+            wsprintf(szWord, "%d ", hsShip.cItem);
         }
         strcat(szWord, part.pcom->szName);
         if (fPlural) {
             strcat(szWord, "s");
         }
-        cch = _wsprintf(szWork, PszGetCompressedString(idsCostS), szWord);
+        cch = wsprintf(szWork, PszGetCompressedString(idsCostS), szWord);
         TextOut(hdc, rc.left, rc.top, szWork, cch);
         rc.left += 8;
         rc.right -= 8;
@@ -1144,7 +1144,7 @@ void DrawBuildSelComp(HWND hwnd, HDC hdc, int16_t iDraw) {
             TextOut(hdc, rc.left, rc.top, rgszMinerals[k], lstrlen(rgszMinerals[k]));
             SelectObject(hdc, rghfontArial8[0]);
             SetTextColor(hdc, crWindowText);
-            cch = _wsprintf(szWork, PCTLD, (uint32_t)(c * (uint32_t)rgCosts[k]));
+            cch = wsprintf(szWork, PCTLD, (uint32_t)(c * (uint32_t)rgCosts[k]));
             RightTextOut(hdc, rc.right - dxkT - 64, rc.top, szWork, cch, dxMaxMineralQuan);
             TextOut(hdc, rc.right - dxkT - 64, rc.top, PszGetCompressedString(idsKt), 2);
         }
@@ -1154,13 +1154,13 @@ void DrawBuildSelComp(HWND hwnd, HDC hdc, int16_t iDraw) {
         TextOut(hdc, rc.left, rc.top, rgszMinerals[5], lstrlen(rgszMinerals[5]));
         SelectObject(hdc, rghfontArial8[0]);
         SetTextColor(hdc, crWindowText);
-        cch = _wsprintf(szWork, PCTLD, (uint32_t)(c * (uint32_t)rgCosts[3]));
+        cch = wsprintf(szWork, PCTLD, (uint32_t)(c * (uint32_t)rgCosts[3]));
         RightTextOut(hdc, rc.right - dxkT - 64, rc.top, szWork, cch, dxMaxMineralQuan);
         if (!fStarbaseMode) {
             rc.left -= 8;
             rc.top += dyArial8;
             SelectObject(hdc, rghfontArial8[1]);
-            cch = _wsprintf(szWork, PszGetCompressedString(idsMassLdkt), (uint32_t)(c * part.pcom->cMass));
+            cch = wsprintf(szWork, PszGetCompressedString(idsMassLdkt), (uint32_t)(c * part.pcom->cMass));
             TextOut(hdc, rc.left, rc.top, szWork, cch);
         }
     }
@@ -1289,7 +1289,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             cch = CchGetString(idsCost, szWork);
         } else {
             CchGetString(idsHull, rgch);
-            cch = _wsprintf(szWork, PszGetCompressedString(idsCostOneSS), lphul->szClass, mdBuild == mdBuildHuldef ? rgch : "");
+            cch = wsprintf(szWork, PszGetCompressedString(idsCostOneSS), lphul->szClass, mdBuild == mdBuildHuldef ? rgch : "");
         }
         TextOut(hdc, rc.left, rc.top, szWork, cch);
         rc.left += 8;
@@ -1315,7 +1315,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             TextOut(hdc, rc.left, rc.top, rgszMinerals[k], lstrlen(rgszMinerals[k]));
             SelectObject(hdc, rghfontArial8[0]);
             SetTextColor(hdc, crWindowText);
-            cch = _wsprintf(szWork, PCTD, k == 5 ? rgCosts[3] : rgCosts[k]);
+            cch = wsprintf(szWork, PCTD, k == 5 ? rgCosts[3] : rgCosts[k]);
             RightTextOut(hdc, rc.left + dxMineral + dxMaxMineralQuan - dxkT, rc.top, szWork, cch, dxMaxMineralQuan);
             if (k < 5) {
                 TextOut(hdc, rc.left + dxMineral + dxMaxMineralQuan - dxkT, rc.top, PszGetCompressedString(idsKt), 2);
@@ -1330,25 +1330,25 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             } else {
                 lwt = (uint32_t)lphul->wtEmpty;
             }
-            cch = _wsprintf(szWork, PszGetCompressedString(idsMassLdkt), lwt);
+            cch = wsprintf(szWork, PszGetCompressedString(idsMassLdkt), lwt);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
         }
         rc.top -= dyArial8 * 4;
         rc.left += dxMineral + dxMaxMineralQuan + 24;
         if (!fStarbaseMode && (!hwndPopup || GlobalPD.grPopup != grPopupShdef || !GlobalPD.fToken)) {
-            cch = _wsprintf(szWork, PszGetCompressedString(idsDmg), WtMaxShdefStat(lpshdefBuild, 1));
+            cch = wsprintf(szWork, PszGetCompressedString(idsDmg), WtMaxShdefStat(lpshdefBuild, 1));
             RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan);
             cch = CchGetString(idsMaxFuel, szWork);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
             rc.top += dyArial8;
         }
-        cch = _wsprintf(szWork, PszGetCompressedString(idsLddp), dp);
+        cch = wsprintf(szWork, PszGetCompressedString(idsLddp), dp);
         RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 10);
         cch = CchGetString(idsArmor, szWork);
         TextOut(hdc, rc.left, rc.top, szWork, cch);
         rc.top += dyArial8;
         if (mdBuild != mdBuildHuldef) {
-            cch = _wsprintf(szWork, dpShield == 0 ? PszGetCompressedString(idsNone) : "%lddp", dpShield);
+            cch = wsprintf(szWork, dpShield == 0 ? PszGetCompressedString(idsNone) : "%lddp", dpShield);
             RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 10);
             cch = CchGetString(idsShields, szWork);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
@@ -1357,7 +1357,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
         if (mdBuild != mdBuildHuldef) {
             lpshdefBuild->lPower = LComputePower(lpshdefBuild);
             if (lpshdefBuild->lPower != 0) {
-                cch = _wsprintf(szWork, PCTLD, lpshdefBuild->lPower);
+                cch = wsprintf(szWork, PCTLD, lpshdefBuild->lPower);
                 RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan);
                 cch = CchGetString(idsRating, szWork);
                 TextOut(hdc, rc.left, rc.top, szWork, cch);
@@ -1372,7 +1372,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             }
             i = PctCloakFromHuldef(&lpshdefBuild->hul, i, NULL);
             j = PctJammerFromHul(&lpshdefBuild->hul);
-            cch = _wsprintf(szWork, PszGetCompressedString(idsDD4), i, j);
+            cch = wsprintf(szWork, PszGetCompressedString(idsDD4), i, j);
             RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan);
             cch = CchGetString(idsCloakJam, szWork);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
@@ -1383,7 +1383,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             } else {
                 j = SpdOfShip(NULL, 0, NULL, FALSE, lpshdefBuild) + 1;
             }
-            cch = _wsprintf(szWork, PszGetCompressedString(idsDS), i, &rgszSpeed[j * 3]);
+            cch = wsprintf(szWork, PszGetCompressedString(idsDS), i, &rgszSpeed[j * 3]);
             RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan);
             cch = CchGetString((dyArial8 > 14) + 1196, szWork);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
@@ -1397,9 +1397,9 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
                 dRange = GetShdefScannerRange(lpshdefBuild, i, &dPlanRange, &pctDetect, NULL);
                 if (dRange > 0) {
                     if (pctDetect >= 100) {
-                        cch = _wsprintf(szWork, PszGetCompressedString(idsDD6), dRange, dPlanRange);
+                        cch = wsprintf(szWork, PszGetCompressedString(idsDD6), dRange, dPlanRange);
                     } else {
-                        cch = _wsprintf(szWork, PszGetCompressedString(idsDDD), dRange, dPlanRange, pctDetect);
+                        cch = wsprintf(szWork, PszGetCompressedString(idsDDD), dRange, dPlanRange, pctDetect);
                     }
                     RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 40);
                     cch = CchGetString((dyArial8 > 14) + 1199, szWork);
@@ -1450,9 +1450,9 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
                     csh = 1;
                 }
                 if (fStarbaseMode) {
-                    cch = _wsprintf(szWork, PCTDPCTPCT, pct);
+                    cch = wsprintf(szWork, PCTDPCTPCT, pct);
                 } else {
-                    cch = _wsprintf(szWork, PszGetCompressedString(idsLdD), csh, pct);
+                    cch = wsprintf(szWork, PszGetCompressedString(idsLdD), csh, pct);
                 }
                 dp = 1;
             } else {
@@ -1714,7 +1714,7 @@ void FillBuildDD(HWND hwndDD, MdBuild md) {
                         if (!lpshdef[j].fFree) {
                             if (PszPlayerName(i, TRUE, FALSE, FALSE, 0, NULL) != szWork) {
                             }
-                            _wsprintf(&szWork[strlen(szWork)], " %s", lpshdef[j].hul.szClass);
+                            wsprintf(&szWork[strlen(szWork)], " %s", lpshdef[j].hul.szClass);
                             SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)szWork);
                         }
                     }

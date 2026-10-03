@@ -522,7 +522,7 @@ int16_t AlertSz(char *sz, int16_t mbType) {
     char szT[256];
 
     if (ini.fValidate || (ini.fLogging && ini.fGen)) {
-        _wsprintf(szT, "Error: %s", sz);
+        wsprintf(szT, "Error: %s", sz);
         OutputSz(!ini.fValidate ? 6 : 7, szT);
         return IDYES;
     }
@@ -545,7 +545,7 @@ int16_t CchGetString(StringId ids, char *psz) {
 char *PszFromInt(int16_t i, int16_t *pcch) {
     int16_t cch;
 
-    cch = _wsprintf(szFormatNumber, PCTD, i);
+    cch = wsprintf(szFormatNumber, PCTD, i);
     if (pcch) {
         *pcch = cch;
     }
@@ -555,7 +555,7 @@ char *PszFromInt(int16_t i, int16_t *pcch) {
 char *PszFromLong(int32_t l, int16_t *pcch) {
     int16_t cch;
 
-    cch = _wsprintf(szFormatNumber, PCTLD, l);
+    cch = wsprintf(szFormatNumber, PCTLD, l);
     if (*pcch != 0) {
         *pcch = cch;
     }
@@ -596,7 +596,7 @@ int16_t CommaFormatLong(char *psz, int32_t l) {
     char   *pchOut;
     char   *pch;
 
-    c = _wsprintf(rgch, PCTLD, l);
+    c = wsprintf(rgch, PCTLD, l);
     pch = rgch;
     pchOut = psz;
     cSkip = c % 3;
@@ -2126,7 +2126,7 @@ INT_PTR CALLBACK ProgressGaugeDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         dx = GetSystemMetrics(SM_CXSCREEN);
         dy = GetSystemMetrics(SM_CYSCREEN);
         psz = PszGetCompressedString(idsGeneratingDataYearD);
-        _wsprintf(szWork, psz, game.turn + 2401);
+        wsprintf(szWork, psz, game.turn + 2401);
         SetWindowText(GetDlgItem(hwnd, IDC_GAUGE_TEXT), szWork);
         GetWindowRect(hwnd, &rc);
         rc.left = (dx - (rc.right - rc.left)) >> 1;
@@ -2188,7 +2188,7 @@ void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
             if (iNumOnly <= 0) {
                 iNumOnly = vpctProgressGauge;
             }
-            c = _wsprintf(szT, PCTD, iNumOnly);
+            c = wsprintf(szT, PCTD, iNumOnly);
             RightTextOut(hdc, rc.right - 2, 1, szT, c, 80);
         }
         if (fNumOnly)

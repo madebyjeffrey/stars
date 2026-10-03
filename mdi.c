@@ -122,11 +122,11 @@ void CreateChildWindows() {
         szGame[8] = 0;
         strncpy(szGame, psz, 8);
         strlwr(szGame);
-        _wsprintf(&szGame[strlen(szGame)], ".m%d", idPlayer + 1);
-        _wsprintf(szData, "Stars! -- %s -- %s -- %s", game.szName, PszPlayerName(idPlayer, FALSE, TRUE, FALSE, 0, NULL), szGame);
+        wsprintf(&szGame[strlen(szGame)], ".m%d", idPlayer + 1);
+        wsprintf(szData, "Stars! -- %s -- %s -- %s", game.szName, PszPlayerName(idPlayer, FALSE, TRUE, FALSE, 0, NULL), szGame);
     } else {
         CchGetString(idsStarsSHostMode, szWork);
-        _wsprintf(szData, szWork, game.szName);
+        wsprintf(szData, szWork, game.szName);
     }
     SetWindowText(hwndFrame, szData);
     if (idPlayer != iplrNone) {
@@ -240,16 +240,16 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     VerifyTurns();
                     DestroyCurGame();
                     EnsureAis();
-                    _wsprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
+                    wsprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
                     OutputSz(7, szTemp);
                     for (i = 0; i < game.cPlayer; i++) {
                         if (rgOut[i] + 1 > 3) {
-                            ich = _wsprintf(szTemp, "Error: %d: ", i + 1);
+                            ich = wsprintf(szTemp, "Error: %d: ", i + 1);
                         } else {
-                            ich = _wsprintf(szTemp, "%d: ", i + 1);
+                            ich = wsprintf(szTemp, "%d: ", i + 1);
                         }
                         if (!gd.fNoHostNames) {
-                            ich += _wsprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
+                            ich += wsprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
                         }
                         strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
                         if (rgplr[i].fHacker) {
@@ -408,7 +408,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         idPlayer = 0;
         if (wParam == 2506) {
             gd.fGeneratingTurn = TRUE;
-            _wsprintf(szWork, "%s.x1", szBase);
+            wsprintf(szWork, "%s.x1", szBase);
             if (FLoadLogFile(szWork)) {
                 FRunLogFile();
             }
@@ -442,7 +442,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 id = AlertSz(PszFormatIds(idsNewTurnAvailableWouldLikeLoad, NULL), MB_YESNOCANCEL | MB_ICONQUESTION | MB_TASKMODAL);
             }
             if (id == 6) {
-                _wsprintf(szExt, MPCTD, idPlayer + 1);
+                wsprintf(szExt, MPCTD, idPlayer + 1);
                 DestroyCurGame();
                 if (!FLoadGame(szBase, szExt)) {
                     AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
@@ -470,7 +470,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             id = AlertSz(PszFormatIds(idsTurnHasSubmittedChangesMadeAfterTurn, NULL), MB_YESNOCANCEL | MB_ICONQUESTION | MB_TASKMODAL);
             if (id == 6 && !FMarkFile(dtLog, idPlayer, mdMarkDone, FALSE)) {
                 AlertSz(PszFormatIds(idsNewTurnCurrentlyGeneratedHostNewTurn, NULL), MB_ICONHAND);
-                _wsprintf(szExt, MPCTD, idPlayer + 1);
+                wsprintf(szExt, MPCTD, idPlayer + 1);
                 DestroyCurGame();
                 if (!FLoadGame(szBase, szExt)) {
                     AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
@@ -1336,7 +1336,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                         psz = PszPlayerName(idPlayer, TRUE, TRUE, TRUE, 0, NULL);
                         TextOut(pd.hDC, ptLegendA.x + xOff, y, psz, strlen(psz));
                         y += dyPrint;
-                        cch = _wsprintf(szWork, PszGetCompressedString(idsYearD), game.turn + 2400);
+                        cch = wsprintf(szWork, PszGetCompressedString(idsYearD), game.turn + 2400);
                         TextOut(pd.hDC, ptLegendA.x + xOff, y, szWork, cch);
                         if ((grbitScan & grbitScanViewMask) != 5) {
                             y = ptLegendB.y + yOff;
@@ -1377,7 +1377,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                                     }
                                     DrawPlanetPrintDot(pd.hDC, LOWORD(x), LOWORD(y), 1);
                                 } else if (lppl->iPlayer != iplrNone) {
-                                    cch = _wsprintf(szWork, PCTD, lppl->iPlayer + 1);
+                                    cch = wsprintf(szWork, PCTD, lppl->iPlayer + 1);
                                     CtrTextOut(pd.hDC, LOWORD(x), LOWORD(y) - dyPrintTiny, szWork, cch);
                                 }
                             }
@@ -1468,7 +1468,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                 iPassCnt = 0;
             }
             if (game.fSinglePlr && iPassCnt != 0) {
-                _wsprintf(szWork, PszGetCompressedString(idsSureWantForceGenerateDTurnsRow), iPassCnt);
+                wsprintf(szWork, PszGetCompressedString(idsSureWantForceGenerateDTurnsRow), iPassCnt);
                 if (MessageBox(GetFocus(), szWork, "Stars!", MB_YESNO | MB_ICONEXCLAMATION | MB_TASKMODAL) != IDYES)
                     break;
             }
@@ -1541,7 +1541,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             iPassCnt = 0;
         LTutorialFinishUp:
             DestroyCurGame();
-            _wsprintf(szExt, MPCTD, idCur + 1);
+            wsprintf(szExt, MPCTD, idCur + 1);
             if (!FLoadGame(szBase, szExt)) {
                 SetCursor(hcurSav);
                 HideProgressGauge();
@@ -1637,7 +1637,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                     }
                 }
                 psz = PszGetCompressedString(ids);
-                _wsprintf(szWork, psz, cObj, cObj == 1 ? 32 : 115);
+                wsprintf(szWork, psz, cObj, cObj == 1 ? 32 : 115);
                 hwndReportDlg = CreateWindow(szReport, szWork, WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, 0, 0, 100,
                                              100, hwndFrame, NULL, hInst, NULL);
                 SetWindowPos(hwndReportDlg, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
@@ -1680,7 +1680,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                 } else {
                     AlertSz(PszFormatIds(idsNewTurnAvailable, NULL), MB_ICONASTERISK);
                 }
-                _wsprintf(szExt, MPCTD, idPlayer + 1);
+                wsprintf(szExt, MPCTD, idPlayer + 1);
                 game.fDirty = FALSE;
                 DestroyCurGame();
                 if (!FLoadGame(szBase, szExt)) {
@@ -2271,14 +2271,14 @@ void DrawHostDialog2(HWND hwnd, HDC hdcIn) {
     SetRect(&rcDiamond, 6, yCur, dyArial8 + 7, yCur + dyArial8 + 1);
     for (i = 0; i < game.cPlayer; i++) {
         DrawDiamond(hdc, &rcDiamond, hbrBBlue);
-        cch = _wsprintf(szWork, PszGetCompressedString(idsD2), i + 1);
+        cch = wsprintf(szWork, PszGetCompressedString(idsD2), i + 1);
         RightTextOut(hdc, x, yCur, szWork, cch, 0);
         SetTextColor(hdc, rgOut[i] <= 0 ? 32512 : 127);
         CchGetString(rgOut[i] + 716, szStat);
         if (gd.fNoHostNames) {
-            cch = _wsprintf(szWork, " %s", szStat);
+            cch = wsprintf(szWork, " %s", szStat);
         } else {
-            cch = _wsprintf(szWork, PszGetCompressedString(idsSS), PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL), szStat);
+            cch = wsprintf(szWork, PszGetCompressedString(idsSS), PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL), szStat);
         }
         if (rgplr[i].fHacker) {
             strcat(szWork, " - HACKER");
@@ -2289,25 +2289,25 @@ void DrawHostDialog2(HWND hwnd, HDC hdcIn) {
         OffsetRect(&rcDiamond, 0, dyArial8 + 4);
         yCur += dyArial8 + 4;
     }
-    cch = _wsprintf(szWork, PCTD, game.turn + 2401);
+    cch = wsprintf(szWork, PCTD, game.turn + 2401);
     SetWindowText(GetDlgItem(hwnd, IDC_HOST_NEXT_YEAR_TEXT), szWork);
     dsec = (uint32_t)((GetTickCount() - ctickLast) / 1000);
     if (dsec < 60) {
-        cch = _wsprintf(szWork, PszGetCompressedString(idsDSeconds), LOWORD(dsec));
+        cch = wsprintf(szWork, PszGetCompressedString(idsDSeconds), LOWORD(dsec));
     } else {
         dmin = LOWORD((uint32_t)(dsec / 60));
         dsec -= (uint32_t)(60 * dmin);
         if (dmin < 60) {
-            cch = _wsprintf(szWork, PszGetCompressedString(idsD02d), dmin, LOWORD(dsec));
+            cch = wsprintf(szWork, PszGetCompressedString(idsD02d), dmin, LOWORD(dsec));
         } else {
             dhour = (uint32_t)dmin / 60;
             dmin -= 60 * dhour;
             if (dhour < 24) {
-                cch = _wsprintf(szWork, PszGetCompressedString(idsD02d02d), dhour, dmin, LOWORD(dsec));
+                cch = wsprintf(szWork, PszGetCompressedString(idsD02d02d), dhour, dmin, LOWORD(dsec));
             } else {
                 dday = (uint32_t)dhour / 24;
                 dhour -= dday * 24;
-                cch = _wsprintf(szWork, PszGetCompressedString(idsDDaysD02d02d), dday, dhour, dmin, LOWORD(dsec));
+                cch = wsprintf(szWork, PszGetCompressedString(idsDDaysD02d02d), dday, dhour, dmin, LOWORD(dsec));
             }
         }
     }
@@ -2347,7 +2347,7 @@ void VerifyTurns() {
                 cAi++;
                 rgOut[i] = 0;
             } else {
-                _wsprintf(szWork, "%s.x%d", szBase, i + 1);
+                wsprintf(szWork, "%s.x%d", szBase, i + 1);
                 idPlayer = i;
                 if (FLoadLogFile(szWork) && !FRunLogFile()) {
                     rgOut[i] = 3;
@@ -2595,7 +2595,7 @@ INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                     iPassCnt = 0;
                 }
                 if (iPassCnt != 0) {
-                    _wsprintf(szWork, PszGetCompressedString(idsSureWantForceGenerateDTurnsRow), iPassCnt + 1);
+                    wsprintf(szWork, PszGetCompressedString(idsSureWantForceGenerateDTurnsRow), iPassCnt + 1);
                     if (MessageBox(GetFocus(), szWork, "Stars!", MB_YESNO | MB_ICONEXCLAMATION | MB_TASKMODAL) != IDYES) {
                         iPassCnt = 0;
                         return 1;
@@ -2696,7 +2696,7 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
                 goto Done;
             idCur = idPlayer;
             KillTimer(hwnd, uTimerId);
-            _wsprintf(szExt, MPCTD, idPlayer + 1);
+            wsprintf(szExt, MPCTD, idPlayer + 1);
             DestroyCurGame();
             if (!FLoadGame(szBase, szExt)) {
                 AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
@@ -2723,7 +2723,7 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
             EnableWindow(GetDlgItem(hwnd, IDC_HOST_AUTO_GENERATE), FALSE);
             goto Done;
         }
-        _wsprintf(szWork, PszGetCompressedString(idsHostModeDPlayer), cOut);
+        wsprintf(szWork, PszGetCompressedString(idsHostModeDPlayer), cOut);
         if (cOut != 1) {
             strcat(szWork, "s");
         }
@@ -2778,7 +2778,7 @@ void SetWindowIniString(char *sz, HWND hwnd) {
         ch = 'R';
     }
     GetWindowRc(hwnd, &rc);
-    _wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), ch, rc.left, rc.top, rc.right, rc.bottom);
+    wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), ch, rc.left, rc.top, rc.right, rc.bottom);
     return;
 }
 
@@ -2811,50 +2811,50 @@ void WriteIniSettings() {
     if (gd.mdScreenSize == 0) {
         i |= 2;
     }
-    _wsprintf(szWork, szPd, i);
+    wsprintf(szWork, szPd, i);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsMain, szEntry);
     SetWindowIniString(szWork, hwndFrame);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsReportfleetwin, szEntry);
-    _wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptFleet.ptDlg.x, vrptFleet.ptDlg.y, vrptFleet.ptDlg.x + vrptFleet.ptSize.x,
+    wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptFleet.ptDlg.x, vrptFleet.ptDlg.y, vrptFleet.ptDlg.x + vrptFleet.ptSize.x,
               vrptFleet.ptDlg.y + vrptFleet.ptSize.y);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsReportefleetwin, szEntry);
-    _wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptEFleet.ptDlg.x, vrptEFleet.ptDlg.y, vrptEFleet.ptDlg.x + vrptEFleet.ptSize.x,
+    wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptEFleet.ptDlg.x, vrptEFleet.ptDlg.y, vrptEFleet.ptDlg.x + vrptEFleet.ptSize.x,
               vrptEFleet.ptDlg.y + vrptEFleet.ptSize.y);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsReportbtlwin, szEntry);
-    _wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptBattle.ptDlg.x, vrptBattle.ptDlg.y, vrptBattle.ptDlg.x + vrptBattle.ptSize.x,
+    wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptBattle.ptDlg.x, vrptBattle.ptDlg.y, vrptBattle.ptDlg.x + vrptBattle.ptSize.x,
               vrptBattle.ptDlg.y + vrptBattle.ptSize.y);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsReportplanwin, szEntry);
-    _wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptPlanet.ptDlg.x, vrptPlanet.ptDlg.y, vrptPlanet.ptDlg.x + vrptPlanet.ptSize.x,
+    wsprintf(szWork, PszGetCompressedString(idsC04d04d04d04d), 77, vrptPlanet.ptDlg.x, vrptPlanet.ptDlg.y, vrptPlanet.ptDlg.x + vrptPlanet.ptSize.x,
               vrptPlanet.ptDlg.y + vrptPlanet.ptSize.y);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsLayout, szEntry);
-    _wsprintf(szWork, szPd, iWindowLayout);
+    wsprintf(szWork, szPd, iWindowLayout);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle1width, szEntry);
-    _wsprintf(szWork, szPd, vfs.dxPlanWant);
+    wsprintf(szWork, szPd, vfs.dxPlanWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle1height, szEntry);
-    _wsprintf(szWork, szPd, vfs.dyMsgWant);
+    wsprintf(szWork, szPd, vfs.dyMsgWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle1height2, szEntry);
-    _wsprintf(szWork, szPd, vfs.dyMinWant);
+    wsprintf(szWork, szPd, vfs.dyMinWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle2width, szEntry);
-    _wsprintf(szWork, szPd, vfs.dx2PlanWant);
+    wsprintf(szWork, szPd, vfs.dx2PlanWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle2height, szEntry);
-    _wsprintf(szWork, szPd, vfs.dy2MsgWant);
+    wsprintf(szWork, szPd, vfs.dy2MsgWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsStyle2height2, szEntry);
-    _wsprintf(szWork, szPd, vfs.dy2MinWant);
+    wsprintf(szWork, szPd, vfs.dy2MinWant);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsToolbar, szEntry);
-    _wsprintf(szWork, szPd, gd.fToolbar);
+    wsprintf(szWork, szPd, gd.fToolbar);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     iPass = 2;
     rgtile = rgtilePlanet;
@@ -2895,13 +2895,13 @@ void WriteIniSettings() {
     case grobjOther:
         ch = 'E';
     }
-    _wsprintf(szWork, PszGetCompressedString(idsCCD), ch, (int16_t)(int8_t)LOBYTE(idPlayer + 66), sel.id);
+    wsprintf(szWork, PszGetCompressedString(idsCCD), ch, (int16_t)(int8_t)LOBYTE(idPlayer + 66), sel.id);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsMessage, szEntry);
-    _wsprintf(szWork, PCTD, iMsgCur);
+    wsprintf(szWork, PCTD, iMsgCur);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsGameid, szEntry);
-    _wsprintf(szWork, "%lx", game.lid);
+    wsprintf(szWork, "%lx", game.lid);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsScanzoom, szEntry);
     szWork[0] = iScanZoom + '5';
@@ -2939,60 +2939,60 @@ void WriteIniSettings() {
             gd.fWriteTurnNum = FALSE;
         }
         CchGetString(idsFile1, szEntry);
-        _wsprintf(szWork, "%s.m%d", szBase, idPlayer + 1);
+        wsprintf(szWork, "%s.m%d", szBase, idPlayer + 1);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     }
     CchGetString(idsMisc, szSection);
     if (gd.fChgReports) {
         CchGetString(idsReportplanfld, szEntry);
-        _wsprintf(szWork, PCTD, LOWORD(vrptPlanet.grbitVisible));
+        wsprintf(szWork, PCTD, LOWORD(vrptPlanet.grbitVisible));
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportplansort, szEntry);
         i = vrptPlanet.icolSort;
         if (vrptPlanet.fAscending) {
             i |= 0x100;
         }
-        _wsprintf(szWork, PCTD, i);
+        wsprintf(szWork, PCTD, i);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportfleetfld, szEntry);
-        _wsprintf(szWork, PCTD, LOWORD(vrptFleet.grbitVisible));
+        wsprintf(szWork, PCTD, LOWORD(vrptFleet.grbitVisible));
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportfleetsort, szEntry);
         i = vrptFleet.icolSort;
         if (vrptFleet.fAscending) {
             i |= 0x100;
         }
-        _wsprintf(szWork, PCTD, i);
+        wsprintf(szWork, PCTD, i);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportefleetfld, szEntry);
-        _wsprintf(szWork, PCTD, LOWORD(vrptEFleet.grbitVisible));
+        wsprintf(szWork, PCTD, LOWORD(vrptEFleet.grbitVisible));
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportefltsort, szEntry);
         i = vrptEFleet.icolSort;
         if (vrptEFleet.fAscending) {
             i |= 0x100;
         }
-        _wsprintf(szWork, PCTD, i);
+        wsprintf(szWork, PCTD, i);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportbtlfld, szEntry);
-        _wsprintf(szWork, PCTD, LOWORD(vrptBattle.grbitVisible));
+        wsprintf(szWork, PCTD, LOWORD(vrptBattle.grbitVisible));
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportbtlsort, szEntry);
         i = vrptBattle.icolSort;
         if (vrptBattle.fAscending) {
             i |= 0x100;
         }
-        _wsprintf(szWork, PCTD, i);
+        wsprintf(szWork, PCTD, i);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
         CchGetString(idsReportdefgraph, szEntry);
-        _wsprintf(szWork, PCTD, gd.iCurGraph);
+        wsprintf(szWork, PCTD, gd.iCurGraph);
         WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     }
     CchGetString(idsHistoryinfo, szEntry);
-    _wsprintf(szWork, PCTD, uDateInstalled);
+    wsprintf(szWork, PCTD, uDateInstalled);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsVcrspeed, szEntry);
-    _wsprintf(szWork, PCTD, viSpeedVCR);
+    wsprintf(szWork, PCTD, viSpeedVCR);
     WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     if (gd.fChgZipOrd) {
         CchGetString(idsZiporders, szSection);

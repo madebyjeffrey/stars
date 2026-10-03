@@ -35,7 +35,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 psz = szWork;
             } else {
                 psz = PszGetCompressedString(idsUnusedD);
-                _wsprintf(szWork, psz, i - 1072);
+                wsprintf(szWork, psz, i - 1072);
                 psz = szWork;
             }
             hwndRad = GetDlgItem(hwnd, i);
@@ -83,7 +83,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 iAction = vrgZip[iResTechNow].txp.rgia[i].iAction;
                 cch = CchGetString(iAction + 109, szWork);
                 if (szWork[cch - 1] == '.') {
-                    _wsprintf(&szWork[cch - 3], " %dkT", vrgZip[iResTechNow].txp.rgia[i].cQuan);
+                    wsprintf(&szWork[cch - 3], " %dkT", vrgZip[iResTechNow].txp.rgia[i].cQuan);
                 }
                 TextOut(hdc, xCtr + 6, rcGBox.top, szWork, strlen(szWork));
                 rcGBox.top += dyArial8;
@@ -116,12 +116,12 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 if (vrgZip[iResTechNow].fValid) {
                     strcpy(szWork, vrgZip[iResTechNow].szName);
                 } else {
-                    _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
+                    wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                 }
                 lpProc = MakeProcInstance(RenameZipDlg, hInst);
                 if (DialogBox(hInst, MAKEINTRESOURCE(IDD_RENAME), hwndFrame, lpProc) != 0) {
                     if (szWork[0] == 0) {
-                        _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
+                        wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                     }
                     strcpy(vrgZip[iResTechNow].szName, szWork);
                     pszT = &szWork[64];
@@ -146,7 +146,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 break;
             case IDC_DELETE:
                 vrgZip[iResTechNow].fValid = FALSE;
-                _wsprintf(szWork, PszGetCompressedString(idsUnusedD), iResTechNow + 1);
+                wsprintf(szWork, PszGetCompressedString(idsUnusedD), iResTechNow + 1);
                 SetWindowText(GetDlgItem(hwnd, iResTechNow + 1073), szWork);
                 InvalidateRect(hwnd, NULL, TRUE);
                 gd.fChgZipOrd = TRUE;

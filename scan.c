@@ -1780,7 +1780,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
                 id = sel.scan.idpl;
             }
             if (id != idplNone) {
-                c = _wsprintf(szWork, "ID #%d", id + 1);
+                c = wsprintf(szWork, "ID #%d", id + 1);
                 SetBkMode(hdc, OPAQUE);
                 TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
             }
@@ -1790,7 +1790,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
             } else {
                 id = sel.scan.iwp;
             }
-            c = _wsprintf(szWork, "WP #%d", id);
+            c = wsprintf(szWork, "WP #%d", id);
             TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
         }
         l = GetTextExtent(hdc, "X: 8888", 7);
@@ -1810,7 +1810,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         }
     GotCoords:
         if (pt.x > 0) {
-            c = _wsprintf(szWork, "X: %d", pt.x);
+            c = wsprintf(szWork, "X: %d", pt.x);
             SetBkMode(hdc, OPAQUE);
             TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
         }
@@ -1819,7 +1819,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         rcT.right = LOWORD(l) + 6 + rcT.left;
         DrawLockLight(hdc, &rcT, fFullRedraw);
         if (pt.y > 0) {
-            c = _wsprintf(szWork, "Y: %d", pt.y);
+            c = wsprintf(szWork, "Y: %d", pt.y);
             SetBkMode(hdc, OPAQUE);
             TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
         }
@@ -2164,7 +2164,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
 
     if (sel.fl.cord == 87) {
         MessageBeep(MB_ICONASTERISK);
-        _wsprintf(szWork, PszGetCompressedString(idsCantHaveDWaypoints), 86);
+        wsprintf(szWork, PszGetCompressedString(idsCantHaveDWaypoints), 86);
         AlertSz(szWork, MB_ICONHAND);
         return FALSE;
     }

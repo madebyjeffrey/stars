@@ -135,9 +135,9 @@ void DrawThingGauge(HDC hdc, RECT *prc, THING *lpth, int16_t md) {
         l = 0;
     }
     if (cSections == 1) {
-        c = _wsprintf(szWork, "%ldkT", l);
+        c = wsprintf(szWork, "%ldkT", l);
     } else {
-        c = _wsprintf(szWork, "%ld of %ldkT", l, lMax);
+        c = wsprintf(szWork, "%ld of %ldkT", l, lMax);
     }
     l = GetTextExtent(hdc, szWork, c);
     if ((int16_t)LOWORD(l) < prc->right - prc->left - 3) {

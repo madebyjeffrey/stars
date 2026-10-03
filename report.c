@@ -644,7 +644,7 @@ void DrawVCReport(HDC hdc) {
                 } else {
                     idsT = ids;
                 }
-                cch = _wsprintf(szWork, PCTD, vcVal);
+                cch = wsprintf(szWork, PCTD, vcVal);
                 if (i == 3) {
                     strcat(szWork, "%");
                     cch++;
@@ -863,7 +863,7 @@ void DrawHistoryReport(HDC hdc) {
     if (cDrawn > 0) {
         for (i = 0; i <= cDrawn; i++) {
             xCur = (int16_t)(dx * i) / cDrawn + rcChart.left;
-            cch = _wsprintf(szT, PCTD, iYearBase + 2400 + i * j);
+            cch = wsprintf(szT, PCTD, iYearBase + 2400 + i * j);
             CtrTextOut(hdc, xCur, rcChart.bottom + 6, szT, cch);
             if (i > 0 && i < cDrawn) {
                 PatBlt(hdc, xCur, rcChart.top - 2, 1, dy + 4, PATCOPY);
@@ -911,7 +911,7 @@ void DrawHistoryReport(HDC hdc) {
             yCur = rcChart.bottom - LOWORD((int32_t)((int32_t)(dy * cCur) / cScaleMax));
             if (yCur < dyArial8 / 2 + rcChart.top)
                 break;
-            cch = _wsprintf(szWork, PCTLD, cCur);
+            cch = wsprintf(szWork, PCTLD, cCur);
             RightTextOut(hdc, xCur, yCur - dyArial8 / 2, szWork, cch, 0);
             PatBlt(hdc, rcChart.left - 2, yCur, dx + 4, 1, PATCOPY);
         }
@@ -1195,7 +1195,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
             break;
         case colPlanetCapacity:
-            cch = _wsprintf(szT, PCTDPCTPCT, PctPlanetCapacity(lppl));
+            cch = wsprintf(szT, PCTDPCTPCT, PctPlanetCapacity(lppl));
             RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
             break;
         case colPlanetDefense:
@@ -1204,7 +1204,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             if (i > 0) {
                 CalcPctSurvive(lppl, &pct, NULL);
                 pct = (float)((long double)1.0 - pct);
-                cch = _wsprintf(szT, PCTDXPCTDPCTPCT, LOWORD((int32_t)((long double)pct * 100)),
+                cch = wsprintf(szT, PCTDXPCTDPCTPCT, LOWORD((int32_t)((long double)pct * 100)),
                                 LOWORD((int32_t)((pct - (long double)(int16_t)LOWORD((int32_t)((long double)pct * 100)) / 100.0) * 10000)));
                 goto DrawPlusDef;
             }
@@ -1232,7 +1232,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             cch = CchGetString(idsN100, szT);
             dx = LOWORD(GetTextExtent(hdc, szT, cch));
             i = PctPlanetDesirability(lppl, idPlayer);
-            cch = _wsprintf(szT, PCTDPCTPCT, i);
+            cch = wsprintf(szT, PCTDPCTPCT, i);
             if (i <= 10) {
                 SetTextColor(hdc, i >= 0 ? 32639 : 0xff);
             }
@@ -1243,7 +1243,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             if (j > 0) {
                 SetTextColor(hdc, j > 10 ? 0 : 32639);
             }
-            cch = _wsprintf(szT, "(%d%%)", j);
+            cch = wsprintf(szT, "(%d%%)", j);
             RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
             break;
         case colPlanetMinerals:
@@ -1290,9 +1290,9 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 i -= MulDiv(i, rgplr[idPlayer].pctResearch, 100);
             }
             CchGetString(idsD4, szT);
-            cch = _wsprintf(szWork, szT, i);
+            cch = wsprintf(szWork, szT, i);
             RightTextOut(hdc, prc->left + dx, prc->top, szWork, cch, 0);
-            cch = _wsprintf(szT, PCTD, j);
+            cch = wsprintf(szT, PCTD, j);
             RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
         }
         break;
@@ -1323,7 +1323,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 psz = PszGetPlanetName(lpfl->idPlanet);
             } else {
                 psz = szT;
-                _wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpfl->pt.x, lpfl->pt.y);
+                wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpfl->pt.x, lpfl->pt.y);
             }
             ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
             break;
@@ -1362,7 +1362,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             psz = rgshdef[i].hul.szClass;
             ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
             psz = szT;
-            cch = _wsprintf(psz, PCTD, lpfl->rgcsh[i]);
+            cch = wsprintf(psz, PCTD, lpfl->rgcsh[i]);
             chT = '+';
             RightTextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, psz, cch, 0);
             if (j <= 1)
@@ -1376,7 +1376,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 psz = szDblDash;
             } else {
                 psz = szT;
-                cch = _wsprintf(psz, PCTDPCTPCT, i);
+                cch = wsprintf(psz, PCTDPCTPCT, i);
             }
             RightTextOut(hdc, prc->right - 5, prc->top, psz, cch, 0);
             break;
@@ -1385,7 +1385,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             break;
         case colFleetId:
             psz = szT;
-            cch = _wsprintf(psz, "%d", lpfl->ifl + 1);
+            cch = wsprintf(psz, "%d", lpfl->ifl + 1);
             RightTextOut(hdc, prc->right - 2, prc->top, psz, cch, 0);
         }
         break;
@@ -1404,7 +1404,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 psz = PszGetPlanetName(lpbd->idPlanet);
             } else {
                 psz = szT;
-                _wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpbd->pt.x, lpbd->pt.y);
+                wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpbd->pt.x, lpbd->pt.y);
             }
             if (lpbd->pt.x == sel.scan.pt.x && lpbd->pt.y == sel.scan.pt.y) {
                 SetTextColor(hdc, 127);
@@ -1487,7 +1487,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                     psz = PszGetPlanetName(lpfl->idPlanet);
                 } else {
                     psz = szT;
-                    _wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpfl->pt.x, lpfl->pt.y);
+                    wsprintf(psz, PszGetCompressedString(idsSpaceDD), lpfl->pt.x, lpfl->pt.y);
                 }
                 ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
                 break;
@@ -1497,7 +1497,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 lpsz = rglpshdef[lpfl->iPlayer][i].hul.szClass;
                 ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, lpsz, strlen(lpsz), NULL);
                 psz = szT;
-                cch = _wsprintf(psz, PCTD, lpfl->rgcsh[i]);
+                cch = wsprintf(psz, PCTD, lpfl->rgcsh[i]);
                 chT = '+';
                 RightTextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, psz, cch, 0);
                 if (j <= 1)
@@ -1548,7 +1548,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 break;
             case colEnemyFleetId:
                 psz = szT;
-                cch = _wsprintf(psz, "%d", lpfl->ifl + 1);
+                cch = wsprintf(psz, "%d", lpfl->ifl + 1);
                 RightTextOut(hdc, prc->right - 2, prc->top, psz, cch, 0);
                 break;
             case colEnemyFleetWarp:
@@ -1557,7 +1557,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                     cch = 2;
                 } else {
                     psz = szT;
-                    cch = _wsprintf(psz, "%d", lpfl->iwarpFlt);
+                    cch = wsprintf(psz, "%d", lpfl->iwarpFlt);
                 }
                 RightTextOut(hdc, prc->right - 2, prc->top, psz, cch, 0);
             }
@@ -1809,9 +1809,9 @@ LShowTask:
                 psz = PszGetCompressedString(ids);
                 psz[strlen(psz) - 3] = 0;
                 if (fPercent) {
-                    _wsprintf(szWork, "%s %d%%", psz, ord.txp.rgia[icr].cQuan);
+                    wsprintf(szWork, "%s %d%%", psz, ord.txp.rgia[icr].cQuan);
                 } else {
-                    _wsprintf(szWork, icr == 4 ? "%s %dmg" : "%s %dkT", psz, ord.txp.rgia[icr].cQuan);
+                    wsprintf(szWork, icr == 4 ? "%s %dmg" : "%s %dkT", psz, ord.txp.rgia[icr].cQuan);
                 }
                 return szWork;
             default:
@@ -1819,14 +1819,14 @@ LShowTask:
             }
         case grTaskLayMines:
             if (ord.tlm.cTime < 5) {
-                _wsprintf(szWork, "%s  %dy", PszGetCompressedString(ids), ord.tlm.cTime + 1);
+                wsprintf(szWork, "%s  %dy", PszGetCompressedString(ids), ord.tlm.cTime + 1);
             } else {
                 CchGetString(ids, szWork);
             }
             return szWork;
         case grTaskPatrol:
             if (ord.tptl.iDist < 11) {
-                _wsprintf(szWork, "%s  %dly", PszGetCompressedString(ids), (ord.tptl.iDist + 1) * 50);
+                wsprintf(szWork, "%s  %dly", PszGetCompressedString(ids), (ord.tptl.iDist + 1) * 50);
             } else {
                 CchGetString(ids, szWork);
             }
@@ -2138,12 +2138,12 @@ TryTier2:
                 psz = PszGetPlanetName(lpfl1->idPlanet);
                 strcpy(szT, psz);
             } else {
-                _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
+                wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
             }
             if (lpfl2->idPlanet != idPlanetDeepSpace) {
                 psz = PszGetPlanetName(lpfl2->idPlanet);
             } else {
-                _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
+                wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
                 psz = szWork;
             }
             iRet = strcmp(szT, psz);
@@ -2267,12 +2267,12 @@ TryTier2:
                 psz = PszGetPlanetName(lpbd1->idPlanet);
                 strcpy(szT, psz);
             } else {
-                _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpbd1->pt.x, lpbd1->pt.y);
+                wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpbd1->pt.x, lpbd1->pt.y);
             }
             if (lpbd2->idPlanet != idPlanetNone) {
                 psz = PszGetPlanetName(lpbd2->idPlanet);
             } else {
-                _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpbd2->pt.x, lpbd2->pt.y);
+                wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpbd2->pt.x, lpbd2->pt.y);
                 psz = szWork;
             }
             iRet = strcmp(szT, psz);
@@ -2353,12 +2353,12 @@ TryTier2:
                     psz = PszGetPlanetName(lpfl1->idPlanet);
                     strcpy(szT, psz);
                 } else {
-                    _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
+                    wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
                 }
                 if (lpfl2->idPlanet != idPlanetDeepSpace) {
                     psz = PszGetPlanetName(lpfl2->idPlanet);
                 } else {
-                    _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
+                    wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
                     psz = szWork;
                 }
                 iRet = strcmp(szT, psz);
@@ -2867,12 +2867,12 @@ void DumpUniverse() {
             goto DisplayStatus;
         } else {
             fFileErrSilent = TRUE;
-            _wsprintf(szWork, "%s.map", szBase);
+            wsprintf(szWork, "%s.map", szBase);
             StreamOpen(szWork, mdCreate);
             fOpen = TRUE;
             RgToStream("#\tX\tY\tName\r\n", 12);
             for (i = 0; i < game.cPlanMax; i++) {
-                cch = _wsprintf(szWork, "%d\t%d\t%d\t%s\r\n", i + 1, rgptPlan[i].x, rgptPlan[i].y, PszGetCompressedPlanet(rgidPlan[i]));
+                cch = wsprintf(szWork, "%d\t%d\t%d\t%s\r\n", i + 1, rgptPlan[i].x, rgptPlan[i].y, PszGetCompressedPlanet(rgidPlan[i]));
                 RgToStream(szWork, cch);
             }
             StreamClose();
@@ -2880,7 +2880,7 @@ void DumpUniverse() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWriteUniverseDefinitionSMapOperation : idsUniverseDefinitionHasSuccessfullyWrittenSMap;
-    _wsprintf(szWork, PszGetCompressedString(ids), szBase);
+    wsprintf(szWork, PszGetCompressedString(ids), szBase);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
@@ -2931,9 +2931,9 @@ void DumpPlanets() {
         } else {
             fFileErrSilent = TRUE;
             if (gd.fPerPlayerDumps) {
-                _wsprintf(szFile, "%s.p%d", szBase, idPlayer + 1);
+                wsprintf(szFile, "%s.p%d", szBase, idPlayer + 1);
             } else {
-                _wsprintf(szFile, "%s.pla", szBase);
+                wsprintf(szFile, "%s.pla", szBase);
             }
             StreamOpen(szFile, mdCreate);
             fOpen = TRUE;
@@ -2983,7 +2983,7 @@ void DumpPlanets() {
                     szForm[1] = 0;
                 } else {
                     i = PctPlanetDesirability(lppl, idPlayer);
-                    _wsprintf(&szForm[1], PCTDPCTPCT, i);
+                    wsprintf(&szForm[1], PCTDPCTPCT, i);
                 }
                 RgToStream(szForm, strlen(szForm));
                 szForm[1] = 0;
@@ -2995,14 +2995,14 @@ void DumpPlanets() {
                 if (lppl->det == detAll) {
                     CalcPctSurvive(lppl, &pct, NULL);
                     pct = (float)((long double)1.0 - pct);
-                    _wsprintf(&szForm[1], "%ld\t%ld\t%d.%d%%", lppl->cMines, 0, lppl->cFactories, 0, LOWORD((int32_t)((long double)pct * 100)),
+                    wsprintf(&szForm[1], "%ld\t%ld\t%d.%d%%", lppl->cMines, 0, lppl->cFactories, 0, LOWORD((int32_t)((long double)pct * 100)),
                               LOWORD((int32_t)((pct - (long double)(int16_t)LOWORD((int32_t)((long double)pct * 100)) / 100.0) * 10000)));
                 } else {
                     szForm[2] = '\t';
                     szForm[1] = '\t';
                     szForm[3] = 0;
                     if (gd.fPerPlayerDumps && lppl->uDefGuess != 0) {
-                        cch = _wsprintf(&szForm[3], "%d%%", lppl->uDefGuess * 6 + 3);
+                        cch = wsprintf(&szForm[3], "%d%%", lppl->uDefGuess * 6 + 3);
                         szForm[cch + 3] = 0;
                     }
                 }
@@ -3110,7 +3110,7 @@ void DumpPlanets() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWritePlanetInformationSOperationTerminated : idsKnownPlanetInformationHasSuccessfullyWrittenS;
-    _wsprintf(szWork, PszGetCompressedString(ids), szFile);
+    wsprintf(szWork, PszGetCompressedString(ids), szFile);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
@@ -3160,9 +3160,9 @@ void DumpFleets() {
         } else {
             fFileErrSilent = TRUE;
             if (gd.fPerPlayerDumps) {
-                _wsprintf(szFile, "%s.f%d", szBase, idPlayer + 1);
+                wsprintf(szFile, "%s.f%d", szBase, idPlayer + 1);
             } else {
-                _wsprintf(szFile, "%s.fle", szBase);
+                wsprintf(szFile, "%s.fle", szBase);
             }
             StreamOpen(szFile, mdCreate);
             fOpen = TRUE;
@@ -3301,7 +3301,7 @@ void DumpFleets() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWriteFleetInformationSOperationTerminated : idsKnownFleetInformationHasSuccessfullyWrittenS;
-    _wsprintf(szWork, PszGetCompressedString(ids), szFile);
+    wsprintf(szWork, PszGetCompressedString(ids), szFile);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {

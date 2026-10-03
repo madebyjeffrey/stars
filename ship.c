@@ -121,7 +121,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         } else {
             SelectObject(hdc, rghfontArial8[0]);
             if (iWarp < 11) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsWarpD2), iWarp);
+                c = wsprintf(szWork, PszGetCompressedString(idsWarpD2), iWarp);
             } else {
                 c = CchGetString(idsUseStargate, szWork);
             }
@@ -145,7 +145,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         }
         SelectObject(hdc, rghfontArial8[0]);
         lTot = LFuelUseToWaypoint(&sel.fl, iScanActual, FALSE);
-        c = _wsprintf(szWork, PszGetCompressedString(idsLdmg), lTot);
+        c = wsprintf(szWork, PszGetCompressedString(idsLdmg), lTot);
         if (lTot > sel.fl.rgwtMin[4]) {
             SetTextColor(hdc, 0xff);
         }
@@ -398,7 +398,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                 goto LDisplayMsg;
             }
             pszT = PszGetCompressedString(idsFleetCanLayLdMinesPerYear);
-            _wsprintf(szWork, pszT, l);
+            wsprintf(szWork, pszT, l);
             psz = szWork;
             goto LDisplayMsg2;
         case grTaskColonize:
@@ -456,7 +456,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                     dxRight = xLeft;
                     for (i = 0; i < 3; i++) {
                         SetTextColor(hdc, rgcrMinerals[i]);
-                        c = _wsprintf(szWork, PCTLD, rgl[i]);
+                        c = wsprintf(szWork, PCTLD, rgl[i]);
                         DxStreamTextOut(hdc, &dxRight, yTopMsg, szWork, c, TRUE);
                         SetTextColor(hdc, crButtonText);
                         DxStreamTextOut(hdc, &dxRight, yTopMsg, "kT  ", 4, TRUE);
@@ -597,7 +597,7 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
                 }
                 SelectObject(hdc, rghfontArial8[0]);
                 SetTextColor(hdc, crButtonText);
-                c = _wsprintf(szWork, PszGetCompressedString(idsLdkt), pfl->rgwtMin[i]);
+                c = wsprintf(szWork, PszGetCompressedString(idsLdkt), pfl->rgwtMin[i]);
                 RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
                 yTop += dyArial8;
             }
@@ -609,7 +609,7 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
                 SelectObject(hdc, rghfontArial8[0]);
                 SetTextColor(hdc, crButtonText);
             }
-            c = _wsprintf(szWork, PszGetCompressedString(idsLdkt), pfl->rgwtMin[3]);
+            c = wsprintf(szWork, PszGetCompressedString(idsLdkt), pfl->rgwtMin[3]);
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
             yTop += dyArial8;
         }
@@ -695,7 +695,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
         if (l >= 1000000000) {
             c = CchGetString(idsInfinite, szWork);
         } else {
-            c = _wsprintf(szWork, PszGetCompressedString(idsLdLY), l);
+            c = wsprintf(szWork, PszGetCompressedString(idsLdLY), l);
         }
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         if (!gd.fSmallTileMode) {
@@ -710,7 +710,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
             if (i == 0) {
                 c = CchGetString(idsNone2, szWork);
             } else {
-                c = _wsprintf(szWork, PCTDPCTPCT, i);
+                c = wsprintf(szWork, PCTDPCTPCT, i);
             }
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         }
@@ -1076,7 +1076,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         }
         if (iInit != i) {
             AlertSz(PszFormatIds(idsAmountCargoMaySpecifyHereMustBetween, NULL), MB_ICONHAND);
-            _wsprintf(szWork, PCTD, i);
+            wsprintf(szWork, PCTD, i);
             SetWindowText(hwndOrderED, szWork);
         }
         lMin = SendMessage(rghwndOrderDD[1], CB_GETCURSEL, 0, 0);
@@ -1292,7 +1292,7 @@ void DrawFleetGauge(HDC hdc, RECT *prc, FLEET *lpfl, int16_t grbit) {
     if (grbit == 6) {
         if (l != 0) {
             if (l < 11) {
-                c = _wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
+                c = wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
             } else {
                 c = CchGetString(idsUseStargate, szWork);
             }
@@ -1301,16 +1301,16 @@ void DrawFleetGauge(HDC hdc, RECT *prc, FLEET *lpfl, int16_t grbit) {
         }
     } else if (grbit == 7) {
         if (l != 0) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
+            c = wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
         } else {
             c = CchGetString(idsAutomatic, szWork);
         }
     } else if (cSections == 1 && grbit != 4) {
-        c = _wsprintf(szWork, PszGetCompressedString(idsLdkt), l);
+        c = wsprintf(szWork, PszGetCompressedString(idsLdkt), l);
     } else if (grbit == 4) {
-        c = _wsprintf(szWork, PszGetCompressedString(idsLdLdmg), l, lMax);
+        c = wsprintf(szWork, PszGetCompressedString(idsLdLdmg), l, lMax);
     } else {
-        c = _wsprintf(szWork, PszGetCompressedString(idsLdLdkt), l, lMax);
+        c = wsprintf(szWork, PszGetCompressedString(idsLdLdkt), l, lMax);
     }
     l = GetTextExtent(hdc, szWork, c);
     if ((int16_t)LOWORD(l) < prc->right - prc->left - 3) {
@@ -1383,11 +1383,11 @@ void DrawFleetBitmap(FLEET *lpfl, HDC hdc, int16_t x, int16_t y, int16_t fFrame,
         SelectObject(hdc, rghfontArial7[0]);
         SetTextColor(hdc, 0xffffff);
         if (cDiff > 1) {
-            c = _wsprintf(szWork, PCTD, cDiff);
+            c = wsprintf(szWork, PCTD, cDiff);
             TextOut(hdc, x + 1, y + 1, szWork, c);
         }
         if (csh > 1) {
-            c = _wsprintf(szWork, PCTD, csh);
+            c = wsprintf(szWork, PCTD, csh);
             dx = LOWORD(GetTextExtent(hdc, szWork, c));
             TextOut(hdc, x + dxy - 1 - dx, y + 1, szWork, c);
         }
@@ -2200,7 +2200,7 @@ void DrawFleetCargoXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
                 }
                 if (iSupply == SupplyAll || iSupply == iMap) {
                     _Draw3dFrame(hdc, &rc, iSupply == iMap);
-                    c = _wsprintf(szWork, PszGetCompressedString((iMap == 4) + 892), fl.rgwtMin[iMap]);
+                    c = wsprintf(szWork, PszGetCompressedString((iMap == 4) + 892), fl.rgwtMin[iMap]);
                     RightTextOut(hdc, xRight, yTop, szWork, c, 0);
                     if (iSupply == i)
                         break;
@@ -2276,7 +2276,7 @@ void DrawFleetShipsXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
     for (i = 0; i < cXferValidHulls; i++) {
         if (iSupply == SupplyAll || iSupply == i) {
             _Draw3dFrame(hdc, &rc, iSupply == i);
-            c = _wsprintf(szWork, PCTD, pfl->rgcsh[rgXferValidHulls[i]]);
+            c = wsprintf(szWork, PCTD, pfl->rgcsh[rgXferValidHulls[i]]);
             RightTextOut(hdc, xRight, yTop, szWork, c, 0);
             if (iSupply == i)
                 break;
@@ -2344,7 +2344,7 @@ void DrawPlanetXferSide(HDC hdc, RECT *prc, PLANET *ppl, MineralType iSupply) {
         }
         if ((iSupply == SupplyAll || iSupply == i) && i != 4) {
             _Draw3dFrame(hdc, &rc, iSupply == i);
-            c = _wsprintf(szWork, PszGetCompressedString(idsLdkt), pl.rgwtMin[i]);
+            c = wsprintf(szWork, PszGetCompressedString(idsLdkt), pl.rgwtMin[i]);
             RightTextOut(hdc, xRight, yTop, szWork, c, 0);
             if (iSupply == i)
                 break;
@@ -2740,7 +2740,7 @@ void FillFleetCompLB() {
     for (i = 0; i < 16; i++) {
         if (sel.fl.rgcsh[i] > 0) {
             pctDmg = (int32_t)((uint32_t)(sel.fl.rgdv[i].pctSh * sel.fl.rgdv[i].pctDp) + 250) / 500;
-            _wsprintf(szWork, "%c%c%5d%s", pctDmg == 0 ? 81 : 80, pctDmg == 0 ? 32 : (int16_t)(int8_t)LOBYTE(LOWORD(pctDmg)), sel.fl.rgcsh[i],
+            wsprintf(szWork, "%c%c%5d%s", pctDmg == 0 ? 81 : 80, pctDmg == 0 ? 32 : (int16_t)(int8_t)LOBYTE(LOWORD(pctDmg)), sel.fl.rgcsh[i],
                       rgshdef[i].hul.szClass);
             SendMessage(hwndFleetCompLB, LB_ADDSTRING, 0, (LPARAM)szWork);
         }
@@ -2824,7 +2824,7 @@ void UpdateOrdersDDs(int16_t iLevel) {
         case 7:
             psz = PszGetCompressedString(idsWithinDLY);
             for (i = 0; i < 11; i++) {
-                _wsprintf(szWork, psz, 50 * i + 50);
+                wsprintf(szWork, psz, 50 * i + 50);
                 SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
             }
             psz = PszGetCompressedString(idsAnyEnemy);
@@ -2846,7 +2846,7 @@ void UpdateOrdersDDs(int16_t iLevel) {
             break;
         case 6:
             for (i = 0; i < 5; i++) {
-                _wsprintf(szWork, PszGetCompressedString(idsDYearC), i + 1, i == 0 ? 32 : 115);
+                wsprintf(szWork, PszGetCompressedString(idsDYearC), i + 1, i == 0 ? 32 : 115);
                 SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
             }
             SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(idsIindefinitely));
@@ -2893,7 +2893,7 @@ void UpdateOrdersDDs(int16_t iLevel) {
         } else {
             iSel--;
         }
-        _wsprintf(szWork, "%u", sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[iSel].cQuan);
+        wsprintf(szWork, "%u", sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[iSel].cQuan);
         SetWindowText(hwndOrderED, szWork);
     }
     return;

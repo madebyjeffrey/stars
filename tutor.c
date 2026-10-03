@@ -312,7 +312,7 @@ void AdvanceTutor() {
         return;
     }
 LUpdatePage:
-    _wsprintf(szTitle, PszGetCompressedString(idsStarsTutorPageD80), (int16_t)tutor.idt / 8 + 1);
+    wsprintf(szTitle, PszGetCompressedString(idsStarsTutorPageD80), (int16_t)tutor.idt / 8 + 1);
     SetWindowText(tutor.hwnd, szTitle);
     ShowTutor(TRUE);
     GetWindowRect(tutor.hwnd, &rc);
