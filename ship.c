@@ -801,14 +801,14 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     int16_t iInit;
 
     fPercent = FALSE;
-    if (GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    if (HIWORD(wParam) == 0) {
         SetFocus(hwndFrame);
     }
-    if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[4] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    if ((HWND)lParam == rghwndBtn[4] && HIWORD(wParam) == 0) {
         SelectAdjFleet(-1, 0);
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[5] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[5] && HIWORD(wParam) == 0) {
         SelectAdjFleet(1, 0);
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[6] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[6] && HIWORD(wParam) == 0) {
         strcpy(szWork, PszGetFleetName(sel.fl.id));
         StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
         lpProc = MakeProcInstance(RenameDlg, hInst);
@@ -827,26 +827,26 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         } else {
             FreeProcInstance(lpProc);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[3] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[3] && HIWORD(wParam) == 0) {
         SelectAdjPlanet(0, sel.fl.idPlanet);
         SetFleetDropDownSel(sel.fl.id);
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[7] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[7] && HIWORD(wParam) == 0) {
         if (sel.fl.idPlanet != idPlanetDeepSpace) {
             TransferStuff(sel.fl.id, grobjFleet, sel.fl.idPlanet, grobjPlanet, mdXferCargo);
         } else {
             TransferStuff(sel.fl.id, grobjFleet, -1, grobjOther, mdXferCargo);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndShipDD) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == hwndShipDD) {
+        if (HIWORD(wParam) == 1) {
             DrawPlanShip(NULL, tileShipList | tileErase);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndShipLB) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == hwndShipLB) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(hwndShipLB, LB_GETCURSEL, 0, 0);
             SetScanWp(LOWORD(lSel));
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndFleetCompLB) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == hwndFleetCompLB) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(hwndFleetCompLB, LB_GETCURSEL, 0, 0);
             if (lSel >= 0) {
                 for (ishdef = 0; ishdef < 16 && (sel.fl.rgcsh[ishdef] <= 0 || lSel-- > 0); ishdef++) {
@@ -860,8 +860,8 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 Popup(hwndFleetCompLB, 10, 10);
             }
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndBattleDD) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == hwndBattleDD) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(hwndBattleDD, CB_GETCURSEL, 0, 0);
             if (lSel != -1) {
                 if (lSel == 0) {
@@ -875,17 +875,17 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 FLookupFleet(idWriteBack, &sel.fl);
             }
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[0] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[0] && HIWORD(wParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
         if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id)) {
             TransferStuff(sel.fl.id, grobjFleet, xf.id, xf.grobj, mdXferCargo);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[1] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[1] && HIWORD(wParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
         if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) && xf.grobj == grobjFleet) {
             SelectAdjFleet(0, xf.id);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[2] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[2] && HIWORD(wParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
         if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) && xf.grobj == grobjFleet) {
             TransferStuff(sel.fl.id, grobjFleet, xf.id, grobjFleet, mdXferShips);
@@ -894,13 +894,13 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             }
             InvalidateReport(rptFleets, 1);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[8] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[8] && HIWORD(wParam) == 0) {
         TransferStuff(sel.fl.id, grobjFleet, -1, grobjOther, mdXferShips);
         InvalidateReport(rptFleets, 1);
         if (gd.fTutorial) {
             AdvanceTutor();
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[9] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[9] && HIWORD(wParam) == 0) {
         FFleetSplitAll(&sel.fl);
         FillShipDD(sel.fl.id);
         grbit = -31819;
@@ -908,7 +908,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         FillFleetCompLB();
         DrawPlanShip(NULL, grbit);
         InvalidateRect(hwndMine, NULL, TRUE);
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[10] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == rghwndBtn[10] && HIWORD(wParam) == 0) {
         vrgiflMerge = rgifl;
         vcflMerge = 0;
         for (ifl = 0; ifl < cFleet; ifl++) {
@@ -963,11 +963,11 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 AdvanceTutor();
             }
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndRepCB && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+    } else if ((HWND)lParam == hwndRepCB && HIWORD(wParam) == 0) {
         sel.fl.fRepOrders = LOWORD(SendMessage(hwndRepCB, BM_GETCHECK, 0, 0));
         FLookupFleet(idWriteBack, &sel.fl);
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndOrderDD[0]) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == rghwndOrderDD[0]) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(rghwndOrderDD[0], CB_GETCURSEL, 0, 0);
             if (LOWORD(lSel) != sel.fl.lpplord->rgord[sel.iwpAct].grTask) {
                 if (lSel == 3 || sel.fl.lpplord->rgord[sel.iwpAct].grTask == grTaskMine) {
@@ -1023,8 +1023,8 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 DrawPlanShip(NULL, tileStarbaseOrWaypoint | tileErase);
             }
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndOrderDD[1]) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == rghwndOrderDD[1]) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(rghwndOrderDD[1], CB_GETCURSEL, 0, 0);
             switch (sel.fl.lpplord->rgord[sel.iwpAct].grTask) {
             case grTaskPatrol:
@@ -1047,8 +1047,8 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 FLookupFleet(idWriteBack, &sel.fl);
             }
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndOrderDD[2]) {
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+    } else if ((HWND)lParam == rghwndOrderDD[2]) {
+        if (HIWORD(wParam) == 1) {
             lSel = SendMessage(rghwndOrderDD[2], CB_GETCURSEL, 0, 0);
             lMin = SendMessage(rghwndOrderDD[1], CB_GETCURSEL, 0, 0);
             if (lMin == 0) {
@@ -1061,7 +1061,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             UpdateOrdersDDs(3);
             DrawPlanShip(NULL, tileStarbaseOrWaypoint);
         }
-    } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndOrderED && GET_WM_COMMAND_CMD(wParam, lParam) == 768) {
+    } else if ((HWND)lParam == hwndOrderED && HIWORD(wParam) == 768) {
         lSel = SendMessage(rghwndOrderDD[2], CB_GETCURSEL, 0, 0);
         if (lSel == 5 || lSel == 6) {
             fPercent = TRUE;
@@ -1650,11 +1650,11 @@ INT_PTR CALLBACK TransferDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     case WM_LBUTTONDBLCLK:
         return FTrackXfer(hwnd, LOWORD(lParam), HIWORD(lParam), wParam);
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
             StickyDlgPos(hwnd, &ptStickyTransferDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             if (gd.fTutorial) {
                 AdvanceTutor();
             }

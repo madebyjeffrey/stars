@@ -514,7 +514,7 @@ INT_PTR CALLBACK About(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
             KillTimer(hwnd, uTimerId);
@@ -547,7 +547,7 @@ INT_PTR CALLBACK OrderInfoDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         }
         break;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL || GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+        if (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK) {
             EndDialog(hwnd, 1);
             return 1;
         }

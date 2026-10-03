@@ -115,10 +115,10 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         break;
     case WM_VSCROLL:
-        iCur = GetScrollPos(GET_WM_VSCROLL_HWND(wParam, lParam), SB_CTL);
+        iCur = GetScrollPos((HWND)lParam, SB_CTL);
         iNew = iCur;
-        if (GET_WM_VSCROLL_CODE(wParam, lParam) <= SB_BOTTOM) {
-            switch (GET_WM_VSCROLL_CODE(wParam, lParam)) {
+        if (LOWORD(wParam) <= SB_BOTTOM) {
+            switch (LOWORD(wParam)) {
             case SB_BOTTOM:
                 iNew = 2000;
                 break;
@@ -136,7 +136,7 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 break;
             case SB_THUMBPOSITION:
             case SB_THUMBTRACK:
-                iNew = GET_WM_VSCROLL_POS(wParam, lParam);
+                iNew = (short)HIWORD(wParam);
                 break;
             case SB_TOP:
                 iNew = 0;
@@ -156,15 +156,15 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             rc.top = dyArial8 + 6;
             rc.bottom = (dyArial8 + 4) * vprptCur->cRowsVis + rc.top;
             ScrollWindow(hwnd, 0, (dyArial8 + 4) * (iCur - iNew), &rc, &rc);
-            SetScrollPos(GET_WM_VSCROLL_HWND(wParam, lParam), SB_CTL, iNew, TRUE);
+            SetScrollPos((HWND)lParam, SB_CTL, iNew, TRUE);
             UpdateWindow(hwnd);
         }
         return 0;
     case WM_HSCROLL:
-        iCur = GetScrollPos(GET_WM_HSCROLL_HWND(wParam, lParam), SB_CTL);
+        iCur = GetScrollPos((HWND)lParam, SB_CTL);
         iNew = iCur;
-        if (GET_WM_HSCROLL_CODE(wParam, lParam) <= SB_BOTTOM) {
-            switch (GET_WM_HSCROLL_CODE(wParam, lParam)) {
+        if (LOWORD(wParam) <= SB_BOTTOM) {
+            switch (LOWORD(wParam)) {
             case SB_BOTTOM:
                 iNew = 2000;
                 break;
@@ -182,7 +182,7 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 break;
             case SB_THUMBPOSITION:
             case SB_THUMBTRACK:
-                iNew = GET_WM_HSCROLL_POS(wParam, lParam);
+                iNew = (short)HIWORD(wParam);
                 break;
             case SB_TOP:
                 iNew = 0;
@@ -195,8 +195,8 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             iNew = 0;
         }
         if (iNew != iCur) {
-            SetScrollPos(GET_WM_HSCROLL_HWND(wParam, lParam), SB_CTL, iNew, TRUE);
-            iNew = GetScrollPos(GET_WM_HSCROLL_HWND(wParam, lParam), SB_CTL);
+            SetScrollPos((HWND)lParam, SB_CTL, iNew, TRUE);
+            iNew = GetScrollPos((HWND)lParam, SB_CTL);
             if (iNew != iCur) {
                 i = 1;
                 for (ibit = 2; i < vprptCur->cFields && (!(ibit & vprptCur->grbitVisible) || iNew-- > 0); ibit *= 2) {
@@ -242,7 +242,7 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         break;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+        if (LOWORD(wParam) == IDCANCEL) {
             DestroyWindow(hwnd);
             return 1;
         }
@@ -455,7 +455,7 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         InvalidateRect(hwnd, NULL, TRUE);
         return 0;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDCANCEL:
             StickyDlgPos(hwnd, &ptStickyScoreXDlg, FALSE);
             EndDialog(hwnd, i);
@@ -3340,10 +3340,10 @@ INT_PTR CALLBACK PrintMapDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 for (i = 0; i < 2; i++) {
                     hwndEdit = GetDlgItem(hwnd, i + 268);
                     GetWindowText(hwndEdit, szWork, 10);
@@ -3356,18 +3356,18 @@ INT_PTR CALLBACK PrintMapDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 }
             }
             StickyDlgPos(hwnd, &ptStickyPrintMapDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhPrintingAMapOfTheUniverse);
             return 1;
         case IDC_PRINT_MAP_PAGES_X:
         case IDC_PRINT_MAP_PAGES_Y:
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400) {
-                GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 10);
+            if (HIWORD(wParam) == 0x400) {
+                GetWindowText((HWND)lParam, szWork, 10);
                 if (szWork[0] != 0 && (szWork[0] <= '0' || szWork[0] > '9')) {
                     MessageBeep(MB_OK);
-                    SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), &szWork[1]);
+                    SetWindowText((HWND)lParam, &szWork[1]);
                 }
             }
         }

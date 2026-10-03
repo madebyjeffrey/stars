@@ -18,7 +18,7 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
 
     switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
     case WM_MDIACTIVATE:
-        hwndActive = GET_WM_MDIACTIVATE_FACTIVATE(hwnd, wParam, lParam) == 0 ? NULL : hwnd;
+        hwndActive = (lParam == (LPARAM)hwnd) == 0 ? NULL : hwnd;
         return 0;
     case WM_CREATE:
         SetPlanetTitleBar(hwnd);
@@ -68,7 +68,7 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == hwndRepCB) {
+        if ((HWND)lParam == hwndRepCB) {
             SetBkColor((HDC)wParam, crButtonFace);
             SetTextColor((HDC)wParam, crButtonText);
             return (LRESULT)hbrButtonFace;
@@ -156,12 +156,12 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
             ShipCommandProc(hwnd, wParam, lParam);
             return 0;
         }
-        if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndShipDD) {
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+        if ((HWND)lParam == hwndShipDD) {
+            if (HIWORD(wParam) == 1) {
                 DrawPlanShip(NULL, tileShipList | tileErase);
             }
         } else {
-            if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[4] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            if ((HWND)lParam == rghwndBtn[4] && HIWORD(wParam) == 0) {
                 if (GetKeyState(VK_SHIFT) < 0) {
                     SelectAdjPlanet(0, IdFindAdjStarbase(sel.pl.id, FALSE));
                     goto LRefocus;
@@ -170,42 +170,42 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
             LRefocus:
                 SetFocus(hwndFrame);
                 return 0;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[5] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[5] && HIWORD(wParam) == 0) {
                 if (GetKeyState(VK_SHIFT) < 0) {
                     SelectAdjPlanet(0, IdFindAdjStarbase(sel.pl.id, TRUE));
                     goto LRefocus;
                 }
                 SelectAdjPlanet(1, 0);
                 goto LRefocus;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[0] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[0] && HIWORD(wParam) == 0) {
                 lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
                 if (lSel == -1 || !FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, idflNone)) {
                     return 0;
                 }
                 TransferStuff(sel.pl.id, grobjPlanet, xf.id, xf.grobj, mdXferCargo);
                 goto LRefocus;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[1] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[1] && HIWORD(wParam) == 0) {
                 lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
                 if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, idflNone) && xf.grobj == grobjFleet) {
                     SelectAdjFleet(0, xf.id);
                 }
                 goto LRefocus;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[2] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[2] && HIWORD(wParam) == 0) {
                 pt.x = 610;
                 pt.y = 470;
                 ShipBuilder(pt);
                 goto LRefocus;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[11] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[11] && HIWORD(wParam) == 0) {
                 ChangeProduction(FALSE);
                 goto LRefocus;
-            } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[12] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+            } else if ((HWND)lParam == rghwndBtn[12] && HIWORD(wParam) == 0) {
                 if (AlertSz(PszFormatIds(idsSureWantDeleteEverythingPlanetsProductionQueue, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) != IDYES) {
                     return 0;
                 }
                 ChangeProduction(TRUE);
                 goto LRefocus;
             } else {
-                if (GET_WM_COMMAND_HWND(wParam, lParam) != hwndPlanetProdLB || GET_WM_COMMAND_CMD(wParam, lParam) != 1)
+                if ((HWND)lParam != hwndPlanetProdLB || HIWORD(wParam) != 1)
                     goto Default;
                 DrawPlanShip(NULL, tileProductionOrOrbit);
                 if (!gd.fTutorial)

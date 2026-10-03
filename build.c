@@ -160,9 +160,9 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         lpmis->itemHeight = 66;
         return 1;
     case WM_CTLCOLOR:
-        for (i = 2064; i <= 2069 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 2064; i <= 2069 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
-        if (i <= 2069 || GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_SHIPLIST)) {
+        if (i <= 2069 || (HWND)lParam == GetDlgItem(hwnd, IDC_SHIPLIST)) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -219,9 +219,9 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     case WM_RBUTTONDOWN:
         return FTrackSlot(hwnd, LOWORD(lParam), HIWORD(lParam), wParam, FALSE, message == WM_RBUTTONDOWN);
     case WM_COMMAND:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_DESIGNER_SHIPS &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_DESIGNER_STARBASES) {
-            fStarbaseMode = GET_WM_COMMAND_ID(wParam, lParam) - 2064;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_SHIPS &&
+            LOWORD(wParam) <= IDC_DESIGNER_STARBASES) {
+            fStarbaseMode = LOWORD(wParam) - 2064;
             wParam = mdBuild + 2066;
             GetClientRect(hwnd, &rc);
             rc.left = rc.right >> 1 >= rc.right - 352 ? rc.right - 352 : rc.right >> 1;
@@ -234,18 +234,18 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             FillBuildDD(hwndItem, mdBuild);
             SendMessage(hwndItem, CB_SETCURSEL, 0, 0);
             goto FixupShip;
-        } else if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_DESIGNER_EXISTING &&
-                   GET_WM_COMMAND_ID(wParam, lParam) <= IDC_DESIGNER_COMPONENTS) {
+        } else if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_DESIGNER_EXISTING &&
+                   LOWORD(wParam) <= IDC_DESIGNER_COMPONENTS) {
             lSel = 0;
         LRestart:
             lpshdefBuild = NULL;
             fHullCopy = FALSE;
-            mdBuild = GET_WM_COMMAND_ID(wParam, lParam) - 2066;
+            mdBuild = LOWORD(wParam) - 2066;
             hwndItem = GetDlgItem(hwnd, IDC_COMBOBOX);
             UpdateSlotGlobals();
             FillBuildDD(hwndItem, mdBuild);
             SendMessage(hwndItem, CB_SETCURSEL, LOWORD(lSel), 0);
-            SetWindowPos(hwndItem, NULL, ptslotGlob.x - 256 - (GET_WM_COMMAND_ID(wParam, lParam) == IDC_DESIGNER_COMPONENTS ? 0 : 8), 8, 0, 0,
+            SetWindowPos(hwndItem, NULL, ptslotGlob.x - 256 - (LOWORD(wParam) == IDC_DESIGNER_COMPONENTS ? 0 : 8), 8, 0, 0,
                          SWP_NOSIZE | SWP_NOZORDER);
             GetClientRect(hwnd, &rc);
             left = rc.left;
@@ -257,18 +257,18 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             InvalidateRect(hwnd, &rc, TRUE);
             hwndItem = GetDlgItem(hwnd, IDC_DESIGNER_COMPONENT_LIST);
             ShowWindow(hwndItem, mdBuild == mdBuildComp ? SW_SHOW : SW_HIDE);
-            if (GET_WM_COMMAND_ID(wParam, lParam) != IDC_DESIGNER_COMPONENTS)
+            if (LOWORD(wParam) != IDC_DESIGNER_COMPONENTS)
                 goto FixupShip;
             if (gd.fTutorial) {
                 AdvanceTutor();
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_EDITNAME && GET_WM_COMMAND_CMD(wParam, lParam) == 0x400 && !fInEditUpdate) {
+        } else if (LOWORD(wParam) == IDC_EDITNAME && HIWORD(wParam) == 0x400 && !fInEditUpdate) {
             fInEditUpdate = TRUE;
-            GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 250);
-            lSel = SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_GETSEL, 0, 0);
+            GetWindowText((HWND)lParam, szWork, 250);
+            lSel = SendMessage((HWND)lParam, EM_GETSEL, 0, 0);
             if (!FStringFitsScreen(szWork, 160)) {
-                SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork);
-                SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
+                SetWindowText((HWND)lParam, szWork);
+                SendMessage((HWND)lParam, EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
             }
             lstrcpy(lpshdefBuild->hul.szClass, szWork);
             DrawBuildSelHull(hwnd, NULL, 256, NULL);
@@ -276,8 +276,8 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             if (gd.fTutorial) {
                 AdvanceTutor();
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_COMBOBOX) {
-            switch (GET_WM_COMMAND_CMD(wParam, lParam)) {
+        } else if (LOWORD(wParam) == IDC_COMBOBOX) {
+            switch (HIWORD(wParam)) {
             case 1:
             FixupShip:
                 hwndItem = GetDlgItem(hwnd, IDC_COMBOBOX);
@@ -350,12 +350,12 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                 }
                 break;
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_DESIGNER_COMPONENT_LIST) {
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+        } else if (LOWORD(wParam) == IDC_DESIGNER_COMPONENT_LIST) {
+            if (HIWORD(wParam) == 1) {
                 SetBuildSelection(-1);
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_DELETE) {
-            if (GET_WM_COMMAND_CMD(wParam, lParam) != 0)
+        } else if (LOWORD(wParam) == IDC_DELETE) {
+            if (HIWORD(wParam) != 0)
                 break;
             fProgress = FALSE;
             cshQueued = 0;
@@ -394,8 +394,8 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             InvalidateRect(hwnd, &rc, TRUE);
             if (fHullCopy)
                 goto LRestart;
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        } else if (LOWORD(wParam) == IDC_IMPORT) {
+            if (HIWORD(wParam) == 0) {
                 if (gd.fTutorial && !FTutorialEnabledShipBuilder(tutsbCopy))
                     break;
                 hwndItem = GetDlgItem(hwnd, IDC_COMBOBOX);
@@ -496,7 +496,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             } else if (gd.fTutorial) {
                 AdvanceTutor();
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_EDIT) {
+        } else if (LOWORD(wParam) == IDC_EDIT) {
             if (gd.fTutorial && !FTutorialEnabledShipBuilder(tutsbEdit))
                 break;
             if (fStarbaseMode && lpshdefBuild->ishdef == 16 && GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh)
@@ -527,10 +527,10 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             if (gd.fTutorial) {
                 AdvanceTutor();
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+        } else if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
             if (mdBuild == mdBuildEdit) {
                 lSel = 0;
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                if (LOWORD(wParam) == IDOK) {
                     if (!fStarbaseMode && shdefBuild.hul.rghs[0].cItem == 0) {
                         AlertSz(PszFormatIds(idsShipDesignDoesHaveAnyEnginesMust, NULL), MB_ICONHAND);
                         return 0;
@@ -573,10 +573,10 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                 SetWindowPos(hwndItem, NULL, ptslotGlob.x - 256, 32, 240, 266, SWP_NOZORDER);
                 ShowWindow(GetDlgItem(hwnd, IDC_DESIGNER_COMPONENT_LIST), SW_HIDE);
                 if (fHullCopy) {
-                    if (GET_WM_COMMAND_ID(wParam, lParam) != IDCANCEL && !fStarbaseMode && lpshdefBuild->hul.rghs[0].cItem == 0) {
+                    if (LOWORD(wParam) != IDCANCEL && !fStarbaseMode && lpshdefBuild->hul.rghs[0].cItem == 0) {
                         wParam = IDCANCEL;
                     }
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+                    if (LOWORD(wParam) == IDCANCEL) {
                         if (fStarbaseMode) {
                             shdefBuild.fFree = TRUE;
                             rglpshdefSB[idPlayer][ishdefBuild - 16] = shdefBuild;
@@ -595,13 +595,13 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                 SetBuildSelection(-2);
                 StickyDlgPos(hwnd, &ptStickySlotDlg, FALSE);
                 hwndSlotDlg = 0;
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+                EndDialog(hwnd, LOWORD(wParam) == IDOK);
                 if (gd.fTutorial) {
                     AdvanceTutor();
                 }
                 return 1;
             }
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        } else if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(mdBuild == mdBuildEdit ? 3039 : 1066));
             return 1;
         }

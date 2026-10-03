@@ -43,7 +43,7 @@ INT_PTR CALLBACK TutorDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostMessage(hwndFrame, WM_CHAR, wParam, lParam);
         return 0;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDC_TUTOR_PANIC:
             lpProc = MakeProcInstance(PanicDlg, hInst);
             fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_PANIC), hwnd, lpProc);
@@ -95,7 +95,7 @@ INT_PTR CALLBACK PanicDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDCANCEL:
             EndDialog(hwnd, 0);
             return 1;
@@ -104,7 +104,7 @@ INT_PTR CALLBACK PanicDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             return 1;
         case IDC_PANIC_REDO_TURN:
         case IDC_PANIC_COMPLETE_TURN:
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam));
+            EndDialog(hwnd, LOWORD(wParam));
             return 1;
         }
         break;

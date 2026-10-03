@@ -295,8 +295,8 @@ INT_PTR CALLBACK RandomSeedDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         }
         break;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szValue, 32);
                 pch = szValue;
                 dw = 0;
@@ -308,7 +308,7 @@ INT_PTR CALLBACK RandomSeedDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
                 }
                 Randomize(dw);
             }
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         }
         break;
@@ -1902,10 +1902,10 @@ INT_PTR CALLBACK PasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szPass, 60);
                 lSalt = LSaltFromSz(szPass);
                 if (lSalt == lSaltCur) {
@@ -1922,7 +1922,7 @@ INT_PTR CALLBACK PasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     break;
                 }
             }
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, 1089);
@@ -1960,10 +1960,10 @@ INT_PTR CALLBACK NewPasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szPass, 18);
                 lSalt = LSaltFromSz(szPass);
                 GetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_CONFIRM), szPass, 18);
@@ -1986,7 +1986,7 @@ INT_PTR CALLBACK NewPasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                     }
                 }
             }
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhChangePassword);

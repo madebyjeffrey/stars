@@ -1177,10 +1177,10 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
     FLEET       *lpfl;
     int16_t      id;
 
-    if (GET_WM_COMMAND_ID(wParam, 0) >= IDM_POPUP_BASE && GET_WM_COMMAND_ID(wParam, 0) < 15100) {
-        iPopMenuSel = GET_WM_COMMAND_ID(wParam, 0) - 15000;
+    if (LOWORD(wParam) >= IDM_POPUP_BASE && LOWORD(wParam) < 15100) {
+        iPopMenuSel = LOWORD(wParam) - 15000;
     } else {
-        switch (GET_WM_COMMAND_ID(wParam, 0)) {
+        switch (LOWORD(wParam)) {
         case IDM_HELP_ABOUT:
             lpProc = MakeProcInstance(About, hInst);
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUT), hwnd, lpProc);
@@ -1194,7 +1194,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         case IDM_VIEW_LAYOUT_2:
             if (idPlayer == iplrNone)
                 break;
-            iWindowLayout = GET_WM_COMMAND_ID(wParam, 0) - 130;
+            iWindowLayout = LOWORD(wParam) - 130;
             InvalidateRect(hwndFrame, NULL, TRUE);
             EnsureTileSize(iWindowLayout == layoutSmall);
             RefitFrameChildren();
@@ -1222,10 +1222,10 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         case IDM_FILE_MRU7:
         case IDM_FILE_MRU8:
         case IDM_FILE_MRU9:
-            if ((gd.fTutorial && !FAskKillTutor()) || !vrgszMRU || vrgszMRU[(GET_WM_COMMAND_ID(wParam, 0) - 4300) * 256] == 0)
+            if ((gd.fTutorial && !FAskKillTutor()) || !vrgszMRU || vrgszMRU[(LOWORD(wParam) - 4300) * 256] == 0)
                 break;
             iplrOld = idPlayer;
-            strcpy(szT, vrgszMRU + 256 * (GET_WM_COMMAND_ID(wParam, 0) - 4300));
+            strcpy(szT, vrgszMRU + 256 * (LOWORD(wParam) - 4300));
             psz = strrchr(szT, 46);
             if (psz && _access(szT, 0) != -1) {
                 ini.fStartupFile = TRUE;
@@ -1454,7 +1454,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         case IDM_DEBUG_GEN_100_TURNS:
         case IDM_DEBUG_GEN_1000_TURNS:
             idCur = idPlayer;
-            switch (GET_WM_COMMAND_ID(wParam, 0)) {
+            switch (LOWORD(wParam)) {
             case IDM_DEBUG_GEN_100_TURNS:
                 iPassCnt = 100;
                 break;
@@ -1527,7 +1527,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             ShowProgressGauge();
             EnsureAis();
             FGenerateTurn();
-            switch (GET_WM_COMMAND_ID(wParam, 0)) {
+            switch (LOWORD(wParam)) {
             case IDM_DEBUG_GEN_10_TURNS:
             case IDM_DEBUG_GEN_100_TURNS:
             case IDM_DEBUG_GEN_1000_TURNS:
@@ -1595,7 +1595,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         LRetryReport:
             if (!hwndReportDlg) {
                 mf = 8;
-                switch (GET_WM_COMMAND_ID(wParam, 0)) {
+                switch (LOWORD(wParam)) {
                 case IDM_REPORT_FLEET:
                     ids = idsFleetSummaryReportDFleetC;
                     vprptCur = &vrptFleet;
@@ -1641,17 +1641,17 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                 hwndReportDlg = CreateWindow(szReport, szWork, WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, 0, 0, 100,
                                              100, hwndFrame, NULL, hInst, NULL);
                 SetWindowPos(hwndReportDlg, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
-                CheckMenuItem(hmenu, GET_WM_COMMAND_ID(wParam, 0), mf);
+                CheckMenuItem(hmenu, LOWORD(wParam), mf);
                 break;
             } else {
-                if (GET_WM_COMMAND_ID(wParam, 0) != IDM_REPORT_BATTLE || vprptCur != &vrptBattle) {
+                if (LOWORD(wParam) != IDM_REPORT_BATTLE || vprptCur != &vrptBattle) {
                     ids = idsPlayerLogFileAppearsCorruptUnableLoad;
                 } else {
                     ids = idsUniverseDefinitionFileSeemsMissingCorrupt;
                 }
                 mf = 0;
                 DestroyWindow(hwndReportDlg);
-                CheckMenuItem(hmenu, GET_WM_COMMAND_ID(wParam, 0) == IDM_REPORT_FLEET ? IDM_REPORT_FLEET : IDM_REPORT_PLANET, mf);
+                CheckMenuItem(hmenu, LOWORD(wParam) == IDM_REPORT_FLEET ? IDM_REPORT_FLEET : IDM_REPORT_PLANET, mf);
                 if (ids != idsPlayerLogFileAppearsCorruptUnableLoad) {
                     return;
                 }
@@ -1659,7 +1659,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             }
         case IDM_HELP_CONTEXT_13002:
         case IDM_HELP_INTRO:
-            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(GET_WM_COMMAND_ID(wParam, 0) == IDM_HELP_INTRO ? 4501 : 13002));
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(LOWORD(wParam) == IDM_HELP_INTRO ? 4501 : 13002));
             break;
         case IDM_HELP_CONTENTS:
         case IDM_HELP_CONTENTS2:
@@ -1716,7 +1716,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             }
             if (FNewTurnAvail(idPlayer))
                 goto LNewTurnAvail;
-            gd.fSubmit = GET_WM_COMMAND_ID(wParam, 0) == IDM_TURN_END_B;
+            gd.fSubmit = LOWORD(wParam) == IDM_TURN_END_B;
             FWriteLogFile(szBase, idPlayer);
             FWriteHistFile(idPlayer);
             break;
@@ -1738,7 +1738,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         case IDM_TITLE_EXIT:
             if (!hwndTitle)
                 break;
-            PostMessage(hwndTitle, WM_COMMAND, GET_WM_COMMAND_ID(wParam, 0) - 250, 0);
+            PostMessage(hwndTitle, WM_COMMAND, LOWORD(wParam) - 250, 0);
             break;
         case IDM_FILE_RETURN_TO_TITLE:
             if (gd.fTutorial && !FAskKillTutor())
@@ -1847,7 +1847,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             rc.bottom = ScanToPt(rc.bottom) >> 1;
             dx = xScanTop;
             dy = dGalInv - yScanTop;
-            iScanZoom = GET_WM_COMMAND_ID(wParam, 0) - 3905;
+            iScanZoom = LOWORD(wParam) - 3905;
             CheckMenuItem(hmenu, iScanZoom + 4, MF_CHECKED | MF_BYPOSITION);
             DrawMenuBar(hwnd);
             SetScanScrollBars(hwndScanner);
@@ -1873,7 +1873,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         case IDM_FLEET_DELETE_WAYPOINT:
         case IDM_FLEET_INSERT_WAYPOINT:
             if (sel.grobj == grobjFleet && GetFocus() != hwndOrderED) {
-                DeleteCurWayPoint(GET_WM_COMMAND_ID(wParam, 0) == IDM_FLEET_DELETE_WAYPOINT);
+                DeleteCurWayPoint(LOWORD(wParam) == IDM_FLEET_DELETE_WAYPOINT);
             }
             goto Default;
         default:
@@ -2578,11 +2578,11 @@ INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDC_HOST_GENERATE_NOW:
         case IDCANCEL:
         case IDC_HOST_AUTO_GENERATE:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HOST_GENERATE_NOW) {
+            if (LOWORD(wParam) == IDC_HOST_GENERATE_NOW) {
                 if (GetAsyncKeyState(VK_SHIFT) < 0) {
                     if (GetAsyncKeyState(VK_CONTROL) < 0) {
                         iPassCnt = 999;
@@ -2606,10 +2606,10 @@ INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 }
             }
             StickyDlgPos(hwnd, &ptStickyHostModeDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL ? 0 : GET_WM_COMMAND_ID(wParam, lParam) == IDC_HOST_AUTO_GENERATE ? -1 : 1);
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HOST_AUTO_GENERATE) {
+            EndDialog(hwnd, LOWORD(wParam) == IDCANCEL ? 0 : LOWORD(wParam) == IDC_HOST_AUTO_GENERATE ? -1 : 1);
+            if (LOWORD(wParam) == IDC_HOST_AUTO_GENERATE) {
                 EnsureAis();
-            } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL && gd.fClose) {
+            } else if (LOWORD(wParam) == IDCANCEL && gd.fClose) {
                 PostQuitMessage(vretExitValue);
             }
             return 1;
@@ -2663,10 +2663,10 @@ INT_PTR CALLBACK HostOptionsDialog(HWND hwnd, UINT message, WPARAM wParam, LPARA
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDCANCEL:
         case IDOK:
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhHostModeDialog);
@@ -3226,7 +3226,7 @@ LRESULT CALLBACK TitleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(vretExitValue);
         goto Default;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case 0:
             NewGameWizard(hwnd, FALSE);
             if (!lpPlanets && game.lid == 0) {

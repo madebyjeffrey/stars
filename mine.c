@@ -69,7 +69,7 @@ LRESULT CALLBACK MineWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         EndPaint(hwnd, &ps);
         break;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_HWND(wParam, lParam) != hwndMineCB || GET_WM_COMMAND_CMD(wParam, lParam) != 0)
+        if ((HWND)lParam != hwndMineCB || HIWORD(wParam) != 0)
             break;
         fDetonate = LOWORD(SendMessage(hwndMineCB, BM_GETCHECK, 0, 0));
         rtlt.idFull = lpThings[sel.scan.ith].idFull;

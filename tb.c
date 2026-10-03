@@ -172,7 +172,7 @@ LRESULT CALLBACK TbWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32512)));
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_HWND(wParam, lParam) != hwndTBRadar || GET_WM_COMMAND_CMD(wParam, lParam) != 8)
+        if ((HWND)lParam != hwndTBRadar || HIWORD(wParam) != 8)
             break;
         PostMessage(hwnd, 1524, 0, 0);
         break;

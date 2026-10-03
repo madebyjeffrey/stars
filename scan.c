@@ -31,7 +31,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
     switch (msg) {
     case WM_MDIACTIVATE:
-        hwndActive = GET_WM_MDIACTIVATE_FACTIVATE(hwnd, wParam, lParam) == 0 ? NULL : hwnd;
+        hwndActive = (lParam == (LPARAM)hwnd) == 0 ? NULL : hwnd;
         break;
     case WM_CREATE:
         yScanTop = 1000;
@@ -272,8 +272,8 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         goto Default;
     case WM_HSCROLL:
     case WM_VSCROLL:
-        if (GET_WM_HSCROLL_CODE(wParam, lParam) <= SB_THUMBTRACK) {
-            switch (GET_WM_HSCROLL_CODE(wParam, lParam)) {
+        if (LOWORD(wParam) <= SB_THUMBTRACK) {
+            switch (LOWORD(wParam)) {
             case SB_LINEUP:
                 d = -dScanInc;
                 break;
@@ -288,7 +288,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 break;
             case SB_THUMBPOSITION:
             case SB_THUMBTRACK:
-                d = GET_WM_HSCROLL_POS(wParam, lParam) - (msg == WM_VSCROLL ? yScanTop : xScanTop);
+                d = (short)HIWORD(wParam) - (msg == WM_VSCROLL ? yScanTop : xScanTop);
                 d &= 0xfffc;
             }
         } else {
@@ -2800,10 +2800,10 @@ INT_PTR CALLBACK FindDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szName, 40);
                 if (!FSelectSz(szName)) {
                     AlertSz(PszFormatIds(idsSorryCantFindPlanetFleetName, NULL), MB_ICONHAND);
@@ -2813,7 +2813,7 @@ INT_PTR CALLBACK FindDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 }
             }
             StickyDlgPos(hwnd, &ptStickyFindDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhFindPlanetOrFleet);

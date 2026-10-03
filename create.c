@@ -2173,14 +2173,14 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         return 1;
     case WM_CTLCOLOR:
         for (i = 200; i <= 203; i++) {
-            if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
+            if ((HWND)lParam == GetDlgItem(hwnd, i)) {
                 i = -1;
                 break;
             }
         }
         if (i != -1) {
             for (i = 1000; i <= 1004; i++) {
-                if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
+                if ((HWND)lParam == GetDlgItem(hwnd, i)) {
                     i = -1;
                     break;
                 }
@@ -2239,7 +2239,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDC_FINISH:
         case IDCANCEL:
         case IDC_SIMPLE_NEW_GAME_ADVANCED:
@@ -2251,11 +2251,11 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             game.mdSize = i - 1000;
             game.turn = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_COMBOBOX), CB_GETCURSEL, 0, 0));
             StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam));
+            EndDialog(hwnd, LOWORD(wParam));
             return 1;
         case IDC_SIMPLE_NEW_GAME_TUTORIAL:
             StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam));
+            EndDialog(hwnd, LOWORD(wParam));
             return 1;
         case IDC_SIMPLE_NEW_GAME_CUSTOMIZE_RACE:
             hwndDD = GetDlgItem(hwnd, IDC_COMBOBOX);
@@ -2334,10 +2334,10 @@ INT_PTR CALLBACK NewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 1000; i <= 1021 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 1000; i <= 1021 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 1021 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */ ||
-            GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
+            (HWND)lParam == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -2387,11 +2387,11 @@ INT_PTR CALLBACK NewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep1SpecifyingTheUniverse);
             return 1;
         }
-        for (iRet = 0; iRet < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[iRet]; iRet++) {
+        for (iRet = 0; iRet < 4 && LOWORD(wParam) != rgidRaceBtn[iRet]; iRet++) {
         }
         if (iRet < 4) {
             if (iRet != 0) {
@@ -2477,7 +2477,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 401; i <= 448 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 401; i <= 448 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 448 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -2650,11 +2650,11 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep2SpecifyingThePlayers);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             if (i != 0 && vrgplrTypeNew[0] == 0 && !fRCWReadOnly) {
@@ -2774,7 +2774,7 @@ INT_PTR CALLBACK NewGameDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 291; i <= 297 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 291; i <= 297 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 297 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -2799,20 +2799,20 @@ INT_PTR CALLBACK NewGameDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep3VictoryConditions);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_VC_OWNS_PLANETS && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_VC_HIGHEST_SCORE) {
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), BM_GETCHECK, 0, 0));
-            SetVCCheck(&game, GET_WM_COMMAND_ID(wParam, lParam) - 291 + ((uint16_t)(GET_WM_COMMAND_ID(wParam, lParam) - 291) >= 2), i);
+        if (LOWORD(wParam) >= IDC_VC_OWNS_PLANETS && LOWORD(wParam) <= IDC_VC_HIGHEST_SCORE) {
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), BM_GETCHECK, 0, 0));
+            SetVCCheck(&game, LOWORD(wParam) - 291 + ((uint16_t)(LOWORD(wParam) - 291) >= 2), i);
             DrawNewGame3(hwnd, NULL, 8);
         }
     }

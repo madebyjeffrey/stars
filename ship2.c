@@ -51,7 +51,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 1073; i <= 1076 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 1076) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -95,18 +95,18 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_ZIP_PROD_PRESET_1 &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_ZIP_PROD_PRESET_4) {
-            iResTechNow = GET_WM_COMMAND_ID(wParam, lParam) - 1073;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 &&
+            LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
+            iResTechNow = LOWORD(wParam) - 1073;
             EnableZipBtns(hwnd, iResTechNow);
             InvalidateRect(hwnd, NULL, TRUE);
         } else {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+            switch (LOWORD(wParam)) {
             case IDOK:
             case IDCANCEL:
                 hwndZipOrderDlg = 0;
                 StickyDlgPos(hwnd, &ptStickyZipOrderDlg, FALSE);
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+                EndDialog(hwnd, LOWORD(wParam) == IDOK);
                 if (gd.fTutorial) {
                     AdvanceTutor();
                 }
@@ -133,7 +133,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     }
                     *pszT = 0;
                     SetWindowText(GetDlgItem(hwnd, iResTechNow + 1073), &szWork[64]);
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
+                    if (LOWORD(wParam) == IDC_IMPORT) {
                         vrgZip[iResTechNow].fValid = TRUE;
                         vrgZip[iResTechNow].txp = sel.fl.lpplord->rgord[sel.iwpAct].txp;
                         InvalidateRect(hwnd, NULL, TRUE);
@@ -197,14 +197,14 @@ INT_PTR CALLBACK RenameZipDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szWork, 14);
             }
             StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(!hwndZipOrderDlg ? 1106 : 3103));
@@ -237,31 +237,31 @@ INT_PTR CALLBACK RenameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szWork, 32);
                 FStringFitsScreen(szWork, 160);
             }
             StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_EDIT1:
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400 && !fInEditUpdate) {
+            if (HIWORD(wParam) == 0x400 && !fInEditUpdate) {
                 fInEditUpdate = TRUE;
-                GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 250);
-                lSel = SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_GETSEL, 0, 0);
+                GetWindowText((HWND)lParam, szWork, 250);
+                lSel = SendMessage((HWND)lParam, EM_GETSEL, 0, 0);
                 if (!FStringFitsScreen(szWork, 160)) {
-                    SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork);
-                    SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
+                    SetWindowText((HWND)lParam, szWork);
+                    SendMessage((HWND)lParam, EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
                 }
                 fInEditUpdate = FALSE;
                 break;
             }
             /* fallthrough */
         default:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+            if (LOWORD(wParam) == IDC_HELP) {
                 WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhRenameFleetDialog);
                 return 1;
             }
@@ -1100,13 +1100,13 @@ INT_PTR CALLBACK MergeFleetsDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST)) {
+        if ((HWND)lParam != GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST)) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
             for (i = 0; i < vcflMerge; i++) {
@@ -1114,11 +1114,11 @@ INT_PTR CALLBACK MergeFleetsDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                     vrgiflMerge[i] = iflNone;
                 }
             }
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK && gd.fTutorial && !FOKMergeDialog()) {
+            if (LOWORD(wParam) == IDOK && gd.fTutorial && !FOKMergeDialog()) {
                 return 1;
             }
             StickyDlgPos(hwnd, &ptStickyMergeFleetsDlg, FALSE);
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhMergeFleetsDialog);
@@ -1126,7 +1126,7 @@ INT_PTR CALLBACK MergeFleetsDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case IDC_MERGE_FLEETS_SELECT_ALL:
         case IDC_MERGE_FLEETS_UNSELECT_ALL:
             for (i = 0; i < vcflMerge; i++) {
-                SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_SETSEL, GET_WM_COMMAND_ID(wParam, lParam) == IDC_MERGE_FLEETS_SELECT_ALL, i);
+                SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_SETSEL, LOWORD(wParam) == IDC_MERGE_FLEETS_SELECT_ALL, i);
             }
             return 1;
         }

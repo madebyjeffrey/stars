@@ -447,8 +447,8 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         i = 2;
         goto KillTime;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_VCR_REW_ALL && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_VCR_FWD_ALL) {
-            i = GET_WM_COMMAND_ID(wParam, lParam) - 161;
+        if (LOWORD(wParam) >= IDC_VCR_REW_ALL && LOWORD(wParam) <= IDC_VCR_FWD_ALL) {
+            i = LOWORD(wParam) - 161;
             if (gd.fVCRTimer) {
             KillTime:
                 KillTimer(hwnd, 2668);
@@ -496,7 +496,7 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
             }
             SetVCRBoard(iStep);
             DrawVCR(NULL, -2, -1);
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+        } else if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
             if (gd.fVCRTimer) {
                 gd.fVCRTimer = FALSE;
                 KillTimer(hwnd, 2668);
@@ -507,7 +507,7 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
             StickyDlgPos(hwnd, &ptStickyVCRDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        } else if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhBattleVCR);
             return 1;
         }

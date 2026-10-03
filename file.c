@@ -1242,11 +1242,11 @@ INT_PTR CALLBACK AskSaveDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     case WM_INITDIALOG:
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDC_SAVE:
         case IDC_NO_DON_T_SAVE:
         case IDC_SAVESUBMIT:
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDC_NO_DON_T_SAVE ? 0 : GET_WM_COMMAND_ID(wParam, lParam) == IDC_SAVESUBMIT ? -1 : 1);
+            EndDialog(hwnd, LOWORD(wParam) == IDC_NO_DON_T_SAVE ? 0 : LOWORD(wParam) == IDC_SAVESUBMIT ? -1 : 1);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, 1090);

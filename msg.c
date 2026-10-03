@@ -1051,7 +1051,7 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         ((MINMAXINFO *)lParam)->ptMinTrackSize.y = (0xd * dyArial8 >> 1) + 0x16;
         goto Default;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) != hwndMsgScroll)
+        if ((HWND)lParam != hwndMsgScroll)
             goto Default;
         SetBkColor((HDC)wParam, crButtonFace);
         return (LRESULT)hbrButtonFace;
@@ -1170,10 +1170,10 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         }
         return 0;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        if (HIWORD(wParam) == 0) {
             SetFocus(hwndFrame);
         }
-        if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndMsgBtn[0] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        if ((HWND)lParam == rghwndMsgBtn[0] && HIWORD(wParam) == 0) {
         PrevMsg:
             if (gd.fSendMsgMode) {
                 FFinishPlrMsgEntry(-1);
@@ -1201,7 +1201,7 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 AdvanceTutor();
             }
             break;
-        } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndMsgBtn[2] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        } else if ((HWND)lParam == rghwndMsgBtn[2] && HIWORD(wParam) == 0) {
         NextMsg:
             if (gd.fSendMsgMode) {
                 FFinishPlrMsgEntry(1);
@@ -1217,10 +1217,10 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 iMsgCur = i;
             }
             goto SetupNewMsg;
-        } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndMsgBtn[3] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        } else if ((HWND)lParam == rghwndMsgBtn[3] && HIWORD(wParam) == 0) {
             FFinishPlrMsgEntry(1000);
             goto SetupNewMsg;
-        } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndMsgBtn[1] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
+        } else if ((HWND)lParam == rghwndMsgBtn[1] && HIWORD(wParam) == 0) {
         GotoMsg:
             if (gd.fSendMsgMode || iMsgCur >= cMsg)
                 goto ToggleMsgMode;
@@ -2115,10 +2115,10 @@ INT_PTR CALLBACK MsgDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, szWork, 9);
                 if (!FValidSerialNo(szWork, NULL)) {
                     AlertSz(PszFormatIds(idsSerialNumberHaveEnteredValid, NULL), MB_ICONHAND);
@@ -2126,7 +2126,7 @@ INT_PTR CALLBACK MsgDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
                     break;
                 }
             }
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhCopyProtection);

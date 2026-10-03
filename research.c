@@ -104,7 +104,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 1073; i <= 1078 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 1073; i <= 1078 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 1078 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -133,15 +133,15 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         /* fallthrough */
     case WM_COMMAND:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RESEARCH_ENERGY &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RESEARCH_BIOTECH) {
-            if (IsDlgButtonChecked(hwnd, GET_WM_COMMAND_ID(wParam, lParam)) != 0) {
-                iResTechNow = GET_WM_COMMAND_ID(wParam, lParam) - 1073;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RESEARCH_ENERGY &&
+            LOWORD(wParam) <= IDC_RESEARCH_BIOTECH) {
+            if (IsDlgButtonChecked(hwnd, LOWORD(wParam)) != 0) {
+                iResTechNow = LOWORD(wParam) - 1073;
                 GetClientRect(hwnd, &rc);
                 DrawResearchDlg(hwnd, NULL, &rc, 4);
             }
         } else {
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+            if (LOWORD(wParam) == IDCANCEL) {
                 fChg = FALSE;
                 iResTechNext = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), CB_GETCURSEL, 0, 0));
                 if (iResTechNext == 0) {
@@ -170,7 +170,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 }
                 return 1;
             }
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+            if (LOWORD(wParam) == IDC_HELP) {
                 WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhResearchDialog);
                 return 1;
             }
@@ -632,7 +632,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 266; i <= 267 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 266; i <= 267 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 267 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -651,7 +651,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         CheckMenuItem(hmenu, IDM_VIEW_BROWSER_TOGGLE2, MF_UNCHECKED);
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDCANCEL:
             StickyDlgPos(hwnd, &ptStickyBrowserDlg, FALSE);
             hwndBrowser = 0;
@@ -664,7 +664,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
             }
             return 1;
         case IDC_BROWSER_COMPONENT_CATEGORY:
-            if (GET_WM_COMMAND_CMD(wParam, lParam) != 1)
+            if (HIWORD(wParam) != 1)
                 break;
             fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
             lSel = SendMessage(GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY), CB_GETCURSEL, 0, 0);
@@ -694,7 +694,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
             }
             iStart = i;
             fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
-            iOff = GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT ? 1 : -1;
+            iOff = LOWORD(wParam) == IDC_NEXT ? 1 : -1;
             do {
                 if ((vpartBrowser.hs.iItem += iOff) == iItemStart && !fAllHsts)
                     break;
@@ -703,7 +703,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                     goto NullItem;
                 md = FLookupPart(&vpartBrowser);
                 if (md == mdPartAvailInvalid) {
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT && fAllHsts) {
+                    if (LOWORD(wParam) == IDC_NEXT && fAllHsts) {
                         i++;
                         if (i >= 17) {
                             i = 1;
@@ -716,7 +716,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                         vpartBrowser.pcom = NULL;
                         break;
                     }
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_BACK && fAllHsts) {
+                    if (LOWORD(wParam) == IDC_BACK && fAllHsts) {
                         if (vpartBrowser.hs.iItem > 100) {
                             i--;
                             if (i <= 0) {
@@ -726,7 +726,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                             vpartBrowser.hs.iItem = 100;
                             goto Top;
                         }
-                    } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT) {
+                    } else if (LOWORD(wParam) == IDC_NEXT) {
                         vpartBrowser.hs.iItem = 0;
                         goto Top;
                     }

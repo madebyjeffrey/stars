@@ -217,7 +217,7 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 271; i <= 278 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 271; i <= 278 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 278 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -270,14 +270,14 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep1BasicDefinition);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
-            if (GET_WM_COMMAND_ID(wParam, lParam) != IDCANCEL) {
+            if (LOWORD(wParam) != IDCANCEL) {
                 iPlrBmp = vplr.iPlrBmp;
                 for (j = 271; j <= 278 && IsDlgButtonChecked(hwnd, j) == 0; j++) {
                 }
@@ -298,33 +298,33 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RACE_HUMANOID &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RACE_CUSTOM) {
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HUMANOID &&
+            LOWORD(wParam) <= IDC_RACE_CUSTOM) {
             memset(vplr.szName, 0, 32);
             GetDlgItemText(hwnd, IDC_RACE_NAME, vplr.szName, 32);
             memset(vplr.szNames, 0, 32);
             GetDlgItemText(hwnd, IDC_RACE_PLURAL_NAME, vplr.szNames, 32);
-            GetDlgItemText(hwnd, GET_WM_COMMAND_ID(wParam, lParam), szBuf, 32);
+            GetDlgItemText(hwnd, LOWORD(wParam), szBuf, 32);
             for (i = 0; i < 7 && strcmp(vplr.szName, PszGetCompressedString(i + 1383)) != 0; i++) {
             }
-            if (i < 7 && GET_WM_COMMAND_ID(wParam, lParam) < IDC_RACE_CUSTOM) {
+            if (i < 7 && LOWORD(wParam) < IDC_RACE_CUSTOM) {
                 memset(vplr.szName, 0, 32);
-                CchGetString(GET_WM_COMMAND_ID(wParam, lParam) + 1112, vplr.szName);
+                CchGetString(LOWORD(wParam) + 1112, vplr.szName);
                 SetDlgItemText(hwnd, IDC_RACE_NAME, vplr.szName);
                 memset(vplr.szNames, 0, 32);
                 psz = PszPlayerName(0, TRUE, TRUE, FALSE, 0, &vplr);
                 strcpy(vplr.szNames, psz);
                 SetDlgItemText(hwnd, IDC_RACE_PLURAL_NAME, vplr.szNames);
             }
-            if (GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RACE_RANDOM) {
-                pplr = &vrgplrDef[GET_WM_COMMAND_ID(wParam, lParam) - 271];
+            if (LOWORD(wParam) <= IDC_RACE_RANDOM) {
+                pplr = &vrgplrDef[LOWORD(wParam) - 271];
             } else {
                 pplr = &vplr;
             }
             InvalidateAdvPtsRect(hwnd);
             i = GetRaceStat(pplr, rsUseLeftover);
             SendMessage(GetDlgItem(hwnd, IDC_COMBOBOX), CB_SETCURSEL, i, 0);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEXT), GET_WM_COMMAND_ID(wParam, lParam) != IDC_RACE_RANDOM);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEXT), LOWORD(wParam) != IDC_RACE_RANDOM);
             vplr.iPlrBmp = pplr->iPlrBmp;
             GetWindowRect(GetDlgItem(hwnd, IDC_COMBOBOX), &rc);
             ScreenToClient(hwnd, (POINT *)&rc.right);
@@ -403,7 +403,7 @@ INT_PTR CALLBACK RaceWizardDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 291; i <= 293 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 291; i <= 293 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 293 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -429,20 +429,20 @@ INT_PTR CALLBACK RaceWizardDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         pt.y = HIWORD(lParam);
         return FTrackRaceDlg2(hwnd, pt, wParam);
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep4PopulationGrowthFactors);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyRaceDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_IMMUNE_TO_GRAVITY && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_IMMUNE_TO_RADIATION) {
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), BM_GETCHECK, 0, 0));
-            iVar = GET_WM_COMMAND_ID(wParam, lParam) - 291;
+        if (LOWORD(wParam) >= IDC_IMMUNE_TO_GRAVITY && LOWORD(wParam) <= IDC_IMMUNE_TO_RADIATION) {
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), BM_GETCHECK, 0, 0));
+            iVar = LOWORD(wParam) - 291;
             if (i == 1) {
                 vplr.rgEnvVar[iVar] = envImmune;
                 vplr.rgEnvVarMax[iVar] = envImmune;
@@ -775,7 +775,7 @@ INT_PTR CALLBACK RaceWizardDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) ||
+        if ((HWND)lParam == GetDlgItem(hwnd, IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) ||
             message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
@@ -799,18 +799,18 @@ INT_PTR CALLBACK RaceWizardDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep5PopulationEfficiencyPlayerRace);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyRaceDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) {
+        if (LOWORD(wParam) == IDC_RACE_FACTORY_GERMANIUM_DISCOUNT) {
             i = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_RACE_FACTORY_GERMANIUM_DISCOUNT), BM_GETCHECK, 0, 0));
             SetRaceGrbit(&vplr, ibitRaceCheapFact, i);
             DrawRace3(hwnd, NULL, 99);
@@ -1020,7 +1020,7 @@ INT_PTR CALLBACK RaceWizardDlg4(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 271; i <= 280 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 271; i <= 280 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 280 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -1069,20 +1069,20 @@ INT_PTR CALLBACK RaceWizardDlg4(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep2PrimaryRacialTraits);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyRaceDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RACE_HYPER_EXPANSION &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RACE_JACK_OF_ALL_TRADES) {
-            i = GET_WM_COMMAND_ID(wParam, lParam) - 271;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_HYPER_EXPANSION &&
+            LOWORD(wParam) <= IDC_RACE_JACK_OF_ALL_TRADES) {
+            i = LOWORD(wParam) - 271;
             SetRaceStat(&vplr, rsMajorAdv, i);
             if (GetRaceStat(&vplr, rsMajorAdv) == raMacintosh) {
                 SetRaceStat(&vplr, rsFactProd, 10);
@@ -1128,7 +1128,7 @@ INT_PTR CALLBACK RaceWizardDlg5(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 291; i <= 304 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 291; i <= 304 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 304 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -1162,20 +1162,20 @@ INT_PTR CALLBACK RaceWizardDlg5(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep3LesserTraitsPlayerRace);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyRaceDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RACE_IMPROVED_FUEL_EFFICIENCY && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RACE_REGENERATING_SHIELDS) {
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), BM_GETCHECK, 0, 0));
-            cColDrop = GET_WM_COMMAND_ID(wParam, lParam) - 291;
+        if (LOWORD(wParam) >= IDC_RACE_IMPROVED_FUEL_EFFICIENCY && LOWORD(wParam) <= IDC_RACE_REGENERATING_SHIELDS) {
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), BM_GETCHECK, 0, 0));
+            cColDrop = LOWORD(wParam) - 291;
             SetRaceGrbit(&vplr, cColDrop, i);
             InvalidateAdvPtsRect(hwnd);
             InvalidateRect(hwnd, &rcCargo, FALSE);
@@ -1216,9 +1216,9 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 271; i <= 288 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 271; i <= 288 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
-        if (i <= 288 || GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH) ||
+        if (i <= 288 || (HWND)lParam == GetDlgItem(hwnd, IDC_RACE_START_HIGHER_TECH) ||
             message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
@@ -1246,24 +1246,24 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep6ResearchCostsPlayerRace);
             return 1;
         }
-        for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
+        for (i = 0; i < 4 && LOWORD(wParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
             StickyDlgPos(hwnd, &ptStickyRaceDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
         }
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RACE_ENERGY_COST_EXTRA &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RACE_BIOTECH_COST_LESS) {
-            i = GET_WM_COMMAND_ID(wParam, lParam) - 271;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_RACE_ENERGY_COST_EXTRA &&
+            LOWORD(wParam) <= IDC_RACE_BIOTECH_COST_LESS) {
+            i = LOWORD(wParam) - 271;
             SetRaceStat(&vplr, i / 3 + 8, i % 3);
             InvalidateAdvPtsRect(hwnd);
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_RACE_START_HIGHER_TECH) {
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), BM_GETCHECK, 0, 0));
+        } else if (LOWORD(wParam) == IDC_RACE_START_HIGHER_TECH) {
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), BM_GETCHECK, 0, 0));
             SetRaceGrbit(&vplr, ibitRaceTech3, i);
             InvalidateAdvPtsRect(hwnd);
         }

@@ -49,13 +49,13 @@ INT_PTR CALLBACK RelationsDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         EndPaint(hwnd, &ps);
         return 1;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, IDC_RELATIONS_PLAYER_LIST)) {
+        if ((HWND)lParam != GetDlgItem(hwnd, IDC_RELATIONS_PLAYER_LIST)) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
         break;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+        if (LOWORD(wParam) == IDCANCEL) {
             StickyDlgPos(hwnd, &ptStickyRelationsDlg, FALSE);
             i = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_RELATIONS_PLAYER_LIST), LB_GETCURSEL, 0, 0));
             if (i >= idPlayer) {
@@ -64,20 +64,20 @@ INT_PTR CALLBACK RelationsDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
             EndDialog(hwnd, i + 3);
             return 1;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RELATIONS_NEUTRAL && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RELATIONS_ENEMY) {
+        if (LOWORD(wParam) >= IDC_RELATIONS_NEUTRAL && LOWORD(wParam) <= IDC_RELATIONS_ENEMY) {
             i = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_RELATIONS_PLAYER_LIST), LB_GETCURSEL, 0, 0));
             if (i >= idPlayer) {
                 i++;
             }
-            rgplr[idPlayer].rgmdRelation[i] = GET_WM_COMMAND_ID(wParam, lParam) - 2004;
+            rgplr[idPlayer].rgmdRelation[i] = LOWORD(wParam) - 2004;
             fDirtyPlan = TRUE;
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_RELATIONS_PLAYER_LIST) {
+        } else if (LOWORD(wParam) == IDC_RELATIONS_PLAYER_LIST) {
             i = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_RELATIONS_PLAYER_LIST), LB_GETCURSEL, 0, 0));
             if (i >= idPlayer) {
                 i++;
             }
             CheckRadioButton(hwnd, IDC_RELATIONS_NEUTRAL, IDC_RELATIONS_ENEMY, rgplr[idPlayer].rgmdRelation[i] + 2004);
-        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+        } else if (LOWORD(wParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhPlayerRelationsDialog);
             return 1;
         }
@@ -113,14 +113,14 @@ INT_PTR CALLBACK NewPlanNameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         }
         break;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+            if (LOWORD(wParam) == IDOK) {
                 GetDlgItemText(hwnd, IDC_EDIT1, btlplan.szName, 32);
                 fDirtyPlan = TRUE;
             }
-            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            EndDialog(hwnd, LOWORD(wParam) == IDOK);
             return 1;
         case IDC_HELP:
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhBattlePlansDialog);
@@ -191,7 +191,7 @@ INT_PTR CALLBACK BattlePlansDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         }
         return 1;
     case WM_CTLCOLOR:
-        for (idc = 1053; idc <= 1058 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, idc); idc++) {
+        for (idc = 1053; idc <= 1058 && (HWND)lParam != GetDlgItem(hwnd, idc); idc++) {
         }
         if (idc >= 1053 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -203,7 +203,7 @@ INT_PTR CALLBACK BattlePlansDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_COMMAND:
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        switch (LOWORD(wParam)) {
         case IDOK:
         case IDCANCEL:
             if (fDirtyPlan) {
@@ -244,17 +244,17 @@ INT_PTR CALLBACK BattlePlansDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             rglpbtlplan[idPlayer][iPlanSelDlg] = btlplan;
             break;
         case IDC_BATTLE_PLAN_PRIMARY_TARGET:
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), 1031, 0, 0));
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), 1031, 0, 0));
             btlplan.mdTarget1 = i;
             fDirtyPlan = TRUE;
             break;
         case IDC_BATTLE_PLAN_SECONDARY_TARGET:
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), 1031, 0, 0));
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), 1031, 0, 0));
             btlplan.mdTarget2 = i;
             fDirtyPlan = TRUE;
             break;
         case IDC_BATTLE_PLAN_ATTACK_WHO:
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), 1031, 0, 0));
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), 1031, 0, 0));
             if (game.fSinglePlr) {
                 i = 3;
             } else if (i >= idPlayer + 4) {
@@ -264,7 +264,7 @@ INT_PTR CALLBACK BattlePlansDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             fDirtyPlan = TRUE;
             break;
         case IDC_BATTLE_PLAN_TACTIC:
-            i = LOWORD(SendMessage(GetDlgItem(hwnd, GET_WM_COMMAND_ID(wParam, lParam)), 1031, 0, 0));
+            i = LOWORD(SendMessage(GetDlgItem(hwnd, LOWORD(wParam)), 1031, 0, 0));
             btlplan.mdTactic = i;
             fDirtyPlan = TRUE;
             break;

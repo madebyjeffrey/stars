@@ -315,7 +315,7 @@ INT_PTR CALLBACK ProductionDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         lpmis->itemHeight = dyArial8 + 2;
         return 1;
     case WM_CTLCOLOR:
-        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) ||
+        if ((HWND)lParam == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) ||
             message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
@@ -402,7 +402,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     int16_t cMax;
     PLPROD *lpplprodT;
 
-    switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+    switch (LOWORD(wParam)) {
     case IDC_PRODUCTION_ADD:
     AddItem:
         lSel = SendMessage(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), LB_GETCURSEL, 0, 0);
@@ -533,7 +533,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             ipl++;
             lpprod++;
         }
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
+        if (LOWORD(wParam) == IDC_IMPORT) {
             cMax = lpplProdGlob->iprodMac + vrgZipProd[lParam].cpq;
             if (cMax < 1) {
                 cMax = 1;
@@ -572,7 +572,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         goto RedrawText;
     case IDC_PRODUCTION_AVAILABLE_ITEMS:
     case IDC_PRODUCTION_QUEUE:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+        if (HIWORD(wParam) == 1) {
         RedrawText:
             GetClientRect(hwnd, &rc);
             rc.top = yTopFutureTech;
@@ -580,8 +580,8 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             rc.left += 130;
             InvalidateRect(hwnd, &rc, TRUE);
             DrawProductionDlg(hwnd, NULL, &rc, -1);
-        } else if (GET_WM_COMMAND_CMD(wParam, lParam) == 2) {
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_PRODUCTION_AVAILABLE_ITEMS)
+        } else if (HIWORD(wParam) == 2) {
+            if (LOWORD(wParam) == IDC_PRODUCTION_AVAILABLE_ITEMS)
                 goto AddItem;
             goto RemoveItem;
         }
@@ -597,14 +597,14 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     case IDCANCEL:
         hwndProdDlg = 0;
         StickyDlgPos(hwnd, &ptStickyProduceDlg, FALSE);
-        EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+        EndDialog(hwnd, LOWORD(wParam) == IDOK);
         break;
     case IDC_BACK:
     case IDC_NEXT:
-        c = GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT ? 1 : -1;
+        c = LOWORD(wParam) == IDC_NEXT ? 1 : -1;
         FinishProduction(TRUE);
         if (GetKeyState(VK_SHIFT) < 0) {
-            SelectAdjPlanet(0, IdFindAdjStarbase(sel.pl.id, GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT));
+            SelectAdjPlanet(0, IdFindAdjStarbase(sel.pl.id, LOWORD(wParam) == IDC_NEXT));
         } else {
             SelectAdjPlanet(c, 0);
         }
@@ -1233,7 +1233,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
     case WM_CTLCOLOR:
-        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        for (i = 1073; i <= 1076 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 1076) {
             SetBkColor((HDC)wParam, crButtonFace);
@@ -1263,17 +1263,17 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         EndPaint(hwnd, &ps);
         return 1;
     case WM_COMMAND:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_ZIP_PROD_PRESET_1 &&
-            GET_WM_COMMAND_ID(wParam, lParam) <= IDC_ZIP_PROD_PRESET_4) {
-            iResTechNow = GET_WM_COMMAND_ID(wParam, lParam) - 1073;
+        if (HIWORD(wParam) == 0 && LOWORD(wParam) >= IDC_ZIP_PROD_PRESET_1 &&
+            LOWORD(wParam) <= IDC_ZIP_PROD_PRESET_4) {
+            iResTechNow = LOWORD(wParam) - 1073;
             EnableZipProdBtns(hwnd, iResTechNow);
             FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);
         } else {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+            switch (LOWORD(wParam)) {
             case IDOK:
             case IDCANCEL:
                 StickyDlgPos(hwnd, &ptStickyZipProdDlg, FALSE);
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+                EndDialog(hwnd, LOWORD(wParam) == IDOK);
                 vyZPDStatic = -1;
                 if (gd.fTutorial) {
                     AdvanceTutor();
@@ -1304,7 +1304,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                     *pszT = 0;
                     SetWindowText(GetDlgItem(hwnd, iResTechNow + 1073), &szWork[64]);
                 LDontRename:
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
+                    if (LOWORD(wParam) == IDC_IMPORT) {
                         vrgZipProd[iResTechNow].fValid = TRUE;
                         cpq = 0;
                         for (i = 0; i < lpplProdGlob->iprodMac; i++) {
