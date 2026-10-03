@@ -1,0 +1,192 @@
+April 21 1998
+
+======================================================================
+                        V2.7i UPGRADE INSTRUCTIONS
+======================================================================
+
+* Stars! 2.70i can read files created by any version from 2.60 to 2.70h.
+* Version 2.70h is backwards compatible with:
+	2.60f, 2.60g, 2.60h, 2.70f and 2.70g
+* Players with 2.60i or 2.70i can play in games hosted with the above
+        earlier versions.
+* Players with earlier versions can not play in games hosted with
+        2.60i or 2.70i unless they upgrade to the "i" release.
+
+To upgrade to Stars! 2.70i from older versions:
+
+Players should submit their turns with their current version. Then
+the host should upgrade to 2.70i or 2.60i before generating the new
+year. Then each player should upgrade to 2.70i or 2.60i before loading
+their new turns.
+
+======================================================================
+                               CHANGES 
+======================================================================
+
+Special thanks to Thomas Pfister for providing translation
+assistance for the German version of Stars! 2.70i.
+
+Changes for Stars! 2.70i:
+
+Universe definition (.def) files can now include AI players instead
+   of just human players using the format "# n m" where n is the id
+   number of the Ai and m is the skill level of the Ai.
+   Races IDs: 0=Random, 1=Robotoids, 2=Turindrones, 3=Automitrons,
+              4=Rototills, 5=Cybertrons, 6=Macinti
+   Skill Levels: 0=Random, 1=Easy, 2=Standard, 3=Tough, 4=Expert
+   # 1 4     <-- Expert Robotoid AI.
+Universe definition files can now include a random seed to force the
+   universe to be created exactly the same each time. Just add random
+   seed value as a forth number on the same line as the universe size.
+   Example:   1 2 1 13424531
+Multi-year turn generation is now possible in solo games using F12
+   for 10 years, <Ctrl>F12 for 100 years and <Shift>F12 for 1000
+   years. Press and hold <Shift> or <Ctrl> to halt automatic turn
+   generation early.
+Added command line support for multi-year generation to the -g command
+   line parameter. The new syntax is -g[n] where n is an optional
+   number between 2 and 1000. Example: Stars! -g10 mygame.hst
+Added multi-year turn generation support from the host dialog. Hold
+   down the <Shift> key and press the Generate Now button to generate
+   10 years. Hold down the <Ctrl> key for 100 years. Hold down both
+   <Shift>+<Ctrl> to generate 1000 years. Press and hold <Shift> or
+   <Ctrl> to halt automatic turn generation early.
+Added option to include player number in the file name extension for
+   planet and fleet dumps. To change from .PLA and .FLE to .Pnn and
+   .Fnn, where nn is your player number, just add "NewReports=1" to
+   the [Misc] section of your stars.ini.
+Added additional planet dump columns if NewReports=1
+   Gravity, Temperature, Radiation, Original Gravity, Original
+   Temperature, Original Radiation, Value after Terraforming,
+   % of Pop Capacity, Scanner Range, Penetrating Scanner Range,
+   Mass Driver destination, Driver Warp speed, Routing destination,
+   StarGate Range, StarGate Mass limit, Percent Damage
+Added additional fleet dump columns if NewReports=1
+   Owner, ETA, Warp speed, Mass, Cloak %, Scanner range,
+   Penetrating Scanner range, Task, Remote Mining, Mine Sweeping,
+   Mine Laying, Terraforming, Count of Unarmed ships, Count of Scouts,
+   Count of Warships, Count of Utility ships, Count of Bombers.
+Added a -d command line parameter for dumping PLA, FLE and MAP files.
+   Stars! -dm mygame.m1    <-- Dump the universe definition and exit
+   Stars! -df mygame.m1    <-- Dump player 1's fleets and exit
+   Stars! -dp mygame.m1    <-- Dump player 1's planets and exit
+   Stars! -dfmp mygame.m1  <-- Dump everything player 1 knows and exit
+Changed default Chicken battle plan to have a primary target of Any
+   for new games. This allows fleeing ships to fire back.
+Added option to exclude the race name for custom races from the
+   Advanced New Game Wizard and Host Mode. Add "NoHostNames=1" to 
+   the [Misc] section of your stars.ini for this to take effect. This
+   allows hosts to know who is playing each position but not the
+   names of their races.
+No longer show double splash screens when the load of a file from the
+   command line fails.
+It is now possible to open race files from the command line. This also
+   means that it is possible to associate race files with the Stars!
+   executable so that they can be opened by double-clicking on them in
+   the Windows shell.
+Closed illegal ship design loophole. Illegal components are now deleted.
+Corrected Empire Interactive phone order number in About Box.
+Increased size of the recent file list to 9.
+Waypoints listbox now scrolls to show previous or next item when the
+   top or bottom item is selected.
+Starbases now obey the "Attack Who" field of your default battle plan.
+Stars! remembers what message number you were on when continuing your
+   most recent game.
+Enemies are now prevented from giving you fleets.
+Cross player fleet transfers (gifts) now always happen after movement.
+Too many fleets in the same location can no longer prevent a battle
+   from occurring.
+Many additional PLA and FLE dump file columns now show actual or
+   approximate values for other players' colonies and fleets when known.
+Corrected the display of mine field decay rates. The displayed rate now
+   matches the actual decay again.
+Fixed problem where newly unoccupied planets would occasionally still
+   display as having a starbase.
+Fixed problems with WaitFor% and LoadUpto% transport tasks.
+Improved integrity of racial point cost calculations.
+Corrected ship repair speed problems.
+Fixed obscure bug which sometimes caused battles to end too soon.
+Fixed mineral transmutation bug when unloading for stargate jumps.
+
+Changes for Stars! 2.70h:
+
+Fixed stray pointer in Report initialization that caused listbox
+   redraw problems on Windows 3.1 machines
+Fixed problem with fleets sometimes inappropriately generating fuel
+Ensured that "tool tips" are never partially off screen
+Summary pane now shows field count for your own minefields
+Fixed keyboard access to Done and Help buttons when VCR is finished
+Replaced "Stream Error" alerts with something more intelligible
+Changed name of victory condition from "Exceeds next nearest player's
+   score by..." to "Exceeds second place score by..." The meaning
+   of the condition has not changed
+Host dialog now displays better messages when a .x file is unacceptable
+Save and Submit now has Ctrl-A for a keyboard accelerator
+Your fleets now pick new targets only if the composition of the
+   target has changed AND the target is not owned by you
+Fixed description of the War Monger trait in the Race Wizard
+Tech Browser graph for Trans-Galactic Drive and Trans-Galactic Super
+   Scoop now correctly displays a battle speed of 9
+We now use multi-fleet bombing messages when more than one of your
+   fleets are in orbit even if only one of them has bombers in it
+Fixed display of planetary scanner range for planets without scanners
+Fixed floating point error caused by having way too many colonists
+   on a planet
+Added popup tech browser page from minefield image in summary window
+Prevent players from setting waypoints beyond edge of universe
+
+
+Changes for Stars! 2.70g:
+
+Fixed bombing bug which occurred sometimes when multiple players
+   each have multiple fleets in orbit
+Antimatter Generators work correctly again
+Fixed race requirement description for Fielded Kelarium in the
+   Tech Browser
+Fixed bug which sometimes made copies of gift ship designs
+   unbuildable
+Fixed crash when using Prev/Next for Fleets with the Planets
+   report open and vice versa
+
+
+Special thanks to Christian Eustermann for providing translation
+assistance for the German version of Stars! 2.7f.
+
+Changes for Stars! 2.70f:
+
+We now free up the WAV device between battles
+Fixed bug where ships were not removed from production queues when
+   the design was deleted if no ships of that design existed
+All progress on other starbases in the production queue is undone when
+   the current starbase goes away
+Mineral packets flung by Packet Physics races are no longer reduced
+   to 1/3 damage
+Failed cargo transfers to other players no longer halt turn generation
+Non-Alternate Reality remote miners no longer use the homeworld mineral
+   concentration floor value
+Remote mining is now limited to the equivalent of 4000 mines per fleet
+Fixed problem where editing the Chicken battle plan created a
+   duplicate plan and ate the Sniper plan
+Can no longer give a player ships if they already have 512 fleets
+Improved initial spacing of players for 3 way battles
+Players can't steal from other players using remote miners any more
+Enemies can no longer transfer cargo to your fleets
+Other players' est. pop values are no longer divided by 100 in dump files
+All fleets now include the owner's race name in dump files
+Fleet location now listed by name if at a planet in dump files
+Multiple fleets bombing one planet are now treated as one large fleet
+Ships can no longer become 100% damaged without dying
+Routed mining ships clump into usable sized fleets
+Players can no longer create too many minefields or mineral packets
+Sends player a message when minelaying fails due to too many fields
+Host now does a better job of detecting corrupt log (.x) files
+Inactive players no longer try colonizing with non-colonizer ships
+Anti-Matter Generators now continue to work on ships given away
+Warp gauge no longer shows danger color at warp 10 for warp 10 engines
+Seriously over-cloaked ships no longer appear as if they were uncloaked
+Minefield hit reports are less likely to display the wrong owner name
+Cybertron AIs no longer accidentally give other players colonists
+Now prevent colonists from being automatically dumped in deep space
+Fleets that should have been dead and not written out are now ignored
+Loading log files with mergers of missing fleets no longer crashes
+Empty fleets are no longer saved under any circumstances

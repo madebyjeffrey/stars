@@ -22,7 +22,7 @@ void BattleVCR(int16_t iBattle) {
     while (vlpbdVCR->id != iBattle) {
         if (vlpbdVCR->id == 0xffff) {
             lphb = lphb->lphbNext;
-            if (lphb == 0) {
+            if (!lphb) {
                 return;
             }
             vlpbdVCR = (BTLDATA *)((uint8_t *)lphb + (sizeof(HB) + 2));
@@ -35,25 +35,27 @@ void BattleVCR(int16_t iBattle) {
     if (setjmp(env) != 0) {
         penvMem = penvMemSav;
         AlertSz(PszFormatIds(idsMemory, NULL), MB_ICONHAND);
-    } else {
-        vrgtok = LpAlloc(vlpbdVCR->ctok * sizeof(TOK), htMisc);
-        vrgdpVCR = LpAlloc(vlpbdVCR->ctok * 4, htMisc);
-        vcStepVCR = SetVCRBoard(30000) - 1;
-        vcRound = viRound;
-        SetVCRBoard(-1);
-        if (gd.fTutorial != 0) {
-            AdvanceTutor();
-        }
-        lpProc = MakeProcInstance(VCRDlg, hInst);
-        DialogBox(hInst, MAKEINTRESOURCE(IDD_VCR), hwndFrame, lpProc);
+        goto LCleanup;
     }
-    if (lpProc != 0) {
+    vrgtok = LpAlloc(vlpbdVCR->ctok * sizeof(TOK), htMisc);
+    vrgdpVCR = LpAlloc(vlpbdVCR->ctok * 4, htMisc);
+    vcStepVCR = SetVCRBoard(30000) - 1;
+    vcRound = viRound;
+    SetVCRBoard(-1);
+    if (gd.fTutorial) {
+        AdvanceTutor();
+    }
+    lpProc = MakeProcInstance(VCRDlg, hInst);
+    DialogBox(hInst, MAKEINTRESOURCE(IDD_VCR), hwndFrame, lpProc);
+
+LCleanup:
+    if (lpProc) {
         FreeProcInstance(lpProc);
     }
-    if (vrgtok != 0) {
+    if (vrgtok) {
         FreeLp(vrgtok, htMisc);
     }
-    if (vrgdpVCR != 0) {
+    if (vrgdpVCR) {
         FreeLp(vrgdpVCR, htMisc);
     }
     vrgtok = NULL;
@@ -68,14 +70,14 @@ int16_t CBattles() {
 
     cBattles = 0;
     lphb = rglphb[11];
-    if (lphb == 0) {
+    if (!lphb) {
         return 0;
     }
     lpbd = (BTLDATA *)((uint8_t *)lphb + (sizeof(HB) + 2));
     while (1) {
         if (lpbd->id == 0xffff) {
             lphb = lphb->lphbNext;
-            if (lphb == 0 || lphb->ibTop <= sizeof(HB))
+            if (!lphb || lphb->ibTop <= sizeof(HB))
                 break;
             lpbd = (BTLDATA *)((uint8_t *)lphb + (sizeof(HB) + 2));
         } else {
@@ -94,14 +96,14 @@ BTLDATA *BtlDataGet(int16_t i) {
     HB      *lphb;
 
     lphb = rglphb[11];
-    if (lphb == 0) {
+    if (!lphb) {
         return NULL;
     }
     lpbd = (BTLDATA *)((uint8_t *)lphb + (sizeof(HB) + 2));
     while (1) {
         if (lpbd->id == 0xffff) {
             lphb = lphb->lphbNext;
-            if (lphb == 0 || lphb->ibTop <= sizeof(HB))
+            if (!lphb || lphb->ibTop <= sizeof(HB))
                 break;
             lpbd = (BTLDATA *)((uint8_t *)lphb + (sizeof(HB) + 2));
         } else {
@@ -129,43 +131,33 @@ int32_t CBattleUnits(BTLDATA *lpbd, BattleUnitFlags grbitBU) {
     for (i = 0; i < ctok; i++) {
         lptok = &lpbd->rgtok[i];
         if (lptok->iplr == idPlayer) {
-            if ((grbitBU & grBuOurUnits) == 0)
+            if (!(grbitBU & grBuOurUnits))
                 continue;
-        } else if ((grbitBU & grBuTheirUnits) == 0) {
+        } else if (!(grbitBU & grBuTheirUnits)) {
             continue;
         }
-        if ((grbitBU & grBuIncludeSb) != 0 || lptok->ishdef < 16) {
-            if ((grbitBU & grBuClassAll) != 0xf8 && lptok->ishdef < 16) {
-                imd = LphuldefFromId(rglpshdef[lptok->iplr][lptok->ishdef].hul.ihuldef)->imdCategory;
-                if ((int16_t)imd <= hullCatFreighter || (int16_t)imd >= hullCatMiner) {
-                    if ((grbitBU & grBuClassUnarmed) == 0)
-                        continue;
-                } else {
-                    switch (imd) {
-                    case hullCatScout:
-                        if ((grbitBU & grBuClassScout) == 0)
-                            break;
-                        goto L_0600;
-                    case hullCatWarship:
-                        if ((grbitBU & grBuClassWarship) == 0)
-                            break;
-                        goto L_0600;
-                    case hullCatBomber:
-                        if ((grbitBU & grBuClassBomber) == 0)
-                            break;
-                        goto L_0600;
-                    case hullCatUtility:
-                        if ((grbitBU & grBuClassUtility) == 0)
-                            break;
-                    default:
-                        goto L_0600;
-                    }
+        if (!(grbitBU & grBuIncludeSb) && lptok->ishdef >= 16)
+            continue;
+        if ((grbitBU & grBuClassAll) != 0xf8 && lptok->ishdef < 16) {
+            imd = LphuldefFromId(rglpshdef[lptok->iplr][lptok->ishdef].hul.ihuldef)->imdCategory;
+            if ((int16_t)imd <= hullCatFreighter || (int16_t)imd >= hullCatMiner) {
+                if (!(grbitBU & grBuClassUnarmed))
                     continue;
-                }
+            } else if (imd == hullCatScout) {
+                if (!(grbitBU & grBuClassScout))
+                    continue;
+            } else if (imd == hullCatWarship) {
+                if (!(grbitBU & grBuClassWarship))
+                    continue;
+            } else if (imd == hullCatBomber) {
+                if (!(grbitBU & grBuClassBomber))
+                    continue;
+            } else if (imd == hullCatUtility) {
+                if (!(grbitBU & grBuClassUtility))
+                    continue;
             }
-        L_0600:
-            lUnits += (uint32_t)lptok->csh;
         }
+        lUnits += (uint32_t)lptok->csh;
     }
     return lUnits;
 }
@@ -185,10 +177,10 @@ int32_t CBattleKills(BTLDATA *lpbd, int16_t fOurDead) {
         for (i = 0; i < cKill; i++) {
             if (lpbr->rgkill[i].cshKill > 0) {
                 if (lpbd->rgtok[lpbr->rgkill[i].itok].iplr == idPlayer) {
-                    if (fOurDead != 0) {
+                    if (fOurDead) {
                         cKilled += (uint32_t)lpbr->rgkill[i].cshKill;
                     }
-                } else if (fOurDead == 0) {
+                } else if (!fOurDead) {
                     cKilled += (uint32_t)lpbr->rgkill[i].cshKill;
                 }
             }
@@ -203,7 +195,7 @@ int32_t LdpFromItokDv(int16_t itok, DV *lpdv) {
     int16_t  csh;
     int32_t  dp;
 
-    if (lpdv != 0) {
+    if (lpdv) {
         dv.dp = lpdv->dp;
     } else {
         dv.dp = 0;
@@ -263,7 +255,7 @@ int16_t SetVCRBoard(int16_t iStep) {
                 ptok = vrgtok;
                 i = 0;
                 while (i < vlpbdVCR->ctok) {
-                    if (ptok->fRegen != 0) {
+                    if (ptok->fRegen) {
                         RegenShield(ptok);
                     }
                     ptok->fMoved = FALSE;
@@ -377,7 +369,7 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
             crBkSav = SetBkColor(hdc, crButtonFace);
             SelectObject(hdc, rghfontArial8[1]);
             InitBtnTrack(&btnt, hwnd, NULL, prc, bt, 80, FALSE, FALSE, NULL);
-            while (FTrackBtn(&btnt) != 0) {
+            while (FTrackBtn(&btnt)) {
                 if ((iDir == -1 && iCur > 0) || (iDir == 1 && iCur < 4)) {
                     iCur += iDir;
                     bt = _wsprintf(szWork, PszGetCompressedString(idsPlaybackSpeedD), iCur + 1);
@@ -388,7 +380,7 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
             SelectObject(hdc, rghfontArial8[0]);
             SetBkColor(hdc, crBkSav);
             ReleaseDC(hwnd, hdc);
-            if (gd.fVCRTimer != 0) {
+            if (gd.fVCRTimer) {
                 KillTimer(hwnd, 2668);
                 gd.fVCRTimer = SetTimer(hwnd, 2668, 570 - 120 * viSpeedVCR, NULL) != 0;
             }
@@ -426,19 +418,16 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
                 viVCRFocus = vlpbdVCR->ctok - 1;
             }
             i = viVCRFocus;
-            while (1) {
+            do {
                 i++;
                 if (i == vlpbdVCR->ctok) {
                     i = 0;
                 }
-                if (vrgtok[i].brc == brc && vrgtok[i].csh > 0)
-                    break;
-                if (i == viVCRFocus)
-                    goto L_15fb;
-            }
-            viVCRFocus = i;
-            goto GoodSel;
-        L_15fb:
+                if (vrgtok[i].brc == brc && vrgtok[i].csh > 0) {
+                    viVCRFocus = i;
+                    goto GoodSel;
+                }
+            } while (i != viVCRFocus);
             viVCRFocus = -1;
         }
     GoodSel:
@@ -450,89 +439,83 @@ INT_PTR CALLBACK VCRDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         EndPaint(hwnd, &ps);
         return 1;
     case WM_TIMER:
-        if (gd.fVCRTimer == 0) {
+        if (!gd.fVCRTimer) {
             return 0;
         }
         if (viStepVCRCur != vcStepVCR)
             goto NextBtn;
         i = 2;
-        break;
+        goto KillTime;
     case WM_COMMAND:
         if (GET_WM_COMMAND_ID(wParam, lParam) >= IDC_VCR_REW_ALL && GET_WM_COMMAND_ID(wParam, lParam) <= IDC_VCR_FWD_ALL) {
             i = GET_WM_COMMAND_ID(wParam, lParam) - 161;
-            if (gd.fVCRTimer == 0)
-                goto L_16d3;
-            break;
-        }
-        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-        case IDOK:
-        case IDCANCEL:
-            if (gd.fVCRTimer != 0) {
+            if (gd.fVCRTimer) {
+            KillTime:
+                KillTimer(hwnd, 2668);
+                gd.fVCRTimer = FALSE;
+                if (i == 2) {
+                    return 0;
+                }
+            }
+            if (GetAsyncKeyState(VK_CONTROL) < 0) {
+                dStep = 100;
+            } else if (GetAsyncKeyState(VK_SHIFT) < 0) {
+                dStep = 10;
+            } else {
+                dStep = 1;
+            }
+            fAnimate = FALSE;
+            switch (i) {
+            case 0:
+                iStep = -1;
+                break;
+            case 1:
+                iStep = viStepVCRCur - dStep;
+                if (iStep >= -1)
+                    break;
+                iStep = -1;
+                break;
+            case 2:
+                gd.fVCRTimer = SetTimer(hwnd, 2668, 570 - 120 * viSpeedVCR, NULL) != 0;
+                /* fallthrough */
+            case 3:
+            NextBtn:
+                if (i == 3) {
+                    iStep = viStepVCRCur + dStep;
+                } else {
+                    iStep = viStepVCRCur + 1;
+                }
+                if (iStep > vcStepVCR) {
+                    iStep = vcStepVCR;
+                }
+                fAnimate = viSpeedVCR < 4;
+                break;
+            case 4:
+                iStep = vcStepVCR;
+                break;
+            }
+            SetVCRBoard(iStep);
+            DrawVCR(NULL, -2, -1);
+        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+            if (gd.fVCRTimer) {
                 gd.fVCRTimer = FALSE;
                 KillTimer(hwnd, 2668);
             }
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 tutor.fProgress = TRUE;
             }
             StickyDlgPos(hwnd, &ptStickyVCRDlg, FALSE);
             EndDialog(hwnd, i);
             return 1;
-        case IDC_HELP:
+        } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhBattleVCR);
             return 1;
-        default:
-            return 0;
         }
+        break;
     case WM_DESTROY:
         hwndVCRDlg = 0;
-    default:
-        return 0;
-    }
-    KillTimer(hwnd, 2668);
-    gd.fVCRTimer = FALSE;
-    if (i == 2) {
-        return 0;
-    }
-L_16d3:
-    if (GetAsyncKeyState(VK_CONTROL) < 0) {
-        dStep = 100;
-    } else if (GetAsyncKeyState(VK_SHIFT) < 0) {
-        dStep = 10;
-    } else {
-        dStep = 1;
-    }
-    fAnimate = FALSE;
-    switch (i) {
-    case 0:
-        iStep = -1;
         break;
-    case 1:
-        iStep = viStepVCRCur - dStep;
-        if (iStep >= -1)
-            break;
-        iStep = -1;
-        break;
-    case 2:
-        gd.fVCRTimer = SetTimer(hwnd, 2668, 570 - 120 * viSpeedVCR, NULL) != 0;
-    case 3:
-        goto NextBtn;
-    case 4:
-        iStep = vcStepVCR;
     }
-    goto L_1807;
-NextBtn:
-    if (i == 3) {
-        iStep = viStepVCRCur + dStep;
-    } else {
-        iStep = viStepVCRCur + 1;
-    }
-    if (iStep > vcStepVCR) {
-        iStep = vcStepVCR;
-    }
-    fAnimate = viSpeedVCR < 4;
-L_1807:
-    SetVCRBoard(iStep);
-    DrawVCR(NULL, -2, -1);
     return 0;
 }
 
@@ -578,16 +561,16 @@ void GetVCRStats(int16_t itok, int32_t *pdpArmor, DV *pdv, int32_t *pdpShields, 
         dpArmor = 0;
         dpShields = (uint32_t)((uint32_t)vrgtok[itok].dpShield * (uint32_t)vrgtok[itok].csh);
     }
-    if (pdv != 0) {
+    if (pdv) {
         pdv->dp = dv.dp;
     }
-    if (pcsh != 0) {
+    if (pcsh) {
         *pcsh = cshT;
     }
-    if (pdpArmor != 0) {
+    if (pdpArmor) {
         *pdpArmor = dpArmor;
     }
-    if (pdpShields != 0) {
+    if (pdpShields) {
         *pdpShields = dpShields;
     }
     return;
@@ -623,11 +606,9 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
     DV      dv;
     int16_t xT;
     int16_t cshNew;
-    char   *t_merge_2766_0001;
-    uint8_t t_merge_2d54_0001;
 
-    fCreatedDC = hdc == 0;
-    if (fCreatedDC != 0) {
+    fCreatedDC = hdc == NULL;
+    if (fCreatedDC) {
         hdc = GetDC(hwndVCRDlg);
     }
     hbrSav = SelectObject(hdc, hbrButtonFace);
@@ -722,12 +703,12 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 j = 0;
                 for (i = vlpbrVCR->ctok; i > 0; i--) {
                     itokT = vlpbrVCR->rgkill[i - 1].itok;
-                    if (itokT == vlpbrVCR->itokAttack && fJam == 0) {
+                    if (itokT == vlpbrVCR->itokAttack && !fJam) {
                         fJam |= vlpbrVCR->rgkill[i - 1].grfWeapon & (bitFNoHit | bitFDeflected);
                     }
                     j += vlpbrVCR->rgkill[i - 1].cshKill;
-                    if (rgfSeen[itokT] == 0) {
-                        rgfSeen[itokT] = 1;
+                    if (!rgfSeen[itokT]) {
+                        rgfSeen[itokT] = TRUE;
                         GetVCRStats(itokT, &dpT, NULL, &dpShT, &cshT);
                         dpArmor += vrgdpVCR[itokT] - dpT;
                         dpShields += dpShT;
@@ -738,8 +719,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                 y += dyArial8;
                 if (dpShields != 0) {
                     CchGetString(idsAnd, szT);
-                    t_merge_2766_0001 = dpArmor > 0 ? szT : j > 0 ? "," : ".";
-                    c = _wsprintf(szWork, PszGetCompressedString(idsLdDamageShieldsS), dpShields, t_merge_2766_0001);
+                    c = _wsprintf(szWork, PszGetCompressedString(idsLdDamageShieldsS), dpShields, dpArmor > 0 ? szT : j > 0 ? "," : ".");
                     TextOut(hdc, x, y, szWork, c);
                     y += dyArial8;
                 }
@@ -748,7 +728,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     TextOut(hdc, x, y, szWork, c);
                     y += dyArial8;
                 }
-                if ((fJam & 0x40) != 0 && dpShields == 0 && dpArmor == 0) {
+                if ((fJam & 0x40) && dpShields == 0 && dpArmor == 0) {
                     psz = PszGetCompressedString(idsDamage3);
                     TextOut(hdc, x, y, psz, strlen(psz));
                     y += dyArial8;
@@ -766,9 +746,9 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     y += dyArial8;
                 }
             }
-            if (fJam != 0) {
+            if (fJam) {
                 SetTextColor(hdc, 127);
-                c = CchGetString((fJam & 0x40) != 0 && dpArmor == 0 ? idsTorpedoesDeflected2 : idsTorpedoesDeflected, szWork);
+                c = CchGetString((fJam & 0x40) && dpArmor == 0 ? idsTorpedoesDeflected2 : idsTorpedoesDeflected, szWork);
                 TextOut(hdc, x, y, szWork, c);
                 y += dyArial8;
                 SetTextColor(hdc, crButtonText);
@@ -814,8 +794,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     } else {
                         i = vrgtok[viVCRFocus].spd + 1;
                     }
-                    t_merge_2d54_0001 = vrgtok[viVCRFocus].initMin >= 0xff ? 0 : vrgtok[viVCRFocus].initMin;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsInitiativeD), t_merge_2d54_0001);
+                    c = _wsprintf(szWork, PszGetCompressedString(idsInitiativeD), vrgtok[viVCRFocus].initMin >= 0xff ? 0 : vrgtok[viVCRFocus].initMin);
                     TextOut(hdc, x, y, szWork, c);
                     c = _wsprintf(szWork, PszGetCompressedString(idsMovementS), &rgszSpeed[i * 3]);
                     TextOut(hdc, xT, y, szWork, c);
@@ -949,7 +928,7 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
     }
     SetBkMode(hdc, bkMode);
     SelectObject(hdc, hbrSav);
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwndVCRDlg, hdc);
     }
     return;
@@ -1006,12 +985,6 @@ void AnimateAttack(HDC hdc) {
     HDC          hdcMem;
     HBITMAP      hbmpSav;
     HBITMAP      hbmpScreen;
-    uint16_t     t_scratch_m76_3;
-    uint16_t     t_scratch_m76_4;
-    uint16_t     t_scratch_m76_8;
-    uint16_t     t_scratch_m76_9;
-    int16_t      t_scratch_m7c;
-    int16_t      t_merge_41df_0001;
 
     grfWeapon = 0;
     fKill = FALSE;
@@ -1021,161 +994,152 @@ void AnimateAttack(HDC hdc) {
         y = ptokSrc->brc >> 4;
         ptSrc.x = (dxyVCRSquare + 3) * x + 10 + dxyVCRSquare / 2 + 1;
         ptSrc.y = (dxyVCRSquare + 3) * y + 10 + dxyVCRSquare / 2 + 1;
-        t_scratch_m76_3 = dxyVCRSquare / 2;
-        ptTop.x = (dxyVCRSquare + 3) * x + 10 + t_scratch_m76_3 + 1;
-        ptBottom.x = (dxyVCRSquare + 3) * x + 10 + t_scratch_m76_3 + 1;
-        t_scratch_m76_4 = dxyVCRSquare / 2;
-        ptRight.y = (dxyVCRSquare + 3) * y + 10 + t_scratch_m76_4 + 1;
-        ptLeft.y = (dxyVCRSquare + 3) * y + 10 + t_scratch_m76_4 + 1;
+        ptBottom.x = ptTop.x = (dxyVCRSquare + 3) * x + 10 + dxyVCRSquare / 2 + 1;
+        ptLeft.y = ptRight.y = (dxyVCRSquare + 3) * y + 10 + dxyVCRSquare / 2 + 1;
         ptBottom.y = dxyVCRSquare / 3 + ptLeft.y;
         ptTop.y = ptLeft.y - dxyVCRSquare / 3;
         ptLeft.x = ptBottom.x - dxyVCRSquare / 3;
         ptRight.x = dxyVCRSquare / 3 + ptBottom.x;
         iHit = 0;
-        do {
-            grfWeapon = vlpbrVCR->rgkill[iHit].grfWeapon;
-            if (vlpbrVCR->rgkill[iHit].cshKill != 0) {
+    LNextTarget:
+        grfWeapon = vlpbrVCR->rgkill[iHit].grfWeapon;
+        if (vlpbrVCR->rgkill[iHit].cshKill != 0) {
+            fKill = TRUE;
+        }
+        for (iFrame = iHit + 1; iFrame < vlpbrVCR->ctok && vlpbrVCR->rgkill[iFrame].itok == vlpbrVCR->rgkill[iHit].itok; iFrame++) {
+            grfWeapon |= vlpbrVCR->rgkill[iFrame].grfWeapon;
+            if (vlpbrVCR->rgkill[iFrame].cshKill != 0) {
                 fKill = TRUE;
             }
-            for (iFrame = iHit + 1; iFrame < vlpbrVCR->ctok && vlpbrVCR->rgkill[iFrame].itok == vlpbrVCR->rgkill[iHit].itok; iFrame++) {
-                grfWeapon |= vlpbrVCR->rgkill[iFrame].grfWeapon;
-                if (vlpbrVCR->rgkill[iFrame].cshKill != 0) {
-                    fKill = TRUE;
-                }
-            }
-            ptokAttack = vrgtok + vlpbrVCR->rgkill[iHit].itok;
-            x = ptokAttack->brc & 0xf;
-            y = ptokAttack->brc >> 4;
-            dx = (ptokSrc->brc & 0xf) - x;
-            dy = (ptokSrc->brc >> 4) - y;
-            ptDest.x = (dxyVCRSquare + 3) * x + 10 + dxyVCRSquare / 2 + 1;
-            ptDest.y = (dxyVCRSquare + 3) * y + 10 + dxyVCRSquare / 2 + 1;
-            t_scratch_m76_8 = dxyVCRSquare / 2;
-            ptDestTop.x = (dxyVCRSquare + 3) * x + 10 + t_scratch_m76_8 + 1;
-            ptDestBottom.x = (dxyVCRSquare + 3) * x + 10 + t_scratch_m76_8 + 1;
-            t_scratch_m76_9 = dxyVCRSquare / 2;
-            ptDestRight.y = (dxyVCRSquare + 3) * y + 10 + t_scratch_m76_9 + 1;
-            ptDestLeft.y = (dxyVCRSquare + 3) * y + 10 + t_scratch_m76_9 + 1;
-            ptDestBottom.y = dxyVCRSquare / 3 + ptDestLeft.y;
-            ptDestTop.y = ptDestLeft.y - dxyVCRSquare / 3;
-            ptDestLeft.x = ptDestBottom.x - dxyVCRSquare / 3;
-            ptDestRight.x = dxyVCRSquare / 3 + ptDestBottom.x;
-            iHit = iFrame;
-            if (dx != 0 || dy != 0) {
-                if (dx == 0 || (abs(dx) == 1 && abs(dy) > 2)) {
-                    ptBeam1 = ptRight;
-                    ptBeam2 = ptLeft;
-                    if (dy > 0) {
-                        ptTorp = ptTop;
-                    } else {
-                        ptTorp = ptBottom;
-                    }
-                    if (dy > 0) {
-                        ptRay2 = ptDestLeft;
-                    } else {
-                        ptRay2 = ptDestRight;
-                    }
-                    if (dy > 0) {
-                        ptRay1 = ptDestRight;
-                    } else {
-                        ptRay1 = ptDestLeft;
-                    }
-                } else if (dy == 0 || (abs(dy) == 1 && abs(dx) > 2)) {
-                    ptBeam1 = ptTop;
-                    ptBeam2 = ptBottom;
-                    if (dx > 0) {
-                        ptTorp = ptLeft;
-                    } else {
-                        ptTorp = ptRight;
-                    }
-                    if (dx > 0) {
-                        ptRay1 = ptDestTop;
-                    } else {
-                        ptRay1 = ptDestBottom;
-                    }
-                    if (dx > 0) {
-                        ptRay2 = ptDestBottom;
-                    } else {
-                        ptRay2 = ptDestTop;
-                    }
-                } else if (dx > 0) {
-                    if (dy > 0) {
-                        ptRay2 = ptDestBottom;
-                        ptRay1 = ptDestRight;
-                        ptBeam1 = ptTop;
-                    } else {
-                        ptRay2 = ptDestRight;
-                        ptRay1 = ptDestTop;
-                        ptBeam1 = ptBottom;
-                    }
-                    ptBeam2 = ptLeft;
-                    ptTorp.x = ptLeft.x;
-                    ptTorp.y = ptBeam1.y;
+        }
+        ptokAttack = vrgtok + vlpbrVCR->rgkill[iHit].itok;
+        x = ptokAttack->brc & 0xf;
+        y = ptokAttack->brc >> 4;
+        dx = (ptokSrc->brc & 0xf) - x;
+        dy = (ptokSrc->brc >> 4) - y;
+        ptDest.x = (dxyVCRSquare + 3) * x + 10 + dxyVCRSquare / 2 + 1;
+        ptDest.y = (dxyVCRSquare + 3) * y + 10 + dxyVCRSquare / 2 + 1;
+        ptDestBottom.x = ptDestTop.x = (dxyVCRSquare + 3) * x + 10 + dxyVCRSquare / 2 + 1;
+        ptDestLeft.y = ptDestRight.y = (dxyVCRSquare + 3) * y + 10 + dxyVCRSquare / 2 + 1;
+        ptDestBottom.y = dxyVCRSquare / 3 + ptDestLeft.y;
+        ptDestTop.y = ptDestLeft.y - dxyVCRSquare / 3;
+        ptDestLeft.x = ptDestBottom.x - dxyVCRSquare / 3;
+        ptDestRight.x = dxyVCRSquare / 3 + ptDestBottom.x;
+        iHit = iFrame;
+        if (dx != 0 || dy != 0) {
+            if (dx == 0 || (abs(dx) == 1 && abs(dy) > 2)) {
+                ptBeam1 = ptRight;
+                ptBeam2 = ptLeft;
+                if (dy > 0) {
+                    ptTorp = ptTop;
                 } else {
-                    if (dy > 0) {
-                        ptBeam1 = ptTop;
-                        ptRay1 = ptDestBottom;
-                        ptRay2 = ptDestLeft;
-                    } else {
-                        ptBeam1 = ptBottom;
-                        ptRay1 = ptDestLeft;
-                        ptRay2 = ptDestTop;
-                    }
-                    ptBeam2 = ptRight;
-                    ptTorp.x = ptRight.x;
-                    ptTorp.y = ptBeam1.y;
+                    ptTorp = ptBottom;
                 }
-                if ((grfWeapon & (bitFBeamLow | bitFBeamHigh)) != 0) {
-                    SelectObject(hdc, (grfWeapon & bitFBeamHigh) == 0 ? hpenEnemy : hpenStarbase);
-                    MoveTo(hdc, ptBeam1.x, ptBeam1.y);
-                    LineTo(hdc, ptDest.x, ptDest.y);
-                    MoveTo(hdc, ptBeam2.x, ptBeam2.y);
-                    LineTo(hdc, ptDest.x, ptDest.y);
-                    DrawIcon(hdc, ptDest.x - 16, ptDest.y - 16, rghiconVCR[0]);
+                if (dy > 0) {
+                    ptRay2 = ptDestLeft;
+                } else {
+                    ptRay2 = ptDestRight;
                 }
-                if ((grfWeapon & bitFTorp) != 0) {
-                    if (fAnimate != 0) {
-                        hdcMem = CreateCompatibleDC(hdc);
-                        if (hdcMem == 0)
-                            goto LFinishUp;
-                        hbmpScreen = CreateCompatibleBitmap(hdc, 32, 32);
-                        if (hbmpScreen == 0) {
-                            DeleteDC(hdcMem);
-                            goto LFinishUp;
-                        }
-                        hbmpSav = SelectObject(hdcMem, hbmpScreen);
-                        t_scratch_m7c = abs(dx);
-                        t_merge_41df_0001 = t_scratch_m7c > abs(dy) ? abs(dx) : abs(dy);
-                        cFrame = t_merge_41df_0001 * ((grfWeapon & bitFTorp) == 0 ? 4 : 8);
-                        ptBase = ptTorp;
-                        dxFrame = ptTorp.x - ptDest.x;
-                        dyFrame = ptTorp.y - ptDest.y;
-                        ti.dwSize = 12;
-                        TimerCount(&ti);
-                        dwTickLast = ti.dwmsSinceStart;
-                        for (iFrame = 0; iFrame < cFrame; iFrame++) {
-                            BitBlt(hdcMem, 0, 0, 32, 32, hdc, ptTorp.x - 16, ptTorp.y - 16, SRCCOPY);
-                            DrawIcon(hdc, ptTorp.x - 16, ptTorp.y - 16, rghiconVCR[(iFrame & 3) + 3]);
-                            do {
-                                TimerCount(&ti);
-                                dwTickCur = ti.dwmsSinceStart;
-                            } while (dwTickCur >= dwTickLast && dwTickCur < dwTickLast + 35 - (int16_t)(10 * viSpeedVCR));
-                            dwTickLast = dwTickCur;
-                            BitBlt(hdc, ptTorp.x - 16, ptTorp.y - 16, 32, 32, hdcMem, 0, 0, SRCCOPY);
-                            ptTorp.x = ptBase.x - LOWORD((int32_t)((int32_t)(dxFrame * iFrame) / cFrame));
-                            ptTorp.y = ptBase.y - LOWORD((int32_t)((int32_t)(dyFrame * iFrame) / cFrame));
-                        }
-                        SelectObject(hdcMem, hbmpSav);
-                        DeleteObject(hbmpScreen);
+                if (dy > 0) {
+                    ptRay1 = ptDestRight;
+                } else {
+                    ptRay1 = ptDestLeft;
+                }
+            } else if (dy == 0 || (abs(dy) == 1 && abs(dx) > 2)) {
+                ptBeam1 = ptTop;
+                ptBeam2 = ptBottom;
+                if (dx > 0) {
+                    ptTorp = ptLeft;
+                } else {
+                    ptTorp = ptRight;
+                }
+                if (dx > 0) {
+                    ptRay1 = ptDestTop;
+                } else {
+                    ptRay1 = ptDestBottom;
+                }
+                if (dx > 0) {
+                    ptRay2 = ptDestBottom;
+                } else {
+                    ptRay2 = ptDestTop;
+                }
+            } else if (dx > 0) {
+                if (dy > 0) {
+                    ptRay2 = ptDestBottom;
+                    ptRay1 = ptDestRight;
+                    ptBeam1 = ptTop;
+                } else {
+                    ptRay2 = ptDestRight;
+                    ptRay1 = ptDestTop;
+                    ptBeam1 = ptBottom;
+                }
+                ptBeam2 = ptLeft;
+                ptTorp.x = ptLeft.x;
+                ptTorp.y = ptBeam1.y;
+            } else {
+                if (dy > 0) {
+                    ptBeam1 = ptTop;
+                    ptRay1 = ptDestBottom;
+                    ptRay2 = ptDestLeft;
+                } else {
+                    ptBeam1 = ptBottom;
+                    ptRay1 = ptDestLeft;
+                    ptRay2 = ptDestTop;
+                }
+                ptBeam2 = ptRight;
+                ptTorp.x = ptRight.x;
+                ptTorp.y = ptBeam1.y;
+            }
+            if (grfWeapon & (bitFBeamLow | bitFBeamHigh)) {
+                SelectObject(hdc, !(grfWeapon & bitFBeamHigh) ? hpenEnemy : hpenStarbase);
+                MoveTo(hdc, ptBeam1.x, ptBeam1.y);
+                LineTo(hdc, ptDest.x, ptDest.y);
+                MoveTo(hdc, ptBeam2.x, ptBeam2.y);
+                LineTo(hdc, ptDest.x, ptDest.y);
+                DrawIcon(hdc, ptDest.x - 16, ptDest.y - 16, rghiconVCR[0]);
+            }
+            if (grfWeapon & bitFTorp) {
+                if (fAnimate) {
+                    hdcMem = CreateCompatibleDC(hdc);
+                    if (!hdcMem)
+                        goto LFinishUp;
+                    hbmpScreen = CreateCompatibleBitmap(hdc, 32, 32);
+                    if (!hbmpScreen) {
                         DeleteDC(hdcMem);
+                        goto LFinishUp;
                     }
-                    if ((grfWeapon & bitFNoHit) == 0) {
-                        DrawIcon(hdc, ptDest.x - 16, ptDest.y - 16, rghiconVCR[1]);
+                    hbmpSav = SelectObject(hdcMem, hbmpScreen);
+                    cFrame = max(abs(dx), abs(dy)) * (!(grfWeapon & bitFTorp) ? 4 : 8);
+                    ptBase = ptTorp;
+                    dxFrame = ptTorp.x - ptDest.x;
+                    dyFrame = ptTorp.y - ptDest.y;
+                    ti.dwSize = 12;
+                    TimerCount(&ti);
+                    dwTickLast = ti.dwmsSinceStart;
+                    for (iFrame = 0; iFrame < cFrame; iFrame++) {
+                        BitBlt(hdcMem, 0, 0, 32, 32, hdc, ptTorp.x - 16, ptTorp.y - 16, SRCCOPY);
+                        DrawIcon(hdc, ptTorp.x - 16, ptTorp.y - 16, rghiconVCR[(iFrame & 3) + 3]);
+                        do {
+                            TimerCount(&ti);
+                            dwTickCur = ti.dwmsSinceStart;
+                        } while (dwTickCur >= dwTickLast && dwTickCur < dwTickLast + 35 - (int16_t)(10 * viSpeedVCR));
+                        dwTickLast = dwTickCur;
+                        BitBlt(hdc, ptTorp.x - 16, ptTorp.y - 16, 32, 32, hdcMem, 0, 0, SRCCOPY);
+                        ptTorp.x = ptBase.x - LOWORD((int32_t)((int32_t)(dxFrame * iFrame) / cFrame));
+                        ptTorp.y = ptBase.y - LOWORD((int32_t)((int32_t)(dyFrame * iFrame) / cFrame));
                     }
+                    SelectObject(hdcMem, hbmpSav);
+                    DeleteObject(hbmpScreen);
+                    DeleteDC(hdcMem);
+                }
+                if (!(grfWeapon & bitFNoHit)) {
+                    DrawIcon(hdc, ptDest.x - 16, ptDest.y - 16, rghiconVCR[1]);
                 }
             }
-        LFinishUp:;
-        } while (iHit < vlpbrVCR->ctok);
+        }
+    LFinishUp:
+        if (iHit < vlpbrVCR->ctok)
+            goto LNextTarget;
         for (iFrame = 0; iFrame < vlpbrVCR->ctok; iFrame++) {
             fKill = vlpbrVCR->rgkill[iFrame].cshKill > 0;
             ptokAttack = vrgtok + vlpbrVCR->rgkill[iFrame].itok;
@@ -1218,7 +1182,7 @@ int16_t PopupVCRMenu(HWND hwnd, int16_t x, int16_t y, uint8_t brc) {
                 lpshdef = rglpshdef[vrgtok[i].iplr] + vrgtok[i].ishdef;
             }
             cch += _wsprintf(&szWork[cch], " %s * %d", lpshdef->hul.szClass, vrgtok[i].csh);
-            if (fAttack != 0 && vlpbrVCR->ctok > 0 && viStepVCRCur >= 0) {
+            if (fAttack && vlpbrVCR->ctok > 0 && viStepVCRCur >= 0) {
                 cKilled = 0;
                 for (j = 0; j < vlpbrVCR->ctok; j++) {
                     if (vlpbrVCR->rgkill[j].itok == i) {

@@ -10,36 +10,37 @@ int16_t ChangeProduction(int16_t fClear) {
     penvMemSav = penvMem;
     penvMem = &env;
     if (setjmp(env) != 0) {
-        if (lpplProdGlob != 0) {
+        if (lpplProdGlob) {
             FreePl((PL *)lpplProdGlob);
         }
         lpplProdGlob = NULL;
-        if (hwndProdDlg != 0) {
+        if (hwndProdDlg) {
             EndDialog(hwndProdDlg, 0);
         }
         hwndProdDlg = 0;
         fDlgUp = FALSE;
         AlertSz(PszFormatIds(idsThereIsntEnoughFreeMemoryModifyProduction, NULL), MB_ICONHAND);
         penvMem = penvMemSav;
-        return 0;
+        return FALSE;
     }
-    if (fClear != 0) {
+    if (fClear) {
         fSuccess = 1;
-    } else {
-        InitProduction(rgprod);
-        fDlgUp = TRUE;
-        lpProcProd = MakeProcInstance(ProductionDlg, hInst);
-        fSuccess = DialogBox(hInst, MAKEINTRESOURCE(IDD_PRODUCTION), hwndFrame, lpProcProd);
-        FreeProcInstance(lpProcProd);
-        hwndProdDlg = 0;
-        fDlgUp = FALSE;
+        goto LWriteProdQ;
     }
+    InitProduction(rgprod);
+    fDlgUp = TRUE;
+    lpProcProd = MakeProcInstance(ProductionDlg, hInst);
+    fSuccess = DialogBox(hInst, MAKEINTRESOURCE(IDD_PRODUCTION), hwndFrame, lpProcProd);
+    FreeProcInstance(lpProcProd);
+    hwndProdDlg = 0;
+    fDlgUp = FALSE;
+LWriteProdQ:
     FinishProduction(fSuccess);
-    if (fSuccess != 0 && sel.grobj == grobjPlanet) {
+    if (fSuccess && sel.grobj == grobjPlanet) {
         DrawPlanShip(NULL, tilePlanetStats);
     }
     penvMem = penvMemSav;
-    return 1;
+    return TRUE;
 }
 
 void InitProduction(PROD *rgprod) {
@@ -50,22 +51,18 @@ void InitProduction(PROD *rgprod) {
     int16_t  ipl;
     PART     part;
     PROD    *lpprod;
-    uint16_t t_scratch_m1a_2;
-    uint16_t t_scratch_m1a_3;
-    uint16_t t_scratch_m1a_4;
-    uint16_t t_scratch_m1a_5;
 
     gd.fNoResearchSav = sel.pl.fNoResearch;
-    if (rgprod == 0) {
+    if (!rgprod) {
         rgprod = pProdGlob;
     }
-    if (sel.pl.lpplprod != 0) {
+    if (sel.pl.lpplprod) {
         i = sel.pl.lpplprod->iprodMac;
     } else {
         i = 2;
     }
     lpplProdGlob = (PLPROD *)LpplAlloc(4, i, htOrd);
-    if (sel.pl.lpplprod != 0) {
+    if (sel.pl.lpplprod) {
         fmemcpy(lpplProdGlob->rgprod, sel.pl.lpplprod->rgprod, i * 4);
     } else {
         i = 0;
@@ -74,11 +71,10 @@ void InitProduction(PROD *rgprod) {
     cProdGlob = 0;
     pProdGlob = rgprod;
     memset(rgprod, 0, 64 * sizeof(PROD));
-    if (sel.pl.fStarbase != 0 && LphuldefFromId(rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef)->hul.wtCargoMax != 0) {
+    if (sel.pl.fStarbase && LphuldefFromId(rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef)->hul.wtCargoMax != 0) {
         for (i = 0; i < 16; i++) {
-            if (rgshdef[i].fFree == 0 && rgshdef[i].fGift == 0) {
-                t_scratch_m1a_2 = rgshdef[i].hul.wtEmpty;
-                if (LphuldefFromId(rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef)->hul.wtCargoMax >= t_scratch_m1a_2) {
+            if (!rgshdef[i].fFree && !rgshdef[i].fGift) {
+                if (LphuldefFromId(rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef)->hul.wtCargoMax >= rgshdef[i].hul.wtEmpty) {
                     rgprod[cProdGlob].cItem = 0x3ff;
                     rgprod[cProdGlob].iItem = i;
                     rgprod[cProdGlob].grobj = grobjFleet;
@@ -88,7 +84,7 @@ void InitProduction(PROD *rgprod) {
         }
     }
     for (i = 0; i < 10; i++) {
-        if (rglpshdefSB[idPlayer][i].fFree == 0 && rglpshdefSB[idPlayer][i].fGift == 0 && (sel.pl.isb != i || sel.pl.fStarbase == 0)) {
+        if (!rglpshdefSB[idPlayer][i].fFree && !rglpshdefSB[idPlayer][i].fGift && (sel.pl.isb != i || !sel.pl.fStarbase)) {
             rgprod[cProdGlob].cItem = 1;
             rgprod[cProdGlob].iItem = LOWORD((int16_t)(i + 16));
             rgprod[cProdGlob].grobj = grobjFleet;
@@ -96,8 +92,8 @@ void InitProduction(PROD *rgprod) {
         }
     }
     part.hs.grhst = hstPlanetary;
-    part.hs.iItem = 14;
-    if (FLookupPart(&part) == 1) {
+    part.hs.iItem = iplanetaryGenesisDevice;
+    if (FLookupPart(&part) == mdPartAvailAvailable) {
         rgprod[cProdGlob].cItem = 1;
         rgprod[cProdGlob].iItem = iobjGenesis;
         rgprod[cProdGlob].grobj = grobjPlanet;
@@ -112,24 +108,21 @@ void InitProduction(PROD *rgprod) {
             cProdGlob++;
         }
     }
-    t_scratch_m1a_3 = sel.pl.cFactories;
-    u = CMaxFactories(&sel.pl, idPlayer) - t_scratch_m1a_3;
+    u = CMaxFactories(&sel.pl, idPlayer) - sel.pl.cFactories;
     if ((int16_t)u > 0) {
         rgprod[cProdGlob].cItem = LOWORD(1020 >= u ? (uint32_t)u : 1020);
         rgprod[cProdGlob].iItem = mdIdleFactory;
         rgprod[cProdGlob].grobj = grobjPlanet;
         cProdGlob++;
     }
-    t_scratch_m1a_4 = sel.pl.cMines;
-    u = CMaxMines(&sel.pl, idPlayer) - t_scratch_m1a_4;
+    u = CMaxMines(&sel.pl, idPlayer) - sel.pl.cMines;
     if ((int16_t)u > 0) {
         rgprod[cProdGlob].cItem = LOWORD(1020 >= u ? (uint32_t)u : 1020);
         rgprod[cProdGlob].iItem = mdIdleMine;
         rgprod[cProdGlob].grobj = grobjPlanet;
         cProdGlob++;
     }
-    t_scratch_m1a_5 = sel.pl.cDefenses;
-    u = CMaxDefenses(&sel.pl, idPlayer) - t_scratch_m1a_5;
+    u = CMaxDefenses(&sel.pl, idPlayer) - sel.pl.cDefenses;
     if ((int16_t)u > 0) {
         rgprod[cProdGlob].cItem = u;
         rgprod[cProdGlob].iItem = mdIdleDefense;
@@ -154,18 +147,8 @@ void InitProduction(PROD *rgprod) {
         cProdGlob++;
     }
     for (i = 0; i < 7; i++) {
-        if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
-            switch (i) {
-            default:
-                goto L_0c45;
-            case 0:
-            case 1:
-            case 2:
-                break;
-            }
+        if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh && (i == 0 || i == 1 || i == 2))
             continue;
-        }
-    L_0c45:
         if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) != raTerra || (i != 4 && i != 5)) {
             rgprod[cProdGlob].cItem = 0x3ff;
             rgprod[cProdGlob].iItem = LOWORD(i);
@@ -199,24 +182,24 @@ void InitProduction(PROD *rgprod) {
         ipl++;
         lpprod++;
     }
-    if (gd.fTutorial != 0 && idPlayer == 0) {
+    if (gd.fTutorial && idPlayer == 0) {
         AdvanceTutor();
     }
     return;
 }
 
 void FinishProduction(int16_t fWrite) {
-    if (fWrite != 0) {
+    if (fWrite) {
         FreePl((PL *)sel.pl.lpplprod);
-        if (lpplProdGlob != 0 && lpplProdGlob->iprodMac == 0) {
+        if (lpplProdGlob && lpplProdGlob->iprodMac == 0) {
             FreePl((PL *)lpplProdGlob);
             lpplProdGlob = NULL;
         }
         sel.pl.lpplprod = lpplProdGlob;
         lpplProdGlob = NULL;
-        FLookupPlanet(-1, &sel.pl);
+        FLookupPlanet(idWriteBack, &sel.pl);
         FLookupPlanet(sel.pl.id, &sel.pl);
-        if (fAi == 0) {
+        if (!fAi) {
             FillPlanetProdLB(NULL, NULL, NULL);
             DrawPlanShip(NULL, tileProductionOrOrbit);
         }
@@ -225,7 +208,7 @@ void FinishProduction(int16_t fWrite) {
         FreePl((PL *)lpplProdGlob);
     }
     lpplProdGlob = NULL;
-    if (gd.fTutorial != 0 && idPlayer == 0) {
+    if (gd.fTutorial && idPlayer == 0) {
         tutor.fProgress = TRUE;
         AdvanceTutor();
     }
@@ -255,170 +238,169 @@ INT_PTR CALLBACK ProductionDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     int16_t            fRet;
     HCURSOR            hcs;
 
-    if (message == WM_PAINT) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        rgidProdBtns[0] = 1070;
+        rgidProdBtns[1] = 1071;
+        rgidProdBtns[2] = 1;
+        rgidProdBtns[3] = 2;
+        rgidProdBtns[4] = 1048;
+        rgidProdBtns[5] = 1049;
+        rgidProdBtns[6] = 1081;
+        rgidProdBtns[7] = 1082;
+        rgidProdBtns[8] = 1069;
+        rgidProdBtns[9] = 118;
+        hwndProdDlg = hwnd;
+        if (rgplr[idPlayer].cPlanet <= 1) {
+            EnableWindow(GetDlgItem(hwnd, IDC_NEXT), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_BACK), FALSE);
+        }
+        if (gd.mdScreenSize >= 1) {
+            dx = 760;
+            dy = 580;
+        } else {
+            dx = 610;
+            dy = 24 * dyArial8 + 24;
+        }
+        SetWindowPos(hwnd, NULL, 0, 0, dx, dy, SWP_NOMOVE | SWP_NOZORDER);
+        GetClientRect(hwnd, &rc);
+        xCtr = rc.right >> 1;
+        dyLB = rc.bottom - (int16_t)(17 * dyArial8) / 2 - 24;
+        rc.left = (int16_t)(11 * rc.right) / 20 + 16;
+        dxPBtn = (int16_t)(rc.right - rc.left) / 4;
+        rc.bottom -= (int16_t)(3 * dyArial8) / 2 + 6;
+        SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY), NULL, 6, rc.bottom, rc.left - 12, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+        for (i = 0; i < 4; i++) {
+            SetWindowPos(GetDlgItem(hwnd, rgidProdBtns[i]), NULL, rc.left, rc.bottom, dxPBtn - 6, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+            rc.left += dxPBtn;
+        }
+        dxPBtn += 24;
+        rc.left = xCtr - ((dxPBtn - 6) >> 1);
+        dy = (int16_t)(dyLB - 9 * dyArial8) / 5 + (int16_t)(3 * dyArial8) / 2 - 3;
+        rc.top = 8;
+        if (dy > 50) {
+            rc.top += (int16_t)((dy - 50) * 5) / 2;
+            dy = 50;
+        }
+        for (i = 4; i < 10; i++) {
+            SetWindowPos(GetDlgItem(hwnd, rgidProdBtns[i]), NULL, rc.left, rc.top, dxPBtn - 6, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+            rc.top += dy;
+        }
+        SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), NULL, 6, 6, rc.left - 12, dyLB, SWP_NOZORDER);
+        GetWindowRect(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), &rcT);
+        SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_QUEUE), NULL, rc.left + dxPBtn, 6, rc.left - 12, rcT.bottom - rcT.top, SWP_NOZORDER);
+        ScreenToClient(hwnd, (POINT *)&rcT.right);
+        yTopFutureTech = rcT.bottom;
+        InitializeProductionDlg(hwnd);
+        if (gd.mdScreenSize == 1 && ptStickyProduceDlg.y == -1) {
+            ptStickyProduceDlg.y = 0;
+        }
+        StickyDlgPos(hwnd, &ptStickyProduceDlg, TRUE);
+        return 1;
+    case WM_DRAWITEM:
+        lpdis = (DRAWITEMSTRUCT *)lParam;
+        if (lpdis->itemID == -1) {
+            HandleFocusState(lpdis, -2);
+        } else {
+            switch (lpdis->itemAction) {
+            case ODA_DRAWENTIRE:
+            case ODA_SELECT:
+            case ODA_FOCUS:
+                DrawCBEntireItem(lpdis, 4);
+            }
+        }
+        return 1;
+    case WM_MEASUREITEM:
+        lpmis = (MEASUREITEMSTRUCT *)lParam;
+        lpmis->itemHeight = dyArial8 + 2;
+        return 1;
+    case WM_CTLCOLOR:
+        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) ||
+            message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_LBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+        pt.x = LOWORD(lParam);
+        pt.y = HIWORD(lParam);
+        if (PtInRect(&rcProdDiamond, PointFrom16(pt)) == 0)
+            break;
+        if (message == WM_LBUTTONDOWN) {
+            GlobalPD.grPopup = grPopupString;
+            GlobalPD.dxOut = 180;
+            GlobalPD.psz = szPopupBuffer;
+            CchGetString(idsRightClickBlueDiamondApplyProductionTemplate, szPopupBuffer);
+            Popup(hwnd, pt.x, pt.y);
+            break;
+        }
+        sz255[0] = -1;
+        sz255[1] = 0;
+        cMax = 0;
+        for (i = 0; i < 4; i++) {
+            if (vrgZipProd[i].fValid) {
+                rgszZip[cMax++] = vrgZipProd[i].szName;
+            }
+        }
+        rgszZip[cMax++] = sz255;
+        rgszZip[cMax++] = PszGetCompressedString(idsCustomize);
+        i = PopupMenu(hwnd, pt.x, pt.y, cMax, NULL, rgszZip, -1, TRUE);
+        if (i == cMax - 1) {
+            memcpy(rgzp, vrgZipProd, 160);
+            lpProc = MakeProcInstance(ZipProdDlg, hInst);
+            fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_ZIP_PROD), hwnd, lpProc);
+            FreeProcInstance(lpProc);
+            if (fRet)
+                break;
+            memcpy(vrgZipProd, rgzp, 160);
+            break;
+        }
+        if (i < 0)
+            break;
+        for (cMax = 0; cMax < 4 && (!vrgZipProd[cMax].fValid || i-- != 0); cMax++) {
+        }
+        ProdCommandHandler(hwnd, 0x816, cMax);
+        break;
+    case WM_SETCURSOR:
+        hcs = 0;
+        GetCursorPos16(&pt);
+        ScreenToClient16(hwnd, &pt);
+        if (PtInRect(&rcProdDiamond, PointFrom16(pt)) == 0)
+            break;
+        SetCursor(hcurArrowHelp);
+        return 1;
+    case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetClientRect(hwnd, &rc);
         DrawProductionDlg(hwnd, hdc, &rc, -1);
         EndPaint(hwnd, &ps);
         return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) == 0) {
-        switch (message) {
-        case WM_INITDIALOG:
-            rgidProdBtns[0] = 1070;
-            rgidProdBtns[1] = 1071;
-            rgidProdBtns[2] = 1;
-            rgidProdBtns[3] = 2;
-            rgidProdBtns[4] = 1048;
-            rgidProdBtns[5] = 1049;
-            rgidProdBtns[6] = 1081;
-            rgidProdBtns[7] = 1082;
-            rgidProdBtns[8] = 1069;
-            rgidProdBtns[9] = 118;
-            hwndProdDlg = hwnd;
-            if (rgplr[idPlayer].cPlanet <= 1) {
-                EnableWindow(GetDlgItem(hwnd, IDC_NEXT), FALSE);
-                EnableWindow(GetDlgItem(hwnd, IDC_BACK), FALSE);
-            }
-            if (gd.mdScreenSize >= 1) {
-                dx = 760;
-                dy = 580;
-            } else {
-                dx = 610;
-                dy = 24 * dyArial8 + 24;
-            }
-            SetWindowPos(hwnd, NULL, 0, 0, dx, dy, SWP_NOMOVE | SWP_NOZORDER);
-            GetClientRect(hwnd, &rc);
-            xCtr = rc.right >> 1;
-            dyLB = rc.bottom - (int16_t)(17 * dyArial8) / 2 - 24;
-            rc.left = (int16_t)(11 * rc.right) / 20 + 16;
-            dxPBtn = (int16_t)(rc.right - rc.left) / 4;
-            rc.bottom -= (int16_t)(3 * dyArial8) / 2 + 6;
-            SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY), NULL, 6, rc.bottom, rc.left - 12, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-            for (i = 0; i < 4; i++) {
-                SetWindowPos(GetDlgItem(hwnd, rgidProdBtns[i]), NULL, rc.left, rc.bottom, dxPBtn - 6, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                rc.left += dxPBtn;
-            }
-            dxPBtn += 24;
-            rc.left = xCtr - ((dxPBtn - 6) >> 1);
-            dy = (int16_t)(dyLB - 9 * dyArial8) / 5 + (int16_t)(3 * dyArial8) / 2 - 3;
-            rc.top = 8;
-            if (dy > 50) {
-                rc.top += (int16_t)((dy - 50) * 5) / 2;
-                dy = 50;
-            }
-            for (i = 4; i < 10; i++) {
-                SetWindowPos(GetDlgItem(hwnd, rgidProdBtns[i]), NULL, rc.left, rc.top, dxPBtn - 6, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                rc.top += dy;
-            }
-            SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), NULL, 6, 6, rc.left - 12, dyLB, SWP_NOZORDER);
-            GetWindowRect(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), &rcT);
-            SetWindowPos(GetDlgItem(hwnd, IDC_PRODUCTION_QUEUE), NULL, rc.left + dxPBtn, 6, rc.left - 12, rcT.bottom - rcT.top, SWP_NOZORDER);
-            ScreenToClient(hwnd, (POINT *)&rcT.right);
-            yTopFutureTech = rcT.bottom;
-            InitializeProductionDlg(hwnd);
-            if (gd.mdScreenSize == 1 && ptStickyProduceDlg.y == -1) {
-                ptStickyProduceDlg.y = 0;
-            }
-            StickyDlgPos(hwnd, &ptStickyProduceDlg, TRUE);
-            return 1;
-        case WM_DRAWITEM:
-            lpdis = (DRAWITEMSTRUCT *)lParam;
-            if (lpdis->itemID == -1) {
-                HandleFocusState(lpdis, -2);
-            } else {
-                switch (lpdis->itemAction) {
-                case ODA_DRAWENTIRE:
-                case ODA_SELECT:
-                case ODA_FOCUS:
-                    DrawCBEntireItem(lpdis, 4);
-                }
-            }
-            return 1;
-        case WM_MEASUREITEM:
-            lpmis = (MEASUREITEMSTRUCT *)lParam;
-            lpmis->itemHeight = dyArial8 + 2;
-            return 1;
-        case WM_LBUTTONDOWN:
-        case WM_RBUTTONDOWN:
-            pt.x = LOWORD(lParam);
-            pt.y = HIWORD(lParam);
-            if (PtInRect(&rcProdDiamond, PointFrom16(pt)) == 0)
-                break;
-            if (message == WM_LBUTTONDOWN) {
-                GlobalPD.grPopup = grPopupString;
-                GlobalPD.dxOut = 180;
-                GlobalPD.psz = szPopupBuffer;
-                CchGetString(idsRightClickBlueDiamondApplyProductionTemplate, szPopupBuffer);
-                Popup(hwnd, pt.x, pt.y);
-                break;
-            }
-            sz255[0] = -1;
-            sz255[1] = 0;
-            cMax = 0;
-            for (i = 0; i < 4; i++) {
-                if (vrgZipProd[i].fValid != 0) {
-                    rgszZip[cMax++] = vrgZipProd[i].szName;
-                }
-            }
-            rgszZip[cMax++] = sz255;
-            rgszZip[cMax++] = PszGetCompressedString(idsCustomize);
-            i = PopupMenu(hwnd, pt.x, pt.y, cMax, NULL, rgszZip, -1, TRUE);
-            if (i == cMax - 1) {
-                memcpy(rgzp, vrgZipProd, 160);
-                lpProc = MakeProcInstance(ZipProdDlg, hInst);
-                fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_ZIP_PROD), hwnd, lpProc);
-                FreeProcInstance(lpProc);
-                if (fRet != 0)
-                    break;
-                memcpy(vrgZipProd, rgzp, 160);
-                break;
-            }
-            if (i < 0)
-                break;
-            for (cMax = 0; cMax < 4 && (vrgZipProd[cMax].fValid == 0 || i-- != 0); cMax++) {
-            }
-            ProdCommandHandler(hwnd, 0x816, cMax);
-            break;
-        case WM_SETCURSOR:
-            hcs = 0;
-            GetCursorPos16(&pt);
-            ScreenToClient16(hwnd, &pt);
-            if (PtInRect(&rcProdDiamond, PointFrom16(pt)) == 0)
-                break;
-            SetCursor(hcurArrowHelp);
-            return 1;
-        case WM_COMMAND:
-            ProdCommandHandler(hwnd, wParam, lParam);
-        }
-    } else if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) || HIWORD(lParam) == 6) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
+    case WM_COMMAND:
+        ProdCommandHandler(hwnd, wParam, lParam);
     }
     return 0;
 }
 
 void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
-    int32_t  lSel;
-    int16_t  iSrc;
-    HWND     hwndLB;
-    int16_t  c;
-    int16_t  iDst;
-    PROD     prodLast;
-    int16_t  ipl;
-    int16_t  fRefillSrc;
-    int16_t  iMac;
-    RECT     rc;
-    PROD    *lpprod;
-    PROD     prod;
-    int16_t  cMax;
-    PLPROD  *lpplprodT;
-    uint32_t t_merge_1e76_0001_wide;
+    int32_t lSel;
+    int16_t iSrc;
+    HWND    hwndLB;
+    int16_t c;
+    int16_t iDst;
+    PROD    prodLast;
+    int16_t ipl;
+    int16_t fRefillSrc;
+    int16_t iMac;
+    RECT    rc;
+    PROD   *lpprod;
+    PROD    prod;
+    int16_t cMax;
+    PLPROD *lpplprodT;
 
     switch (GET_WM_COMMAND_ID(wParam, lParam)) {
     case IDC_PRODUCTION_ADD:
@@ -429,13 +411,13 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         for (iSrc = 0; iSrc < cProdGlob && (pProdGlob[iSrc].cItem == 0 || lSel-- != 0); iSrc++) {
         }
         prod = pProdGlob[iSrc];
-        if ((GetAsyncKeyState(VK_CONTROL) & 0xfffe) != 0) {
-            if ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0) {
+        if (GetAsyncKeyState(VK_CONTROL) & 0xfffe) {
+            if (GetAsyncKeyState(VK_SHIFT) & 0xfffe) {
                 prod.cItem = LOWORD(prod.cItem < 1020 ? (uint32_t)prod.cItem : 1020);
             } else {
                 prod.cItem = LOWORD(prod.cItem < 100 ? (uint32_t)prod.cItem : 100);
             }
-        } else if ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0) {
+        } else if (GetAsyncKeyState(VK_SHIFT) & 0xfffe) {
             prod.cItem = LOWORD(prod.cItem < 10 ? (uint32_t)prod.cItem : 10);
         } else {
             prod.cItem = 1;
@@ -456,25 +438,23 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         if (iDst < iMac) {
             if (iDst >= 0) {
                 prodLast = lpplProdGlob->rgprod[iDst];
+                if ((uint32_t)prodLast.iItem == prod.iItem && (uint32_t)prodLast.grobj == prod.grobj) {
+                RingItUp:
+                    lpplProdGlob->rgprod[iDst].cItem = min(1020, lpplProdGlob->rgprod[iDst].cItem + prod.cItem);
+                    if (lpplProdGlob->rgprod[iDst].cItem > 1 && lpplProdGlob->rgprod[iDst].iItem == iobjAlchemy &&
+                        lpplProdGlob->rgprod[iDst].grobj == grobjPlanet) {
+                        lpplProdGlob->rgprod[iDst].cItem = 1;
+                    }
+                    goto FixedUp;
+                }
+            }
+            iDst++;
+            if (iDst < iMac) {
+                prodLast = lpplProdGlob->rgprod[iDst];
                 if ((uint32_t)prodLast.iItem == prod.iItem && (uint32_t)prodLast.grobj == prod.grobj)
                     goto RingItUp;
             }
-            iDst++;
-            if (iDst >= iMac)
-                goto L_2099;
-            prodLast = lpplProdGlob->rgprod[iDst];
-            if ((uint32_t)prodLast.iItem != prod.iItem || (uint32_t)prodLast.grobj != prod.grobj)
-                goto L_2099;
-        RingItUp:
-            t_merge_1e76_0001_wide =
-                1020 < lpplProdGlob->rgprod[iDst].cItem + (uint32_t)prod.cItem ? 1020 : (uint32_t)lpplProdGlob->rgprod[iDst].cItem + (uint32_t)prod.cItem;
-            lpplProdGlob->rgprod[iDst].cItem = LOWORD(t_merge_1e76_0001_wide);
-            if (lpplProdGlob->rgprod[iDst].cItem <= 1 || lpplProdGlob->rgprod[iDst].iItem != iobjAlchemy || lpplProdGlob->rgprod[iDst].grobj != grobjPlanet)
-                goto FixedUp;
-            lpplProdGlob->rgprod[iDst].cItem = 1;
-            goto FixedUp;
         }
-    L_2099:
         if (iMac >= 40) {
             MessageBeep(MB_OK);
             goto RedrawText;
@@ -505,13 +485,13 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         for (iSrc = 0; iSrc < cProdGlob && ((uint32_t)pProdGlob[iSrc].grobj != prod.grobj || (uint32_t)pProdGlob[iSrc].iItem != prod.iItem); iSrc++) {
         }
         fRefillSrc = pProdGlob[iSrc].cItem == 0;
-        if ((GetAsyncKeyState(VK_CONTROL) & 0xfffe) != 0) {
-            if ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0) {
+        if (GetAsyncKeyState(VK_CONTROL) & 0xfffe) {
+            if (GetAsyncKeyState(VK_SHIFT) & 0xfffe) {
                 c = 1020;
             } else {
                 c = 100;
             }
-        } else if ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0) {
+        } else if (GetAsyncKeyState(VK_SHIFT) & 0xfffe) {
             c = 10;
         } else {
             c = 1;
@@ -536,7 +516,7 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         if (lSel >= 0) {
             SendMessage(GetDlgItem(hwnd, IDC_PRODUCTION_QUEUE), LB_SETCURSEL, LOWORD(lSel) + 1, 0);
         }
-        if (fRefillSrc == 0)
+        if (!fRefillSrc)
             goto RedrawText;
         FillProdSrcLB(GetDlgItem(hwnd, IDC_PRODUCTION_AVAILABLE_ITEMS), -1);
         goto RedrawText;
@@ -592,13 +572,20 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         goto RedrawText;
     case IDC_PRODUCTION_AVAILABLE_ITEMS:
     case IDC_PRODUCTION_QUEUE:
-        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1)
-            goto RedrawText;
-        if (GET_WM_COMMAND_CMD(wParam, lParam) != 2)
-            break;
-        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_PRODUCTION_AVAILABLE_ITEMS)
-            goto AddItem;
-        goto RemoveItem;
+        if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
+        RedrawText:
+            GetClientRect(hwnd, &rc);
+            rc.top = yTopFutureTech;
+            rc.bottom = 7 * dyArial8 + rc.top;
+            rc.left += 130;
+            InvalidateRect(hwnd, &rc, TRUE);
+            DrawProductionDlg(hwnd, NULL, &rc, -1);
+        } else if (GET_WM_COMMAND_CMD(wParam, lParam) == 2) {
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_PRODUCTION_AVAILABLE_ITEMS)
+                goto AddItem;
+            goto RemoveItem;
+        }
+        break;
     case IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY:
         hwndLB = GetDlgItem(hwnd, IDC_PRODUCTION_QUEUE);
         sel.pl.fNoResearch = LOWORD(SendMessage(GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY), BM_GETCHECK, 0, 0));
@@ -655,15 +642,6 @@ void ProdCommandHandler(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     case IDC_HELP:
         WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhProductionDialog);
     }
-    return;
-RedrawText:
-    GetClientRect(hwnd, &rc);
-    rc.top = yTopFutureTech;
-    rc.bottom = 7 * dyArial8 + rc.top;
-    rc.left += 130;
-    InvalidateRect(hwnd, &rc, TRUE);
-    DrawProductionDlg(hwnd, NULL, &rc, -1);
-    return;
 }
 
 void InitializeProductionDlg(HWND hwnd) {
@@ -707,7 +685,7 @@ void DrawProductionDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
     char    szT[100];
 
     fCreatedDC = FALSE;
-    if (hdc == 0) {
+    if (!hdc) {
         fCreatedDC = TRUE;
         hdc = GetDC(hwnd);
     }
@@ -774,7 +752,7 @@ void DrawProductionDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t iDraw) {
     SelectObject(hdc, rghfontArial8[1]);
     c = CchGetString(idsApplyDefineProductionTemplate, szWork);
     TextOut(hdc, rc.right + 4, rc.top, szWork, c);
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwnd, hdc);
     }
     return;
@@ -815,32 +793,35 @@ char *PszNameProdItem(PROD *lpprod) {
     if (lpprod->grobj == grobjFleet) {
         if (iItem >= 16) {
             iItem -= 16;
-            if (rglpshdefSB[idPlayer][iItem].fFree == 0) {
-                fstrcpy(szWork, rglpshdefSB[idPlayer][iItem].hul.szClass);
-                if (sel.pl.fStarbase == 0) {
-                    return szWork;
-                }
-                iDelta = rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef - rglpshdefSB[idPlayer][iItem].hul.ihuldef;
-                if (iDelta > 0) {
-                    strcat(szWork, " (downgrade)");
-                    return szWork;
-                }
-                if (iDelta >= 0) {
-                    return szWork;
-                }
-                strcat(szWork, " (upgrade)");
+            if (rglpshdefSB[idPlayer][iItem].fFree) {
+            LBogus:
+                szWork[0] = 0;
                 return szWork;
             }
-        } else if (rgshdef[iItem].fFree == 0) {
+            fstrcpy(szWork, rglpshdefSB[idPlayer][iItem].hul.szClass);
+            if (!sel.pl.fStarbase) {
+                return szWork;
+            }
+            iDelta = rglpshdefSB[idPlayer][sel.pl.isb].hul.ihuldef - rglpshdefSB[idPlayer][iItem].hul.ihuldef;
+            if (iDelta > 0) {
+                strcat(szWork, " (downgrade)");
+                return szWork;
+            }
+            if (iDelta >= 0) {
+                return szWork;
+            }
+            strcat(szWork, " (upgrade)");
+            return szWork;
+        } else {
+            if (rgshdef[iItem].fFree)
+                goto LBogus;
             strcpy(szWork, rgshdef[iItem].hul.szClass);
             return szWork;
         }
-        szWork[0] = 0;
-        return szWork;
     }
-    if (iItem >= 18 && iItem <= 26) {
-        fstrcpy(szWork, LpplanetaryFromId(LOWORD(iItem) - 18)->szName);
-    } else if (iItem == 27) {
+    if (iItem >= iobjPlanetaryScannerFirst && iItem <= iobjPlanetaryScannerLast) {
+        fstrcpy(szWork, LpplanetaryFromId(LOWORD(iItem) - iobjPlanetaryScannerFirst)->szName);
+    } else if (iItem == iobjPlanetaryScanner) {
         CchGetString(idsPlanetaryScanner, szWork);
     } else {
         CchGetString(LOWORD(iItem) + 126, szWork);
@@ -881,14 +862,14 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
         } else {
             lpshdef = rglpshdef[iplr];
         }
-        if (lpshdef[iItem].fFree != 0) {
+        if (lpshdef[iItem].fFree) {
             for (i = 0; i < 4; i++) {
                 rgCost[i] = 0;
             }
             return;
         }
         GetTrueHullCost(iplr, &lpshdef[iItem].hul, rgCosts);
-        if (fStarbase != 0 && lppl->fStarbase != 0) {
+        if (fStarbase && lppl->fStarbase) {
             lphulCur = &rglpshdefSB[iplr][lppl->isb].hul;
             lphulNew = &lpshdef[iItem].hul;
             GetTrueHullCost(iplr, lphulCur, rgCostsCur);
@@ -949,12 +930,12 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
                 }
             }
         }
-        if (fStarbase != 0 && (GetRaceGrbit(&rgplr[iplr], ibitRaceISB) != 0 || GetRaceStat(&rgplr[iplr], rsMajorAdv) == raMacintosh)) {
+        if (fStarbase && (GetRaceGrbit(&rgplr[iplr], ibitRaceISB) != 0 || GetRaceStat(&rgplr[iplr], rsMajorAdv) == raMacintosh)) {
             for (i = 0; i < 4; i++) {
                 rgCosts[i] -= (uint32_t)rgCosts[i] / 5;
             }
         }
-        if (fStarbase != 0) {
+        if (fStarbase) {
             for (i = 0; i < 4; i++) {
                 rgCost[i] = (uint32_t)((uint32_t)(rgCosts[i] + 1) / 2);
             }
@@ -968,7 +949,7 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
         case iobjFactory:
         case mdIdleFactory:
             cost = GetRaceGrbit(&rgplr[iplr], ibitRaceCheapFact);
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 for (i = 0; i < 3; i++) {
                     rgCost[i] = (int16_t)(2 - cost);
                 }
@@ -989,7 +970,7 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
         case iobjDefense:
         case mdIdleDefense:
             part.hs.grhst = hstPlanetary;
-            part.hs.iItem = 9;
+            part.hs.iItem = iplanetarySDI;
             FLookupPart(&part);
             for (i = 0; i < 3; i++) {
                 rgCost[i] = part.pplanetary->rgwtOreCost[i];
@@ -1010,7 +991,7 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
             break;
         case iobjGenesis:
             part.hs.grhst = hstPlanetary;
-            part.hs.iItem = 14;
+            part.hs.iItem = iplanetaryGenesisDevice;
             FLookupPart(&part);
             GetTruePartCost(iplr, &part, rgCosts);
             for (i = 0; i < 4; i++) {
@@ -1051,6 +1032,7 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
             break;
         case iobjPlanetaryScanner:
             iItem = iobjPlanetaryScannerFirst;
+            /* fallthrough */
         case iobjPlanetaryScannerFirst:
         case iobjPlanetaryScannerViewer90:
         case iobjPlanetaryScannerScoper150:
@@ -1069,7 +1051,7 @@ void GetProductionCosts(PLANET *lppl, PROD *lpprod, uint32_t *rgCost, int16_t ip
             }
         }
     }
-    if (fOnlyOne == 0) {
+    if (!fOnlyOne) {
         for (i = 0; i < 4; i++) {
             rgCost[i] = (uint32_t)(rgCost[i] * cItem);
         }
@@ -1092,7 +1074,7 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
     int32_t    rgRes[4];
     PROD      *lpprod;
 
-    if (lpplprod == 0) {
+    if (!lpplprod) {
         lpplprod = lppl->lpplprod;
     }
     pl = *lppl;
@@ -1109,7 +1091,7 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
             rgRes[j] = pl.rgwtMin[j];
         }
         rgRes[3] = CResourcesAtPlanet(&pl, lppl->iPlayer);
-        if (pl.fNoResearch == 0) {
+        if (!pl.fNoResearch) {
             cResearch = (int32_t)(rgRes[3] * (int16_t)rgplr[lppl->iPlayer].pctResearch) / 100;
             rgRes[3] -= cResearch;
         } else {
@@ -1140,22 +1122,17 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
                     if (cBuilt > 0 && *piFirst == 0) {
                         *piFirst = iPass;
                     }
-                    switch (mdStatus) {
-                    case mdProdStatSkippedAuto:
-                        if (*piFirst == 0)
-                            goto LCleanUp;
-                        *piLast = iPass - 1;
+                    if (mdStatus == mdProdStatSkippedAuto) {
+                        if (*piFirst != 0) {
+                            *piLast = iPass - 1;
+                        }
                         goto LCleanUp;
-                    case mdProdStatComplete:
-                    case mdProdStatCompleteAuto:
+                    }
+                    if (mdStatus == mdProdStatComplete || mdStatus == mdProdStatCompleteAuto) {
                         *piLast = iPass;
                         goto LCleanUp;
-                    default:
-                        goto L_52a2;
                     }
-                    goto LCleanUp;
                 }
-            L_52a2:
                 fAlchemy = FALSE;
                 if (lpprod->grobj == grobjPlanet) {
                     switch (lpprod->iItem) {
@@ -1172,8 +1149,13 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
                     break;
             }
         }
-        if ((int16_t)iItem < iobjMine)
-            goto L_53d7;
+        if ((int16_t)iItem < iobjMine) {
+            *piFirst = LOWORD(rgRes[3]);
+            if (iItem == iprodEstimateResearchResources) {
+                *piFirst += LOWORD(cResearch);
+            }
+            goto LCleanUp;
+        }
         for (j = 0; j < 3; j++) {
             pl.rgwtMin[j] = rgRes[j];
         }
@@ -1183,14 +1165,8 @@ void EstimateItemProdSched(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, i
         *piFirst = 100;
     }
     *piLast = 100;
-    goto LCleanUp;
-L_53d7:
-    *piFirst = LOWORD(rgRes[3]);
-    if (iItem == 0xffff) {
-        *piFirst += LOWORD(cResearch);
-    }
 LCleanUp:
-    if (pl.lpplprod != 0) {
+    if (pl.lpplprod) {
         FreePl((PL *)pl.lpplprod);
     }
     return;
@@ -1211,47 +1187,9 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     int16_t     cch;
     FARPROC     lpProc;
     int16_t     cpq;
-    char       *t_55d5;
-    char       *t_5a67;
 
-    if (message == WM_PAINT) {
-        hdc = BeginPaint(hwnd, &ps);
-        GetClientRect(hwnd, &rc);
-        GetWindowRect(GetDlgItem(hwnd, IDC_ZIP_PROD_PRESET_1), &rcGBox);
-        ScreenToClient(hwnd, (POINT *)&rcGBox);
-        GetWindowRect(GetDlgItem(hwnd, IDC_ZIP_PROD_PRESET_4), &rc);
-        ScreenToClient(hwnd, (POINT *)&rc.right);
-        rcGBox.right = rc.right;
-        rcGBox.bottom = rc.bottom;
-        ExpandRc(&rcGBox, dyArial8, dyArial8 >> 1);
-        _Draw3dFrame(hdc, &rcGBox, -1);
-        SelectObject(hdc, rghfontArial8[1]);
-        SetBkColor(hdc, crButtonFace);
-        cch = CchGetString(idsCustomOrders, szWork);
-        TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, cch);
-        rcGBox.top = rcGBox.bottom + 8;
-        if (vrgZipProd[iResTechNow].fValid != 0) {
-            cch = CchGetString(vrgZipProd[iResTechNow].fNoResearch + 1222, szWork);
-            TextOut(hdc, rcGBox.left, vyZPDStatic, szWork, cch);
-        }
-        EndPaint(hwnd, &ps);
-        return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
-        }
-        if (i <= 1076) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    if (message == WM_INITDIALOG) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
         SetWindowText(hwnd, PszGetCompressedString(idsCustomizeProductionTemplates));
         GetWindowRect(hwnd, &rc);
         GetClientRect(hwnd, &rc2);
@@ -1267,14 +1205,11 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);
         for (i = 1073; i <= 1076; i++) {
             iBase = i - 1073;
-            if (vrgZipProd[iBase].fValid != 0) {
+            if (vrgZipProd[iBase].fValid) {
                 pszT = szWork;
                 psz = vrgZipProd[iBase].szName;
                 while (*psz != 0) {
-                    t_55d5 = psz;
-                    psz++;
-                    *pszT++ = *t_55d5;
-                    if (*t_55d5 == '&') {
+                    if ((*pszT++ = *psz++) == '&') {
                         *pszT++ = '&';
                     }
                 }
@@ -1289,12 +1224,45 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
             SetWindowText(hwndRad, psz);
         }
         StickyDlgPos(hwnd, &ptStickyZipProdDlg, TRUE);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
         return 1;
-    }
-    if (message == WM_COMMAND) {
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 1076) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        GetClientRect(hwnd, &rc);
+        GetWindowRect(GetDlgItem(hwnd, IDC_ZIP_PROD_PRESET_1), &rcGBox);
+        ScreenToClient(hwnd, (POINT *)&rcGBox);
+        GetWindowRect(GetDlgItem(hwnd, IDC_ZIP_PROD_PRESET_4), &rc);
+        ScreenToClient(hwnd, (POINT *)&rc.right);
+        rcGBox.right = rc.right;
+        rcGBox.bottom = rc.bottom;
+        ExpandRc(&rcGBox, dyArial8, dyArial8 >> 1);
+        _Draw3dFrame(hdc, &rcGBox, -1);
+        SelectObject(hdc, rghfontArial8[1]);
+        SetBkColor(hdc, crButtonFace);
+        cch = CchGetString(idsCustomOrders, szWork);
+        TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, cch);
+        rcGBox.top = rcGBox.bottom + 8;
+        if (vrgZipProd[iResTechNow].fValid) {
+            cch = CchGetString(vrgZipProd[iResTechNow].fNoResearch + 1222, szWork);
+            TextOut(hdc, rcGBox.left, vyZPDStatic, szWork, cch);
+        }
+        EndPaint(hwnd, &ps);
+        return 1;
+    case WM_COMMAND:
         if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_ZIP_PROD_PRESET_1 &&
             GET_WM_COMMAND_ID(wParam, lParam) <= IDC_ZIP_PROD_PRESET_4) {
             iResTechNow = GET_WM_COMMAND_ID(wParam, lParam) - 1073;
@@ -1307,21 +1275,21 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                 StickyDlgPos(hwnd, &ptStickyZipProdDlg, FALSE);
                 EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
                 vyZPDStatic = -1;
-                if (gd.fTutorial != 0) {
+                if (gd.fTutorial) {
                     AdvanceTutor();
                 }
                 return 1;
             case IDC_IMPORT:
             case IDC_RENAME:
-                if (vrgZipProd[iResTechNow].fValid != 0) {
+                if (vrgZipProd[iResTechNow].fValid) {
                     strcpy(szWork, vrgZipProd[iResTechNow].szName);
                 } else {
                     _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                 }
                 lpProc = MakeProcInstance(RenameZipDlg, hInst);
-                if (iResTechNow != Energy) {
-                    if (DialogBox(hInst, MAKEINTRESOURCE(IDD_RENAME), hwndFrame, lpProc) == 0)
-                        goto L_5ce2;
+                if (iResTechNow == Energy)
+                    goto LDontRename;
+                if (DialogBox(hInst, MAKEINTRESOURCE(IDD_RENAME), hwndFrame, lpProc) != 0) {
                     if (szWork[0] == 0) {
                         _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
                     }
@@ -1329,34 +1297,31 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
                     pszT = &szWork[64];
                     psz = szWork;
                     while (*psz != 0) {
-                        t_5a67 = psz;
-                        psz++;
-                        *pszT++ = *t_5a67;
-                        if (*t_5a67 == '&') {
+                        if ((*pszT++ = *psz++) == '&') {
                             *pszT++ = '&';
                         }
                     }
                     *pszT = 0;
                     SetWindowText(GetDlgItem(hwnd, iResTechNow + 1073), &szWork[64]);
-                }
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
-                    vrgZipProd[iResTechNow].fValid = TRUE;
-                    cpq = 0;
-                    for (i = 0; i < lpplProdGlob->iprodMac; i++) {
-                        if (lpplProdGlob->rgprod[i].grobj == grobjPlanet && lpplProdGlob->rgprod[i].iItem < mdIdleFactory) {
-                            vrgZipProd[iResTechNow].rgpq[cpq].mdIdle = lpplProdGlob->rgprod[i].iItem;
-                            vrgZipProd[iResTechNow].rgpq[cpq].cQuan = lpplProdGlob->rgprod[i].cItem;
-                            cpq++;
-                            if (cpq >= 12)
-                                break;
+                LDontRename:
+                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_IMPORT) {
+                        vrgZipProd[iResTechNow].fValid = TRUE;
+                        cpq = 0;
+                        for (i = 0; i < lpplProdGlob->iprodMac; i++) {
+                            if (lpplProdGlob->rgprod[i].grobj == grobjPlanet && lpplProdGlob->rgprod[i].iItem < mdIdleFactory) {
+                                vrgZipProd[iResTechNow].rgpq[cpq].mdIdle = lpplProdGlob->rgprod[i].iItem;
+                                vrgZipProd[iResTechNow].rgpq[cpq].cQuan = lpplProdGlob->rgprod[i].cItem;
+                                cpq++;
+                                if (cpq >= 12)
+                                    break;
+                            }
                         }
+                        vrgZipProd[iResTechNow].cpq = cpq;
+                        vrgZipProd[iResTechNow].fNoResearch = sel.pl.fNoResearch;
+                        FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);
                     }
-                    vrgZipProd[iResTechNow].cpq = cpq;
-                    vrgZipProd[iResTechNow].fNoResearch = sel.pl.fNoResearch;
-                    FillZipProdLB(hwnd, &vrgZipProd[iResTechNow]);
+                    EnableZipProdBtns(hwnd, iResTechNow);
                 }
-                EnableZipProdBtns(hwnd, iResTechNow);
-            L_5ce2:
                 FreeProcInstance(lpProc);
                 SetFocus(hwnd);
                 gd.fChgZipProd = TRUE;
@@ -1399,7 +1364,7 @@ void FillZipProdLB(HWND hwndDlg, ZIPPRODQ *pzpq) {
     rc.bottom = vyZPDStatic + dyArial8;
     InvalidateRect(hwndDlg, &rc, TRUE);
     SendMessage(hwndLB, LB_RESETCONTENT, 0, 0);
-    if (pzpq->fValid == 0 || pzpq->cpq == 0) {
+    if (!pzpq->fValid || pzpq->cpq == 0) {
         SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(idsAutoBuildOrders));
     } else {
         CchGetString(idsSD2, szFormat);

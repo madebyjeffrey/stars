@@ -21,7 +21,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
     RECT    rc;
 
     pfl = obj.pfl;
-    if (ptile->fFixCtls != 0) {
+    if (ptile->fFixCtls) {
         rgrcRef[0].top = -5;
         rgrcRef[0].bottom = -6;
         rgrcRef[12].top = -5;
@@ -30,18 +30,18 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         ShowWindow(hwndRepCB, SW_HIDE);
         ptile->fFixCtls = FALSE;
     }
-    if (FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFleetWaypoints)) == 0) {
+    if (!FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFleetWaypoints))) {
         ShowWindow(hwndShipLB, SW_HIDE);
         ShowWindow(hwndRepCB, SW_HIDE);
     } else {
         xLeft = rc.left + 4;
         xRight = rc.right - 4;
-        yTop = (gd.fSmallTileMode == 0 ? 4 : 2) + rc.top;
+        yTop = (!gd.fSmallTileMode ? 4 : 2) + rc.top;
         rgrcRef[12].top = -5;
         rgrcRef[12].bottom = -6;
         GetClientRect(hwndShipLB, &rcT);
         swp = SWP_NOZORDER | SWP_NOACTIVATE;
-        dyShipLB = (dyArial8 + 2) * (gd.fSmallTileMode == 0 ? 4 : 3);
+        dyShipLB = (dyArial8 + 2) * (!gd.fSmallTileMode ? 4 : 3);
         dWrong = dyShipLB - (rcT.bottom - rcT.top);
         if (dxShipLB == xRight - xLeft && dWrong >= 0 && dWrong < dyArial8) {
             swp |= SWP_NOSIZE;
@@ -52,9 +52,9 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         ShowWindow(hwndShipLB, SW_SHOW);
         GetClientRect(hwndShipLB, &rcT);
         dyShipLB = rcT.bottom - rcT.top;
-        yTop += (gd.fSmallTileMode == 0 ? 4 : 2) + dyShipLB;
+        yTop += (!gd.fSmallTileMode ? 4 : 2) + dyShipLB;
         SelectObject(hdc, rghfontArial8[1]);
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             rcT.top = yTop;
             rcT.bottom = yTop + dyArial8;
             rcT.left = xLeft;
@@ -69,7 +69,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
             l = lTot;
         }
         dxRight = xRight - xLeft - LOWORD(l);
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             c = CchGetString(sel.iwpAct <= 0 ? idsWayPt : idsComing, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
         }
@@ -88,17 +88,18 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         }
         RightTextOut(hdc, xRight, yTop, psz, 0, dxRight);
         yTop += dyArial8;
-        if (sel.fl.cord <= 1 || sel.iwpAct == 0) {
-            rgrcRef[0].top = -5;
-            rgrcRef[0].bottom = -6;
-            if (sel.fl.cord <= 1) {
-                SetRect(&rc, xLeft - 1, yTop, xRight - 1, dyArial8 * 4 + yTop);
-                FillRect(hdc, &rc, hbrButtonFace);
-                yTop += (dyArial8 - gd.fSmallTileMode) * 4 + gd.fSmallTileMode * 2;
-                goto DoCheckBox;
-            }
+        if (sel.fl.cord > 1 && sel.iwpAct != 0)
+            goto DoDistance;
+        rgrcRef[0].top = -5;
+        rgrcRef[0].bottom = -6;
+        if (sel.fl.cord <= 1) {
+            SetRect(&rc, xLeft - 1, yTop, xRight - 1, dyArial8 * 4 + yTop);
+            FillRect(hdc, &rc, hbrButtonFace);
+            yTop += (dyArial8 - gd.fSmallTileMode) * 4 + gd.fSmallTileMode * 2;
+            goto DoCheckBox;
         }
-        if (ptile->fMinDraw == 0) {
+    DoDistance:
+        if (!ptile->fMinDraw) {
             SelectObject(hdc, rghfontArial8[1]);
             c = CchGetString(idsDistance, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
@@ -108,7 +109,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         RightTextOut(hdc, xRight, yTop, PszGetDistance(ord.pt.x, ord.pt.y, pt.x, pt.y), 0, dxRight);
         yTop += dyArial8 - gd.fSmallTileMode;
         SelectObject(hdc, rghfontArial8[1]);
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             c = CchGetString(idsWarpFactor, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
         }
@@ -127,7 +128,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
             RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         }
         yTop += dyArial8;
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             SelectObject(hdc, rghfontArial8[1]);
             c = CchGetString(idsTravelTime, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
@@ -137,7 +138,7 @@ void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
         SetTextColor(hdc, 0);
         yTop += dyArial8 - gd.fSmallTileMode;
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             SelectObject(hdc, rghfontArial8[1]);
             c = CchGetString(idsEstFuelUsage, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
@@ -195,7 +196,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
     int16_t  c;
     int32_t  rgl[4];
 
-    if (ptile->fFixCtls != 0) {
+    if (ptile->fFixCtls) {
         for (i = 0; i < 3; i++) {
             ShowWindow(rghwndOrderDD[i], SW_HIDE);
         }
@@ -206,7 +207,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
         rgrcRef[18].top = -5;
         rgrcRef[18].bottom = -6;
     }
-    if (FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsWaypointTask)) == 0) {
+    if (!FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsWaypointTask))) {
         for (i = 0; i < 3; i++) {
             ShowWindow(rghwndOrderDD[i], SW_HIDE);
         }
@@ -215,7 +216,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
         pfl = obj.pfl;
         xLeft = rc.left + 4;
         xRight = rc.right - 4;
-        yTop = (gd.fSmallTileMode == 0 ? 4 : 2) + rc.top;
+        yTop = (!gd.fSmallTileMode ? 4 : 2) + rc.top;
         yBot = rc.bottom - 4;
         dxRight = xRight - xLeft;
         rgrcRef[5].top = -5;
@@ -268,7 +269,8 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                 szT[cch] = ' ';
                 cch++;
                 szT[cch] = 0;
-                dxT = LOWORD(GetTextExtent(hdc, psz, cch)) + 2;
+                /* NATIVE: original measured psz before it was set; see WIN16-PARITY.md */
+                dxT = LOWORD(GetTextExtent(hdc, szT, cch)) + 2;
                 SetRect(&rc, xLeft, yTop + 4, xLeft + dxT, yBot);
                 FillRect(hdc, &rc, hbrButtonFace);
                 DrawText(hdc, szT, cch, &rc, DT_NOPREFIX);
@@ -366,7 +368,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
             ShowWindow(hwndOrderED, SW_SHOW);
             SetRect(&rc, xRight - dxKt - 1, yTop + 2, xRight - 1, yBot);
             FillRect(hdc, &rc, hbrButtonFace);
-            if (fActive != 0) {
+            if (fActive) {
                 DrawText(hdc, psz, 2, &rc, DT_NOPREFIX);
             }
         } else {
@@ -390,7 +392,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
             break;
         case grTaskLayMines:
             yTopMsg = yTop;
-            l = CLayMinesFromLpfl(&sel.fl, 0xffff, -1);
+            l = CLayMinesFromLpfl(&sel.fl, mineAll, ishdefAll);
             if (l <= 0) {
                 ids = idsWarningFleetHasMineLayingPods;
                 goto LDisplayMsg;
@@ -406,16 +408,15 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                     for (j = 0; j < rglpshdef[sel.fl.iPlayer][i].hul.chs; j++) {
                         if (rglpshdef[sel.fl.iPlayer][i].hul.rghs[j].grhst == hstSpecialM &&
                             (rglpshdef[sel.fl.iPlayer][i].hul.rghs[j].iItem == ispecialMColonizationModule ||
-                             rglpshdef[sel.fl.iPlayer][i].hul.rghs[j].iItem == ispecialMOrbitalConstructionModule))
-                            goto L_1457;
+                             rglpshdef[sel.fl.iPlayer][i].hul.rghs[j].iItem == ispecialMOrbitalConstructionModule)) {
+                            fActive = TRUE;
+                            goto FoundColony;
+                        }
                     }
                 }
             }
-            goto FoundColony;
-        L_1457:
-            fActive = TRUE;
         FoundColony:
-            if (fActive != 0) {
+            if (fActive) {
                 if (sel.fl.rgwtMin[3] == 0) {
                     ids = idsRememberLoadColonistsBeforeEmbarkingMission;
                     goto LDisplayMsg;
@@ -424,11 +425,19 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                 goto LDisplayMsg;
             }
             ids = idsWarningColonizeMissionCannotCarriedBecauseNone;
-            goto LDisplayMsg;
+        LDisplayMsg:
+            psz = PszGetCompressedString(ids);
+        LDisplayMsg2:
+            SetTextColor(hdc, ids == idsNoteShipsFleetWillDismantledProvideSupplies ? crButtonText : 127);
+            SetRect(&rc, xLeft, yTopMsg, xRight, yBot + 2);
+            SelectObject(hdc, rghfontArial7[0]);
+            DrawText(hdc, psz, strlen(psz), &rc, DT_WORDBREAK | DT_NOPREFIX);
+            SetTextColor(hdc, crButtonText);
+            break;
         case grTaskMine:
             cMine = CMineFromLpfl(&sel.fl);
             if (cMine > 0) {
-                if (lppl != 0 && (lppl->iPlayer == -1 || (lppl->iPlayer == sel.fl.iPlayer && GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh))) {
+                if (lppl && (lppl->iPlayer == iplrNone || (lppl->iPlayer == sel.fl.iPlayer && GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh))) {
                     if (dyArial8 > 14) {
                         SelectObject(hdc, rghfontArial7[0]);
                         dyCur = dyArial7;
@@ -472,14 +481,6 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
             SetTextColor(hdc, crButtonText);
         }
         return;
-    LDisplayMsg:
-        psz = PszGetCompressedString(ids);
-    LDisplayMsg2:
-        SetTextColor(hdc, ids == idsNoteShipsFleetWillDismantledProvideSupplies ? crButtonText : 127);
-        SetRect(&rc, xLeft, yTopMsg, xRight, yBot + 2);
-        SelectObject(hdc, rghfontArial7[0]);
-        DrawText(hdc, psz, strlen(psz), &rc, DT_WORDBREAK | DT_NOPREFIX);
-        SetTextColor(hdc, crButtonText);
     }
     return;
 }
@@ -496,28 +497,28 @@ void DrawShipPlanet(HDC hdc, TILE *ptile, OBJ obj) {
     THING  *lpth;
     THING  *lpthMac;
 
-    if (obj.pfl->idPlanet != -1) {
+    if (obj.pfl->idPlanet != idPlanetDeepSpace) {
         psz = PszGetPlanetName(obj.pfl->idPlanet | 0x8000);
     } else {
         psz = PszGetCompressedString(idsDeepSpace2);
     }
-    if (ptile->fFixCtls != 0) {
+    if (ptile->fFixCtls) {
         ShowWindow(rghwndBtn[3], SW_HIDE);
         ShowWindow(rghwndBtn[7], SW_HIDE);
         ptile->fFixCtls = FALSE;
     }
-    if (FDrawTileNC(hdc, ptile, &rc, psz) == 0) {
+    if (!FDrawTileNC(hdc, ptile, &rc, psz)) {
         ShowWindow(rghwndBtn[3], SW_HIDE);
         ShowWindow(rghwndBtn[7], SW_HIDE);
     } else {
         xLeft = rc.left + 4;
         xRight = rc.right - 4;
-        yTop = (gd.fSmallTileMode == 0 ? 4 : 1) + rc.top;
+        yTop = (!gd.fSmallTileMode ? 4 : 1) + rc.top;
         dx = (int16_t)(xRight - xLeft - 16) / 3;
         dy = 3 * dyArial8 >> 1;
-        EnableWindow(rghwndBtn[3], obj.pfl->idPlanet != -1 && sel.pl.iPlayer == idPlayer);
-        SetWindowText(rghwndBtn[7], PszGetCompressedString(obj.pfl->idPlanet == -1 ? idsJettison2 : idsXFer));
-        if (obj.pfl->idPlanet == -1) {
+        EnableWindow(rghwndBtn[3], obj.pfl->idPlanet != idPlanetDeepSpace && sel.pl.iPlayer == idPlayer);
+        SetWindowText(rghwndBtn[7], PszGetCompressedString(obj.pfl->idPlanet == idPlanetDeepSpace ? idsJettison2 : idsXFer));
+        if (obj.pfl->idPlanet == idPlanetDeepSpace) {
             lpth = lpThings;
             lpthMac = lpThings + cThing;
             for (; lpth < lpthMac && (lpth->ith != ithMineralPacket || obj.pfl->pt.x != lpth->pt.x || obj.pfl->pt.y != lpth->pt.y); lpth++) {
@@ -526,7 +527,7 @@ void DrawShipPlanet(HDC hdc, TILE *ptile, OBJ obj) {
         } else {
             EnableWindow(rghwndBtn[7], TRUE);
         }
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             i = 3;
             while (i <= 7) {
                 SetWindowPos(rghwndBtn[i], NULL, xLeft, yTop, dx, dy, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -553,13 +554,13 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
     RECT    rc;
 
     pfl = obj.pfl;
-    if (ptile->fFixCtls != 0) {
+    if (ptile->fFixCtls) {
         rgrcRef[2].top = -5;
         rgrcRef[2].bottom = -6;
         rgrcRef[3].top = -5;
         rgrcRef[3].bottom = -6;
     }
-    if (FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFuelCargo)) != 0) {
+    if (FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFuelCargo))) {
         xLeft = rc.left + 4;
         xRight = rc.right - 4;
         yTop = rc.top + 1;
@@ -572,14 +573,14 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
         if (l2 > l) {
             l = l2;
         }
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             TextOut(hdc, xLeft, yTop, szWork, c);
         }
         SetRect(&rcGauge, xLeft + LOWORD(l), yTop, xRight, yTop + dyArial8);
         rgrcRef[2] = rcGauge;
         DrawFleetGauge(hdc, &rcGauge, pfl, 4);
-        yTop += (gd.fSmallTileMode == 0 ? 4 : 2) + dyArial8;
-        if (ptile->fMinDraw == 0) {
+        yTop += (!gd.fSmallTileMode ? 4 : 2) + dyArial8;
+        if (!ptile->fMinDraw) {
             c = CchGetString(idsCargo3, szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
         }
@@ -587,9 +588,9 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
         rgrcRef[3] = rcGauge;
         DrawFleetGauge(hdc, &rcGauge, pfl, 5);
         yTop += dyArial8 + 4;
-        if (gd.fSmallTileMode == 0) {
+        if (!gd.fSmallTileMode) {
             for (i = 0; i <= 2; i++) {
-                if (ptile->fMinDraw == 0) {
+                if (!ptile->fMinDraw) {
                     SelectObject(hdc, rghfontArial8[1]);
                     SetTextColor(hdc, rgcrMinerals[i]);
                     TextOut(hdc, xLeft, yTop, rgszMinerals[i], lstrlen(rgszMinerals[i]));
@@ -600,7 +601,7 @@ void DrawShipCargo(HDC hdc, TILE *ptile, OBJ obj) {
                 RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
                 yTop += dyArial8;
             }
-            if (ptile->fMinDraw == 0) {
+            if (!ptile->fMinDraw) {
                 SelectObject(hdc, rghfontArial8[1]);
                 SetTextColor(hdc, 0xffffff);
                 c = CchGetString(idsColonists2, szWork);
@@ -634,7 +635,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
     RECT    rc;
 
     pfl = obj.pfl;
-    if (ptile->fFixCtls != 0) {
+    if (ptile->fFixCtls) {
         ShowWindow(hwndFleetCompLB, SW_HIDE);
         ShowWindow(rghwndBtn[8], SW_HIDE);
         ShowWindow(rghwndBtn[9], SW_HIDE);
@@ -642,7 +643,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
         ShowWindow(hwndBattleDD, SW_HIDE);
         ptile->fFixCtls = FALSE;
     }
-    if (FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFleetComposition)) == 0) {
+    if (!FDrawTileNC(hdc, ptile, &rc, PszGetCompressedString(idsFleetComposition))) {
         ShowWindow(hwndFleetCompLB, SW_HIDE);
         ShowWindow(rghwndBtn[8], SW_HIDE);
         ShowWindow(rghwndBtn[9], SW_HIDE);
@@ -654,7 +655,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
         yTop = rc.top + 3;
         GetClientRect(hwndFleetCompLB, &rcT);
         swp = SWP_NOZORDER | SWP_NOACTIVATE;
-        dyFleetCompLB = (dyArial8 + 2) * (gd.fSmallTileMode == 0 ? 5 : 3);
+        dyFleetCompLB = (dyArial8 + 2) * (!gd.fSmallTileMode ? 5 : 3);
         dyWrong = dyFleetCompLB - (rcT.bottom - rcT.top);
         if (dxFleetCompLB == xRight - xLeft && dyWrong >= 0 && dyWrong < dyArial8) {
             swp |= SWP_NOSIZE;
@@ -665,11 +666,11 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
         ShowWindow(hwndFleetCompLB, SW_SHOW);
         GetClientRect(hwndFleetCompLB, &rcT);
         dyFleetCompLB = rcT.bottom - rcT.top;
-        yTop += (gd.fSmallTileMode == 0 ? 4 : 2) + dyFleetCompLB;
+        yTop += (!gd.fSmallTileMode ? 4 : 2) + dyFleetCompLB;
         SelectObject(hdc, rghfontArial8[1]);
         c = CchGetString(idsBattlePlan2, szWork);
         dxLabel = LOWORD(GetTextExtent(hdc, szWork, c));
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             TextOut(hdc, xLeft, yTop + 4, szWork, c);
         }
         swp = SWP_NOZORDER | SWP_NOACTIVATE;
@@ -683,7 +684,7 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
         yTop += dyShipDD + 3;
         c = CchGetString(idsEstRange, szWork);
         l = GetTextExtent(hdc, szWork, c);
-        if (ptile->fMinDraw == 0) {
+        if (!ptile->fMinDraw) {
             TextOut(hdc, xLeft, yTop, szWork, c);
         }
         SelectObject(hdc, rghfontArial8[0]);
@@ -697,9 +698,9 @@ void DrawFleetComp(HDC hdc, TILE *ptile, OBJ obj) {
             c = _wsprintf(szWork, PszGetCompressedString(idsLdLY), l);
         }
         RightTextOut(hdc, xRight, yTop, szWork, c, dxRight);
-        if (gd.fSmallTileMode == 0) {
+        if (!gd.fSmallTileMode) {
             yTop += dyArial8;
-            if (ptile->fMinDraw == 0) {
+            if (!ptile->fMinDraw) {
                 SelectObject(hdc, rghfontArial8[1]);
                 c = CchGetString(idsPercentCloaked, szWork);
                 TextOut(hdc, xLeft, yTop, szWork, c);
@@ -765,7 +766,7 @@ int16_t FCanMerge(FLEET *pfl) {
     csh = 0;
     for (i = 0; i < cFleet; i++) {
         lpfl = rglpfl[i];
-        if (rglpfl[i] == 0)
+        if (!rglpfl[i])
             break;
         if (lpfl->iPlayer == pfl->iPlayer && lpfl->pt.x == sel.fl.pt.x && lpfl->pt.y == sel.fl.pt.y) {
             cfl++;
@@ -830,7 +831,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         SelectAdjPlanet(0, sel.fl.idPlanet);
         SetFleetDropDownSel(sel.fl.id);
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[7] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
-        if (sel.fl.idPlanet != -1) {
+        if (sel.fl.idPlanet != idPlanetDeepSpace) {
             TransferStuff(sel.fl.id, grobjFleet, sel.fl.idPlanet, grobjPlanet, mdXferCargo);
         } else {
             TransferStuff(sel.fl.id, grobjFleet, -1, grobjOther, mdXferCargo);
@@ -871,24 +872,24 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 } else {
                     sel.fl.iplan = lSel - 1;
                 }
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
             }
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[0] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
-        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) != 0) {
+        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id)) {
             TransferStuff(sel.fl.id, grobjFleet, xf.id, xf.grobj, mdXferCargo);
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[1] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
-        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) != 0 && xf.grobj == grobjFleet) {
+        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) && xf.grobj == grobjFleet) {
             SelectAdjFleet(0, xf.id);
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[2] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
         lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
-        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) != 0 && xf.grobj == grobjFleet) {
+        if (lSel != -1 && FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.fl.id) && xf.grobj == grobjFleet) {
             TransferStuff(sel.fl.id, grobjFleet, xf.id, grobjFleet, mdXferShips);
-            if ((grbitScan & grbitScanFleetPaths) != 0) {
+            if (grbitScan & grbitScanFleetPaths) {
                 InvalidateRect(hwndScanner, NULL, TRUE);
             }
             InvalidateReport(rptFleets, 1);
@@ -896,7 +897,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[8] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
         TransferStuff(sel.fl.id, grobjFleet, -1, grobjOther, mdXferShips);
         InvalidateReport(rptFleets, 1);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndBtn[9] && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
@@ -912,9 +913,9 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         vcflMerge = 0;
         for (ifl = 0; ifl < cFleet; ifl++) {
             lpfl = rglpfl[ifl];
-            if (rglpfl[ifl] == 0)
+            if (!rglpfl[ifl])
                 break;
-            if (lpfl->iPlayer == idPlayer && lpfl->fDead == 0 && lpfl->pt.x == sel.fl.pt.x && lpfl->pt.y == sel.fl.pt.y) {
+            if (lpfl->iPlayer == idPlayer && !lpfl->fDead && lpfl->pt.x == sel.fl.pt.x && lpfl->pt.y == sel.fl.pt.y) {
                 rgifl[vcflMerge++] = ifl;
             }
         }
@@ -922,7 +923,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         lpProc = MakeProcInstance(MergeFleetsDlg, hInst);
         if (DialogBox(hInst, MAKEINTRESOURCE(IDD_MERGE_FLEETS), hwndFrame, lpProc) != 0) {
             for (ifl = 0; ifl < vcflMerge; ifl++) {
-                if (vrgiflMerge[ifl] != -1) {
+                if (vrgiflMerge[ifl] != iflNone) {
                     if (rglpfl[vrgiflMerge[ifl]]->id == sel.fl.id) {
                         lpfl = rglpfl[vrgiflMerge[ifl]];
                     }
@@ -930,8 +931,8 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 }
             }
             for (ifl = 0; ifl < vcflMerge; ifl++) {
-                if (vrgiflMerge[ifl] != -1) {
-                    if (lpfl == 0) {
+                if (vrgiflMerge[ifl] != iflNone) {
+                    if (!lpfl) {
                         lpfl = LpflFromId(vrgiflMerge[ifl]);
                     } else if (vrgiflMerge[ifl] != lpfl->id) {
                         break;
@@ -945,7 +946,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             }
         }
         FreeProcInstance(lpProc);
-        if (lpfl != 0) {
+        if (lpfl) {
             FFleetMergeAll(&sel.fl);
             FillShipDD(sel.fl.id);
             grbit = -31819;
@@ -953,18 +954,18 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             FillFleetCompLB();
             DrawPlanShip(NULL, grbit);
             InvalidateRect(hwndMine, NULL, TRUE);
-            if ((grbitScan & grbitScanFleetPaths) != 0) {
+            if (grbitScan & grbitScanFleetPaths) {
                 InvalidateRect(hwndScanner, NULL, TRUE);
             }
             vrgiflMerge = 0;
             vcflMerge = 0;
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 AdvanceTutor();
             }
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == hwndRepCB && GET_WM_COMMAND_CMD(wParam, lParam) == 0) {
         sel.fl.fRepOrders = LOWORD(SendMessage(hwndRepCB, BM_GETCHECK, 0, 0));
-        FLookupFleet(-1, &sel.fl);
+        FLookupFleet(idWriteBack, &sel.fl);
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndOrderDD[0]) {
         if (GET_WM_COMMAND_CMD(wParam, lParam) == 1) {
             lSel = SendMessage(rghwndOrderDD[0], CB_GETCURSEL, 0, 0);
@@ -996,28 +997,28 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                         }
                         for (ifl = 0; ifl < cFleet; ifl++) {
                             lpfl = rglpfl[ifl];
-                            if (rglpfl[ifl] == 0)
+                            if (!rglpfl[ifl])
                                 break;
                             if (lpfl->pt.x == sel.fl.lpplord->rgord[sel.iwpAct].pt.x && lpfl->pt.y == sel.fl.lpplord->rgord[sel.iwpAct].pt.y &&
-                                lpfl->iPlayer == idPlayer && lpfl->fDead == 0 && lpfl->id != sel.fl.id) {
+                                lpfl->iPlayer == idPlayer && !lpfl->fDead && lpfl->id != sel.fl.id) {
                                 if (lpfl->rgcsh[ishPrimary] > 0) {
                                     lpflBest = lpfl;
                                     if (lpfl->cord == 1)
                                         break;
-                                } else if (lpflBest == 0 || (lpflBest->cord > 1 && lpfl->cord == 1)) {
+                                } else if (!lpflBest || (lpflBest->cord > 1 && lpfl->cord == 1)) {
                                     lpflBest = lpfl;
                                 }
                             }
                         }
-                        if (lpflBest != 0) {
+                        if (lpflBest) {
                             sel.fl.lpplord->rgord[sel.iwpAct].grobj = grobjFleet;
                             sel.fl.lpplord->rgord[sel.iwpAct].id = lpflBest->id;
-                            FLookupFleet(-1, &sel.fl);
+                            FLookupFleet(idWriteBack, &sel.fl);
                             FillOrdersLB();
                         }
                     }
                 }
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
                 UpdateOrdersDDs(1);
                 DrawPlanShip(NULL, tileStarbaseOrWaypoint | tileErase);
             }
@@ -1028,12 +1029,12 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             switch (sel.fl.lpplord->rgord[sel.iwpAct].grTask) {
             case grTaskPatrol:
                 sel.fl.lpplord->rgord[sel.iwpAct].tptl.iDist = LOWORD(lSel);
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
                 UpdateOrdersDDs(1);
                 break;
             case grTaskGive:
                 sel.fl.lpplord->rgord[sel.iwpAct].tsell.iPlrX = LOWORD(lSel);
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
                 UpdateOrdersDDs(1);
                 break;
             case grTaskXfer:
@@ -1043,7 +1044,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             default:
                 sel.fl.lpplord->rgord[sel.iwpAct].tlm.cTime = LOWORD(lSel);
                 sel.fl.lpplord->rgord[sel.iwpAct].tlm.cTimeOld = LOWORD(lSel);
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
             }
         }
     } else if (GET_WM_COMMAND_HWND(wParam, lParam) == rghwndOrderDD[2]) {
@@ -1056,7 +1057,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
                 lMin--;
             }
             sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[lMin].iAction = LOWORD(lSel);
-            FLookupFleet(-1, &sel.fl);
+            FLookupFleet(idWriteBack, &sel.fl);
             UpdateOrdersDDs(3);
             DrawPlanShip(NULL, tileStarbaseOrWaypoint);
         }
@@ -1068,7 +1069,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
         GetWindowText(hwndOrderED, rgb, 8);
         iInit = atoi(rgb);
         i = 0 <= iInit ? iInit : 0;
-        if (fPercent != 0) {
+        if (fPercent) {
             i = 100 >= i ? i : 100;
         } else {
             i = 4000 >= i ? i : 4000;
@@ -1085,7 +1086,7 @@ void ShipCommandProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
             lMin--;
         }
         sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[lMin].cQuan = i;
-        FLookupFleet(-1, &sel.fl);
+        FLookupFleet(idWriteBack, &sel.fl);
     }
     return;
 }
@@ -1099,17 +1100,17 @@ void SelectAdjFleet(int16_t dInc, int16_t idFleet) {
     FLEET  *lpflT;
     SCAN    scan;
 
-    idOld = -1;
+    idOld = idflNone;
     if (cFleet > 0) {
         if (dInc != 0) {
             idFleet = sel.fl.id;
         }
-        if (vrptFleet.fCached == 0) {
+        if (!vrptFleet.fCached) {
             InvalidateReport(rptFleets, 1);
         }
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0 || lpfl->id == idFleet)
+            if (!rglpfl[i] || lpfl->id == idFleet)
                 break;
         }
         if (i == cFleet || lpfl->iPlayer != idPlayer) {
@@ -1120,6 +1121,7 @@ void SelectAdjFleet(int16_t dInc, int16_t idFleet) {
             scan.pt = lpfl->pt;
             scan.grobj = grobjPlanet | grobjFleet | mdExact;
             ChangeScanSel(&scan, 0);
+            goto FinishUp;
         } else {
             if (dInc != 0) {
                 for (i = 0; i < (int16_t)rgplr[idPlayer].cFleet && rglpfl[vlprgidFleet[i]]->id != idFleet; i++) {
@@ -1144,11 +1146,12 @@ void SelectAdjFleet(int16_t dInc, int16_t idFleet) {
             ChangeMainObjSel(grobjFleet, idNew);
             RedrawScanSel(NULL, 1);
         }
+    FinishUp:
         CtrPointScan(pt, TRUE);
         DrawScannerSBar(NULL, NULL, NULL, FALSE);
         InvalidateRect(hwndMine, NULL, TRUE);
         SetMineralTitleBar(hwndMine);
-        if (idOld != -1) {
+        if (idOld != idflNone) {
             SetFleetDropDownSel(idOld);
         }
     }
@@ -1162,7 +1165,7 @@ void SetFleetDropDownSel(int16_t id) {
     int16_t iOffset;
 
     iOffset = 0;
-    idSkip = sel.grobj == grobjFleet ? sel.fl.id : -1;
+    idSkip = sel.grobj == grobjFleet ? sel.fl.id : idflNone;
     for (i = 0; i < cFleet && rglpfl[i]->id != id; i++) {
         lpfl = rglpfl[i];
         if (sel.pt.x == lpfl->pt.x && sel.pt.y == lpfl->pt.y && lpfl->id != idSkip) {
@@ -1244,7 +1247,7 @@ void DrawFleetGauge(HDC hdc, RECT *prc, FLEET *lpfl, int16_t grbit) {
     int16_t cSections;
     int32_t l;
 
-    if (lpfl == 0) {
+    if (!lpfl) {
         lpfl = &sel.fl;
     }
     SelectObject(hdc, rghfontArial8[1]);
@@ -1287,12 +1290,14 @@ void DrawFleetGauge(HDC hdc, RECT *prc, FLEET *lpfl, int16_t grbit) {
     l = LDrawGauge(hdc, prc, cSections, rgSize, rghbr, lMax);
     iMode = SetBkMode(hdc, TRANSPARENT);
     if (grbit == 6) {
-        if (l == 0) {
-            c = CchGetString(idsStopped, szWork);
-        } else if (l < 11) {
-            c = _wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
+        if (l != 0) {
+            if (l < 11) {
+                c = _wsprintf(szWork, PszGetCompressedString(idsWarpLd), l);
+            } else {
+                c = CchGetString(idsUseStargate, szWork);
+            }
         } else {
-            c = CchGetString(idsUseStargate, szWork);
+            c = CchGetString(idsStopped, szWork);
         }
     } else if (grbit == 7) {
         if (l != 0) {
@@ -1326,7 +1331,7 @@ void DrawFleetBitmap(FLEET *lpfl, HDC hdc, int16_t x, int16_t y, int16_t fFrame,
     int16_t dxyPlusWidth;
     HBRUSH  hbrSav;
 
-    if (fFrame != 0) {
+    if (fFrame) {
         hbrSav = SelectObject(hdc, hbrButtonShadow);
         PatBlt(hdc, x, y, 68, 2, PATCOPY);
         PatBlt(hdc, x, y, 2, 68, PATCOPY);
@@ -1346,7 +1351,7 @@ void DrawFleetBitmap(FLEET *lpfl, HDC hdc, int16_t x, int16_t y, int16_t fFrame,
     ibmp %= 148;
     SelectPalette(hdc, vhpal, FALSE);
     RealizePalette(hdc);
-    if (fShrink != 0) {
+    if (fShrink) {
         DibBlt(hdc, x, y, 32, 32, rghdibShipsT[ibmp >> 5], ((ibmp & 0x1f) >> 2) * 0x20, (3 - (ibmp & 3)) * 0x20, 32, 32, 13369376);
         dxy = 32;
         dxyPlus = 5;
@@ -1363,14 +1368,14 @@ void DrawFleetBitmap(FLEET *lpfl, HDC hdc, int16_t x, int16_t y, int16_t fFrame,
             DibBlt(hdc, x, y + 48, 16, 16, hdibRacesT, (ibmpRace & 7) * 0x10, (3 - ((ibmpRace & 0x1f) >> 3)) * 0x10, 16, 16, 13369376);
         }
     }
-    if (csh == 0 || fShrink != 0) {
+    if (csh == 0 || fShrink) {
         if (cDiff > 4) {
             cDiff = 4;
         }
         cDiff--;
         for (i = 0; i < cDiff; i++) {
             xCur = ((i & 1) ^ ((i & 2) == 2)) == 0 ? x + 2 : x + dxy - 2 - dxyPlus;
-            yCur = (i & 2) == 0 ? y + 2 : y + dxy - 2 - dxyPlus;
+            yCur = !(i & 2) ? y + 2 : y + dxy - 2 - dxyPlus;
             PatBlt(hdc, xCur, (int16_t)(dxyPlus - 1) / 2 + yCur, dxyPlus, dxyPlusWidth, WHITENESS);
             PatBlt(hdc, (int16_t)(dxyPlus - 1) / 2 + xCur, yCur, dxyPlusWidth, dxyPlus, WHITENESS);
         }
@@ -1404,11 +1409,11 @@ int16_t FEnumCalcJettison(void *lprt, RecordType rt, int16_t cb, PLANET *lppl, i
         if (prtxfer->grobj1 != grobjFleet || prtxfer->grobj2 != grobjOther) {
             return TRUE;
         }
-        if (FLookupFleet(iFleet, &fl) == 0) {
+        if (!FLookupFleet(iFleet, &fl)) {
             return TRUE;
         }
         pt = fl.pt;
-        if (FLookupFleet(prtxfer->id1, &fl) == 0) {
+        if (!FLookupFleet(prtxfer->id1, &fl)) {
             return TRUE;
         }
         if (fl.pt.x != pt.x || fl.pt.y != pt.y) {
@@ -1421,7 +1426,7 @@ int16_t FEnumCalcJettison(void *lprt, RecordType rt, int16_t cb, PLANET *lppl, i
         j = 0;
         i = 0;
         while (i < 5) {
-            if ((grbit & 1) != 0) {
+            if (grbit & 1) {
                 if (rt == rtLogCargoXfer8) {
                     lppl->rgwtMin[i] -= (int16_t)prtxfer->rgcQuan[j];
                 } else {
@@ -1460,7 +1465,7 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
     mdXferDlg = mdXfer;
     for (i = 0; i < 2; i++) {
         if (xfer[i].grobj != grobjOther) {
-            if (FLookupObject(xfer[i].grobj, xfer[i].id, &xfer[i].fl) == 0) {
+            if (!FLookupObject(xfer[i].grobj, xfer[i].id, &xfer[i].fl)) {
                 return 0;
             }
             if (xfer[i].grobj == grobjPlanet) {
@@ -1472,7 +1477,7 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
             xfer[1].id = lpfl->id;
             xfer[1].grobj = grobjFleet;
         } else {
-            xfer[i].fl.id = -1;
+            xfer[i].fl.id = idflNone;
             for (j = 0; j < 4; j++) {
                 xfer[i].pl.rgwtMin[j] = 0;
             }
@@ -1490,13 +1495,13 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
     }
     rgbtnXfer = rgbtn;
     crgbtnXfer = 32;
-    if (gd.fTutorial != 0) {
+    if (gd.fTutorial) {
         AdvanceTutor();
     }
     lpProcXfer = MakeProcInstance(TransferDlg, hInst);
     fSuccess = DialogBox(hInst, MAKEINTRESOURCE(IDD_TRANSFER), hwndFrame, lpProcXfer);
     FreeProcInstance(lpProcXfer);
-    if (fSuccess != 0) {
+    if (fSuccess) {
         iDelFleet = -1;
         if (mdXfer == mdXferShips) {
             for (i = 0; i < 16 && xfer[1].fl.rgcsh[i] <= 0; i++) {
@@ -1509,13 +1514,13 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
             switch (xfer[i].grobj) {
             case grobjPlanet:
             case grobjOther:
-                FLookupPlanet(-1, &xfer[i].pl);
+                FLookupPlanet(idWriteBack, &xfer[i].pl);
                 if (xfer[i].grobj != grobjPlanet || lPopPrev != xfer[i].pl.rgwtMin[3])
                     break;
                 lPopPrev = -1;
                 break;
             case grobjFleet:
-                FLookupFleet(-1, &xfer[i].fl);
+                FLookupFleet(idWriteBack, &xfer[i].fl);
                 if (mdXfer != mdXferShips)
                     break;
                 for (j = 0; j < 16 && xfer[i].fl.rgcsh[j] == 0; j++) {
@@ -1525,7 +1530,7 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
                 iDelFleet = i;
                 break;
             case grobjThing:
-                FLookupThing(-1, &xfer[i].th);
+                FLookupThing(idWriteBack, &xfer[i].th);
             }
         }
         if (iDelFleet != -1) {
@@ -1533,7 +1538,7 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
         }
         if (mdXfer == mdXferShips) {
             FillShipDD(sel.fl.id);
-            if ((grbitScan & grbitScanFleetPaths) != 0) {
+            if (grbitScan & grbitScanFleetPaths) {
                 InvalidateRect(hwndScanner, NULL, TRUE);
             }
         }
@@ -1552,29 +1557,27 @@ int16_t TransferStuff(int16_t id1, GrobjClass grobj1, int16_t id2, GrobjClass gr
         } else {
             InvalidateMineralBars();
         }
-        if (lPopPrev != -1 && GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh && (grbitScan & grbitScanCoverage) != 0) {
+        if (lPopPrev != -1 && GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh && (grbitScan & grbitScanCoverage)) {
             InvalidateRect(hwndScanner, NULL, FALSE);
-            goto L_5673;
+        } else if (lPopPrev != -1 && (grbitScan & grbitScanViewMask) == 4) {
+        LInvalScanPlan:
+            pt = sel.pt;
+            LogicalToScan(&pt);
+            rc.right = pt.x;
+            rc.bottom = pt.y;
+            rc.left = pt.x;
+            rc.top = pt.y;
+            InflateRect(&rc, 20, 20);
+            rc.top -= 20;
+            InvalidateRect(hwndScanner, &rc, FALSE);
+        } else if ((grbitScan & grbitScanViewMask) == 1) {
+            goto LInvalScanPlan;
         }
-        if ((lPopPrev == -1 || (grbitScan & grbitScanViewMask) != 4) && (grbitScan & grbitScanViewMask) != 1)
-            goto L_5673;
-        pt = sel.pt;
-        LogicalToScan(&pt);
-        rc.right = pt.x;
-        rc.bottom = pt.y;
-        rc.left = pt.x;
-        rc.top = pt.y;
-        InflateRect(&rc, 20, 20);
-        rc.top -= 20;
-        InvalidateRect(hwndScanner, &rc, FALSE);
-        goto L_5673;
+    } else if (mdXfer == mdXferShips && grobj2 == grobjOther) {
+    CancelSplit:
+        FDeleteFleet(xfer[1].fl.id, grobjNone, 0);
+        CancelMemRt(rtLogFleetSplit);
     }
-    if (mdXfer != mdXferShips || grobj2 != grobjOther)
-        goto L_5673;
-CancelSplit:
-    FDeleteFleet(xfer[1].fl.id, grobjNone, 0);
-    CancelMemRt(rtLogFleetSplit);
-L_5673:
     mdXferDlg = mdXferNone;
     return 0;
 }
@@ -1629,7 +1632,7 @@ INT_PTR CALLBACK TransferDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             }
         }
         FSetupXferBtns(&rc);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
         return 1;
@@ -1652,7 +1655,7 @@ INT_PTR CALLBACK TransferDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         case IDCANCEL:
             StickyDlgPos(hwnd, &ptStickyTransferDlg, FALSE);
             EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 AdvanceTutor();
             }
             return 1;
@@ -1660,29 +1663,29 @@ INT_PTR CALLBACK TransferDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(mdXferDlg == mdXferShips ? 1080 : 1075));
             return 1;
         }
+        /* fallthrough */
     default:
         return 0;
     }
 }
 
 int16_t FTrackXfer(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
-    POINT16  ptOld;
-    POINT16  pt;
-    int32_t  dChg;
-    BTNT     btnt;
-    int32_t  cCur;
-    int16_t  i;
-    int16_t  iBtn;
-    int16_t  iVal;
-    BTN      btn;
-    int32_t  cNew;
-    RECT     rc;
-    uint16_t t_merge_5ecd_0001;
+    POINT16 ptOld;
+    POINT16 pt;
+    int32_t dChg;
+    BTNT    btnt;
+    int32_t cCur;
+    int16_t i;
+    int16_t iBtn;
+    int16_t iVal;
+    BTN     btn;
+    int32_t cNew;
+    RECT    rc;
 
     GetClientRect(hwnd, &rc);
     pt.x = x;
     pt.y = y;
-    for (i = 0; i < crgbtnXfer && ((rgbtnXfer[i].bt & 4) != 0 || PtInRect(&rgbtnXfer[i].rc, PointFrom16(pt)) == 0); i++) {
+    for (i = 0; i < crgbtnXfer && ((rgbtnXfer[i].bt & 4) || PtInRect(&rgbtnXfer[i].rc, PointFrom16(pt)) == 0); i++) {
     }
     if (i == crgbtnXfer) {
         return FALSE;
@@ -1690,32 +1693,9 @@ int16_t FTrackXfer(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
     iBtn = i >> 1;
     btn = rgbtnXfer[i];
     iVal = btn.iVal & 0x7f;
-    if (btn.fVisible != 0) {
-        InitBtnTrack(&btnt, hwnd, NULL, &btn.rc, btn.bt, 80, FALSE, FALSE, NULL);
-        if ((fkb & 8) != 0) {
-            dChg = (uint32_t)((fkb & 4) == 0 ? 100 : 1000);
-        } else if ((fkb & 4) != 0) {
-            dChg = 10;
-        } else {
-            dChg = 1;
-        }
-        while (FTrackBtn(&btnt) != 0) {
-            if (mdXferDlg == mdXferShips) {
-                i = (int16_t)LOWORD(dChg) < pxfer[btn.iSide == 0].fl.rgcsh[iVal] ? LOWORD(dChg) : pxfer[btn.iSide == 0].fl.rgcsh[iVal];
-                if (i != 0) {
-                    if (pxfer[btn.iSide].fl.rgcsh[iVal] >= 32766 - i) {
-                        i = 1;
-                    }
-                    pxfer[btn.iSide].fl.rgcsh[iVal] = pxfer[btn.iSide].fl.rgcsh[iVal] + i;
-                    t_merge_5ecd_0001 = btn.iSide == 0;
-                    pxfer[t_merge_5ecd_0001].fl.rgcsh[iVal] -= i;
-                    DrawXferDlg(hwnd, btnt.hdc, &rc, iBtn);
-                }
-            } else if (iVal >= 0 && iVal <= 4 && XferSupply(iVal, btn.iSide == 0 ? dChg : -dChg) != 0) {
-                DrawXferDlg(hwnd, btnt.hdc, &rc, iVal);
-            }
-        }
-    } else if (iVal <= 4) {
+    if (!btn.fVisible) {
+        if (iVal > 4)
+            goto FinishUp;
         if (pxfer[1].grobj == grobjThing) {
             if (iVal == 4 || iVal == 3)
                 goto FinishUp;
@@ -1725,7 +1705,7 @@ int16_t FTrackXfer(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
         SetCapture(hwnd);
         ptOld.y = -1;
         ptOld.x = -1;
-        while (FGetMouseMove(&pt) != 0) {
+        while (FGetMouseMove(&pt)) {
             if (pt.x != ptOld.x || pt.y != ptOld.y) {
                 ptOld = pt;
                 if (btn.iSide == 1 && pxfer[1].grobj == grobjThing) {
@@ -1744,6 +1724,30 @@ int16_t FTrackXfer(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
             }
         }
         ReleaseCapture();
+    } else {
+        InitBtnTrack(&btnt, hwnd, NULL, &btn.rc, btn.bt, 80, FALSE, FALSE, NULL);
+        if (fkb & 8) {
+            dChg = (uint32_t)(!(fkb & 4) ? 100 : 1000);
+        } else if (fkb & 4) {
+            dChg = 10;
+        } else {
+            dChg = 1;
+        }
+        while (FTrackBtn(&btnt)) {
+            if (mdXferDlg == mdXferShips) {
+                i = (int16_t)LOWORD(dChg) < pxfer[btn.iSide == 0].fl.rgcsh[iVal] ? LOWORD(dChg) : pxfer[btn.iSide == 0].fl.rgcsh[iVal];
+                if (i != 0) {
+                    if (pxfer[btn.iSide].fl.rgcsh[iVal] >= 32766 - i) {
+                        i = 1;
+                    }
+                    pxfer[btn.iSide].fl.rgcsh[iVal] = pxfer[btn.iSide].fl.rgcsh[iVal] + i;
+                    pxfer[btn.iSide == 0].fl.rgcsh[iVal] -= i;
+                    DrawXferDlg(hwnd, btnt.hdc, &rc, iBtn);
+                }
+            } else if (iVal >= 0 && iVal <= 4 && XferSupply(iVal, btn.iSide == 0 ? dChg : -dChg) != 0) {
+                DrawXferDlg(hwnd, btnt.hdc, &rc, iVal);
+            }
+        }
     }
 FinishUp:
     UpdateXferBtns();
@@ -1762,12 +1766,7 @@ int32_t GetCargoFree(FLEET *lpfl) {
     return LGetFleetStat(lpfl, 2) - cHave;
 }
 
-int32_t GetFuelFree(FLEET *lpfl) {
-    int32_t t_call_6017;
-
-    t_call_6017 = LGetFleetStat(lpfl, 1);
-    return t_call_6017 - lpfl->rgwtMin[4];
-}
+int32_t GetFuelFree(FLEET *lpfl) { return LGetFleetStat(lpfl, 1) - lpfl->rgwtMin[4]; }
 
 int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg, void *pobj) {
     THING  *pth;
@@ -1776,12 +1775,11 @@ int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg
     FLEET  *pfl;
     PLANET *ppl;
     int32_t wtFree;
-    int32_t t_merge_6425_0001;
 
     switch (grobj) {
     case grobjPlanet:
     case grobjOther:
-        if (pobj != 0) {
+        if (pobj) {
             ppl = pobj;
         } else if (grobj == grobjPlanet) {
             FLookupPlanet(id, &xfer.pl);
@@ -1802,12 +1800,12 @@ int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg
             }
             ppl->rgwtMin[iSupply] += dChg;
         }
-        if (dChg == 0 || pobj != 0 || grobj == grobjOther)
+        if (dChg == 0 || pobj || grobj == grobjOther)
             break;
-        FLookupPlanet(-1, &xfer.pl);
+        FLookupPlanet(idWriteBack, &xfer.pl);
         break;
     case grobjThing:
-        if (pobj != 0) {
+        if (pobj) {
             pth = pobj;
         } else {
             FLookupThing(id, &xfer.th);
@@ -1832,12 +1830,12 @@ int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg
             }
             pth->thp.rgwtMin[iSupply] += LOWORD(dChg);
         }
-        if (dChg == 0 || pobj != 0)
+        if (dChg == 0 || pobj)
             break;
-        FLookupThing(-1, pth);
+        FLookupThing(idWriteBack, pth);
         break;
     default:
-        if (pobj != 0) {
+        if (pobj) {
             pfl = pobj;
         } else {
             FLookupFleet(id, &xfer.fl);
@@ -1853,8 +1851,7 @@ int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg
             if (iSupply == Colonists && pfl->det != detAll) {
                 dChg = 0;
             }
-            t_merge_6425_0001 = iSupply == Fuel ? GetFuelFree(pfl) : GetCargoFree(pfl);
-            if (dChg >= t_merge_6425_0001) {
+            if (dChg >= (iSupply == Fuel ? GetFuelFree(pfl) : GetCargoFree(pfl))) {
                 if (iSupply == Fuel) {
                     dChg = GetFuelFree(pfl);
                 } else {
@@ -1863,8 +1860,8 @@ int32_t ChgCargo(GrobjClass grobj, int16_t id, MineralType iSupply, int32_t dChg
             }
             pfl->rgwtMin[iSupply] += dChg;
         }
-        if (dChg != 0 && pobj == 0) {
-            FLookupFleet(-1, pfl);
+        if (dChg != 0 && !pobj) {
+            FLookupFleet(idWriteBack, pfl);
         }
     }
     return dChg;
@@ -1906,7 +1903,7 @@ void UpdateXferBtns() {
     iLastButton = mdXferDlg == mdXferShips ? cXferValidHulls * 2 : 4;
     for (i = 0; i < crgbtnXfer; i++) {
         iVal = rgbtnXfer[i].iVal;
-        if (rgbtnXfer[i].fVisible != 0 && (iVal <= iLastButton || mdXferDlg == mdXferShips)) {
+        if (rgbtnXfer[i].fVisible && (iVal <= iLastButton || mdXferDlg == mdXferShips)) {
             iSide = rgbtnXfer[i].iSide;
             if (mdXferDlg == mdXferShips) {
                 if (pxfer[iSide].fl.rgcsh[iVal] == 32766) {
@@ -1943,7 +1940,7 @@ void DrawXferDlg(HWND hwnd, HDC hdc, RECT *prc, MineralType iSupply) {
     int16_t dxCtr;
 
     fCreatedDC = FALSE;
-    if (hdc == 0) {
+    if (!hdc) {
         fCreatedDC = TRUE;
         hdc = GetDC(hwnd);
     }
@@ -1951,7 +1948,7 @@ void DrawXferDlg(HWND hwnd, HDC hdc, RECT *prc, MineralType iSupply) {
     if (iSupply < Ironium) {
         PatBlt(hdc, dxCtr, 0, 1, prc->bottom, BLACKNESS);
         for (i = 0; i < crgbtnXfer; i++) {
-            if (rgbtnXfer[i].fVisible != 0) {
+            if (rgbtnXfer[i].fVisible) {
                 DrawBtn(hdc, &rgbtnXfer[i].rc, rgbtnXfer[i].bt, FALSE, NULL);
             }
         }
@@ -1977,7 +1974,7 @@ void DrawXferDlg(HWND hwnd, HDC hdc, RECT *prc, MineralType iSupply) {
         }
     }
 RelDC:
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwnd, hdc);
     }
     return;
@@ -2026,7 +2023,7 @@ int16_t FSetupXferBtns(RECT *prc) {
         for (j = 0; j < 2; j++) {
             rgbtnXfer[cBtn].rc = rcBtn;
             rgbtnXfer[cBtn].bt = j == 0 ? 2 : 3;
-            if (fThingXfer != 0 && i >= 4) {
+            if (fThingXfer && i >= 4) {
                 rgbtnXfer[cBtn].fVisible = FALSE;
                 rgbtnXfer[cBtn].rc.bottom = -100;
             } else {
@@ -2180,7 +2177,7 @@ void DrawFleetCargoXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
     if (iSupply == SupplyAll) {
         SelectObject(hdc, rghfontArial8[1]);
         for (i = 0; i < 6; i++) {
-            if (i != 6 || fOtherPlr == 0) {
+            if (i != 6 || !fOtherPlr) {
                 RightTextOut(hdc, xLeft + dxLabels, yTop, PszGetCompressedString(i + 428), 0, 0);
             }
             yTop += dyArial8 + 6;
@@ -2188,7 +2185,7 @@ void DrawFleetCargoXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
     }
     yTop = rc.bottom + 3;
     xLeft += dxLabels + 6;
-    if (fOtherPlr != 0) {
+    if (fOtherPlr) {
         xRight = xLeft + dxMaxMineralQuan;
         SetRect(&rc, xLeft - 2, yTop - 1, xLeft + dxMaxMineralQuan + 2, yTop + dyArial8 + 1);
         i = 0;
@@ -2313,7 +2310,7 @@ void DrawPlanetXferSide(HDC hdc, RECT *prc, PLANET *ppl, MineralType iSupply) {
     rc.bottom = rc.top + dyArial8 + 2;
     if (iSupply == SupplyAll) {
         _Draw3dFrame(hdc, &rc, 0);
-        if (pl.id != -1) {
+        if (pl.id != idplNone) {
             psz = PszGetPlanetName(pl.id);
         } else {
             psz = PszGetCompressedString(idsDeepSpace);
@@ -2403,10 +2400,10 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
         return NULL;
     }
     if (PtInRect(&rgrcRef[5], PointFrom16(pt)) != 0) {
-        if (fCursor != 0) {
+        if (fCursor) {
             return hcurArrowHelp;
         }
-        if (fRightBtn != 0) {
+        if (fRightBtn) {
             sz255[0] = -1;
             sz255[1] = 0;
             for (i = 0; i < 4; i++) {
@@ -2415,7 +2412,7 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             rgszZip[4] = sz255;
             cMax = 5;
             for (i = 0; i < 4; i++) {
-                if (vrgZip[i].fValid != 0) {
+                if (vrgZip[i].fValid) {
                     rgszZip[cMax++] = vrgZip[i].szName;
                 }
             }
@@ -2429,56 +2426,54 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
                 lpProc = MakeProcInstance(ZipOrderDlg, hInst);
                 fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_ZIP_PROD), hwndFrame, lpProc);
                 FreeProcInstance(lpProc);
-                if (fRet == 0) {
+                if (!fRet) {
                     memcpy(vrgZip, rgzo, 96);
                 }
-            } else {
-                if (i > 4) {
-                    i -= 4;
-                    iSkip = 0;
-                    while (i != 0) {
-                        if (vrgZip[iSkip].fValid != 0) {
-                            i--;
-                            if (i == 0)
-                                break;
-                        }
-                        iSkip++;
+            } else if (i > 4) {
+                i -= 4;
+                iSkip = 0;
+                while (i != 0) {
+                    if (vrgZip[iSkip].fValid) {
+                        i--;
+                        if (i == 0)
+                            break;
                     }
-                    sel.fl.lpplord->rgord[sel.iwpAct].txp = vrgZip[iSkip].txp;
-                } else {
-                    if (i == -1)
-                        goto L_8b82;
-                    lptxp = (TASKXPORT *)&sel.fl.lpplord->rgord[sel.iwpAct].txp;
-                    switch (i) {
-                    case 0:
-                        lptxp->rgia[4].iAction = iActionLoadDunnage;
-                        for (i = 0; i < 3; i++) {
-                            lptxp->rgia[i].iAction = iActionLoadAll;
-                        }
-                        lptxp->rgia[3].iAction = iActionNone;
-                        break;
-                    case 1:
-                        lptxp->rgia[4].iAction = iActionLoadDunnage;
-                        for (i = 0; i <= 3; i++) {
-                            lptxp->rgia[i].iAction = iActionUnloadAll;
-                        }
-                        break;
-                    case 2:
-                        lptxp->rgia[4].iAction = iActionLoadDunnage;
-                        for (i = 0; i < 3; i++) {
-                            lptxp->rgia[i].iAction = iActionWaitPercent;
-                            lptxp->rgia[i].cQuan = 100;
-                        }
-                        lptxp->rgia[3].iAction = iActionNone;
-                        break;
-                    case 3:
-                        for (i = 0; i < 5; i++) {
-                            lptxp->rgia[i].iAction = iActionNone;
-                            lptxp->rgia[i].cQuan = 0;
-                        }
+                    iSkip++;
+                }
+                sel.fl.lpplord->rgord[sel.iwpAct].txp = vrgZip[iSkip].txp;
+                goto LWriteZip;
+            } else if (i != -1) {
+                lptxp = (TASKXPORT *)&sel.fl.lpplord->rgord[sel.iwpAct].txp;
+                switch (i) {
+                case 0:
+                    lptxp->rgia[4].iAction = iActionLoadDunnage;
+                    for (i = 0; i < 3; i++) {
+                        lptxp->rgia[i].iAction = iActionLoadAll;
+                    }
+                    lptxp->rgia[3].iAction = iActionNone;
+                    break;
+                case 1:
+                    lptxp->rgia[4].iAction = iActionLoadDunnage;
+                    for (i = 0; i <= 3; i++) {
+                        lptxp->rgia[i].iAction = iActionUnloadAll;
+                    }
+                    break;
+                case 2:
+                    lptxp->rgia[4].iAction = iActionLoadDunnage;
+                    for (i = 0; i < 3; i++) {
+                        lptxp->rgia[i].iAction = iActionWaitPercent;
+                        lptxp->rgia[i].cQuan = 100;
+                    }
+                    lptxp->rgia[3].iAction = iActionNone;
+                    break;
+                case 3:
+                    for (i = 0; i < 5; i++) {
+                        lptxp->rgia[i].iAction = iActionNone;
+                        lptxp->rgia[i].cQuan = 0;
                     }
                 }
-                FLookupFleet(-1, &sel.fl);
+            LWriteZip:
+                FLookupFleet(idWriteBack, &sel.fl);
                 UpdateOrdersDDs(1);
                 DrawPlanShip(NULL, tileStarbaseOrWaypoint);
             }
@@ -2487,14 +2482,14 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             Popup(hwndPlanet, pt.x, pt.y);
         }
     } else if (PtInRect(&rgrcRef[12], PointFrom16(pt)) != 0) {
-        if (fCursor != 0) {
+        if (fCursor) {
             return hcurArrowHelp;
         }
-        if (fRightBtn != 0) {
+        if (fRightBtn) {
             iChecked = -1;
             lpord = &sel.fl.lpplord->rgord[sel.iwpAct];
             FFindNearestObject(lpord->pt, grobjPlanet | grobjFleet | grobjOther | grobjThing | mdExact, &scan);
-            if (scan.idpl != -1) {
+            if (scan.idpl != idplNone) {
                 rgid[0] = scan.idpl;
             } else {
                 rgid[0] = 268435456;
@@ -2506,7 +2501,7 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             }
             for (i = 0; i < cFleet; i++) {
                 lpfl = rglpfl[i];
-                if (rglpfl[i] == 0)
+                if (!rglpfl[i])
                     break;
                 if (scan.pt.x == lpfl->pt.x && scan.pt.y == lpfl->pt.y && lpfl->id != sel.fl.id) {
                     if (lpord->grobj == grobjFleet && lpord->id == lpfl->id) {
@@ -2525,7 +2520,7 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             lpthMac = lpThings + cThing;
             for (; lpth < lpthMac; lpth++) {
                 if (scan.pt.x == lpth->pt.x && scan.pt.y == lpth->pt.y) {
-                    if (fSep == 0) {
+                    if (!fSep) {
                         if (c >= 100)
                             break;
                         rgid[c++] = -1;
@@ -2541,17 +2536,17 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
                 if (i == 0 && rgid[0] == 268435456) {
                     lpord->grobj = grobjOther;
                     lpord->id = -1;
-                } else if ((rgid[i] & 0x20000000) != 0) {
+                } else if (rgid[i] & 0x20000000) {
                     lpord->grobj = grobjThing;
                     lpord->id = LOWORD(rgid[i]);
-                } else if ((rgid[i] & 0x80000000) != 0) {
+                } else if (rgid[i] & 0x80000000) {
                     lpord->grobj = grobjFleet;
                     lpord->id = LOWORD(rgid[i]);
                 } else {
                     lpord->grobj = grobjPlanet;
                     lpord->id = LOWORD(rgid[0]);
                 }
-                FLookupFleet(-1, &sel.fl);
+                FLookupFleet(idWriteBack, &sel.fl);
                 FillOrdersLB();
                 SetOrdersLbSel(sel.iwpAct);
             }
@@ -2563,11 +2558,11 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             Popup(hwndPlanet, pt.x, pt.y);
         }
     } else {
-        if (fRightBtn != 0) {
+        if (fRightBtn) {
             return NULL;
         }
         if (PtInRect(rgrcRef, PointFrom16(pt)) != 0) {
-            if (sel.grobj != grobjFleet && fCursor != 0) {
+            if (sel.grobj != grobjFleet && fCursor) {
                 return NULL;
             }
             irc = 0;
@@ -2607,10 +2602,10 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             }
         } else {
             if (PtInRect(&rgrcRef[3], PointFrom16(pt)) != 0) {
-                if (fCursor != 0) {
+                if (fCursor) {
                     return hcurHand;
                 }
-                if (sel.fl.idPlanet != -1) {
+                if (sel.fl.idPlanet != idPlanetDeepSpace) {
                     TransferStuff(sel.fl.id, grobjFleet, sel.fl.idPlanet, grobjPlanet, mdXferCargo);
                 } else {
                     lpth = lpThings;
@@ -2626,20 +2621,20 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
                 return NULL;
             }
             if (PtInRect(&rgrcRef[4], PointFrom16(pt)) != 0) {
-                if (fCursor != 0) {
+                if (fCursor) {
                     return hcurHand;
                 }
                 lSel = SendMessage(hwndShipDD, CB_GETCURSEL, 0, 0);
                 if (lSel == -1) {
                     return NULL;
                 }
-                if (FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.grobj == grobjFleet ? sel.fl.id : -1) != 0) {
+                if (FLookupOrbitingXfer(sel.pl.id, LOWORD(lSel), &xf, sel.grobj == grobjFleet ? sel.fl.id : idflNone)) {
                     TransferStuff(sel.id, sel.grobj, xf.id, xf.grobj, mdXferCargo);
                 }
                 return NULL;
             }
             if (PtInRect(&rgrcRef[18], PointFrom16(pt)) != 0) {
-                if ((sel.grobj != grobjFleet && fCursor != 0) || sel.fl.lpplord->rgord[sel.iwpAct].grTask != grTaskPatrol) {
+                if ((sel.grobj != grobjFleet && fCursor) || sel.fl.lpplord->rgord[sel.iwpAct].grTask != grTaskPatrol) {
                     return NULL;
                 }
                 irc = 18;
@@ -2650,11 +2645,10 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             }
         }
     }
-L_8b82:
     if (irc == -1) {
         return NULL;
     }
-    if (fCursor != 0) {
+    if (fCursor) {
         return hcurHand;
     }
     dx = (int16_t)(rgrcRef[irc].right - rgrcRef[irc].left - 2);
@@ -2666,7 +2660,7 @@ L_8b82:
     lTempMax = lMax < lTempMax ? lMax : lTempMax;
     lTempMin = 0 <= lTempMin ? lTempMin : 0;
     fFirst = TRUE;
-    while (fFirst != 0 || FGetMouseMove(&pt) != 0) {
+    while (fFirst || FGetMouseMove(&pt)) {
         fFirst = FALSE;
         if (pt.x != ptOld.x || pt.y != ptOld.y) {
             ptOld = pt;
@@ -2687,7 +2681,7 @@ L_8b82:
                     DrawPlanShip(NULL, tileStarbaseOrWaypoint | tileMinimized);
                     break;
                 case 15:
-                    DrawMassWarpGauge(hdc, &rgrcRef[15], fTwoMAs == 0 ? iWarp : -iWarp, LOWORD(lNew) + 4);
+                    DrawMassWarpGauge(hdc, &rgrcRef[15], !fTwoMAs ? iWarp : -iWarp, LOWORD(lNew) + 4);
                     break;
                 case 2:
                     sel.fl.rgwtMin[4] = lNew;
@@ -2708,42 +2702,32 @@ L_8b82:
         }
     }
     grbit = sel.scan.grobj == grobjOther ? sel.scan.grobjFull : sel.scan.grobj;
-    switch (irc) {
-    case 2:
-        FLookupFleet(-1, &sel.fl);
-        FLookupPlanet(-1, &pl);
+    if (irc == 2) {
+        FLookupFleet(idWriteBack, &sel.fl);
+        FLookupPlanet(idWriteBack, &pl);
         DrawPlanShip(NULL, tileFleetOrders | tileFleetComp | tileMinimized);
-        if ((grbit & 1) != 0 && sel.fl.idPlanet == sel.scan.idpl)
-            goto FixMinWin;
-        if ((grbit & 2) == 0 || sel.fl.id != rglpfl[sel.scan.ifl]->id)
-            break;
-        InvalidateRect(hwndMine, NULL, TRUE);
-        break;
-    case 1:
-        FLookupFleet(-1, &xf.fl);
+        if ((grbit & 1) && sel.fl.idPlanet == sel.scan.idpl) {
+        FixMinWin:
+            InvalidateMineralBars();
+        } else if ((grbit & 2) && sel.fl.id == rglpfl[sel.scan.ifl]->id) {
+            InvalidateRect(hwndMine, NULL, TRUE);
+        }
+    } else if (irc == 1) {
+        FLookupFleet(idWriteBack, &xf.fl);
         if (sel.grobj == grobjFleet) {
-            FLookupFleet(-1, &sel.fl);
+            FLookupFleet(idWriteBack, &sel.fl);
             DrawPlanShip(NULL, tileMineralsOrCargo | tileFleetOrders | tileFleetComp | tileMinimized);
-            break;
+        } else {
+            FLookupPlanet(idWriteBack, &sel.pl);
+            if ((grbit & 1) && sel.pl.id == sel.scan.idpl)
+                goto FixMinWin;
         }
-        FLookupPlanet(-1, &sel.pl);
-        if ((grbit & 1) != 0 && sel.pl.id == sel.scan.idpl)
-            goto FixMinWin;
-        break;
-    case 0:
-    case 18:
-        FLookupFleet(-1, &sel.fl);
-        break;
-    case 15:
-        if (LOWORD(lCur) != sel.pl.iWarpFling) {
-            sel.pl.iWarpFling = LOWORD(lCur);
-            FLookupPlanet(-1, &sel.pl);
-        }
+    } else if (irc == 0 || irc == 18) {
+        FLookupFleet(idWriteBack, &sel.fl);
+    } else if (irc == 15 && LOWORD(lCur) != sel.pl.iWarpFling) {
+        sel.pl.iWarpFling = LOWORD(lCur);
+        FLookupPlanet(idWriteBack, &sel.pl);
     }
-    goto L_914e;
-FixMinWin:
-    InvalidateMineralBars();
-L_914e:
     ReleaseCapture();
     return (HCURSOR)(uintptr_t)ReleaseDC(hwndPlanet, hdc);
 }
@@ -2784,8 +2768,8 @@ void FillOrdersLB() {
 
 void SetOrdersLbSel(int16_t iSel) {
     SendMessage(hwndShipLB, LB_SETCURSEL, iSel, 0);
-    if (iSel > (gd.fSmallTileMode == 0 ? 2 : 1)) {
-        SendMessage(hwndShipLB, LB_SETTOPINDEX, iSel - (gd.fSmallTileMode == 0 ? 2 : 1), 0);
+    if (iSel > (!gd.fSmallTileMode ? 2 : 1)) {
+        SendMessage(hwndShipLB, LB_SETTOPINDEX, iSel - (!gd.fSmallTileMode ? 2 : 1), 0);
     }
     UpdateWindow(hwndShipLB);
     UpdateOrdersDDs(0);
@@ -2807,77 +2791,79 @@ void UpdateOrdersDDs(int16_t iLevel) {
     } else {
         rglSel[0] = SendMessage(rghwndOrderDD[0], CB_GETCURSEL, 0, 0);
     }
-    if (iLevel > 1) {
-        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_GETCURSEL, 0, 0);
-        if (rglSel[0] != 1 || iLevel > 3)
-            goto L_987f;
-        iSel = LOWORD(rglSel[1]);
-        if (iSel == 0) {
-            iSel = 4;
-        } else {
-            iSel--;
-        }
-    }
-    SendMessage(rghwndOrderDD[1], CB_RESETCONTENT, 0, 0);
-    switch (rglSel[0]) {
-    case 1:
-        iMax = LGetFleetStat(&sel.fl, 2) == 0 ? 1 : 5;
-        for (i = 0; i < iMax; i++) {
-            if (i == 0) {
-                iMin = 4;
-            } else {
-                iMin = i - 1;
-            }
-            strcpy(&szWork[1], rgszMinerals[iMin]);
-            if (sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[iMin].iAction != iActionNone) {
-                szWork[0] = '*';
-                if (iSel == -1) {
-                    iSel = iMin;
+    if (iLevel <= 1) {
+    DoMinerals:
+        SendMessage(rghwndOrderDD[1], CB_RESETCONTENT, 0, 0);
+        switch (rglSel[0]) {
+        case 1:
+            iMax = LGetFleetStat(&sel.fl, 2) == 0 ? 1 : 5;
+            for (i = 0; i < iMax; i++) {
+                if (i == 0) {
+                    iMin = 4;
+                } else {
+                    iMin = i - 1;
                 }
+                strcpy(&szWork[1], rgszMinerals[iMin]);
+                if (sel.fl.lpplord->rgord[sel.iwpAct].txp.rgia[iMin].iAction != iActionNone) {
+                    szWork[0] = '*';
+                    if (iSel == -1) {
+                        iSel = iMin;
+                    }
+                } else {
+                    szWork[0] = ' ';
+                }
+                SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
+            }
+            if (iSel == -1 || iSel == 4) {
+                iSel = 0;
             } else {
-                szWork[0] = ' ';
+                iSel++;
             }
-            SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
-        }
-        if (iSel == -1 || iSel == 4) {
-            iSel = 0;
-        } else {
-            iSel++;
-        }
-        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
-        break;
-    case 7:
-        psz = PszGetCompressedString(idsWithinDLY);
-        for (i = 0; i < 11; i++) {
-            _wsprintf(szWork, psz, 50 * i + 50);
-            SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
-        }
-        psz = PszGetCompressedString(idsAnyEnemy);
-        SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)psz);
-        iSel = sel.fl.lpplord->rgord[sel.iwpAct].tptl.iDist;
-        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
-        break;
-    case 9:
-        szT[0] = ' ';
-        for (i = 0; i < game.cPlayer; i++) {
-            if (i != idPlayer) {
-                psz = PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL);
-                strcpy(&szT[1], psz);
-                SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szT);
+            rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
+            break;
+        case 7:
+            psz = PszGetCompressedString(idsWithinDLY);
+            for (i = 0; i < 11; i++) {
+                _wsprintf(szWork, psz, 50 * i + 50);
+                SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
             }
+            psz = PszGetCompressedString(idsAnyEnemy);
+            SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)psz);
+            iSel = sel.fl.lpplord->rgord[sel.iwpAct].tptl.iDist;
+            rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
+            break;
+        case 9:
+            szT[0] = ' ';
+            for (i = 0; i < game.cPlayer; i++) {
+                if (i != idPlayer) {
+                    psz = PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL);
+                    strcpy(&szT[1], psz);
+                    SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szT);
+                }
+            }
+            iSel = sel.fl.lpplord->rgord[sel.iwpAct].tsell.iPlrX;
+            rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
+            break;
+        case 6:
+            for (i = 0; i < 5; i++) {
+                _wsprintf(szWork, PszGetCompressedString(idsDYearC), i + 1, i == 0 ? 32 : 115);
+                SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
+            }
+            SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(idsIindefinitely));
+            rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, sel.fl.lpplord->rgord[sel.iwpAct].tsell.iPlrX, 0);
         }
-        iSel = sel.fl.lpplord->rgord[sel.iwpAct].tsell.iPlrX;
-        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, iSel, 0);
-        break;
-    case 6:
-        for (i = 0; i < 5; i++) {
-            _wsprintf(szWork, PszGetCompressedString(idsDYearC), i + 1, i == 0 ? 32 : 115);
-            SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)szWork);
+    } else {
+        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_GETCURSEL, 0, 0);
+        if (rglSel[0] == 1 && iLevel <= 3) {
+            iSel = LOWORD(rglSel[1]);
+            if (iSel == 0) {
+                iSel = 4;
+            } else {
+                iSel--;
+            }
+            goto DoMinerals;
         }
-        SendMessage(rghwndOrderDD[1], CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(idsIindefinitely));
-        rglSel[1] = SendMessage(rghwndOrderDD[1], CB_SETCURSEL, sel.fl.lpplord->rgord[sel.iwpAct].tsell.iPlrX, 0);
     }
-L_987f:
     if (iLevel <= 2) {
         SendMessage(rghwndOrderDD[2], CB_RESETCONTENT, 0, 0);
         if (rglSel[0] == 1) {
@@ -2938,7 +2924,7 @@ void DeleteCurWayPoint(int16_t fBackup) {
     if (sel.fl.cord < 2 || sel.iwpAct == 0) {
         MessageBeep(MB_ICONASTERISK);
     } else {
-        if ((grbitScan & grbitScanFleetPaths) != 0) {
+        if (grbitScan & grbitScanFleetPaths) {
             rgpt[0] = sel.fl.lpplord->rgord[sel.iwpAct].pt;
             rgpt[1] = sel.fl.lpplord->rgord[sel.iwpAct - 1].pt;
             if (sel.iwpAct < sel.fl.cord - 1) {
@@ -2961,15 +2947,15 @@ void DeleteCurWayPoint(int16_t fBackup) {
                 sel.fl.lpplord->iordMac--;
             }
         }
-        if (fBackup == 0 && sel.iwpAct < sel.fl.cord - 1) {
+        if (!fBackup && sel.iwpAct < sel.fl.cord - 1) {
             sel.iwpAct++;
         }
         RedrawScanSel(NULL, 0);
-        FLookupFleet(-1, &sel.fl);
+        FLookupFleet(idWriteBack, &sel.fl);
         FFindNearestObject(sel.fl.lpplord->rgord[sel.iwpAct].pt, grobjPlanet | grobjFleet | grobjOther | grobjThing | mdExact, &scan);
         sel.iwpAct = -2;
         ChangeScanSel(&scan, 1);
-        if ((grbitScan & grbitScanFleetPaths) != 0) {
+        if (grbitScan & grbitScanFleetPaths) {
             for (ipt = 0; ipt < cpt; ipt++) {
                 LogicalToScan(&rgpt[ipt]);
             }
@@ -2983,7 +2969,7 @@ void DeleteCurWayPoint(int16_t fBackup) {
 void DeleteWpFar(FLEET *lpfl, int16_t iDel, int16_t fRecycle) {
     ORDER ord;
 
-    if (fRecycle != 0) {
+    if (fRecycle) {
         if (iDel == 86 || lpfl->cord == 2 ||
             (lpfl->lpplord->rgord[lpfl->cord - 1].pt.x == lpfl->lpplord->rgord[iDel].pt.x &&
              lpfl->lpplord->rgord[lpfl->cord - 1].pt.y == lpfl->lpplord->rgord[iDel].pt.y)) {
@@ -2993,7 +2979,7 @@ void DeleteWpFar(FLEET *lpfl, int16_t iDel, int16_t fRecycle) {
         }
     }
     fmemmove(&lpfl->lpplord->rgord[iDel], &lpfl->lpplord->rgord[iDel + 1], (lpfl->cord - iDel - 1) * sizeof(ORDER));
-    if (fRecycle != 0) {
+    if (fRecycle) {
         lpfl->lpplord->rgord[lpfl->cord - 1] = ord;
     } else {
         lpfl->cord--;
@@ -3003,22 +2989,20 @@ void DeleteWpFar(FLEET *lpfl, int16_t iDel, int16_t fRecycle) {
 }
 
 int32_t EstFuelUse(FLEET *lpfl, int16_t iOrd, int16_t iWarp, int32_t dTravel, int16_t fRangeOnly) {
-    int32_t  iEffNext;
-    int32_t  lT;
-    int16_t  fEfficient;
-    double   d;
-    int32_t  iEffCur;
-    int32_t  wtCargoT;
-    int32_t  lFuel;
-    ORDER   *lpord;
-    int16_t  i;
-    SHDEF   *lpshdef;
-    int32_t  wtCargo;
-    int16_t  j;
-    int32_t  wtMass;
-    int32_t  rgieff[16];
-    uint16_t t_scratch_m76;
-    int16_t  t_call_a40a;
+    int32_t iEffNext;
+    int32_t lT;
+    int16_t fEfficient;
+    double  d;
+    int32_t iEffCur;
+    int32_t wtCargoT;
+    int32_t lFuel;
+    ORDER  *lpord;
+    int16_t i;
+    SHDEF  *lpshdef;
+    int32_t wtCargo;
+    int16_t j;
+    int32_t wtMass;
+    int32_t rgieff[16];
 
     iEffCur = 0;
     gd.fRadiatingEngine = FALSE;
@@ -3026,37 +3010,29 @@ int32_t EstFuelUse(FLEET *lpfl, int16_t iOrd, int16_t iWarp, int32_t dTravel, in
         iWarp = lpfl->lpplord->rgord[iOrd + 1].iWarp;
     }
     fEfficient = GetRaceGrbit(&rgplr[lpfl->iPlayer], ibitRaceIFE);
-    i = 0;
-    lpshdef = rglpshdef[lpfl->iPlayer];
-    while (i < 16) {
+    for (i = 0, lpshdef = rglpshdef[lpfl->iPlayer]; i < 16; i++, lpshdef++) {
         if (lpfl->rgcsh[i] != 0) {
             for (j = 0; j < lpshdef->hul.chs && lpshdef->hul.rghs[j].grhst != hstEngine; j++) {
             }
-            if (j != lpshdef->hul.chs) {
-                t_scratch_m76 = lpshdef->hul.rghs[j].cItem;
-                if (t_scratch_m76 >= LphuldefFromId(lpshdef->hul.ihuldef)->hul.rghs[j].cItem) {
-                    rgieff[i] = LpengineFromId(lpshdef->hul.rghs[j].iItem)->rgcFuelUsed[iWarp];
-                    if (fEfficient != 0) {
-                        rgieff[i] -= (int32_t)(rgieff[i] * 15) / 100;
-                    }
-                    if (lpshdef->hul.rghs[j].iItem != 10)
-                        goto L_a07d;
-                    gd.fRadiatingEngine = TRUE;
-                    goto L_a07d;
-                }
+            if (j == lpshdef->hul.chs || lpshdef->hul.rghs[j].cItem < LphuldefFromId(lpshdef->hul.ihuldef)->hul.rghs[j].cItem) {
+                rgieff[i] = 99999;
+                continue;
             }
-            rgieff[i] = 99999;
+            rgieff[i] = LpengineFromId(lpshdef->hul.rghs[j].iItem)->rgcFuelUsed[iWarp];
+            if (fEfficient) {
+                rgieff[i] -= (int32_t)(rgieff[i] * 15) / 100;
+            }
+            if (lpshdef->hul.rghs[j].iItem == iengineRadiatingHydroRamScoop) {
+                gd.fRadiatingEngine = TRUE;
+            }
         }
-    L_a07d:
-        i++;
-        lpshdef++;
     }
     wtCargo = 0;
     for (i = 0; i <= 3; i++) {
         wtCargo += lpfl->rgwtMin[i];
     }
     if (dTravel == -1) {
-        if (fRangeOnly != 0) {
+        if (fRangeOnly) {
             dTravel = 1000;
         } else {
             lpord = &lpfl->lpplord->rgord[iOrd];
@@ -3073,8 +3049,7 @@ int32_t EstFuelUse(FLEET *lpfl, int16_t iOrd, int16_t iWarp, int32_t dTravel, in
                     if (wtCargo < (int32_t)(uint32_t)(lpfl->rgcsh[i] * WtMaxShdefStat(rglpshdef[lpfl->iPlayer] + i, 2))) {
                         wtCargoT = wtCargo;
                     } else {
-                        t_call_a40a = WtMaxShdefStat(rglpshdef[lpfl->iPlayer] + i, 2);
-                        wtCargoT = (uint32_t)(lpfl->rgcsh[i] * (int16_t)t_call_a40a);
+                        wtCargoT = (uint32_t)(lpfl->rgcsh[i] * (int16_t)WtMaxShdefStat(rglpshdef[lpfl->iPlayer] + i, 2));
                     }
                     wtCargo -= wtCargoT;
                     if (rgieff[i] > 0) {
@@ -3095,11 +3070,11 @@ int32_t EstFuelUse(FLEET *lpfl, int16_t iOrd, int16_t iWarp, int32_t dTravel, in
             break;
         iEffCur = iEffNext;
     }
-    if (fRangeOnly == 0) {
+    if (!fRangeOnly) {
         lFuel += 9;
     }
     lFuel = (int32_t)(lFuel / 10);
-    if (fRangeOnly != 0) {
+    if (fRangeOnly) {
         if (lFuel == 0) {
             lFuel = 1000000000;
         } else if (lFuel > 100000) {
@@ -3125,7 +3100,7 @@ int16_t IFindIdealWarp(FLEET *lpfl, int16_t fIgnoreScoops) {
     ENGINE *lpengine;
 
     iWorst = 10;
-    if (lpfl == 0) {
+    if (!lpfl) {
         lpfl = &sel.fl;
     }
     for (i = 0; i < 16; i++) {
@@ -3140,7 +3115,7 @@ int16_t IFindIdealWarp(FLEET *lpfl, int16_t fIgnoreScoops) {
             lpengine = LpengineFromId(j);
             for (; iWorst > 0; iWorst--) {
                 if (lpengine->rgcFuelUsed[iWorst] <= 120) {
-                    if (lpengine->rgcFuelUsed[iWorst] > 0 && fIgnoreScoops == 0 && j != 14 && j != 15) {
+                    if (lpengine->rgcFuelUsed[iWorst] > 0 && !fIgnoreScoops && j != iengineTransGalacticMizerScoop && j != iengineGalaxyScoop) {
                         if (iWorst >= 5 && lpengine->rgcFuelUsed[iWorst - 1] == 0) {
                             iWorst--;
                         } else if (iWorst >= 6 && lpengine->rgcFuelUsed[iWorst - 2] == 0) {
@@ -3153,11 +3128,11 @@ int16_t IFindIdealWarp(FLEET *lpfl, int16_t fIgnoreScoops) {
                         switch (j) {
                         default:
                             iWorst = 9;
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 14:
-                        case 15:
+                        case iengineInterspace10:
+                        case iengineEnigmaPulsar:
+                        case iengineTransStar10:
+                        case iengineTransGalacticMizerScoop:
+                        case iengineGalaxyScoop:
                             break;
                         }
                     }
@@ -3233,8 +3208,7 @@ int32_t LFuelUseToWaypoint(FLEET *lpfl, int16_t iwp, int16_t fMaxCargo) {
         }
         if (lpord[i + 1].grobj == grobjPlanet) {
             lppl = LpplFromId(lpord[i + 1].id);
-            if (lppl != 0 && lppl->iPlayer == idPlayer && lppl->fStarbase != 0 &&
-                LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) {
+            if (lppl && lppl->iPlayer == idPlayer && lppl->fStarbase && LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) {
                 lCur = 0;
             }
         }
@@ -3243,39 +3217,38 @@ int32_t LFuelUseToWaypoint(FLEET *lpfl, int16_t iwp, int16_t fMaxCargo) {
 }
 
 void FleetTransferCargoBalance(FLEET *pflNew1, FLEET *pflNew2) {
-    int16_t  iplr;
-    int32_t  rgCargoCapLoss[2];
-    int32_t  wtCargoXfer;
-    int16_t  fDeadFleet;
-    int32_t  wtCargoTot;
-    int16_t  rgrgcshLoss[2][16];
-    int32_t  rgrgCargoDelta[2][5];
-    int32_t  rgFuelCapacity[2];
-    FLEET   *rgpflNew[2];
-    int16_t  wtCargoMax;
-    int16_t  wtFuelMax;
-    int16_t  i;
-    int32_t  lChg;
-    int32_t  rgFuelCapLoss[2];
-    FLEET    rgflCur[2];
-    int16_t  j;
-    SHDEF   *lpshdef;
-    int32_t  rgCargoCapacity[2];
-    int16_t  ishdef;
-    int32_t  l;
-    int32_t  cshDmgDst;
-    int32_t  cshDmgSrc;
-    int16_t  iSrc;
-    int32_t  pctNew;
-    int32_t  cshDmgMoved;
-    uint16_t t_merge_c236_0001;
+    int16_t iplr;
+    int32_t rgCargoCapLoss[2];
+    int32_t wtCargoXfer;
+    int16_t fDeadFleet;
+    int32_t wtCargoTot;
+    int16_t rgrgcshLoss[2][16];
+    int32_t rgrgCargoDelta[2][5];
+    int32_t rgFuelCapacity[2];
+    FLEET  *rgpflNew[2];
+    int16_t wtCargoMax;
+    int16_t wtFuelMax;
+    int16_t i;
+    int32_t lChg;
+    int32_t rgFuelCapLoss[2];
+    FLEET   rgflCur[2];
+    int16_t j;
+    SHDEF  *lpshdef;
+    int32_t rgCargoCapacity[2];
+    int16_t ishdef;
+    int32_t l;
+    int32_t cshDmgDst;
+    int32_t cshDmgSrc;
+    int16_t iSrc;
+    int32_t pctNew;
+    int32_t cshDmgMoved;
 
     fDeadFleet = FALSE;
     rgpflNew[0] = pflNew1;
     rgpflNew[1] = pflNew2;
     iplr = pflNew1->iPlayer;
     for (i = 0; i < 2; i++) {
-        if (rgpflNew[i]->fDead != 0) {
+        if (rgpflNew[i]->fDead) {
             fDeadFleet = TRUE;
             memset(&rgflCur[i], 0, sizeof(FLEET));
             rgflCur[i].iPlayer = iplr;
@@ -3306,7 +3279,7 @@ void FleetTransferCargoBalance(FLEET *pflNew1, FLEET *pflNew2) {
                     }
                 }
             }
-            if (fDeadFleet == 0 && rgrgcshLoss[0][ishdef] == -rgrgcshLoss[1][ishdef] && rgrgcshLoss[0][ishdef] != 0) {
+            if (!fDeadFleet && rgrgcshLoss[0][ishdef] == -rgrgcshLoss[1][ishdef] && rgrgcshLoss[0][ishdef] != 0) {
                 iSrc = rgrgcshLoss[0][ishdef] < 0;
                 if (rgflCur[iSrc].rgcsh[ishdef] > 0) {
                     cshDmgSrc = (int32_t)(rgflCur[iSrc].rgdv[ishdef].pctSh * rgflCur[iSrc].rgcsh[ishdef]) / 100;
@@ -3408,8 +3381,7 @@ void FleetTransferCargoBalance(FLEET *pflNew1, FLEET *pflNew2) {
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 5; j++) {
             rgpflNew[i]->rgwtMin[j] += rgrgCargoDelta[i][j];
-            t_merge_c236_0001 = i == 0;
-            rgpflNew[t_merge_c236_0001]->rgwtMin[j] -= rgrgCargoDelta[i][j];
+            rgpflNew[i == 0]->rgwtMin[j] -= rgrgCargoDelta[i][j];
         }
     }
     return;
@@ -3422,7 +3394,7 @@ void DestroyAllIshdefSB(int16_t ishdefSB, int16_t iplr) {
     lppl = lpPlanets;
     lpplMac = lpPlanets + cPlanet;
     for (; lppl < lpplMac; lppl++) {
-        if (lppl->iPlayer == iplr && lppl->fStarbase != 0 && lppl->isb == ishdefSB) {
+        if (lppl->iPlayer == iplr && lppl->fStarbase && lppl->isb == ishdefSB) {
             lppl->fStarbase = FALSE;
             KillQueuedShips(lppl);
             KillQueuedMassPackets(lppl);
@@ -3446,41 +3418,38 @@ void DestroyAllIshdef(int16_t ishdef, int16_t iplr) {
         DestroyAllIshdefSB(ishdef - 16, iplr);
         InvalidateReport(rptPlanets, 1);
     } else {
-        lpfl = *rglpfl;
-        i = 0;
-        while (i < cFleet) {
-            if (lpfl->iPlayer == iplr && lpfl->rgcsh[ishdef] > 0) {
-                memset(&flDead, 0, sizeof(FLEET));
-                cKill = lpfl->rgcsh[ishdef];
-                cDel += cKill;
-                for (j = 0; j < 16 && (j == ishdef || lpfl->rgcsh[j] == 0); j++) {
-                }
-                if (j == 16) {
-                    lpfl->rgcsh[ishdef] = 0;
-                    FDeleteFleet(lpfl->id, grobjNone, -1);
-                    goto L_c392;
-                }
-                flDead.iplr = iplr;
-                flDead.fDead = TRUE;
-                flDead.rgcsh[ishdef] = cKill;
-                flNew = *lpfl;
-                flNew.rgcsh[ishdef] = 0;
-                FleetTransferCargoBalance(&flNew, &flDead);
-                *lpfl = flNew;
-                if (sel.grobj == grobjFleet && sel.fl.id == flNew.id) {
-                    FLookupFleet(flNew.id, &sel.fl);
-                    RedrawScanSel(NULL, 0);
-                    FillShipDD(sel.fl.id);
-                    grbit = -31819;
-                    FLookupFleet(sel.fl.id, &sel.fl);
-                    FillFleetCompLB();
-                    DrawPlanShip(NULL, grbit);
-                    InvalidateRect(hwndMine, NULL, TRUE);
-                }
+        for (lpfl = *rglpfl, i = 0; i < cFleet; lpfl = rglpfl[i]) {
+            if (lpfl->iPlayer != iplr || lpfl->rgcsh[ishdef] <= 0)
+                goto IncrementI;
+            memset(&flDead, 0, sizeof(FLEET));
+            cKill = lpfl->rgcsh[ishdef];
+            cDel += cKill;
+            for (j = 0; j < 16 && (j == ishdef || lpfl->rgcsh[j] == 0); j++) {
             }
+            if (j == 16) {
+                lpfl->rgcsh[ishdef] = 0;
+                FDeleteFleet(lpfl->id, grobjNone, -1);
+                continue;
+            }
+            flDead.iplr = iplr;
+            flDead.fDead = TRUE;
+            flDead.rgcsh[ishdef] = cKill;
+            flNew = *lpfl;
+            flNew.rgcsh[ishdef] = 0;
+            FleetTransferCargoBalance(&flNew, &flDead);
+            *lpfl = flNew;
+            if (sel.grobj == grobjFleet && sel.fl.id == flNew.id) {
+                FLookupFleet(flNew.id, &sel.fl);
+                RedrawScanSel(NULL, 0);
+                FillShipDD(sel.fl.id);
+                grbit = -31819;
+                FLookupFleet(sel.fl.id, &sel.fl);
+                FillFleetCompLB();
+                DrawPlanShip(NULL, grbit);
+                InvalidateRect(hwndMine, NULL, TRUE);
+            }
+        IncrementI:
             i++;
-        L_c392:
-            lpfl = rglpfl[i];
         }
         InvalidateReport(rptFleets, 1);
     }
@@ -3498,8 +3467,8 @@ void RemoveIshdefFromAllQueues(int16_t ishdef, int16_t fSpaceDocks) {
     lppl = lpPlanets;
     lpplMac = lpPlanets + cPlanet;
     for (; lppl < lpplMac; lppl++) {
-        if (lppl->lpplprod != 0 && lppl->lpplprod->iprodMac != 0 && lppl->iPlayer == idPlayer && lppl->fStarbase != 0 &&
-            (fSpaceDocks == 0 || rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef == ihuldefSpaceDock)) {
+        if (lppl->lpplprod && lppl->lpplprod->iprodMac != 0 && lppl->iPlayer == idPlayer && lppl->fStarbase &&
+            (!fSpaceDocks || rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef == ihuldefSpaceDock)) {
             iDst = 0;
             iprod = 0;
             lpprod = lppl->lpplprod->rgprod;
@@ -3521,7 +3490,7 @@ void RemoveIshdefFromAllQueues(int16_t ishdef, int16_t fSpaceDocks) {
             }
         }
     }
-    if (sel.grobj == grobjPlanet && sel.pl.lpplprod != 0) {
+    if (sel.grobj == grobjPlanet && sel.pl.lpplprod) {
         FLookupPlanet(sel.pl.id, &sel.pl);
         FillPlanetProdLB(hwndPlanetProdLB, sel.pl.lpplprod, NULL);
     }
@@ -3536,19 +3505,19 @@ int16_t CshQueued(int16_t ishdef, int16_t *pfProgress, int16_t fSpaceDocks) {
     PROD   *lpprod;
 
     csh = 0;
-    *pfProgress = 0;
+    *pfProgress = FALSE;
     lppl = lpPlanets;
     lpplMac = lpPlanets + cPlanet;
     for (; lppl < lpplMac; lppl++) {
-        if (lppl->lpplprod != 0 && lppl->lpplprod->iprodMac != 0 && lppl->iPlayer == idPlayer && lppl->fStarbase != 0 &&
-            (fSpaceDocks == 0 || rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef == ihuldefSpaceDock)) {
+        if (lppl->lpplprod && lppl->lpplprod->iprodMac != 0 && lppl->iPlayer == idPlayer && lppl->fStarbase &&
+            (!fSpaceDocks || rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef == ihuldefSpaceDock)) {
             iprod = 0;
             lpprod = lppl->lpplprod->rgprod;
             while (iprod < lppl->lpplprod->iprodMac) {
                 if (lpprod->grobj == grobjFleet && lpprod->iItem == (uint32_t)ishdef) {
                     csh += lpprod->cItem;
                     if (lpprod->pct != 0) {
-                        *pfProgress = 1;
+                        *pfProgress = TRUE;
                     }
                 }
                 iprod++;
@@ -3571,9 +3540,9 @@ void Merge2Fleets(FLEET *lpflDst, FLEET *lpflDel, int16_t fNoDelete) {
     }
     FleetTransferCargoBalance(rgfl, &rgfl[1]);
     for (i = 0; i < 2; i++) {
-        FLookupFleet(-1, &rgfl[i]);
+        FLookupFleet(idWriteBack, &rgfl[i]);
     }
-    if (fNoDelete != 0) {
+    if (fNoDelete) {
         lpflDel->fDead = TRUE;
     } else {
         FDeleteFleet(rgfl[1].id, grobjFleet, rgfl[0].id);
@@ -3595,23 +3564,25 @@ void FleetOrdersChangeTarget(FLEET *lpflOld) {
     fChg = FALSE;
     for (iflMac = 0; iflMac < cFleet; iflMac++) {
         lpfl = rglpfl[iflMac];
-        if (rglpfl[iflMac] == 0)
+        if (!rglpfl[iflMac])
             break;
-        if (lpfl->lpplord != 0) {
+        if (lpfl->lpplord) {
             for (iord = lpfl->cord - 1; iord >= 0; iord--) {
                 if (lpfl->lpplord->rgord[iord].grobj == grobjFleet && lpfl->lpplord->rgord[iord].id == lpflOld->id) {
-                    if (fChg == 0) {
+                    if (!fChg) {
                         pt = lpflOld->pt;
                         lpflOld->pt.x++;
-                        if (FFindNearestObject(pt, grobjPlanet | grobjFleet | mdExact, &scan) == 0) {
+                        if (FFindNearestObject(pt, grobjPlanet | grobjFleet | mdExact, &scan)) {
+                            if (scan.grobjFull & grobjFleet) {
+                                grobj = grobjFleet;
+                                id = rglpfl[scan.ifl]->id;
+                            } else {
+                                grobj = grobjPlanet;
+                                id = scan.idpl;
+                            }
+                        } else {
                             grobj = grobjOther;
                             id = iord;
-                        } else if ((scan.grobjFull & grobjFleet) != 0) {
-                            grobj = grobjFleet;
-                            id = rglpfl[scan.ifl]->id;
-                        } else {
-                            grobj = grobjPlanet;
-                            id = scan.idpl;
                         }
                         lpflOld->pt.x--;
                     }
@@ -3635,48 +3606,50 @@ void GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost) {
         rgCost[i] = lpcom->rgwtOreCost[i];
     }
     rgCost[3] = lpcom->resCost;
-    if (iPlayer != -1) {
-        if ((ppart->hs.grhst & hstTerra) == 0 && ((ppart->hs.grhst & hstPlanetary) == 0 || ppart->hs.iItem < 9 || ppart->hs.iItem > 13) &&
-            ((ppart->hs.grhst & hstPlanetary) == 0 || ppart->hs.iItem < 0 || ppart->hs.iItem > 8)) {
-            cExcess = 100;
+    if (iPlayer != iplrNone) {
+        if ((ppart->hs.grhst & hstTerra) ||
+            ((ppart->hs.grhst & hstPlanetary) && ppart->hs.iItem >= iplanetarySDI && ppart->hs.iItem <= iplanetaryNeutronShield) ||
+            ((ppart->hs.grhst & hstPlanetary) && ppart->hs.iItem >= iplanetaryViewer50 && ppart->hs.iItem <= iplanetarySnooper620X))
+            goto LOtherDiddles;
+        cExcess = 100;
+        for (i = 0; i < 6; i++) {
+            cCur = rgplr[iPlayer].rgTech[i] - lpcom->rgTech[i];
+            if (lpcom->rgTech[i] > 0 && cCur < cExcess) {
+                cExcess = cCur;
+            }
+        }
+        if (cExcess == 100) {
             for (i = 0; i < 6; i++) {
-                cCur = rgplr[iPlayer].rgTech[i] - lpcom->rgTech[i];
-                if (lpcom->rgTech[i] > 0 && cCur < cExcess) {
-                    cExcess = cCur;
+                if (rgplr[iPlayer].rgTech[i] < cExcess) {
+                    cExcess = rgplr[iPlayer].rgTech[i];
                 }
             }
-            if (cExcess == 100) {
-                for (i = 0; i < 6; i++) {
-                    if (rgplr[iPlayer].rgTech[i] < cExcess) {
-                        cExcess = rgplr[iPlayer].rgTech[i];
-                    }
+        }
+        if (cExcess >= 1) {
+            if (cExcess > 19) {
+                cExcess = 19;
+            }
+            if (GetRaceGrbit(&rgplr[iPlayer], ibitRaceBleedingEdgeTech) != 0) {
+                cExcess = 5 * cExcess;
+                if (cExcess > 80) {
+                    cExcess = 80;
+                }
+            } else {
+                cExcess *= 4;
+                if (cExcess > 75) {
+                    cExcess = 75;
                 }
             }
-            if (cExcess >= 1) {
-                if (cExcess > 19) {
-                    cExcess = 19;
-                }
-                if (GetRaceGrbit(&rgplr[iPlayer], ibitRaceBleedingEdgeTech) != 0) {
-                    cExcess = 5 * cExcess;
-                    if (cExcess > 80) {
-                        cExcess = 80;
-                    }
-                } else {
-                    cExcess *= 4;
-                    if (cExcess > 75) {
-                        cExcess = 75;
-                    }
-                }
-                for (i = 0; i < 4; i++) {
-                    if (rgCost[i] > 0) {
-                        rgCost[i] -= MulDiv(rgCost[i], cExcess, 100);
-                        if (rgCost[i] == 0) {
-                            rgCost[i] = 1;
-                        }
+            for (i = 0; i < 4; i++) {
+                if (rgCost[i] > 0) {
+                    rgCost[i] -= MulDiv(rgCost[i], cExcess, 100);
+                    if (rgCost[i] == 0) {
+                        rgCost[i] = 1;
                     }
                 }
             }
         }
+    LOtherDiddles:
         if (ppart->hs.grhst == hstSpecialSB && GetRaceStat(&rgplr[iPlayer], rsMajorAdv) == raStargate &&
             GetRaceStat(&rgplr[iPlayer], rsMajorAdv) == raStargate && ppart->hs.iItem >= ispecialSBStargate100250 &&
             ppart->hs.iItem <= ispecialSBStargateAnyAny) {
@@ -3694,6 +3667,7 @@ void GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost) {
                     }
                     break;
                 }
+                /* fallthrough */
             default:
                 switch (ppart->hs.grhst) {
                 case hstBeam:
@@ -3705,6 +3679,7 @@ void GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost) {
                         }
                         break;
                     }
+                    /* fallthrough */
                 default:
                     if (ppart->hs.grhst == hstTerra && GetRaceStat(&rgplr[iPlayer], rsMajorAdv) == raTerra) {
                         rgCost[3] = (uint32_t)rgCost[3] / 2;
@@ -3716,7 +3691,7 @@ void GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost) {
                 }
             }
         }
-        if (cExcess < 1 && GetRaceGrbit(&rgplr[iPlayer], ibitRaceBleedingEdgeTech) != 0 && gd.fDontCalcBleed == 0) {
+        if (cExcess < 1 && GetRaceGrbit(&rgplr[iPlayer], ibitRaceBleedingEdgeTech) != 0 && !gd.fDontCalcBleed) {
             for (i = 0; i < 6 && lpcom->rgTech[i] <= 0; i++) {
             }
             if (i < 6) {

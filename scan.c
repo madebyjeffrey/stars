@@ -38,9 +38,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         xScanTop = 1000;
         break;
     case WM_CHAR:
-        switch (wParam) {
-        case 'v':
-        case 'V':
+        if (wParam == 'v' || wParam == 'V') {
             hdc = GetDC(hwndScanner);
             pt = sel.scan.pt;
             LogicalToScan(&pt);
@@ -62,28 +60,25 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             SetROP2(hdc, iRopSav);
             ReleaseDC(hwndScanner, hdc);
             break;
-        case '-':
-            iScanNew = iScanZoom - 1;
-            if (iScanNew >= zoom25)
-                goto L_01ca;
-            iScanNew = zoom25;
-            goto L_01ca;
-        default:
-            iScanNew = iScanZoom + 1;
-            if (iScanNew <= zoom400)
-                goto L_01ca;
-            iScanNew = zoom400;
-            goto L_01ca;
         }
-        break;
-    L_01ca:
-        if (iScanNew == iScanZoom)
-            break;
-        SendMessage(hwndFrame, WM_COMMAND, iScanNew + 3905, 0);
+        if (wParam == '-') {
+            iScanNew = iScanZoom - 1;
+            if (iScanNew < zoom25) {
+                iScanNew = zoom25;
+            }
+        } else {
+            iScanNew = iScanZoom + 1;
+            if (iScanNew > zoom400) {
+                iScanNew = zoom400;
+            }
+        }
+        if (iScanNew != iScanZoom) {
+            SendMessage(hwndFrame, WM_COMMAND, iScanNew + 3905, 0);
+        }
         break;
     case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
-        if (rglpfl != 0 && gd.fNoScannerDraw == 0) {
+        if (rglpfl && !gd.fNoScannerDraw) {
             GetClientRect(hwnd, &rc);
             DrawScannerSBar(hdc, &ps.rcPaint, NULL, TRUE);
             rc.bottom -= dySBar;
@@ -100,13 +95,13 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         rc.bottom -= dySBar;
         if (PtInRect(&rc, PointFrom16(pt)) == 0) {
             SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32512)));
-        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0 || (grbitScan & grbitScanAddWaypoints) != 0)) {
+        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) || (grbitScan & grbitScanAddWaypoints))) {
             SetCursor(hcurScanAdd);
-        } else if (FNearAWayPoint(pt, FALSE) != 0) {
+        } else if (FNearAWayPoint(pt, FALSE)) {
             SetCursor(hcurOpenGrab);
-        } else if (gd.fSetMassMode != 0 || gd.fSetRouteMode != 0 ||
+        } else if (gd.fSetMassMode || gd.fSetRouteMode ||
                    (sel.grobj == grobjPlanet &&
-                    (((GetAsyncKeyState(VK_SHIFT) & 0xfffe) != 0 && IWarpMAFromLppl(&sel.pl, NULL) > 0) || (GetAsyncKeyState(VK_CONTROL) & 0xfffe) != 0))) {
+                    (((GetAsyncKeyState(VK_SHIFT) & 0xfffe) && IWarpMAFromLppl(&sel.pl, NULL) > 0) || (GetAsyncKeyState(VK_CONTROL) & 0xfffe)))) {
             SetCursor(hcurScanAdd);
         } else {
             SetCursor(hcurScanner);
@@ -121,7 +116,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         pt.y = HIWORD(lParam);
         GetClientRect(hwnd, &rc);
         if (pt.y >= rc.bottom - dySBar) {
-            if (msg != WM_LBUTTONDOWN || pt.y >= rc.bottom - (dySBar >> 1) || (sel.scan.grobjFull & (grobjPlanet | grobjFleet)) == 0)
+            if (msg != WM_LBUTTONDOWN || pt.y >= rc.bottom - (dySBar >> 1) || !(sel.scan.grobjFull & (grobjPlanet | grobjFleet)))
                 break;
             if (sel.scan.grobj == grobjFleet) {
                 GlobalPD.grPopup = grPopupFleet;
@@ -133,41 +128,41 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             break;
         }
         ScanToLogical(&pt);
-        FFindNearestObject(pt, gd.fSetMassMode != 0 || gd.fSetRouteMode != 0 ? grobjPlanet : grobjPlanet | grobjFleet | grobjOther | grobjThing, &scan);
-        if ((gd.fSetMassMode != 0 || (sel.grobj == grobjPlanet && (wParam & 4) != 0 && IWarpMAFromLppl(&sel.pl, NULL) > 0)) && msg == WM_LBUTTONDOWN) {
+        FFindNearestObject(pt, gd.fSetMassMode != 0 || gd.fSetRouteMode ? grobjPlanet : grobjPlanet | grobjFleet | grobjOther | grobjThing, &scan);
+        if ((gd.fSetMassMode || (sel.grobj == grobjPlanet && (wParam & 4) && IWarpMAFromLppl(&sel.pl, NULL) > 0)) && msg == WM_LBUTTONDOWN) {
             DrawShipScanPath(NULL, FALSE);
             if (scan.idpl == sel.pl.id) {
                 sel.pl.idFling = 0;
             } else {
                 sel.pl.idFling = scan.idpl + 1;
             }
-            FLookupPlanet(-1, &sel.pl);
+            FLookupPlanet(idWriteBack, &sel.pl);
             gd.fSetMassMode = FALSE;
             DrawShipScanPath(NULL, TRUE);
             DrawPlanShip(NULL, tileStarbaseOrWaypoint | tileMinimized);
             break;
         }
-        if ((gd.fSetRouteMode != 0 || (sel.grobj == grobjPlanet && (wParam & 8) != 0)) && msg == WM_LBUTTONDOWN) {
+        if ((gd.fSetRouteMode || (sel.grobj == grobjPlanet && (wParam & 8))) && msg == WM_LBUTTONDOWN) {
             DrawShipScanPath(NULL, FALSE);
             if (scan.idpl == sel.pl.id) {
                 sel.pl.idRoute = 0;
             } else {
                 sel.pl.idRoute = scan.idpl + 1;
             }
-            FLookupPlanet(-1, &sel.pl);
+            FLookupPlanet(idWriteBack, &sel.pl);
             gd.fSetRouteMode = FALSE;
             DrawShipScanPath(NULL, TRUE);
             DrawPlanShip(NULL, tileProductionOrOrbit | tileMinimized);
             break;
         }
-        if (msg == WM_MBUTTONDOWN || (msg == WM_RBUTTONDOWN && (wParam & 4) != 0)) {
+        if (msg == WM_MBUTTONDOWN || (msg == WM_RBUTTONDOWN && (wParam & 4))) {
             FHandleMeasuringTape(&scan, pt);
             break;
         }
         if (msg == WM_RBUTTONDOWN) {
             iChecked = -1;
             pt = scan.pt;
-            if ((scan.grobjFull & grobjPlanet) != 0) {
+            if (scan.grobjFull & grobjPlanet) {
                 rgid[0] = scan.idpl;
                 rgid[1] = -1;
                 c = 2;
@@ -179,7 +174,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             }
             for (i = 0; i < cFleet; i++) {
                 lpfl = rglpfl[i];
-                if (rglpfl[i] == 0)
+                if (!rglpfl[i])
                     break;
                 if (pt.x == lpfl->pt.x && pt.y == lpfl->pt.y) {
                     if (sel.grobj == grobjFleet && lpfl->id == sel.id) {
@@ -190,7 +185,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                         break;
                 }
             }
-            if (c == 2 && (scan.grobjFull & grobjPlanet) != 0) {
+            if (c == 2 && (scan.grobjFull & grobjPlanet)) {
                 c = 1;
             }
             fSep = c == 0;
@@ -198,7 +193,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             lpthMac = lpThings + cThing;
             for (; lpth < lpthMac; lpth++) {
                 if (pt.x == lpth->pt.x && pt.y == lpth->pt.y) {
-                    if (fSep == 0) {
+                    if (!fSep) {
                         rgid[c++] = -1;
                         fSep = TRUE;
                     }
@@ -211,16 +206,16 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             iSel = PopupMenu(hwnd, pt.x, pt.y, c, rgid, NULL, iChecked, TRUE);
             if (iSel < 0)
                 break;
-            if ((rgid[iSel] & 0x80000000) != 0) {
+            if (rgid[iSel] & 0x80000000) {
                 scan.grobj = grobjFleet;
                 id = LOWORD(rgid[iSel]);
                 for (i = 0; i < cFleet; i++) {
                     lpfl = rglpfl[i];
-                    if (rglpfl[i] == 0 || lpfl->id == id)
+                    if (!rglpfl[i] || lpfl->id == id)
                         break;
                 }
                 scan.ifl = i;
-            } else if ((rgid[iSel] & 0x20000000) != 0) {
+            } else if (rgid[iSel] & 0x20000000) {
                 scan.grobj = grobjThing;
                 lpth = lpThings;
                 lpthMac = lpThings + cThing;
@@ -231,40 +226,42 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 scan.grobj = grobjPlanet;
             }
             ChangeScanSel(&scan, 2);
-            if (scan.grobj == grobjPlanet && (FLookupPlanet(scan.idpl, &plT) == 0 || plT.iPlayer != idPlayer))
+            if (scan.grobj == grobjPlanet && (!FLookupPlanet(scan.idpl, &plT) || plT.iPlayer != idPlayer))
                 break;
+            goto DblClick;
         } else {
-            if (sel.grobj == grobjFleet && ((wParam & 4) != 0 || (grbitScan & grbitScanAddWaypoints) != 0)) {
+            if (sel.grobj == grobjFleet && ((wParam & 4) || (grbitScan & grbitScanAddWaypoints))) {
                 FAddWayPoint(pt, &scan);
                 break;
             }
             fChgScan = scan.pt.x == sel.scan.pt.x && scan.pt.y == sel.scan.pt.y;
             ChangeScanSel(&scan, 1);
-            if ((FNearAWayPoint(pt, TRUE) != 0 && FHandleWayPointDrag(pt) != 0) || fChgScan == 0 || (scan.grobj != grobjFleet && scan.grobj != grobjPlanet))
+            if ((FNearAWayPoint(pt, TRUE) && FHandleWayPointDrag(pt)) || !fChgScan || (scan.grobj != grobjFleet && scan.grobj != grobjPlanet))
                 break;
             if (scan.pt.x == sel.pt.x && scan.pt.y == sel.pt.y) {
-                if (FGetNextObjHere(&scan, TRUE) == 0)
+                if (!FGetNextObjHere(&scan, TRUE))
                     break;
             } else if (scan.grobj == grobjPlanet) {
-                if (FLookupPlanet(scan.idpl, &plT) == 0)
+                if (!FLookupPlanet(scan.idpl, &plT))
                     break;
-                if (plT.iPlayer != idPlayer || ((scan.grobjFull & grobjFleet) != 0 && sel.grobj == grobjPlanet && scan.idpl == sel.id)) {
-                    if ((scan.grobjFull & grobjFleet) == 0)
+                if (plT.iPlayer != idPlayer || ((scan.grobjFull & grobjFleet) && sel.grobj == grobjPlanet && scan.idpl == sel.id)) {
+                    if (!(scan.grobjFull & grobjFleet))
                         break;
                     scan.grobj = grobjFleet;
                 }
             }
         }
+    DblClick:
         if ((scan.grobj == grobjFleet && rglpfl[scan.ifl]->iPlayer != idPlayer) || scan.grobj == grobjThing)
             break;
         if (scan.grobj == grobjFleet) {
-            scan.iwp = -1;
+            scan.iwp = iwpNone;
         }
         ChangeScanSel(&scan, 1);
         RedrawScanSel(NULL, 0);
         ChangeMainObjSel(scan.grobj, scan.grobj == grobjPlanet ? scan.idpl : rglpfl[scan.ifl]->id);
         RedrawScanSel(NULL, 1);
-        if (scan.grobj != grobjFleet || (scan.grobjFull & grobjPlanet) == 0)
+        if (scan.grobj != grobjFleet || !(scan.grobjFull & grobjPlanet))
             break;
         scan.grobj = grobjPlanet;
         ChangeScanSel(&scan, 1);
@@ -457,17 +454,11 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     int16_t  iRel;
     int32_t  lPop;
     COLORREF cr;
-    HGDIOBJ  t_merge_34aa_0001;
-    HGDIOBJ  t_merge_34da_0001;
-    HGDIOBJ  t_merge_359c_0001;
-    HGDIOBJ  t_merge_35c8_0001;
-    HGDIOBJ  t_merge_3b2d_0001;
-    HGDIOBJ  t_merge_3b5d_0001;
 
     mdScanBase = grbitScan & grbitScanViewMask;
     hdcScreen = 0;
     hbmpScreen = 0;
-    if (rglpfl == 0 || gd.fNoScannerDraw != 0 || gd.fGeneratingTurn != 0) {
+    if (!rglpfl || gd.fNoScannerDraw || gd.fGeneratingTurn) {
         return 0;
     }
     xLeft = xScanTop;
@@ -480,13 +471,13 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     l = (uint32_t)(l * (int16_t)(prc->bottom - prc->top));
     if (l < 48000) {
         hdcMem = CreateCompatibleDC(hdc);
-        if (hdcMem != 0) {
+        if (hdcMem) {
             hbmpScreen = CreateCompatibleBitmap(hdc, prc->right - (prc->left & 0xfff8), prc->bottom - (prc->top & 0xfff8));
-            if (hbmpScreen == 0) {
+            if (!hbmpScreen) {
                 DeleteDC(hdcMem);
             }
         }
-        if (hbmpScreen != 0) {
+        if (hbmpScreen) {
             hdcScreen = hdc;
             hdc = hdcMem;
             hbmpXSav = SelectObject(hdc, hbmpScreen);
@@ -494,8 +485,8 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
             pt.y = 0;
             pt.x = 0;
             ClientToScreen16(hwndScanner, &pt);
-            ptOrigin.x = ptOrigin.x + 8 - (pt.x & 7) & 7;
-            ptOrigin.y = ptOrigin.y + 8 - (pt.y & 7) & 7;
+            ptOrigin.x = (ptOrigin.x + 8 - (pt.x & 7)) & 7;
+            ptOrigin.y = (ptOrigin.y + 8 - (pt.y & 7)) & 7;
             rcDraw = *prc;
         }
     }
@@ -518,7 +509,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     i = 0;
     id = 1;
     while (i < 16) {
-        if (rgshdef[i].fFree != 0) {
+        if (rgshdef[i].fFree) {
             grbitScanShip &= ~(id & grbitScanShip);
         }
         i++;
@@ -532,17 +523,17 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         ptSelMain.y = -2;
         ptSelMain.x = -2;
     }
-    if (gd.fFleetLinkValid == 0) {
+    if (!gd.fFleetLinkValid) {
         LinkFleets(FALSE);
     } else {
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0)
+            if (!rglpfl[i])
                 break;
             lpfl->fDone = FALSE;
         }
     }
-    if ((grbitScan & grbitScanCoverage) != 0) {
+    if (grbitScan & grbitScanCoverage) {
         fPlanetScanner = 0;
         dc.rgx = rgx;
         dc.rgy = rgy;
@@ -577,7 +568,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         }
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0)
+            if (!rglpfl[i])
                 break;
             if (lpfl->iPlayer == idPlayer) {
                 dRange = GetFleetScannerRange(lpfl, &dPlanRange, NULL, NULL);
@@ -597,15 +588,15 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
             }
         }
         DrawRadarCircle(&dc, NULL);
-        if (hbrRadarNear == 0) {
+        if (!hbrRadarNear) {
             hbrRadarNear = HbrGet(vcScreenColors > 8 ? 24672 : 32639);
         }
-        if (hpenRadarNear == 0) {
+        if (!hpenRadarNear) {
             hpenRadarNear = CreatePen(0, 1, vcScreenColors > 8 ? 24672 : 32639);
         }
         SelectObject(hdc, hbrRadarNear);
         SelectObject(hdc, hpenRadarNear);
-        if ((fPlanetScanner & 1) != 0) {
+        if (fPlanetScanner & 1) {
             lppl = lpPlanets;
             lpplMac = lpPlanets + cPlanet;
             for (; lppl < lpplMac; lppl++) {
@@ -626,10 +617,10 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                 }
             }
         }
-        if ((fPlanetScanner & 2) != 0) {
+        if (fPlanetScanner & 2) {
             for (i = 0; i < cFleet; i++) {
                 lpfl = rglpfl[i];
-                if (rglpfl[i] == 0)
+                if (!rglpfl[i])
                     break;
                 if (lpfl->iPlayer == idPlayer) {
                     dRange = GetFleetScannerRange(lpfl, &dPlanRange, NULL, NULL);
@@ -668,22 +659,22 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         SelectObject(hdc, hbrRadar);
         SelectObject(hdc, hpenRadar);
         if (mdScanBase != scanViewNoPlayerInfo) {
-            id = sel.grobj == grobjFleet ? sel.fl.id : -1;
-            id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : -1;
+            id = sel.grobj == grobjFleet ? sel.fl.id : idflNone;
+            id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : idflNone;
             SelectObject(hdcMem, hbmpScanShip);
             SetTextColor(hdc, 0);
             SetBkColor(hdc, 0xffffff);
             for (i = 0; i < cFleet; i++) {
                 lpfl = rglpfl[i];
-                if (rglpfl[i] == 0)
+                if (!rglpfl[i])
                     break;
-                if (lpfl->idPlanet == -1 && (CShipsScanVis(lpfl) > 0 || lpfl->id == id || lpfl->id == id2)) {
+                if (lpfl->idPlanet == idPlanetDeepSpace && (CShipsScanVis(lpfl) > 0 || lpfl->id == id || lpfl->id == id2)) {
                     pt = lpfl->pt;
                     if (pt.x >= xMin && pt.x < xMax && pt.y >= yMin && pt.y < yMax) {
                         pt.x = PtToScan(xOff + pt.x);
                         pt.y = PtToScan(yOff - pt.y);
                         fSelected = lpfl->pt.x == ptSelMain.x && lpfl->pt.y == ptSelMain.y;
-                        if (fSelected != 0) {
+                        if (fSelected) {
                             SelectObject(hdcMem, hbmpScanner);
                             BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 11, 80, SRCAND);
                             SelectObject(hdcMem, hbmpScanShip);
@@ -699,7 +690,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         SelectObject(hdc, hpenSav);
         SelectObject(hdc, hbrSav);
     }
-    if ((grbitScan & grbitScanMineFields) != 0) {
+    if (grbitScan & grbitScanMineFields) {
         dc.rgx = rgx;
         dc.rgy = rgy;
         dc.rgrad = rgrad;
@@ -719,12 +710,12 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         ropSav = GetROP2(hdc);
         SetBkColor(hdc, 0);
         for (j = 0; j < 3; j++) {
-            if ((j != 0 || (grbitScanMines & 1) != 0) && (j != 1 || (grbitScanMines & 2) != 0) && (j != 2 || (grbitScanMines & 0xc) != 0)) {
+            if ((j != 0 || (grbitScanMines & 1)) && (j != 1 || (grbitScanMines & 2)) && (j != 2 || (grbitScanMines & 0xc))) {
                 for (i = 0; i < 3; i++) {
                     for (fDetonating = FALSE; fDetonating <= (i == 0); fDetonating++) {
                         SetBrushOrg(hdc, ptOrigin.x, ptOrigin.y);
                         SelectObject(hdc, rghbrPat[i]);
-                        SetTextColor(hdc, fDetonating == 0 ? rgcrScanMine[j] : 16711935);
+                        SetTextColor(hdc, !fDetonating ? rgcrScanMine[j] : 16711935);
                         lpth = lpThings;
                         lpthMac = lpThings + cThing;
                         for (; lpth < lpthMac; lpth++) {
@@ -732,9 +723,9 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                                 (j < 1 || (lpth->iplr != idPlayer && (rgplr[idPlayer].rgmdRelation[lpth->iplr] == 1) != (j == 2)))) {
                                 if (j == 2 && (grbitScanMines & 0xc) != 0xc) {
                                     if (rgplr[idPlayer].rgmdRelation[lpth->iplr] == 0) {
-                                        if ((grbitScanMines & 4) == 0)
+                                        if (!(grbitScanMines & 4))
                                             continue;
-                                    } else if ((grbitScanMines & 8) == 0) {
+                                    } else if (!(grbitScanMines & 8)) {
                                         continue;
                                     }
                                 }
@@ -803,9 +794,9 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
             case ithMysteryTrader:
                 pt = lpth->pt;
                 LogicalToScan(&pt);
-                if (lpth->ith == ithWormhole && lpth->idFull < lpth->thw.idPartner && (1 << idPlayer & lpth->thw.grbitPlrTrav) != 0) {
+                if (lpth->ith == ithWormhole && lpth->idFull < lpth->thw.idPartner && (1 << idPlayer & lpth->thw.grbitPlrTrav)) {
                     lpthDest = LpthFromId(lpth->thw.idPartner);
-                    if (lpthDest != 0) {
+                    if (lpthDest) {
                         MoveTo(hdc, pt.x, pt.y);
                         pt2 = lpthDest->pt;
                         LogicalToScan(&pt2);
@@ -854,15 +845,15 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         SelectObject(hdc, hbrSav);
         SelectObject(hdc, hpenSav);
     }
-    if ((grbitScan & grbitScanFleetPaths) != 0 && mdScanBase != scanViewNoPlayerInfo) {
-        id = sel.grobj == grobjFleet ? sel.fl.id : -1;
-        id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : -1;
+    if ((grbitScan & grbitScanFleetPaths) && mdScanBase != scanViewNoPlayerInfo) {
+        id = sel.grobj == grobjFleet ? sel.fl.id : idflNone;
+        id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : idflNone;
         hpenSav = SelectObject(hdc, hpenStarbase);
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0)
+            if (!rglpfl[i])
                 break;
-            if (lpfl->fDead == 0 && lpfl->det >= detAll && lpfl->cord > 1 && (CShipsScanVis(lpfl) > 0 || lpfl->id == id || lpfl->id == id2)) {
+            if (!lpfl->fDead && lpfl->det >= detAll && lpfl->cord > 1 && (CShipsScanVis(lpfl) > 0 || lpfl->id == id || lpfl->id == id2)) {
                 for (iord = 0; iord < lpfl->cord; iord++) {
                     pt = lpfl->lpplord->rgord[iord].pt;
                     pt.x = PtToScan(xOff + pt.x);
@@ -903,34 +894,35 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     for (i = 0; i < game.cPlanMax; i++) {
         if (rgptPlan[i].x >= xMin && rgptPlan[i].x < xMax && rgptPlan[i].y >= yMin && rgptPlan[i].y < yMax) {
             fDoDraw = TRUE;
-        } else {
-            if ((grbitScan & grbitScanPlanetNames) == 0)
-                continue;
-            fDoDraw = FALSE;
-        }
-        pt.x = PtToScan(xOff + rgptPlan[i].x);
-        pt.y = PtToScan(yOff - rgptPlan[i].y);
-        if (fDoDraw != 0) {
-            if (ptSelMain.x == rgptPlan[i].x && ptSelMain.y == rgptPlan[i].y && mdScanBase <= scanViewMineralConc) {
-                BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, 69, SRCAND);
-                BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, 33, SRCPAINT);
-            } else {
-                BitBlt(hdc, pt.x - 1, pt.y - 1, 3, 3, hdcMem, 11, 15, SRCCOPY);
-            }
-        }
-        if ((grbitScan & grbitScanPlanetNames) != 0 && iScanZoom >= zoom75 && rgptPlan[i].x >= xMin - 50 && rgptPlan[i].x < xMax + 50 &&
-            rgptPlan[i].y >= yMin - 20 && rgptPlan[i].y < yMax + 20) {
-            PszGetPlanetName(i);
-            if ((grbitScan & grbitScanPlayerColors) != 0) {
-                lppl = LpplFromId(i);
-                if (lppl != 0 && lppl->iPlayer != -1) {
-                    SetTextColor(hdc, lppl->iPlayer == idPlayer ? 0xffffff : rgcrPlrHistory[lppl->iPlayer]);
+
+        LBailIn:
+            pt.x = PtToScan(xOff + rgptPlan[i].x);
+            pt.y = PtToScan(yOff - rgptPlan[i].y);
+            if (fDoDraw) {
+                if (ptSelMain.x == rgptPlan[i].x && ptSelMain.y == rgptPlan[i].y && mdScanBase <= scanViewMineralConc) {
+                    BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, 69, SRCAND);
+                    BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, 33, SRCPAINT);
+                } else {
+                    BitBlt(hdc, pt.x - 1, pt.y - 1, 3, 3, hdcMem, 11, 15, SRCCOPY);
                 }
             }
-            CtrTextOut(hdc, pt.x, pt.y + 5 + j, szWork, 0);
-            if ((grbitScan & grbitScanPlayerColors) != 0) {
-                SetTextColor(hdc, 0xffffff);
+            if ((grbitScan & grbitScanPlanetNames) && iScanZoom >= zoom75 && rgptPlan[i].x >= xMin - 50 && rgptPlan[i].x < xMax + 50 &&
+                rgptPlan[i].y >= yMin - 20 && rgptPlan[i].y < yMax + 20) {
+                PszGetPlanetName(i);
+                if (grbitScan & grbitScanPlayerColors) {
+                    lppl = LpplFromId(i);
+                    if (lppl && lppl->iPlayer != iplrNone) {
+                        SetTextColor(hdc, lppl->iPlayer == idPlayer ? 0xffffff : rgcrPlrHistory[lppl->iPlayer]);
+                    }
+                }
+                CtrTextOut(hdc, pt.x, pt.y + 5 + j, szWork, 0);
+                if (grbitScan & grbitScanPlayerColors) {
+                    SetTextColor(hdc, 0xffffff);
+                }
             }
+        } else if (grbitScan & grbitScanPlanetNames) {
+            fDoDraw = FALSE;
+            goto LBailIn;
         }
     }
     SetBkMode(hdc, iBkPrev);
@@ -953,8 +945,8 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
         i = 0;
         while (i < cPlanet) {
             id = lppl->id;
-            fStarbase = lppl->fStarbase != 0 && lppl->iPlayer != -1;
-            if (fStarbase != 0) {
+            fStarbase = lppl->fStarbase != 0 && lppl->iPlayer != iplrNone;
+            if (fStarbase) {
                 if (rglpshdefSB[lppl->iPlayer][lppl->isb].hul.ihuldef == ihuldefOrbitalFort) {
                     fStarbase = 2;
                 }
@@ -979,10 +971,8 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                             fTerra = TRUE;
                         }
                     }
-                    t_merge_34aa_0001 = pctDesire < 0 ? hbrRadar : fTerra != 0 ? hbrDkYellow : hbrGreen;
-                    hbrSav = SelectObject(hdc, t_merge_34aa_0001);
-                    t_merge_34da_0001 = pctDesire < 0 ? hpenRadar : fTerra != 0 ? hpenDkYellow : hpenDkGreen;
-                    hpenSav = SelectObject(hdc, t_merge_34da_0001);
+                    hbrSav = SelectObject(hdc, pctDesire < 0 ? hbrRadar : fTerra ? hbrDkYellow : hbrGreen);
+                    hpenSav = SelectObject(hdc, pctDesire < 0 ? hpenRadar : fTerra ? hpenDkYellow : hpenDkGreen);
                     if (pctDesire >= 0) {
                         dRad = pctDesire / 11 + 2;
                     } else {
@@ -999,12 +989,10 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     if (dRad < 1) {
                         dRad = 1;
                     }
-                    t_merge_359c_0001 = pctDesire < 0 ? hbrEnemy : fTerra != 0 ? hbrYellow : hbrShip;
-                    SelectObject(hdc, t_merge_359c_0001);
-                    t_merge_35c8_0001 = pctDesire < 0 ? hpenEnemy : fTerra != 0 ? hpenYellow : hpenShip;
-                    SelectObject(hdc, t_merge_35c8_0001);
+                    SelectObject(hdc, pctDesire < 0 ? hbrEnemy : fTerra ? hbrYellow : hbrShip);
+                    SelectObject(hdc, pctDesire < 0 ? hpenEnemy : fTerra ? hpenYellow : hpenShip);
                     Ellipse(hdc, pt.x - dRad, pt.y - dRad, pt.x + dRad + 1, pt.y + dRad + 1);
-                    if (lppl->iPlayer != -1) {
+                    if (lppl->iPlayer != iplrNone) {
                         rc.left = pt.x - 1;
                         rc.right = rc.left + 9;
                         rc.top = pt.y - 20;
@@ -1030,7 +1018,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                 case scanViewMineralConc:
                     fConc = mdScanBase == scanViewMineralConc;
                     iOff = iScanZoom < zoom100;
-                    if (lppl->det < detMore && (fConc == 0 || lppl->det < detSome))
+                    if (lppl->det < detMore && (!fConc || lppl->det < detSome))
                         goto LNormalScannerMode;
                     xOut = pt.x - vrgScanPO[iOff][0];
                     yOut = pt.y - vrgScanPO[iOff][1];
@@ -1038,7 +1026,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     PatBlt(hdc, xOut - 2, yOut, vrgScanPO[iOff][2], 1, PATCOPY);
                     PatBlt(hdc, xOut - 2, yOut - vrgScanPO[iOff][2] + 1, 1, vrgScanPO[iOff][2], PATCOPY);
                     for (j = 0; j < 3; j++) {
-                        if (fConc != 0) {
+                        if (fConc) {
                             l = (int16_t)((int16_t)lppl->rgMinConc[j] / 5);
                             if (l > 20) {
                                 l = 20;
@@ -1063,7 +1051,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     goto LNormalScannerMode;
                 case scanViewPopulation:
                     fTerra = FALSE;
-                    if (lppl->det >= detSome && lppl->iPlayer != -1) {
+                    if (lppl->det >= detSome && lppl->iPlayer != iplrNone) {
                         if (lppl->iPlayer == idPlayer) {
                             lPop = lppl->rgwtMin[3];
                         } else {
@@ -1079,10 +1067,8 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                         } else {
                             iRel = 3;
                         }
-                        t_merge_3b2d_0001 = iRel == 0 ? hbrShip : iRel == 3 ? hbrEnemy : hbrYellow;
-                        hbrSav = SelectObject(hdc, t_merge_3b2d_0001);
-                        t_merge_3b5d_0001 = iRel == 0 ? hpenDkGreen : iRel == 3 ? hpenEnemy : hpenDkYellow;
-                        hpenSav = SelectObject(hdc, t_merge_3b5d_0001);
+                        hbrSav = SelectObject(hdc, iRel == 0 ? hbrShip : iRel == 3 ? hbrEnemy : hbrYellow);
+                        hpenSav = SelectObject(hdc, iRel == 0 ? hpenDkGreen : iRel == 3 ? hpenEnemy : hpenDkYellow);
                         if (iScanZoom < zoom200) {
                             dRad = (dRad + 1) >> 1;
                         }
@@ -1091,11 +1077,12 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                         SelectObject(hdc, hbrSav);
                         break;
                     }
-                    if (lppl->iPlayer != -1)
+                    if (lppl->iPlayer != iplrNone)
                         break;
+                    /* fallthrough */
                 default:
                 LNormalScannerMode:
-                    if (lppl->iPlayer == -1) {
+                    if (lppl->iPlayer == iplrNone) {
                         if (rgptPlan[id].x != ptSelMain.x || rgptPlan[id].y != ptSelMain.y) {
                             BitBlt(hdc, pt.x - 1, pt.y - 1, 3, 3, hdcMem, 11, 18, SRCCOPY);
                         }
@@ -1109,21 +1096,21 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                         }
                         BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, 69, SRCAND);
                         BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 0, yBmp, SRCPAINT);
-                        if (fStarbase != 0) {
+                        if (fStarbase) {
                             hbrSav = SelectObject(hdc, fStarbase == 2 ? hbrBlue : hbrYellow);
                             PatBlt(hdc, pt.x + 4, pt.y - 6, 5, 5, BLACKNESS);
                             PatBlt(hdc, pt.x + 5, pt.y - 6, 3, 5, PATCOPY);
                             PatBlt(hdc, pt.x + 4, pt.y - 5, 5, 3, PATCOPY);
                             SelectObject(hdc, hbrSav);
                         }
-                        if (fStargate != 0) {
+                        if (fStargate) {
                             hbrSav = SelectObject(hdc, hbrGreen);
                             PatBlt(hdc, pt.x - 7, pt.y - 6, 5, 5, BLACKNESS);
                             PatBlt(hdc, pt.x - 6, pt.y - 6, 3, 5, PATCOPY);
                             PatBlt(hdc, pt.x - 7, pt.y - 5, 5, 3, PATCOPY);
                             SelectObject(hdc, hbrSav);
                         }
-                        if (fMA != 0) {
+                        if (fMA) {
                             hbrSav = SelectObject(hdc, hbrPurple);
                             PatBlt(hdc, pt.x - 2, pt.y - 9, 5, 5, BLACKNESS);
                             PatBlt(hdc, pt.x - 1, pt.y - 9, 3, 5, PATCOPY);
@@ -1139,19 +1126,19 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                             yBmp = 5;
                         }
                         BitBlt(hdc, pt.x - 2, pt.y - 2, 5, 5, hdcMem, 11, yBmp, SRCCOPY);
-                        if (fStarbase != 0) {
+                        if (fStarbase) {
                             hbrSav = SelectObject(hdc, fStarbase == 2 ? hbrBlue : hbrYellow);
                             PatBlt(hdc, pt.x + 3, pt.y - 4, 3, 3, PATCOPY);
                             SelectObject(hdc, hbrSav);
                         }
-                        if (fStargate != 0) {
+                        if (fStargate) {
                             hbrSav = SelectObject(hdc, hbrGreen);
                             PatBlt(hdc, pt.x - 5, pt.y - 4, 3, 3, BLACKNESS);
                             PatBlt(hdc, pt.x - 4, pt.y - 4, 1, 3, PATCOPY);
                             PatBlt(hdc, pt.x - 5, pt.y - 3, 3, 1, PATCOPY);
                             SelectObject(hdc, hbrSav);
                         }
-                        if (fMA != 0) {
+                        if (fMA) {
                             hbrSav = SelectObject(hdc, hbrPurple);
                             PatBlt(hdc, pt.x - 1, pt.y - 6, 3, 3, BLACKNESS);
                             PatBlt(hdc, pt.x, pt.y - 6, 1, 3, PATCOPY);
@@ -1168,15 +1155,15 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     if (cFleet != 0 && mdScanBase != scanViewNoPlayerInfo) {
         lpflT = *rglpfl;
         hbrSav = SelectObject(hdc, hbrShip);
-        id = sel.grobj == grobjFleet ? sel.fl.id : -1;
-        id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : -1;
+        id = sel.grobj == grobjFleet ? sel.fl.id : idflNone;
+        id2 = sel.scan.grobj == grobjFleet ? rglpfl[sel.scan.ifl]->id : idflNone;
         for (i = 0; i < cFleet; i++) {
             lpflT = rglpfl[i];
-            if (rglpfl[i] == 0)
+            if (!rglpfl[i])
                 break;
             if (CShipsScanVis(lpflT) > 0 || lpflT->id == id || lpflT->id == id2) {
                 idP = lpflT->idPlanet;
-                if (idP != -1) {
+                if (idP != idPlanetDeepSpace) {
                     pt = rgptPlan[idP];
                 } else {
                     pt = lpflT->pt;
@@ -1186,24 +1173,24 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                     pt.y = PtToScan(yOff - pt.y);
                     yBmp = lpflT->iPlayer != idPlayer;
                     fSelected = lpflT->pt.x == ptSelMain.x && lpflT->pt.y == ptSelMain.y;
-                    if (idP != -1) {
+                    if (idP != idPlanetDeepSpace) {
                         if (rgWhatsHere[idP] != 3 && rgWhatsHere[idP] != yBmp + 1 && mdScanBase <= scanViewMineralConc) {
                             rgWhatsHere[idP] += yBmp + 1;
                             yBmp = rgWhatsHere[idP] - 1;
-                            if (fSelected != 0) {
+                            if (fSelected) {
                                 BitBlt(hdc, pt.x - 9, pt.y - 9, 19, 19, hdcMem, 29, 69, SRCAND);
                                 BitBlt(hdc, pt.x - 9, pt.y - 9, 19, 19, hdcMem, 29, 19 * yBmp, SRCPAINT);
                             } else {
                                 BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 16, 69, SRCAND);
                                 BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 16, 11 * yBmp, SRCPAINT);
                             }
-                            if ((grbitScan & grbitScanShipCounts) != 0 && lpflT->fDone == 0) {
-                                DrawScanFleetCount(lpflT, pt.x, pt.y - (fSelected == 0 ? 5 : 9) - 2, hdc, hdcMem);
+                            if ((grbitScan & grbitScanShipCounts) && !lpflT->fDone) {
+                                DrawScanFleetCount(lpflT, pt.x, pt.y - (!fSelected ? 5 : 9) - 2, hdc, hdcMem);
                             }
                         }
-                    } else if (fSelected != 0) {
+                    } else if (fSelected) {
                         BitBlt(hdc, pt.x - 5, pt.y - 5, 11, 11, hdcMem, 11, 11 * yBmp + 36, SRCPAINT);
-                        if ((grbitScan & grbitScanShipCounts) != 0 && lpflT->fDone == 0) {
+                        if ((grbitScan & grbitScanShipCounts) && !lpflT->fDone) {
                             DrawScanFleetCount(lpflT, pt.x, pt.y - 7, hdc, hdcMem);
                         }
                     } else {
@@ -1219,7 +1206,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
                         SetBkColor(hdc, 0);
                         GetScanFleetOrientation(lpflT, &ptO, &ptD);
                         BitBlt(hdc, pt.x - ptD.x / 2, pt.y - ptD.y / 2, ptD.x, ptD.y, hdcMem, ptO.x, ptO.y, SRCPAINT);
-                        if ((grbitScan & grbitScanShipCounts) != 0 && lpflT->fDone == 0) {
+                        if ((grbitScan & grbitScanShipCounts) && !lpflT->fDone) {
                             DrawScanFleetCount(lpflT, pt.x, pt.y - ptD.y / 2 - 2, hdc, hdcMem);
                         }
                         SelectObject(hdcMem, hbmpScanner);
@@ -1233,7 +1220,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     prc->bottom -= 14;
     crFore = SetTextColor(hdc, 0);
     crBack = GetBkColor(hdc);
-    if (sel.grobj == grobjFleet || sel.scan.grobj == grobjFleet || sel.scan.grobj == grobjThing || (sel.grobj == grobjPlanet && sel.pl.fStarbase != 0)) {
+    if (sel.grobj == grobjFleet || sel.scan.grobj == grobjFleet || sel.scan.grobj == grobjThing || (sel.grobj == grobjPlanet && sel.pl.fStarbase)) {
         IntersectClipRect(hdc, prc->left, prc->top, prc->right, prc->bottom);
         fOrdersVis = FALSE;
         DrawShipScanPath(hdc, TRUE);
@@ -1243,7 +1230,7 @@ int16_t DrawScanner(HDC hdc, RECT *prc) {
     SetTextColor(hdc, crFore);
     SelectObject(hdcMem, hbmpSav);
     DeleteDC(hdcMem);
-    if (hdcScreen != 0) {
+    if (hdcScreen) {
         SetWindowOrg(hdc, 0, 0);
         BitBlt(hdcScreen, prc->left, prc->top, prc->right - prc->left, prc->bottom - prc->top, hdc, prc->left & 7, prc->top & 7, SRCCOPY);
         SelectObject(hdc, hbmpXSav);
@@ -1263,7 +1250,7 @@ void DrawScanFleetCount(FLEET *lpfl, int16_t x, int16_t y, HDC hdc, HDC hdcMem) 
     int32_t  l;
 
     lpflWalk = lpfl;
-    iPlr = (grbitScan & grbitScanPlayerColors) == 0 ? -2 : -1;
+    iPlr = !(grbitScan & grbitScanPlayerColors) ? -2 : -1;
     l = 0;
     f999 = FALSE;
     do {
@@ -1271,7 +1258,7 @@ void DrawScanFleetCount(FLEET *lpfl, int16_t x, int16_t y, HDC hdc, HDC hdcMem) 
         if (l2 > 0) {
             l += l2;
             if (lpflWalk->iPlayer != iPlr && iPlr != -2) {
-                if (iPlr == -1) {
+                if (iPlr == iplrNone) {
                     iPlr = lpflWalk->iPlayer;
                 } else {
                     iPlr = -2;
@@ -1310,7 +1297,7 @@ void DrawScanFleetCount(FLEET *lpfl, int16_t x, int16_t y, HDC hdc, HDC hdcMem) 
         x += 8;
         l = (int32_t)(l % 100);
     }
-    if (l > 9 || f999 != 0) {
+    if (l > 9 || f999) {
         x -= 3;
         if (cr != 0xffffff) {
             BitBlt(hdc, x, y, 4, 7, hdcMem, (int16_t)LOWORD(l) / 10 * 4, 0, 2229030);
@@ -1342,40 +1329,30 @@ int32_t CShipsScanVis(FLEET *lpfl) {
     uint16_t grbitSh;
 
     csh = 0;
-    if ((grbitScan & grbitScanIdleFleets) != 0) {
-        if (lpfl->iPlayer == idPlayer) {
-            if (lpfl->cord == 1) {
-                switch (lpfl->lpplord->rgord[0].grTask) {
-                case grTaskLayMines:
-                case grTaskScrap:
-                case grTaskMine:
-                case grTaskPatrol:
-                    break;
-                default:
-                    goto L_4c92;
-                }
-            }
+    if (grbitScan & grbitScanIdleFleets) {
+        if (lpfl->iPlayer == idPlayer &&
+            (lpfl->cord != 1 || lpfl->lpplord->rgord[0].grTask == grTaskLayMines || lpfl->lpplord->rgord[0].grTask == grTaskScrap ||
+             lpfl->lpplord->rgord[0].grTask == grTaskMine || lpfl->lpplord->rgord[0].grTask == grTaskPatrol)) {
             return 0;
         }
-    L_4c92:
         if (lpfl->iPlayer != idPlayer && lpfl->iwarpFlt == 0) {
             return 0;
         }
     }
-    if ((grbitScan & grbitScanDesignFilter) != 0 && lpfl->iPlayer == idPlayer) {
+    if ((grbitScan & grbitScanDesignFilter) && lpfl->iPlayer == idPlayer) {
         grbitSh = grbitScanShip;
         j = 0;
         for (; grbitSh != 0; grbitSh >>= 1) {
-            if ((grbitSh & 1) != 0 && lpfl->rgcsh[j] > 0) {
+            if ((grbitSh & 1) && lpfl->rgcsh[j] > 0) {
                 csh += lpfl->rgcsh[j];
             }
             j++;
         }
-    } else if ((grbitScan & grbitScanEnemyFilter) != 0 && lpfl->iPlayer != idPlayer) {
+    } else if ((grbitScan & grbitScanEnemyFilter) && lpfl->iPlayer != idPlayer) {
         grbitSh = grbitScanEShip;
         j = 0;
         for (; grbitSh != 0; grbitSh >>= 1) {
-            if ((grbitSh & 1) != 0) {
+            if (grbitSh & 1) {
                 for (k = 0; k < 16; k++) {
                     if (lpfl->rgcsh[k] > 0 && LphuldefFromId(rglpshdef[lpfl->iPlayer][k].hul.ihuldef)->imdCategory == j) {
                         csh += lpfl->rgcsh[k];
@@ -1393,31 +1370,29 @@ int32_t CShipsScanVis(FLEET *lpfl) {
 }
 
 void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
-    int16_t     y2;
-    int32_t     r2;
-    COLORREF    crSav;
-    int16_t     dy;
-    int16_t     y;
-    int16_t     iFree;
-    int16_t     i;
-    int16_t     dx;
-    int16_t     x2;
-    int16_t     rad;
-    int32_t     l;
-    int16_t     x;
-    RECT        rc;
-    int32_t     t_scratch_m42;
-    long double t_scratch_m3a_2;
+    int16_t  y2;
+    int32_t  r2;
+    COLORREF crSav;
+    int16_t  dy;
+    int16_t  y;
+    int16_t  iFree;
+    int16_t  i;
+    int16_t  dx;
+    int16_t  x2;
+    int16_t  rad;
+    int32_t  l;
+    int16_t  x;
+    RECT     rc;
 
-    if (prc == 0 || (pdc->fCovered == 0 && IntersectRect(&rc, prc, &pdc->rcClip) != 0)) {
-        if (prc != 0) {
+    if (!prc || (!pdc->fCovered && IntersectRect(&rc, prc, &pdc->rcClip) != 0)) {
+        if (prc) {
             rad = (prc->right - prc->left) >> 1;
             x = prc->left + rad;
             y = prc->top + rad;
             r2 = (uint32_t)(rad * rad);
             for (i = 0; i < 4; i++) {
                 x2 = i >= 2 ? pdc->rcClip.right : pdc->rcClip.left;
-                y2 = (i & 1) == 0 ? pdc->rcClip.bottom : pdc->rcClip.top;
+                y2 = !(i & 1) ? pdc->rcClip.bottom : pdc->rcClip.top;
                 dx = x2 - x;
                 dy = y2 - y;
                 if (dx > r2 || dy > r2 || (uint32_t)(dx * dx) + (uint32_t)(dy * dy) > r2)
@@ -1426,7 +1401,19 @@ void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
             if (i == 4) {
                 pdc->fCovered = TRUE;
                 pdc->cCur = 0;
-            } else if (pdc->cCur != pdc->cMax) {
+            DrawEllipse:
+                if (pdc->fHollowOut) {
+                    SetROP2(pdc->hdc, R2_MASKPEN);
+                    crSav = SetBkColor(pdc->hdc, 0xffffff);
+                    Ellipse(pdc->hdc, prc->left, prc->top, prc->right, prc->bottom);
+                    SetBkColor(pdc->hdc, crSav);
+                    SetROP2(pdc->hdc, R2_MERGEPEN);
+                }
+                Ellipse(pdc->hdc, prc->left, prc->top, prc->right, prc->bottom);
+                return;
+            } else if (pdc->cCur == pdc->cMax) {
+                goto DrawEllipse;
+            } else {
                 iFree = pdc->cCur;
                 for (i = 0; i < pdc->cCur; i++) {
                     if (pdc->rgrad[i] <= 0) {
@@ -1438,14 +1425,12 @@ void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
                         dy = y - y2;
                         l = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
                         if (pdc->rgrad[i] < rad) {
-                            t_scratch_m42 = pdc->rgrad[i];
-                            if ((long double)sqrt((double)l) + t_scratch_m42 <= (long double)rad) {
+                            if ((long double)sqrt((double)l) + pdc->rgrad[i] <= (long double)rad) {
                                 pdc->rgrad[i] = 0;
                                 iFree = i;
                             }
                         } else if (pdc->rgrad[i] > rad) {
-                            t_scratch_m3a_2 = (long double)pdc->rgrad[i];
-                            if ((long double)sqrt((double)l) + rad <= t_scratch_m3a_2) {
+                            if ((long double)sqrt((double)l) + rad <= (long double)pdc->rgrad[i]) {
                                 return;
                             }
                         } else if (x2 == x && y2 == y) {
@@ -1462,35 +1447,28 @@ void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
                 pdc->cCur++;
                 return;
             }
-            if (pdc->fHollowOut != 0) {
-                SetROP2(pdc->hdc, R2_MASKPEN);
-                crSav = SetBkColor(pdc->hdc, 0xffffff);
-                Ellipse(pdc->hdc, prc->left, prc->top, prc->right, prc->bottom);
-                SetBkColor(pdc->hdc, crSav);
-                SetROP2(pdc->hdc, R2_MERGEPEN);
-            }
-            Ellipse(pdc->hdc, prc->left, prc->top, prc->right, prc->bottom);
         } else {
-            if (pdc->fHollowOut != 0) {
+            if (pdc->fHollowOut) {
                 SetROP2(pdc->hdc, R2_MASKPEN);
                 crSav = SetBkColor(pdc->hdc, 0xffffff);
                 l = 1;
             }
-            while (1) {
-                for (i = 0; i < pdc->cCur; i++) {
-                    if (pdc->rgrad[i] > 0) {
-                        x = pdc->rgx[i];
-                        y = pdc->rgy[i];
-                        rad = pdc->rgrad[i];
-                        Ellipse(pdc->hdc, x - rad, y - rad, x + rad + 1, y + rad + 1);
-                    }
+        L2ndEl:
+            for (i = 0; i < pdc->cCur; i++) {
+                if (pdc->rgrad[i] > 0) {
+                    x = pdc->rgx[i];
+                    y = pdc->rgy[i];
+                    rad = pdc->rgrad[i];
+                    Ellipse(pdc->hdc, x - rad, y - rad, x + rad + 1, y + rad + 1);
                 }
-                if (pdc->fHollowOut == 0 || l != 1)
-                    break;
+            }
+            if (pdc->fHollowOut && l == 1) {
                 l = 0;
                 SetBkColor(pdc->hdc, crSav);
                 SetROP2(pdc->hdc, R2_MERGEPEN);
+                goto L2ndEl;
             }
+
             pdc->fCovered = FALSE;
             pdc->cCur = 0;
         }
@@ -1525,18 +1503,17 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
     double  m;
     int16_t id;
     int16_t fDoneRoute;
-    HGDIOBJ t_merge_624f_0001;
 
     fHdc = FALSE;
     if ((sel.grobj == grobjFleet || sel.scan.grobj == grobjFleet || sel.scan.grobj == grobjThing ||
-         (sel.grobj == grobjPlanet && ((sel.pl.fStarbase != 0 && sel.pl.idFling != 0) || sel.pl.idRoute != 0))) &&
-        (fShow != fOrdersVis && gd.fNoScannerDraw == 0)) {
+         (sel.grobj == grobjPlanet && ((sel.pl.fStarbase && sel.pl.idFling != 0) || sel.pl.idRoute != 0))) &&
+        (fShow != fOrdersVis && !gd.fNoScannerDraw)) {
         fOrdersVis = fShow;
-        if (hdc == 0) {
+        if (!hdc) {
             hdc = GetDC(hwndScanner);
             fHdc = TRUE;
         }
-        if (sel.scan.grobj == grobjThing && sel.scan.ith != -1) {
+        if (sel.scan.grobj == grobjThing && sel.scan.ith != ithNone) {
             lpth = lpThings + sel.scan.ith;
             ptCur = lpth->pt;
             if (lpth->ith == ithMysteryTrader) {
@@ -1561,7 +1538,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
             goto LNoObjPath;
         lpfl = rglpfl[sel.scan.ifl];
         ptCur = lpfl->pt;
-        if (lpfl->fdirValid == 0 || lpfl->iwarpFlt <= 0)
+        if (!lpfl->fdirValid || lpfl->iwarpFlt <= 0)
             goto LNoObjPath;
         dx = lpfl->dirFltX - 127;
         dy = lpfl->dirFltY - 127;
@@ -1635,29 +1612,28 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
     LNoObjPath:
         if (sel.grobj == grobjPlanet) {
             fDoneRoute = FALSE;
-            if (sel.pl.fStarbase != 0 && sel.pl.idFling != 0) {
+            if (sel.pl.fStarbase && sel.pl.idFling != 0) {
                 hpenSav = SelectObject(hdc, hpenDkPurple);
                 id = sel.pl.idFling - 1;
-            } else {
-            L_5daf:
-                if (sel.pl.idRoute == 0 || fDoneRoute != 0)
-                    goto LFinishUp;
-                fDoneRoute = TRUE;
-                id = sel.pl.idRoute - 1;
-                hpenSav = SelectObject(hdc, hpenDkGreen);
+            LDrawPath:
+                iRopSav = SetROP2(hdc, R2_XORPEN);
+                GetClientRect(hwndScanner, &rc);
+                ExcludeClipRect(hdc, rc.left, rc.bottom - dySBar, rc.right, rc.bottom);
+                pt = rgptPlan[sel.pl.id];
+                LogicalToScan(&pt);
+                MoveTo(hdc, pt.x, pt.y);
+                pt = rgptPlan[id];
+                LogicalToScan(&pt);
+                LineTo(hdc, pt.x, pt.y);
+                SetROP2(hdc, iRopSav);
+                SelectObject(hdc, hpenSav);
             }
-            iRopSav = SetROP2(hdc, R2_XORPEN);
-            GetClientRect(hwndScanner, &rc);
-            ExcludeClipRect(hdc, rc.left, rc.bottom - dySBar, rc.right, rc.bottom);
-            pt = rgptPlan[sel.pl.id];
-            LogicalToScan(&pt);
-            MoveTo(hdc, pt.x, pt.y);
-            pt = rgptPlan[id];
-            LogicalToScan(&pt);
-            LineTo(hdc, pt.x, pt.y);
-            SetROP2(hdc, iRopSav);
-            SelectObject(hdc, hpenSav);
-            goto L_5daf;
+            if (sel.pl.idRoute == 0 || fDoneRoute)
+                goto LFinishUp;
+            fDoneRoute = TRUE;
+            id = sel.pl.idRoute - 1;
+            hpenSav = SelectObject(hdc, hpenDkGreen);
+            goto LDrawPath;
         }
         if (sel.grobj == grobjFleet && sel.fl.cord > 1) {
             memset(rgDup, 0, sel.fl.cord * 2);
@@ -1667,25 +1643,28 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
             while (i < sel.fl.cord) {
                 lpord2 = lpord1 + 1;
                 pt2 = lpord2->pt;
-                if (rgDup[i] == 0) {
-                    j = i + 1;
-                    while (j < sel.fl.cord) {
-                        if ((pt.x == lpord2->pt.x && pt.y == lpord2->pt.y && pt2.x == lpord2[1].pt.x && pt2.y == lpord2[1].pt.y) ||
-                            (pt2.x == lpord2->pt.x && pt2.y == lpord2->pt.y && pt.x == lpord2[1].pt.x && pt.y == lpord2[1].pt.y)) {
-                            rgDup[i] = 1;
-                            rgDup[j] = 2;
-                        }
-                        j++;
-                        lpord2++;
+                if (rgDup[i] != 0)
+                    goto DoNext;
+
+                j = i + 1;
+                while (j < sel.fl.cord) {
+                    if ((pt.x == lpord2->pt.x && pt.y == lpord2->pt.y && pt2.x == lpord2[1].pt.x && pt2.y == lpord2[1].pt.y) ||
+                        (pt2.x == lpord2->pt.x && pt2.y == lpord2->pt.y && pt.x == lpord2[1].pt.x && pt.y == lpord2[1].pt.y)) {
+                        rgDup[i] = 1;
+                        rgDup[j] = 2;
                     }
+                    j++;
+                    lpord2++;
                 }
+
+            DoNext:
                 pt = pt2;
                 i++;
                 lpord1++;
             }
             GetClientRect(hwndScanner, &rc);
             ExcludeClipRect(hdc, rc.left, rc.bottom - dySBar, rc.right, rc.bottom);
-            if (fShow != 0 && (grbitScan & grbitScanFleetPaths) != 0) {
+            if (fShow && (grbitScan & grbitScanFleetPaths)) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
                 pt = sel.fl.lpplord->rgord[0].pt;
                 LogicalToScan(&pt);
@@ -1714,8 +1693,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                     MoveTo(hdc, pt2.x, pt2.y);
                 } else {
                     if (rgDup[i] == 1) {
-                        t_merge_624f_0001 = (grbitScan & grbitScanFleetPaths) != 0 ? hpenYellow : GetStockObject(WHITE_PEN);
-                        SelectObject(hdc, t_merge_624f_0001);
+                        SelectObject(hdc, (grbitScan & grbitScanFleetPaths) ? hpenYellow : GetStockObject(WHITE_PEN));
                     }
                     LineTo(hdc, pt2.x, pt2.y);
                     if (rgDup[i] == 1) {
@@ -1729,7 +1707,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
             SelectClipRgn(hdc, hrgnHuge);
         }
     LFinishUp:
-        if (fHdc != 0) {
+        if (fHdc) {
             ReleaseDC(hwndScanner, hdc);
         }
     }
@@ -1762,13 +1740,13 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
     fDoName = TRUE;
     GetClientRect(hwndScanner, &rc);
     rc.top = rc.bottom - dySBar;
-    if (prc == 0 || IntersectRect(&rcT, prc, &rc) != 0) {
-        if (hdc == 0) {
+    if (!prc || IntersectRect(&rcT, prc, &rc) != 0) {
+        if (!hdc) {
             fhdc = 1;
             hdc = GetDC(hwndScanner);
         }
         hfontSav = SelectObject(hdc, rghfontArial8[1]);
-        if (psbar != 0) {
+        if (psbar) {
             grobj = psbar->grbit;
         } else {
             grobj = sel.scan.grobj;
@@ -1777,7 +1755,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         crBk = SetBkColor(hdc, crButtonFace);
         crText = SetTextColor(hdc, crButtonText);
         hbrSav = SelectObject(hdc, hbrButtonFace);
-        if (fFullRedraw != 0) {
+        if (fFullRedraw) {
             PatBlt(hdc, rc.left, rc.top, rc.right - rc.left, dySBar, PATCOPY);
             SelectObject(hdc, hbrButtonHilite);
             PatBlt(hdc, rc.left, rc.top, 1, dySBar, PATCOPY);
@@ -1788,80 +1766,86 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         rcT.top += 4;
         rcT.bottom -= 4;
         rcT.left += 4;
-        if (rc.right >= 360) {
-            l = GetTextExtent(hdc, "ID #000", 7);
-            dxHole = LOWORD(l) + 6;
-            rcT.right = LOWORD(l) + 6 + rcT.left;
-            DrawLockLight(hdc, &rcT, fFullRedraw);
-            if ((grobj & grobjPlanet) != 0) {
-                if (psbar != 0) {
-                    id = psbar->id;
-                } else {
-                    id = sel.scan.idpl;
-                }
-                if (id != -1) {
-                    c = _wsprintf(szWork, "ID #%d", id + 1);
-                    SetBkMode(hdc, OPAQUE);
-                    TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
-                }
-            } else if (grobj == grobjOther) {
-                if (psbar != 0) {
-                    id = psbar->id;
-                } else {
-                    id = sel.scan.iwp;
-                }
-                c = _wsprintf(szWork, "WP #%d", id);
-                TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
-            }
-            l = GetTextExtent(hdc, "X: 8888", 7);
-            rcT.left += dxHole + 4;
-            dxHole = LOWORD(l) + 6;
-            rcT.right = LOWORD(l) + 6 + rcT.left;
-            DrawLockLight(hdc, &rcT, fFullRedraw);
-            if (psbar != 0) {
-                pt = psbar->pt;
-            } else if (grobj != grobjNone) {
-                pt = sel.scan.pt;
+        if (rc.right < 360)
+            goto DrawTheName;
+
+        l = GetTextExtent(hdc, "ID #000", 7);
+        dxHole = LOWORD(l) + 6;
+        rcT.right = LOWORD(l) + 6 + rcT.left;
+        DrawLockLight(hdc, &rcT, fFullRedraw);
+        if (grobj & grobjPlanet) {
+            if (psbar) {
+                id = psbar->id;
             } else {
-                pt.y = 0;
-                pt.x = 0;
+                id = sel.scan.idpl;
             }
-            if (pt.x > 0) {
-                c = _wsprintf(szWork, "X: %d", pt.x);
+            if (id != idplNone) {
+                c = _wsprintf(szWork, "ID #%d", id + 1);
                 SetBkMode(hdc, OPAQUE);
                 TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
             }
-            rcT.left += dxHole + 4;
-            dxHole = LOWORD(l) + 6;
-            rcT.right = LOWORD(l) + 6 + rcT.left;
-            DrawLockLight(hdc, &rcT, fFullRedraw);
-            if (pt.y > 0) {
-                c = _wsprintf(szWork, "Y: %d", pt.y);
-                SetBkMode(hdc, OPAQUE);
-                TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
+        } else if (grobj == grobjOther) {
+            if (psbar) {
+                id = psbar->id;
+            } else {
+                id = sel.scan.iwp;
             }
-            rcT.left += dxHole + 4;
+            c = _wsprintf(szWork, "WP #%d", id);
+            TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
         }
+        l = GetTextExtent(hdc, "X: 8888", 7);
+        rcT.left += dxHole + 4;
+        dxHole = LOWORD(l) + 6;
+        rcT.right = LOWORD(l) + 6 + rcT.left;
+        DrawLockLight(hdc, &rcT, fFullRedraw);
+        if (psbar) {
+            pt = psbar->pt;
+            goto GotCoords;
+        } else if (grobj != grobjNone) {
+            pt = sel.scan.pt;
+            goto GotCoords;
+        } else {
+            pt.y = 0;
+            pt.x = 0;
+        }
+    GotCoords:
+        if (pt.x > 0) {
+            c = _wsprintf(szWork, "X: %d", pt.x);
+            SetBkMode(hdc, OPAQUE);
+            TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
+        }
+        rcT.left += dxHole + 4;
+        dxHole = LOWORD(l) + 6;
+        rcT.right = LOWORD(l) + 6 + rcT.left;
+        DrawLockLight(hdc, &rcT, fFullRedraw);
+        if (pt.y > 0) {
+            c = _wsprintf(szWork, "Y: %d", pt.y);
+            SetBkMode(hdc, OPAQUE);
+            TextOut(hdc, rcT.left + 3, rcT.top + 2, szWork, c);
+        }
+        rcT.left += dxHole + 4;
+
+    DrawTheName:
         dxHole = rc.right - rcT.left - 4;
         rcT.right = rc.right - rcT.left - 4 + rcT.left;
         DrawLockLight(hdc, &rcT, fFullRedraw);
         rcClip = rcT;
         ExpandRc(&rcClip, -2, -2);
         grReal = grobj == grobjOther ? sel.scan.grobjFull : grobj;
-        if (psbar != 0 && psbar->psz != 0) {
+        if (psbar && psbar->psz) {
             strcpy(szWork, psbar->psz);
-        } else if ((grReal & 1) != 0) {
-            PszGetPlanetName(psbar == 0 ? sel.scan.idpl : psbar->id);
-        } else if ((grReal & 2) != 0) {
-            PszGetFleetName(psbar == 0 ? rglpfl[sel.scan.ifl]->id : psbar->id);
-        } else if ((grReal & 8) != 0) {
-            PszGetThingName(psbar == 0 ? lpThings[sel.scan.ith].idFull : psbar->id);
+        } else if (grReal & 1) {
+            PszGetPlanetName(!psbar ? sel.scan.idpl : psbar->id);
+        } else if (grReal & 2) {
+            PszGetFleetName(!psbar ? rglpfl[sel.scan.ifl]->id : psbar->id);
+        } else if (grReal & 8) {
+            PszGetThingName(!psbar ? lpThings[sel.scan.ith].idFull : psbar->id);
         } else if (grReal == 0 && grobj == grobjOther) {
             CchGetString(idsDeepSpaceWaypoint, szWork);
         } else {
             fDoName = FALSE;
         }
-        if (fDoName != 0) {
+        if (fDoName) {
             ExtTextOut(hdc, rcT.left + 3, rcT.top + 2, ETO_CLIPPED, &rcClip, szWork, lstrlen(szWork), NULL);
         }
         OffsetRc(&rc, 0, dySBar >> 1);
@@ -1873,7 +1857,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         DrawLockLight(hdc, &rcT, fFullRedraw);
         rcClip = rcT;
         ExpandRc(&rcClip, -2, -2);
-        if (psbar != 0) {
+        if (psbar) {
             pt = psbar->pt;
         } else if (grobj != grobjNone) {
             pt = sel.scan.pt;
@@ -1881,7 +1865,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
             pt.y = 0;
             pt.x = 0;
         }
-        if (psbar != 0 && psbar->pscan != 0) {
+        if (psbar && psbar->pscan) {
             pt2 = psbar->pscan->pt;
         } else if (sel.grobj == grobjFleet || sel.grobj == grobjPlanet) {
             pt2 = sel.pt;
@@ -1893,7 +1877,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
             for (psz = szBuf; *psz != ' '; psz++) {
             }
             CchGetString((rc.right >= 350) + 1366, psz + 1);
-            if (psbar == 0 || psbar->pscan == 0) {
+            if (!psbar || !psbar->pscan) {
                 CchGetString(idsFrom, psz + strlen(psz));
                 strcat(psz + 8, PszGetLocName(sel.grobj, sel.id, pt2.x, pt2.y));
             }
@@ -1904,7 +1888,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
         SetTextColor(hdc, crButtonText);
         SetBkColor(hdc, crBk);
         SelectObject(hdc, hfontSav);
-        if (fhdc != 0) {
+        if (fhdc) {
             ReleaseDC(hwndScanner, hdc);
         }
     }
@@ -1918,7 +1902,7 @@ void DrawLockLight(HDC hdc, RECT *prc, int16_t fFullRedraw) {
 
     dx = prc->right - prc->left;
     dy = prc->bottom - prc->top;
-    if (fFullRedraw != 0) {
+    if (fFullRedraw) {
         SelectObject(hdc, hbrButtonShadow);
         PatBlt(hdc, prc->left, prc->top, 1, dy, PATCOPY);
         PatBlt(hdc, prc->left, prc->top, dx, 1, PATCOPY);
@@ -1944,14 +1928,14 @@ void SetScanScrollBars(HWND hwnd) {
     GetClientRect(hwnd, &rc);
     dx = ScanToPt(rc.right);
     dy = ScanToPt(rc.bottom - dySBar);
-    xMax = (1000 <= dGalInv - 1000 - dx ? dGalInv - 0x3e8 - dx : 0x3e8) + 3 & 0xfffc;
-    yMax = (1000 <= dGalInv - 1000 - dy ? dGalInv - 0x3e8 - dy : 0x3e8) + 3 & 0xfffc;
+    xMax = ((1000 <= dGalInv - 1000 - dx ? dGalInv - 0x3e8 - dx : 0x3e8) + 3) & 0xfffc;
+    yMax = ((1000 <= dGalInv - 1000 - dy ? dGalInv - 0x3e8 - dy : 0x3e8) + 3) & 0xfffc;
     SetScrollRange(hwnd, SB_HORZ, 1000, xMax, TRUE);
-    if (fInScrollSet != 0) {
+    if (fInScrollSet) {
         SetScrollRange(hwnd, SB_VERT, 1000, yMax, TRUE);
-        if (fInScrollSet != 0) {
+        if (fInScrollSet) {
             dScanPage = (int16_t)(dx >= dy ? dy : dx) / 3 & 0xfffc;
-            dScanInc = dScanPage / 8 + 2 & 0xfffc;
+            dScanInc = (dScanPage / 8 + 2) & 0xfffc;
             fInScrollSet = FALSE;
         }
     }
@@ -1964,44 +1948,45 @@ void ScrollScanner(int16_t dx, int16_t dy) {
     RECT rcUpd2;
     RECT rc;
 
-    if ((dx != 0 || dy != 0) && IsWindowVisible(hwndScanner) != 0 && gd.fNoScannerDraw == 0) {
+    if ((dx != 0 || dy != 0) && IsWindowVisible(hwndScanner) != 0 && !gd.fNoScannerDraw) {
         hdc = GetDC(hwndScanner);
         GetClientRect(hwndScanner, &rc);
-        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp != 0 || hwndBrowser != 0) {
+        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp || hwndBrowser) {
             DrawScanner(hdc, &rc);
-        } else {
-            rc.bottom -= dySBar;
-            UpdateWindow(hwndScanner);
-            ScrollWindow(hwndScanner, dx, dy, &rc, &rc);
-            if (dy > 0) {
-                SetRect(&rcUpd2, 0, 0, rc.right, dy);
-                rc.top += dy;
-            } else if (dy < 0) {
-                SetRect(&rcUpd2, 0, rc.bottom + dy, rc.right, rc.bottom);
-                rc.bottom += dy;
-            }
-            if (dx > 0) {
-                SetRect(&rcUpd, 0, rc.top, dx, rc.bottom);
-                rc.right -= dx;
-            } else if (dx < 0) {
-                rcUpd = rc;
-                rcUpd.left = rc.right + dx;
-                rc.left -= dx;
-            }
-            if (dx != 0) {
-                ValidateRect(hwndScanner, &rcUpd);
-            }
-            if (dy != 0) {
-                ValidateRect(hwndScanner, &rcUpd2);
-            }
-            if (dx != 0) {
-                DrawScanner(hdc, &rcUpd);
-            }
-            if (dy != 0) {
-                DrawScanner(hdc, &rcUpd2);
-            }
-            UpdateWindow(hwndScanner);
+            goto RelDC;
         }
+        rc.bottom -= dySBar;
+        UpdateWindow(hwndScanner);
+        ScrollWindow(hwndScanner, dx, dy, &rc, &rc);
+        if (dy > 0) {
+            SetRect(&rcUpd2, 0, 0, rc.right, dy);
+            rc.top += dy;
+        } else if (dy < 0) {
+            SetRect(&rcUpd2, 0, rc.bottom + dy, rc.right, rc.bottom);
+            rc.bottom += dy;
+        }
+        if (dx > 0) {
+            SetRect(&rcUpd, 0, rc.top, dx, rc.bottom);
+            rc.right -= dx;
+        } else if (dx < 0) {
+            rcUpd = rc;
+            rcUpd.left = rc.right + dx;
+            rc.left -= dx;
+        }
+        if (dx != 0) {
+            ValidateRect(hwndScanner, &rcUpd);
+        }
+        if (dy != 0) {
+            ValidateRect(hwndScanner, &rcUpd2);
+        }
+        if (dx != 0) {
+            DrawScanner(hdc, &rcUpd);
+        }
+        if (dy != 0) {
+            DrawScanner(hdc, &rcUpd2);
+        }
+        UpdateWindow(hwndScanner);
+    RelDC:
         ReleaseDC(hwndScanner, hdc);
     }
     return;
@@ -2023,30 +2008,30 @@ void RedrawScanSel(HDC hdc, int16_t fVis) {
     sel_grobj = sel.grobj;
     sel_grobjFull = sel.grobjFull;
     sel_scan = sel.scan;
-    if (hwndScanner != 0 && IsWindowVisible(hwndScanner) != 0) {
+    if (hwndScanner && IsWindowVisible(hwndScanner) != 0) {
         if (fVis == -1) {
             fVis = 0;
             fNoSelRedraw = TRUE;
         } else {
             fNoSelRedraw = FALSE;
         }
-        if (hdc == 0) {
+        if (!hdc) {
             fhdc = 1;
             hdc = GetDC(hwndScanner);
         }
         DrawShipScanPath(hdc, fVis);
-        if (fVis == 0) {
-            sel.scan.iwp = -1;
-            sel.scan.ifl = -1;
-            sel.scan.idpl = -1;
+        if (!fVis) {
+            sel.scan.iwp = iwpNone;
+            sel.scan.ifl = iflNone;
+            sel.scan.idpl = idplNone;
             sel.id = -1;
             sel.grobjFull = grobjNone;
             sel.grobj = grobjNone;
             sel.scan.grobjFull = grobjNone;
             sel.scan.grobj = grobjNone;
         }
-        dOff = iScanZoom >= zoom200 && (grbitScan & grbitScanViewMask) == 4 ? 11 : (grbitScan & grbitScanShipCounts) != 0 ? 7 : 0;
-        if (sel_grobj != 0 && fNoSelRedraw == 0) {
+        dOff = iScanZoom >= zoom200 && (grbitScan & grbitScanViewMask) == 4 ? 11 : (grbitScan & grbitScanShipCounts) ? 7 : 0;
+        if (sel_grobj != 0 && !fNoSelRedraw) {
             pt = sel.pt;
             LogicalToScan(&pt);
             SetRect(&rc, pt.x - 11 - dOff, pt.y - 11 - dOff, pt.x + 12 + dOff, pt.y + 23 + dOff);
@@ -2058,13 +2043,13 @@ void RedrawScanSel(HDC hdc, int16_t fVis) {
             SetRect(&rc, pt.x - 6 - dOff, pt.y - 6 - dOff, pt.x + 7 + dOff, pt.y + 15 + dOff);
             DrawScanner(hdc, &rc);
         }
-        if (fVis == 0) {
+        if (!fVis) {
             sel.id = sel_id;
             sel.grobj = sel_grobj;
             sel.grobjFull = sel_grobjFull;
             sel.scan = sel_scan;
         }
-        if (fhdc != 0) {
+        if (fhdc) {
             ReleaseDC(hwndScanner, hdc);
         }
     }
@@ -2117,7 +2102,7 @@ void CtrPointScan(POINT16 pt, int16_t fScroll) {
 
     x = pt.x;
     y = pt.y;
-    if (hwndScanner != 0) {
+    if (hwndScanner) {
         GetClientRect(hwndScanner, &rc);
         rc.bottom -= dySBar;
         cx = ScanToPt(rc.right);
@@ -2130,14 +2115,14 @@ void CtrPointScan(POINT16 pt, int16_t fScroll) {
         y = y <= 1000 ? 1000 : y;
         dxCur = xScanTop;
         dyCur = yScanTop;
-        x = x + 2 & 0xfffc;
-        y = y + 2 & 0xfffc;
+        x = (x + 2) & 0xfffc;
+        y = (y + 2) & 0xfffc;
         if (dxCur != x || dyCur != y) {
             xScanTop = x;
             SetScrollPos(hwndScanner, SB_HORZ, x, TRUE);
             yScanTop = y;
             SetScrollPos(hwndScanner, SB_VERT, y, TRUE);
-            if (fScroll != 0) {
+            if (fScroll) {
                 ScrollScanner(PtToScan(dxCur - x), PtToScan(dyCur - y));
             } else {
                 InvalidateRect(hwndScanner, NULL, FALSE);
@@ -2183,7 +2168,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
         AlertSz(szWork, MB_ICONHAND);
         return FALSE;
     }
-    if ((grbitScan & grbitScanFleetPaths) != 0) {
+    if (grbitScan & grbitScanFleetPaths) {
         rgpt[0] = ptIn;
         rgpt[1] = pscan->pt;
         if (sel.iwpAct < sel.fl.cord - 1) {
@@ -2199,8 +2184,8 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     if ((int32_t)((uint32_t)(dx * dx) + (uint32_t)(dy * dy)) > (int16_t)(lDist * lDist)) {
         pscan->grobjFull = grobjOther;
         pscan->grobj = grobjOther;
-        pscan->idpl = -1;
-        pscan->ifl = -1;
+        pscan->idpl = idplNone;
+        pscan->ifl = iflNone;
         pscan->iwp = sel.iwpAct + 1;
         pscan->pt = ptIn;
     }
@@ -2246,15 +2231,15 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     pscan->grobjFull |= grobjOther;
     pscan->iwp = sel.iwpAct + 1;
     RedrawScanSel(NULL, 0);
-    FLookupFleet(-1, &sel.fl);
+    FLookupFleet(idWriteBack, &sel.fl);
     if (lpord[-1].grTask == grTaskLayMines && lpord[-1].tsell.iPlrX == 5) {
         fmemset((uint8_t *)lpord - 10, 0, 10);
         lpord[-1].grTask = grTaskNone;
-        FLookupFleet(-1, &sel.fl);
+        FLookupFleet(idWriteBack, &sel.fl);
     }
     ChangeScanSel(pscan, 1);
     ReleaseDC(hwndScanner, hdc);
-    if ((grbitScan & grbitScanFleetPaths) != 0) {
+    if (grbitScan & grbitScanFleetPaths) {
         for (ipt = 0; ipt < cpt; ipt++) {
             LogicalToScan(&rgpt[ipt]);
         }
@@ -2280,11 +2265,10 @@ int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
     PLANET *lppl;
     int16_t iWarpOld;
     SCAN    scan;
-    int32_t t_call_7d2b;
 
     iWarpSav = lpord->iWarp;
     iWarp = IFindIdealWarp(NULL, FALSE);
-    if (fAi != 0) {
+    if (fAi) {
         iWarpAi = IFindIdealWarp(NULL, TRUE);
     }
     for (iwp = lpfl->cord - 1; iwp >= 0 && lpord != &lpfl->lpplord->rgord[iwp]; iwp--) {
@@ -2309,7 +2293,7 @@ int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
             }
         }
     }
-    if (fGoFlatOut == 0 && fAi != 0) {
+    if (!fGoFlatOut && fAi) {
         fGoFlatOutAi = TRUE;
         fGoFlatOut = TRUE;
     } else {
@@ -2317,36 +2301,40 @@ int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
     }
     if (iWarp < 9) {
         iWarpOld = iWarp;
-        if (FFindNearestObject(lpord->pt, grobjPlanet | mdExact, &scan) != 0) {
+        if (FFindNearestObject(lpord->pt, grobjPlanet | mdExact, &scan)) {
             lppl = LpplFromId(scan.idpl);
         } else {
             lppl = NULL;
         }
-        if (fGoFlatOut == 0 && (lppl == 0 || (lppl->iPlayer != -1 && lppl->iPlayer != idPlayer))) {
+        if (!fGoFlatOut && (!lppl || (lppl->iPlayer != iplrNone && lppl->iPlayer != idPlayer))) {
             if (iwp > 1 && lpord[-1].iWarp > (uint16_t)iWarp && lpord[-1].iWarp <= 10) {
                 iWarp = lpord[-1].iWarp;
             }
-            t_call_7d2b = LFuelUseToWaypoint(lpfl, iwp, TRUE);
-            if ((int32_t)t_call_7d2b >= (int32_t)(LGetFleetStat(lpfl, 1) / 10) || lpfl->rgwtMin[4] < (int32_t)(LGetFleetStat(lpfl, 1) * 7) / 10)
+            if (LFuelUseToWaypoint(lpfl, iwp, TRUE) >= (int32_t)(LGetFleetStat(lpfl, 1) / 10) || lpfl->rgwtMin[4] < (int32_t)(LGetFleetStat(lpfl, 1) * 7) / 10)
                 goto LOptimizeSpeed;
             iWarp++;
+            goto LTryLimitedSpeed;
         } else {
-            if (fGoFlatOutAi != 0 && lppl != 0 && lppl->iPlayer == idPlayer && rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef != ihuldefOrbitalFort) {
+            if (fGoFlatOutAi && lppl && lppl->iPlayer == idPlayer && rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef != ihuldefOrbitalFort) {
                 fGoFlatOutAi = FALSE;
             }
             iWarp = 9;
         }
-        for (; iWarp > iWarpOld; iWarp--) {
+    LTryLimitedSpeed:
+        while (iWarp > iWarpOld) {
             lpord->iWarp = iWarp;
             lFuel = LFuelUseToWaypoint(lpfl, iwp, TRUE);
-            if (lFuel <= lpfl->rgwtMin[4] && ((lppl != 0 && lppl->fStarbase != 0 && lppl->iPlayer == idPlayer &&
-                                               LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) ||
-                                              lFuel <= (int32_t)(lpfl->rgwtMin[4] / 2) || fGoFlatOut != 0))
+            if (lFuel > lpfl->rgwtMin[4])
+                goto LDecWarp;
+            if (((lppl && lppl->fStarbase && lppl->iPlayer == idPlayer && LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) ||
+                 lFuel <= (int32_t)(lpfl->rgwtMin[4] / 2) || fGoFlatOut))
                 break;
+        LDecWarp:
+            iWarp--;
         }
         lpord->iWarp = iWarpSav;
     }
-    if (fGoFlatOutAi != 0 && iWarp > iWarpAi) {
+    if (fGoFlatOutAi && iWarp > iWarpAi) {
         iWarp = iWarpAi;
     }
 LOptimizeSpeed:
@@ -2381,13 +2369,13 @@ int16_t FNearAWayPoint(POINT16 pt, int16_t fLogical) {
     if (sel.grobj != grobjFleet) {
         return FALSE;
     }
-    if (fLogical == 0) {
+    if (!fLogical) {
         ScanToLogical(&pt);
     }
-    if (FFindNearestObject(pt, grobjPlanet | grobjFleet | grobjOther | grobjThing | mdScanRadius, &scan) == 0) {
+    if (!FFindNearestObject(pt, grobjPlanet | grobjFleet | grobjOther | grobjThing | mdScanRadius, &scan)) {
         return FALSE;
     }
-    if ((scan.grobjFull & grobjOther) != 0) {
+    if (scan.grobjFull & grobjOther) {
         if (scan.pt.x == sel.pt.x && scan.pt.y == sel.pt.y) {
             lpord = &sel.fl.lpplord->rgord[1];
             i = 1;
@@ -2458,64 +2446,67 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
     hcurSav = SetCursor(hcurCloseGrab);
     SetCapture(hwndScanner);
     ptNew = pt;
-    while (FGetMouseMove(&ptNew) != 0) {
-        ptNew.x = 0 > (rc.right >= ptNew.x ? ptNew.x : rc.right) ? 0 : rc.right < ptNew.x ? rc.right : ptNew.x;
-        ptNew.y = 0 > (rc.bottom >= ptNew.y ? ptNew.y : rc.bottom) ? 0 : rc.bottom < ptNew.y ? rc.bottom : ptNew.y;
+    while (FGetMouseMove(&ptNew)) {
+        ptNew.x = max(0, min(rc.right, ptNew.x));
+        ptNew.y = max(0, min(rc.bottom, ptNew.y));
         if (pt.x != ptNew.x || pt.y != ptNew.y) {
-            if (fFirst == 0 || FNearAWayPoint(ptNew, FALSE) == 0) {
-                fFirst = FALSE;
-                ptLogical = ptNew;
-                ScanToLogical(&ptLogical);
-                grTypeIn = (GetAsyncKeyState(VK_SHIFT) & 0xfffe) == 0 ? 79 : 143;
-                FFindNearestObject(ptLogical, grTypeIn, &scan);
-                DrawScanXorLines(hdc, rgpt, cpt);
-                if (scan.grobj == grobjNone) {
-                    rgpt[0] = ptLogical;
-                    sbar.id = -1;
-                    CchGetString(idsDeepSpace, szDeepSpace);
-                    sbar.psz = szDeepSpace;
-                } else {
-                    rgpt[0] = scan.pt;
-                    switch (scan.grobj) {
-                    case grobjPlanet:
-                        sbar.id = scan.idpl;
-                        break;
-                    case grobjFleet:
-                        sbar.id = rglpfl[scan.ifl]->id;
-                        break;
-                    case grobjThing:
-                        sbar.id = lpThings[scan.ith].idFull;
-                        break;
-                    default:
-                        sbar.id = scan.iwp;
-                    }
-                    sbar.psz = 0;
+            if (fFirst && FNearAWayPoint(ptNew, FALSE))
+                goto DoNext;
+
+            fFirst = FALSE;
+            ptLogical = ptNew;
+            ScanToLogical(&ptLogical);
+            grTypeIn = !(GetAsyncKeyState(VK_SHIFT) & 0xfffe) ? 79 : 143;
+            FFindNearestObject(ptLogical, grTypeIn, &scan);
+            DrawScanXorLines(hdc, rgpt, cpt);
+            if (scan.grobj == grobjNone) {
+                rgpt[0] = ptLogical;
+                sbar.id = -1;
+                CchGetString(idsDeepSpace, szDeepSpace);
+                sbar.psz = szDeepSpace;
+            } else {
+                rgpt[0] = scan.pt;
+                switch (scan.grobj) {
+                case grobjPlanet:
+                    sbar.id = scan.idpl;
+                    break;
+                case grobjFleet:
+                    sbar.id = rglpfl[scan.ifl]->id;
+                    break;
+                case grobjThing:
+                    sbar.id = lpThings[scan.ith].idFull;
+                    break;
+                default:
+                    sbar.id = scan.iwp;
                 }
-                sbar.pt = rgpt[0];
-                sbar.grbit = scan.grobj;
-                LogicalToScan(rgpt);
-                DrawScanXorLines(hdc, rgpt, cpt);
-                sbar.pscan = 0;
-                DrawScannerSBar(hdc, NULL, &sbar, FALSE);
+                sbar.psz = 0;
             }
+            sbar.pt = rgpt[0];
+            sbar.grbit = scan.grobj;
+            LogicalToScan(rgpt);
+            DrawScanXorLines(hdc, rgpt, cpt);
+            sbar.pscan = 0;
+            DrawScannerSBar(hdc, NULL, &sbar, FALSE);
+
+        DoNext:
             pt = ptNew;
         }
     }
     fChg = rgpt[0].x != rgpt[1].x || rgpt[0].y != rgpt[1].y;
-    if (fChg != 0) {
+    if (fChg) {
         if (scan.grobj == grobjNone) {
             scan.pt = ptLogical;
             scan.grobj = grobjOther;
             scan.iwp = sel.iwpAct;
         }
         fDup = scan.pt.x == ptPrev.x && scan.pt.y == ptPrev.y;
-        if (fDup == 0 && sel.iwpAct < sel.fl.cord - 1) {
+        if (!fDup && sel.iwpAct < sel.fl.cord - 1) {
             fDup = (scan.pt.x == sel.fl.lpplord->rgord[sel.iwpAct + 1].pt.x && scan.pt.y == sel.fl.lpplord->rgord[sel.iwpAct + 1].pt.y) * 2;
         }
         GetClientRect(hwndScanner, &rc);
-        if (fDup != 0) {
+        if (fDup) {
             fDel = AlertSz(PszFormatIds(idsSureWantDeleteCurrentWaypoint, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) == IDYES;
-            if ((grbitScan & grbitScanFleetPaths) != 0) {
+            if (grbitScan & grbitScanFleetPaths) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
                 MoveTo(hdc, rgpt[2].x, rgpt[2].y);
                 LineTo(hdc, rgpt[0].x, rgpt[0].y);
@@ -2527,7 +2518,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
             }
             DrawScanXorLines(hdc, rgpt, cpt);
             rgpt[0] = rgpt[1];
-            if ((grbitScan & grbitScanFleetPaths) != 0) {
+            if (grbitScan & grbitScanFleetPaths) {
                 hpenSav = SelectObject(hdc, hpenStarbase);
                 MoveTo(hdc, rgpt[2].x, rgpt[2].y);
                 LineTo(hdc, rgpt[0].x, rgpt[0].y);
@@ -2538,12 +2529,12 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
                 SelectObject(hdc, hpenSav);
             }
             DrawScanXorLines(hdc, rgpt, cpt);
-            if (fDel == 0)
+            if (!fDel)
                 goto Done;
             DeleteCurWayPoint(fDup == 1);
             goto Done;
         }
-        if ((grbitScan & grbitScanFleetPaths) != 0) {
+        if (grbitScan & grbitScanFleetPaths) {
             ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
             hpenSav = SelectObject(hdc, hpenStarbase);
             MoveTo(hdc, rgpt[2].x, rgpt[2].y);
@@ -2555,7 +2546,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         }
         DrawScanXorLines(hdc, rgpt, cpt);
         rgpt[0] = rgpt[1];
-        if ((grbitScan & grbitScanFleetPaths) != 0) {
+        if (grbitScan & grbitScanFleetPaths) {
             ExcludeClipRect(hdc, 0, rc.bottom - dySBar, rc.right, rc.bottom);
             hpenSav = SelectObject(hdc, hpenStarbase);
             MoveTo(hdc, rgpt[2].x, rgpt[2].y);
@@ -2585,7 +2576,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         lpord->id = i;
         lpord->pt = scan.pt;
         lpord->iWarp = IWarpBestForWaypoint(&sel.fl, lpord);
-        FLookupFleet(-1, &sel.fl);
+        FLookupFleet(idWriteBack, &sel.fl);
         scan.iwp = sel.iwpAct;
         scan.grobjFull |= grobjOther;
         sel.iwpAct = -2;
@@ -2598,7 +2589,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
     SetMineralTitleBar(hwndMine);
 Done:
     ReleaseDC(hwndScanner, hdc);
-    if (fChg != 0 && (grbitScan & grbitScanFleetPaths) != 0) {
+    if (fChg && (grbitScan & grbitScanFleetPaths)) {
         rgpt[1] = ptNew;
         BoundPoints(&rc, rgpt, cpt);
         hdc = GetDC(hwndScanner);
@@ -2656,18 +2647,16 @@ void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
     int16_t fChgWp;
     int16_t iRad;
     HDC     hdc;
-    POINT16 t_pt_8dfc;
-    POINT16 t_pt_8e08;
-    POINT16 t_pt_9001;
-    POINT16 t_pt_900d;
+    POINT16 ptTL; /* NATIVE: RECT corners are 32-bit; LogicalToScan takes POINT16 */
+    POINT16 ptBR;
 
-    if (fValidScan == 0) {
+    if (!fValidScan) {
         FFindNearestObject(pscan->pt, pscan->grobj, pscan);
     }
     if (memcmp(pscan, &sel.scan, sizeof(SCAN)) != 0) {
-        fChgWp = pscan->iwp != -1 && pscan->iwp != sel.iwpAct;
+        fChgWp = pscan->iwp != iwpNone && pscan->iwp != sel.iwpAct;
         fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel != 0) {
+        if (fMineFieldSel) {
             iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
             rcMine.left = lpThings[sel.scan.ith].pt.x;
             rcMine.top = lpThings[sel.scan.ith].pt.y;
@@ -2675,24 +2664,25 @@ void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
             rcMine.bottom = rcMine.top - iRad;
             rcMine.left -= iRad;
             rcMine.top += iRad;
-            t_pt_8dfc.x = rcMine.left;
-            t_pt_8dfc.y = rcMine.top;
-            LogicalToScan(&t_pt_8dfc);
-            rcMine.left = t_pt_8dfc.x;
-            rcMine.top = t_pt_8dfc.y;
-            t_pt_8e08.x = rcMine.right;
-            t_pt_8e08.y = rcMine.bottom;
-            LogicalToScan(&t_pt_8e08);
-            rcMine.right = t_pt_8e08.x;
-            rcMine.bottom = t_pt_8e08.y;
+            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+            ptTL.x = rcMine.left;
+            ptTL.y = rcMine.top;
+            LogicalToScan(&ptTL);
+            rcMine.left = ptTL.x;
+            rcMine.top = ptTL.y;
+            ptBR.x = rcMine.right;
+            ptBR.y = rcMine.bottom;
+            LogicalToScan(&ptBR);
+            rcMine.right = ptBR.x;
+            rcMine.bottom = ptBR.y;
             InflateRect(&rcMine, 1, 1);
         }
         RedrawScanSel(NULL, -1);
         sel.scan = *pscan;
-        if ((sel.scan.grobjFull & grobjPlanet) != 0 && fValidScan != 2) {
+        if ((sel.scan.grobjFull & grobjPlanet) && fValidScan != 2) {
             sel.scan.grobj = grobjPlanet;
         }
-        if (fChgWp != 0) {
+        if (fChgWp) {
             sel.iwpAct = pscan->iwp;
             FillOrdersLB();
             SetOrdersLbSel(pscan->iwp);
@@ -2700,19 +2690,19 @@ void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
             DrawPlanShip(NULL, 0x122);
         }
         RedrawScanSel(NULL, 1);
-        if (fChgWp != 0) {
+        if (fChgWp) {
             FEnsurePointOnScreen(pscan->pt, TRUE);
         }
         DrawScannerSBar(NULL, NULL, NULL, FALSE);
         InvalidateRect(hwndMine, NULL, TRUE);
         SetMineralTitleBar(hwndMine);
-        if (fMineFieldSel != 0) {
+        if (fMineFieldSel) {
             hdc = GetDC(hwndScanner);
             DrawScanner(hdc, &rcMine);
             ReleaseDC(hwndScanner, hdc);
         }
         fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel != 0) {
+        if (fMineFieldSel) {
             iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
             rcMine.left = lpThings[sel.scan.ith].pt.x;
             rcMine.top = lpThings[sel.scan.ith].pt.y;
@@ -2720,27 +2710,28 @@ void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
             rcMine.bottom = rcMine.top - iRad;
             rcMine.left -= iRad;
             rcMine.top += iRad;
-            t_pt_9001.x = rcMine.left;
-            t_pt_9001.y = rcMine.top;
-            LogicalToScan(&t_pt_9001);
-            rcMine.left = t_pt_9001.x;
-            rcMine.top = t_pt_9001.y;
-            t_pt_900d.x = rcMine.right;
-            t_pt_900d.y = rcMine.bottom;
-            LogicalToScan(&t_pt_900d);
-            rcMine.right = t_pt_900d.x;
-            rcMine.bottom = t_pt_900d.y;
+            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+            ptTL.x = rcMine.left;
+            ptTL.y = rcMine.top;
+            LogicalToScan(&ptTL);
+            rcMine.left = ptTL.x;
+            rcMine.top = ptTL.y;
+            ptBR.x = rcMine.right;
+            ptBR.y = rcMine.bottom;
+            LogicalToScan(&ptBR);
+            rcMine.right = ptBR.x;
+            rcMine.bottom = ptBR.y;
             InflateRect(&rcMine, 1, 1);
         }
-        if (fMineFieldSel != 0) {
+        if (fMineFieldSel) {
             hdc = GetDC(hwndScanner);
             DrawScanner(hdc, &rcMine);
             ReleaseDC(hwndScanner, hdc);
         }
-        if (sel.pl.id != -1) {
+        if (sel.pl.id != idplNone) {
             DrawPlanShip(NULL, 0x4002);
         }
-        if (gd.fTutorial != 0 && idPlayer == 0) {
+        if (gd.fTutorial && idPlayer == 0) {
             AdvanceTutor();
         }
     }
@@ -2755,29 +2746,29 @@ int16_t FGetNextObjHere(SCAN *pscan, int16_t fOnlyOurs) {
     fFound = sel.grobj != grobjFleet;
     for (i = 0; i < cFleet; i++) {
         lpfl = rglpfl[i];
-        if (rglpfl[i] == 0)
+        if (!rglpfl[i])
             break;
-        if (fFound == 0) {
+        if (!fFound) {
             if (lpfl->id == sel.id) {
                 fFound = TRUE;
             }
-        } else if (sel.pt.x == lpfl->pt.x && sel.pt.y == lpfl->pt.y && (fOnlyOurs == 0 || lpfl->iPlayer == idPlayer)) {
+        } else if (sel.pt.x == lpfl->pt.x && sel.pt.y == lpfl->pt.y && (!fOnlyOurs || lpfl->iPlayer == idPlayer)) {
             break;
         }
     }
-    if (fFound == 0) {
+    if (!fFound) {
         return FALSE;
     }
     if (i < cFleet) {
         pscan->ifl = i;
         pscan->grobj = grobjFleet;
-    } else if ((sel.grobjFull & grobjPlanet) != 0 && sel.pl.iPlayer == idPlayer) {
+    } else if ((sel.grobjFull & grobjPlanet) && sel.pl.iPlayer == idPlayer) {
         pscan->grobj = grobjPlanet;
         pscan->idpl = sel.pl.id;
     } else {
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0 || (pscan->pt.x == lpfl->pt.x && pscan->pt.y == lpfl->pt.y && (fOnlyOurs == 0 || lpfl->iPlayer == idPlayer)))
+            if (!rglpfl[i] || (pscan->pt.x == lpfl->pt.x && pscan->pt.y == lpfl->pt.y && (!fOnlyOurs || lpfl->iPlayer == idPlayer)))
                 break;
         }
         if (i >= cFleet || lpfl->id == sel.id) {
@@ -2793,43 +2784,43 @@ INT_PTR CALLBACK FindDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     char szName[40];
     RECT rc;
 
-    if (msg != WM_ERASEBKGND) {
-        if (IS_WM_CTLCOLOR(msg) == 0) {
-            if (msg == WM_INITDIALOG) {
-                StickyDlgPos(hwnd, &ptStickyFindDlg, TRUE);
-                SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x27, 0);
-                return 1;
-            }
-            if (msg == WM_COMMAND) {
-                switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-                case IDOK:
-                case IDCANCEL:
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                        GetDlgItemText(hwnd, IDC_EDIT1, szName, 40);
-                        if (FSelectSz(szName) == 0) {
-                            AlertSz(PszFormatIds(idsSorryCantFindPlanetFleetName, NULL), MB_ICONHAND);
-                            SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
-                            SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
-                            return 0;
-                        }
-                    }
-                    StickyDlgPos(hwnd, &ptStickyFindDlg, FALSE);
-                    EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                    return 1;
-                case IDC_HELP:
-                    WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhFindPlanetOrFleet);
-                    return 1;
-                }
-            }
-        } else if (HIWORD(lParam) == 6) {
+    switch (IS_WM_CTLCOLOR(msg) ? WM_CTLCOLOR : msg) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        StickyDlgPos(hwnd, &ptStickyFindDlg, TRUE);
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x27, 0);
+        return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        if (msg == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
-        return 0;
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetDlgItemText(hwnd, IDC_EDIT1, szName, 40);
+                if (!FSelectSz(szName)) {
+                    AlertSz(PszFormatIds(idsSorryCantFindPlanetFleetName, NULL), MB_ICONHAND);
+                    SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
+                    SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
+                    return 0;
+                }
+            }
+            StickyDlgPos(hwnd, &ptStickyFindDlg, FALSE);
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhFindPlanetOrFleet);
+            return 1;
+        }
     }
-    GetClientRect(hwnd, &rc);
-    FillRect((HDC)wParam, &rc, hbrButtonFace);
-    return 1;
+    return 0;
 }
 
 int16_t FSelectSz(char *szName) {
@@ -2843,67 +2834,71 @@ int16_t FSelectSz(char *szName) {
     SCAN    scan;
 
     iplPartial = -1;
-    scan.iwp = -1;
+    scan.iwp = iwpNone;
     for (ipl = 0; ipl < game.cPlanMax && strcmpi(PszGetCompressedPlanet(rgidPlan[ipl]), szName) != 0; ipl++) {
         if (iplPartial == -1 && strnicmp(PszGetCompressedPlanet(rgidPlan[ipl]), szName, strlen(szName)) == 0) {
             iplPartial = ipl;
         }
     }
-    for (; ipl == game.cPlanMax; ipl = iplPartial) {
-        cch = CchGetString(idsFleet, szT);
-        if (strnicmp(szName, szT, cch) == 0) {
-            pch = szName + 6;
-        } else {
-            pch = szName;
-        }
-        for (; *pch == ' '; pch++) {
-        }
-        if (*pch == '#') {
+GoWithPartial:
+    if (ipl != game.cPlanMax) {
+        FFindNearestObject(rgptPlan[ipl], grobjPlanet, &scan);
+        ChangeScanSel(&scan, 1);
+        FEnsurePointOnScreen(scan.pt, TRUE);
+        UpdateWindow(hwndScanner);
+        SendMessage(hwndScanner, WM_CHAR, 'v', 0);
+        return TRUE;
+    }
+
+    cch = CchGetString(idsFleet, szT);
+    if (strnicmp(szName, szT, cch) == 0) {
+        pch = szName + 6;
+    } else {
+        pch = szName;
+    }
+    for (; *pch == ' '; pch++) {
+    }
+    if (*pch == '#') {
+        pch++;
+    }
+    for (; *pch == ' '; pch++) {
+    }
+    if (*pch >= '1' && *pch <= '9') {
+        ifl = *pch - '0';
+        pch++;
+        while (isdigit(*pch) != 0) {
+            ifl = 10 * ifl + *pch - '0';
             pch++;
+            if (ifl > 512)
+                goto LNotAFleetId;
         }
-        for (; *pch == ' '; pch++) {
-        }
-        if (*pch >= '1' && *pch <= '9') {
-            ifl = *pch - '0';
-            pch++;
-            while (isdigit(*pch) != 0) {
-                ifl = 10 * ifl + *pch - '0';
-                pch++;
-                if (ifl > 512)
-                    goto LNotAFleetId;
-            }
-            ifl--;
-            ifl |= idPlayer << 9;
-            lpfl = LpflFromId(ifl);
-            if (lpfl != 0)
-                goto LFoundFleetId;
-        }
-    LNotAFleetId:
-        for (ifl = 0; ifl < cFleet; ifl++) {
-            lpfl = rglpfl[ifl];
-            if (rglpfl[ifl] == 0)
-                break;
-            if (strcmpi(PszGetFleetName(lpfl->id), szName) == 0)
-                goto LFoundFleetId;
-        }
-        if (iplPartial == -1) {
-            return FALSE;
+        ifl--;
+        ifl |= idPlayer << 9;
+        lpfl = LpflFromId(ifl);
+        if (lpfl) {
+        LFoundFleetId:
+            FFindNearestObject(lpfl->pt, grobjFleet, &scan);
+            scan.ifl = IflFromLpfl(lpfl);
+            ChangeScanSel(&scan, 2);
+            FEnsurePointOnScreen(scan.pt, TRUE);
+            UpdateWindow(hwndScanner);
+            SendMessage(hwndScanner, WM_CHAR, 'v', 0);
+            return TRUE;
         }
     }
-    FFindNearestObject(rgptPlan[ipl], grobjPlanet, &scan);
-    ChangeScanSel(&scan, 1);
-    FEnsurePointOnScreen(scan.pt, TRUE);
-    UpdateWindow(hwndScanner);
-    SendMessage(hwndScanner, WM_CHAR, 'v', 0);
-    return TRUE;
-LFoundFleetId:
-    FFindNearestObject(lpfl->pt, grobjFleet, &scan);
-    scan.ifl = IflFromLpfl(lpfl);
-    ChangeScanSel(&scan, 2);
-    FEnsurePointOnScreen(scan.pt, TRUE);
-    UpdateWindow(hwndScanner);
-    SendMessage(hwndScanner, WM_CHAR, 'v', 0);
-    return TRUE;
+LNotAFleetId:
+    for (ifl = 0; ifl < cFleet; ifl++) {
+        lpfl = rglpfl[ifl];
+        if (!rglpfl[ifl])
+            break;
+        if (strcmpi(PszGetFleetName(lpfl->id), szName) == 0)
+            goto LFoundFleetId;
+    }
+    if (iplPartial == -1) {
+        return FALSE;
+    }
+    ipl = iplPartial;
+    goto GoWithPartial;
 }
 
 void GetScanFleetOrientation(FLEET *lpfl, POINT16 *ppt, POINT16 *pptD) {
@@ -2911,19 +2906,19 @@ void GetScanFleetOrientation(FLEET *lpfl, POINT16 *ppt, POINT16 *pptD) {
     int16_t dx;
 
     if (lpfl->iPlayer == idPlayer) {
-        if (lpfl->cord > 1 && lpfl->lpplord->rgord[1].iWarp != 0) {
+        if (lpfl->cord <= 1 || lpfl->lpplord->rgord[1].iWarp == 0) {
+        NoInfo:
+            dx = dy = 0;
+        } else {
             dx = lpfl->lpplord->rgord[1].pt.x - lpfl->pt.x;
             dy = lpfl->lpplord->rgord[1].pt.y - lpfl->pt.y;
-            goto L_985e;
         }
-    } else if (lpfl->fdirValid != 0 && lpfl->iwarpFlt != 0) {
+    } else {
+        if (!lpfl->fdirValid || lpfl->iwarpFlt == 0)
+            goto NoInfo;
         dx = lpfl->dirFltX - 127;
         dy = lpfl->dirFltY - 127;
-        goto L_985e;
     }
-    dy = 0;
-    dx = 0;
-L_985e:
     GetDxDyOrientation(dx, dy, ppt, pptD);
     return;
 }
@@ -2931,17 +2926,17 @@ L_985e:
 void GetDxDyOrientation(int16_t dx, int16_t dy, POINT16 *ppt, POINT16 *pptD) {
     double  dbl;
     int16_t iBmp;
-    int16_t t_merge_9938_0001;
 
     iBmp = 0;
-    if (dx != 0 || dy != 0) {
-        dbl = (double)(((long double)atan2((double)dy, (double)dx) + 3.1415927) * 4.0 / 3.141592654 + 0.5);
-        iBmp = 8 - (LOWORD((int32_t)dbl) & 7);
-        iBmp = 8 - (LOWORD((int32_t)dbl) & 7) + 1 & 7;
-    }
-    t_merge_9938_0001 = iScanZoom < zoom100 ? 7 : 9;
-    pptD->y = t_merge_9938_0001;
-    pptD->x = t_merge_9938_0001;
+    if (dx == 0 && dy == 0)
+        goto LFinishUp;
+
+    dbl = (double)(((long double)atan2((double)dy, (double)dx) + 3.1415927) * 4.0 / 3.141592654 + 0.5);
+    iBmp = 8 - (LOWORD((int32_t)dbl) & 7);
+    iBmp = (8 - (LOWORD((int32_t)dbl) & 7) + 1) & 7;
+
+LFinishUp:
+    pptD->x = pptD->y = iScanZoom < zoom100 ? 7 : 9;
     if (iScanZoom >= zoom100) {
         ppt->x = 7;
     } else {
@@ -2979,19 +2974,19 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
     iropSav = SetROP2(hdc, R2_XORPEN);
     ptNew = pt;
     LogicalToScan(&ptNew);
-    while (FGetRMouseMove(&ptNew) != 0) {
-        ptNew.x = 0 > (rc.right >= ptNew.x ? ptNew.x : rc.right) ? 0 : rc.right < ptNew.x ? rc.right : ptNew.x;
-        ptNew.y = 0 > (rc.bottom >= ptNew.y ? ptNew.y : rc.bottom) ? 0 : rc.bottom < ptNew.y ? rc.bottom : ptNew.y;
+    while (FGetRMouseMove(&ptNew)) {
+        ptNew.x = max(0, min(rc.right, ptNew.x));
+        ptNew.y = max(0, min(rc.bottom, ptNew.y));
         ptLogical = ptNew;
         ScanToLogical(&ptLogical);
-        grTypeIn = (GetAsyncKeyState(VK_SHIFT) & 0xfffe) == 0 ? 79 : 143;
-        if (FFindNearestObject(ptLogical, grTypeIn, &scan) != 0) {
+        grTypeIn = !(GetAsyncKeyState(VK_SHIFT) & 0xfffe) ? 79 : 143;
+        if (FFindNearestObject(ptLogical, grTypeIn, &scan)) {
             ptLogical = scan.pt;
         }
         if (ptLogLast.x != ptLogical.x || ptLogLast.y != ptLogical.y) {
             ptNew = ptLogical;
             LogicalToScan(&ptNew);
-            if (fVirgin != 0) {
+            if (fVirgin) {
                 if (abs(ptLogical.x - ptLogLast.x) < 3 && abs(ptLogical.y - ptLogLast.y) < 3)
                     continue;
                 fVirgin = FALSE;
@@ -3001,29 +2996,22 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
             }
             MoveTo(hdc, ptBase.x, ptBase.y);
             LineTo(hdc, ptNew.x, ptNew.y);
-            switch (scan.grobj) {
-            case grobjNone:
+            if (scan.grobj == grobjNone) {
                 sbar.id = -1;
                 CchGetString(idsDeepSpace, szT);
                 sbar.psz = szT;
-                break;
-            case grobjPlanet:
-                sbar.id = scan.idpl;
-                goto L_9c32;
-            case grobjFleet:
-                sbar.id = rglpfl[scan.ifl]->id;
-                goto L_9c32;
-            case grobjThing:
-                sbar.id = lpThings[scan.ith].idFull;
-                goto L_9c32;
-            default:
-                sbar.id = scan.iwp;
-                goto L_9c32;
+            } else {
+                if (scan.grobj == grobjPlanet) {
+                    sbar.id = scan.idpl;
+                } else if (scan.grobj == grobjFleet) {
+                    sbar.id = rglpfl[scan.ifl]->id;
+                } else if (scan.grobj == grobjThing) {
+                    sbar.id = lpThings[scan.ith].idFull;
+                } else {
+                    sbar.id = scan.iwp;
+                }
+                sbar.psz = 0;
             }
-            goto L_9c37;
-        L_9c32:
-            sbar.psz = 0;
-        L_9c37:
             sbar.pt = ptLogical;
             sbar.grbit = scan.grobj;
             DrawScannerSBar(hdc, NULL, &sbar, FALSE);
@@ -3031,7 +3019,7 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
             ptLogLast = ptLogical;
         }
     }
-    if (fVirgin == 0) {
+    if (!fVirgin) {
         MoveTo(hdc, ptBase.x, ptBase.y);
         LineTo(hdc, pt.x, pt.y);
     }
@@ -3040,7 +3028,7 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
     DrawScannerSBar(hdc, NULL, NULL, FALSE);
     ReleaseCapture();
     ReleaseDC(hwndScanner, hdc);
-    if (fVirgin == 0) {
+    if (!fVirgin) {
         return TRUE;
     }
     return FALSE;

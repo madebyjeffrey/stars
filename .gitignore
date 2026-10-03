@@ -67,3 +67,8 @@ dkms.conf
 
 # starsbox tests
 tests/scaffold/starsbox/
+
+# local stars-asm reference listings (copied from ../stars-asm/decompiled)
+/reference/
+snippets/
+/AGENTS-private.md

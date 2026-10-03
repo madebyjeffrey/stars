@@ -41,66 +41,56 @@ BTLPLAN rgbtlplanT[5] = {{
                          }};
 PLAYER  vrgplrComp[6][4] = {
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {-1, -1, -1},
-          .rgEnvVarMin = {-1, -1, -1},
-          .rgEnvVarMax = {-1, -1, -1},
+          .rgEnvVar = {envImmune, envImmune, envImmune},
+          .rgEnvVarMin = {envImmune, envImmune, envImmune},
+          .rgEnvVarMax = {envImmune, envImmune, envImmune},
           .pctIdealGrowth = 5,
           .pctResearch = 15,
           .rgAttr = {10, 12, 10, 16, 10, 5, 10, 0, 1, 1, 2, 1, 1},
           .grbitAttr = grbitRaceIFE | grbitRaceMineralAlchemy | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceBleedingEdgeTech,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {-1, -1, -1},
-          .rgEnvVarMin = {-1, -1, -1},
-          .rgEnvVarMax = {-1, -1, -1},
+          .rgEnvVar = {envImmune, envImmune, envImmune},
+          .rgEnvVarMin = {envImmune, envImmune, envImmune},
+          .rgEnvVarMax = {envImmune, envImmune, envImmune},
           .pctIdealGrowth = 6,
           .pctResearch = 15,
           .rgAttr = {9, 13, 9, 16, 10, 4, 11, 0, 1, 1, 2, 1, 1},
           .grbitAttr = grbitRaceIFE | grbitRaceMineralAlchemy | grbitRaceCheapEngines | grbitRaceOBRM,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {-1, -1, -1},
-          .rgEnvVarMin = {-1, -1, -1},
-          .rgEnvVarMax = {-1, -1, -1},
+          .rgEnvVar = {envImmune, envImmune, envImmune},
+          .rgEnvVarMin = {envImmune, envImmune, envImmune},
+          .rgEnvVarMax = {envImmune, envImmune, envImmune},
           .pctIdealGrowth = 6,
           .pctResearch = 15,
           .rgAttr = {8, 13, 9, 18, 10, 4, 12, 0, 1, 2, 2, 2, 1},
           .grbitAttr = grbitRaceIFE | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {-1, -1, -1},
-          .rgEnvVarMin = {-1, -1, -1},
-          .rgEnvVarMax = {-1, -1, -1},
+          .rgEnvVar = {envImmune, envImmune, envImmune},
+          .rgEnvVarMin = {envImmune, envImmune, envImmune},
+          .rgEnvVarMax = {envImmune, envImmune, envImmune},
           .pctIdealGrowth = 7,
           .pctResearch = 15,
           .rgAttr = {8, 13, 9, 16, 10, 4, 8, 0, 1, 2, 1, 2, 1},
           .grbitAttr = grbitRaceIFE | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceCheapFact,
      }},
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {58, 35, 65},
           .rgEnvVarMin = {27, 7, 35},
@@ -111,10 +101,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {62, 33, 61},
           .rgEnvVarMin = {32, 6, 26},
@@ -125,10 +113,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {63, 28, 62},
           .rgEnvVarMin = {31, 4, 30},
@@ -139,24 +125,20 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {62, 29, -1},
-          .rgEnvVarMin = {31, 5, -1},
-          .rgEnvVarMax = {93, 53, -1},
+          .rgEnvVar = {62, 29, envImmune},
+          .rgEnvVarMin = {31, 5, envImmune},
+          .rgEnvVarMax = {93, 53, envImmune},
           .pctIdealGrowth = 15,
           .pctResearch = 15,
           .rgAttr = {8, 15, 10, 25, 10, 5, 9, 0, 0, 0, 0, 0, 0, 0, 1},
           .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceTech3 | grbitRaceCheapFact,
      }},
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {35, 60, 38},
           .rgEnvVarMin = {7, 26, 5},
@@ -167,10 +149,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {35, 60, 38},
           .rgEnvVarMin = {7, 26, 5},
@@ -182,10 +162,8 @@ PLAYER  vrgplrComp[6][4] = {
                       grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {35, 60, 38},
           .rgEnvVarMin = {7, 26, 5},
@@ -196,24 +174,20 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 | grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {35, -1, 50},
-          .rgEnvVarMin = {7, -1},
-          .rgEnvVarMax = {63, -1, 100},
+          .rgEnvVar = {35, envImmune, 50},
+          .rgEnvVarMin = {7, envImmune},
+          .rgEnvVarMax = {63, envImmune, 100},
           .pctIdealGrowth = 16,
           .pctResearch = 15,
           .rgAttr = {8, 14, 9, 14, 14, 5, 14, 1, 0, 0, 0, 0, 0, 0, 4},
           .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 | grbitRaceCheapFact,
      }},
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {32, 31, 31},
@@ -225,10 +199,8 @@ PLAYER  vrgplrComp[6][4] = {
              grbitRaceTT | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {32, 31, 31},
@@ -239,10 +211,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {23, 24, 25},
@@ -253,24 +223,20 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
-          .rgEnvVar = {-1, 50, 50},
-          .rgEnvVarMin = {-1, 24, 25},
-          .rgEnvVarMax = {-1, 76, 75},
+          .rgEnvVar = {envImmune, 50, 50},
+          .rgEnvVarMin = {envImmune, 24, 25},
+          .rgEnvVarMax = {envImmune, 76, 75},
           .pctIdealGrowth = 15,
           .pctResearch = 15,
           .rgAttr = {8, 15, 10, 15, 15, 5, 15, 1, 0, 0, 0, 0, 0, 2, 3},
           .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
      }},
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {22, 22, 22},
@@ -281,10 +247,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceOBRM | grbitRaceLowStartingPop | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {19, 19, 19},
@@ -295,10 +259,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {18, 18, 18},
@@ -310,10 +272,8 @@ PLAYER  vrgplrComp[6][4] = {
                       grbitRaceCheapFact,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {17, 17, 17},
@@ -325,10 +285,8 @@ PLAYER  vrgplrComp[6][4] = {
                       grbitRaceCheapFact,
      }},
     {{
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {20, 20, 20},
@@ -339,10 +297,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceISB | grbitRaceGeneralizedResearch | grbitRaceCheapEngines,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {15, 15, 15},
@@ -353,10 +309,8 @@ PLAYER  vrgplrComp[6][4] = {
           .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceISB | grbitRaceGeneralizedResearch,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {15, 15, 15},
@@ -368,10 +322,8 @@ PLAYER  vrgplrComp[6][4] = {
              grbitRaceIFE | grbitRaceTT | grbitRaceARM | grbitRaceISB | grbitRaceGeneralizedResearch | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy,
      },
       {
-          .iPlayer = -1,
+          .iPlayer = iplrNone,
           .det = detAll,
-          .reserved = 7,
-          .wMdPlr = 7,
           .lSalt = -1,
           .rgEnvVar = {50, 50, 50},
           .rgEnvVarMin = {15, 15, 15},
@@ -387,7 +339,7 @@ uint8_t vrgWormholeVar[5] = {3, 3, 5, 4, 5};
 void InitBattlePlan(BTLPLAN *lpbtlplan, int16_t iplan, int16_t iplr) {
     *lpbtlplan = rgbtlplanT[iplan];
     lpbtlplan->iplr = iplr;
-    if (game.fSinglePlr != 0 && iplan == 0) {
+    if (game.fSinglePlr && iplan == 0) {
         lpbtlplan->iplrAttack = iplrAttackEveryone;
     }
     return;
@@ -453,15 +405,6 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     uint16_t      idLast;
     THING        *lpthLast;
     char          szExt[4];
-    POINT16      *t_03f1;
-    int16_t       t_call_0a1b;
-    int16_t       t_scratch_m116_2;
-    RaceAttribute t_call_1734;
-    uint16_t      t_scratch_m116_15;
-    uint16_t      t_scratch_m116_17;
-    uint16_t      t_scratch_m116_19;
-    int16_t       t_call_361d;
-    int16_t       t_scratch_m116_24;
 
     iMin = 0;
     cKill = 0;
@@ -510,14 +453,11 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     pptT = rgptPlan;
     for (ppt = rgptPlan; ppt < pptMax; ppt++) {
         if (ppt->y >= 0) {
-            t_03f1 = pptT;
-            pptT++;
-            t_03f1->x = ppt->x;
-            t_03f1->y = ppt->y;
+            *pptT++ = *ppt;
         }
     }
     cPlanMax = iMax - cKill;
-    if (game.fClumping != 0) {
+    if (game.fClumping) {
         for (i = 0; i < cPlanMax; i++) {
             lBest = 10000000;
             iBest = 0;
@@ -555,7 +495,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     memset(grUsed, 0, 128);
     for (i = 0; i < cPlanMax; i++) {
         dx = Random(999);
-        while ((grUsed[dx >> 3] & bitTbl[dx & 7]) != 0) {
+        while (grUsed[dx >> 3] & bitTbl[dx & 7]) {
             dx++;
             if (dx >= game.fTutorial + 999) {
                 dx = 0;
@@ -569,7 +509,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     penvMem = &env;
     if (setjmp(env) != 0) {
         DestroyCurGame();
-        return 0;
+        return FALSE;
     }
     lpPlanets = LpAlloc(cPlanMax * sizeof(PLANET), htPlanets);
     fmemset(lpPlanets, 0, cPlanMax * sizeof(PLANET));
@@ -577,10 +517,10 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     lppl = lpPlanets;
     while (i < cPlanMax) {
         lppl->id = i;
-        lppl->iPlayer = -1;
+        lppl->iPlayer = iplrNone;
         lppl->det = detAll;
         lppl->iScanner = 31;
-        if (game.fNoRandom == 0) {
+        if (!game.fNoRandom) {
             lppl->fArtifact = (uint32_t)(Random(3) == 0) & 1;
         }
         lppl->rgEnvVar[0] = Random(90) + 1;
@@ -589,10 +529,8 @@ int16_t GenerateWorld(int16_t fBatchMode) {
         lppl->rgEnvVar[1] = Random(90) + 1;
         lppl->rgEnvVar[1] += Random(10);
         lppl->rgEnvVarOrig[1] = lppl->rgEnvVar[1];
-        t_call_0a1b = Random(99);
-        lppl->rgEnvVarOrig[2] = t_call_0a1b + 1;
-        lppl->rgEnvVar[2] = t_call_0a1b + 1;
-        if (game.fTutorial != 0) {
+        lppl->rgEnvVar[2] = lppl->rgEnvVarOrig[2] = Random(99) + 1;
+        if (game.fTutorial) {
             if (i != 5) {
                 if (i == 11) {
                     lppl->rgEnvVar[0] += 20;
@@ -606,23 +544,22 @@ int16_t GenerateWorld(int16_t fBatchMode) {
             }
         }
         for (j = 0; j < 3; j++) {
-            if (game.fExtraFuel != 0) {
+            if (game.fExtraFuel) {
                 lppl->rgMinConc[j] = 100;
             } else {
                 lppl->rgwtMin[j] = 0;
-                t_scratch_m116_2 = Random(45);
-                lppl->rgMinConc[j] = Random(45) + t_scratch_m116_2 + 31;
+                lppl->rgMinConc[j] = Random(45) + Random(45) + 31;
                 if (lppl->rgEnvVar[2] >= 90) {
                     lppl->rgMinConc[j] += Random(99 - lppl->rgMinConc[j]) / 2;
                 }
             }
             lppl->rgpctMinLevel[j] = 0;
             lppl->rgwtMin[j] = 0;
-            if (game.fBBSPlay != 0 && lppl->rgMinConc[j] < 40) {
+            if (game.fBBSPlay && lppl->rgMinConc[j] < 40) {
                 lppl->rgMinConc[j] += 5;
             }
         }
-        if (game.fExtraFuel != 0) {
+        if (game.fExtraFuel) {
             iT = 100;
         } else {
             iT = Random(27);
@@ -648,7 +585,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
         if (lpPlanets->rgwtMin[j] < 200) {
             lpPlanets->rgwtMin[j] += (int16_t)(Random(150) + 155);
         }
-        if (game.fBBSPlay != 0) {
+        if (game.fBBSPlay) {
             lpPlanets->rgwtMin[j] += (int32_t)(lpPlanets->rgwtMin[j] / 4);
         }
     }
@@ -662,54 +599,76 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     lDistIdeal2 = (int32_t)(lDistIdeal2 * (int16_t)game.mdStartDist) / 3 + l;
     lDistMin2 = (int32_t)(lDistIdeal2 * 9) / 10;
     lDistMax2 = (int32_t)(lDistIdeal2 * 7) / 6;
-    while (1) {
-        lBest = 100000000;
-        dMin = dGal / 4 + 1000;
-        dMax = (int16_t)(3 * dGal) / 4 + 1000;
-        for (i = 0; i < 50; i++) {
-            rgi[0] = Random(cPlanMax);
-            pt = rgptPlan[rgi[0]];
-            if (pt.x < dMin) {
-                dx = dMin - pt.x;
-            } else if (pt.x > dMax) {
-                dx = pt.x - dMax;
-            } else {
-                dx = 0;
-            }
-            if (pt.y < dMin) {
-                dy = dMin - pt.y;
-            } else if (pt.y > dMax) {
-                dy = pt.y - dMax;
-            } else {
-                dy = 0;
-            }
-            if (dx == 0 && dy == 0)
-                break;
-            l = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
-            if (l < lBest) {
-                lBest = l;
-                iBest = rgi[0];
-            }
-        }
-        if (i == 50) {
-            rgi[0] = iBest;
-        }
-        if (game.cPlayer > 4) {
-            dMin = dGal / 20 + 1000;
-            dMax = MulDiv(dGal, 19, 20) + 1000;
-        } else if (game.cPlayer > 2) {
-            dMin = dGal / 10 + 1000;
-            dMax = MulDiv(dGal, 9, 10) + 1000;
+RetryAll:
+    lBest = 100000000;
+    dMin = dGal / 4 + 1000;
+    dMax = (int16_t)(3 * dGal) / 4 + 1000;
+    for (i = 0; i < 50; i++) {
+        rgi[0] = Random(cPlanMax);
+        pt = rgptPlan[rgi[0]];
+        if (pt.x < dMin) {
+            dx = dMin - pt.x;
+        } else if (pt.x > dMax) {
+            dx = pt.x - dMax;
         } else {
-            dMin = MulDiv(dGal, 3, 20) + 1000;
-            dMax = MulDiv(dGal, 17, 20) + 1000;
+            dx = 0;
         }
-        i = 1;
-        while (1) {
-            if (i >= game.cPlayer)
-                goto L_15bc;
-            for (j = 0; j < 50; j++) {
-                rgi[i] = Random(cPlanMax);
+        if (pt.y < dMin) {
+            dy = dMin - pt.y;
+        } else if (pt.y > dMax) {
+            dy = pt.y - dMax;
+        } else {
+            dy = 0;
+        }
+        if (dx == 0 && dy == 0)
+            break;
+        l = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
+        if (l < lBest) {
+            lBest = l;
+            iBest = rgi[0];
+        }
+    }
+    if (i == 50) {
+        rgi[0] = iBest;
+    }
+    if (game.cPlayer > 4) {
+        dMin = dGal / 20 + 1000;
+        dMax = MulDiv(dGal, 19, 20) + 1000;
+    } else if (game.cPlayer > 2) {
+        dMin = dGal / 10 + 1000;
+        dMax = MulDiv(dGal, 9, 10) + 1000;
+    } else {
+        dMin = MulDiv(dGal, 3, 20) + 1000;
+        dMax = MulDiv(dGal, 17, 20) + 1000;
+    }
+    for (i = 1; i < game.cPlayer; i++) {
+        for (j = 0; j < 50; j++) {
+            rgi[i] = Random(cPlanMax);
+            pt = rgptPlan[rgi[i]];
+            if (pt.x >= dMin && pt.y >= dMin && pt.x <= dMax && pt.y <= dMax) {
+                fFound = FALSE;
+                for (k = 0; k < i; k++) {
+                    dx = pt.x - rgptPlan[rgi[k]].x;
+                    dy = pt.y - rgptPlan[rgi[k]].y;
+                    l = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
+                    if (l <= 0 || l < lDistMin2)
+                        break;
+                    if (l <= lDistMax2) {
+                        fFound = TRUE;
+                    }
+                }
+                if (k == i && fFound)
+                    break;
+            }
+        }
+        if (j == 50) {
+            iBest = rgi[i];
+            while (++rgi[i] != iBest) {
+                if (rgi[i] >= cPlanMax) {
+                    rgi[i] = 0;
+                    if (iBest == 0)
+                        break;
+                }
                 pt = rgptPlan[rgi[i]];
                 if (pt.x >= dMin && pt.y >= dMin && pt.x <= dMax && pt.y <= dMax) {
                     fFound = FALSE;
@@ -723,47 +682,17 @@ int16_t GenerateWorld(int16_t fBatchMode) {
                             fFound = TRUE;
                         }
                     }
-                    if (k == i && fFound != 0)
+                    if (k == i && fFound)
                         break;
                 }
             }
-            if (j == 50) {
-                iBest = rgi[i];
-                while (1) {
-                    rgi[i]++;
-                    if (rgi[i] == iBest)
-                        break;
-                    if (rgi[i] >= cPlanMax) {
-                        rgi[i] = 0;
-                        if (iBest == 0)
-                            break;
-                    }
-                    pt = rgptPlan[rgi[i]];
-                    if (pt.x >= dMin && pt.y >= dMin && pt.x <= dMax && pt.y <= dMax) {
-                        fFound = FALSE;
-                        for (k = 0; k < i; k++) {
-                            dx = pt.x - rgptPlan[rgi[k]].x;
-                            dy = pt.y - rgptPlan[rgi[k]].y;
-                            l = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
-                            if (l <= 0 || l < lDistMin2)
-                                break;
-                            if (l <= lDistMax2) {
-                                fFound = TRUE;
-                            }
-                        }
-                        if (k == i && fFound != 0)
-                            break;
-                    }
-                }
-                if (iBest == rgi[i])
-                    break;
+            if (iBest == rgi[i]) {
+                lDistMin2 -= (int32_t)(lDistIdeal2 / 35);
+                lDistMax2 += (int32_t)(lDistIdeal2 / 35);
+                goto RetryAll;
             }
-            i++;
         }
-        lDistMin2 -= (int32_t)(lDistIdeal2 / 35);
-        lDistMax2 += (int32_t)(lDistIdeal2 / 35);
     }
-L_15bc:
     for (i = 0; i < game.cPlayer; i++) {
         j = Random(game.cPlayer - i) + i;
         k = rgi[j];
@@ -779,8 +708,7 @@ L_15bc:
             rgplr[i].rgTech[j] = 0;
             rgplr[i].rgResSpent[j] = 0;
         }
-        t_call_1734 = GetRaceStat(&rgplr[i], rsMajorAdv);
-        switch (t_call_1734) {
+        switch (GetRaceStat(&rgplr[i], rsMajorAdv)) {
         case raAttack:
             rgplr[i].rgTech[1] = 6;
             rgplr[i].rgTech[2] = 1;
@@ -826,7 +754,7 @@ L_15bc:
         if (GetRaceGrbit(&rgplr[i], ibitRaceCheapEngines) != 0) {
             rgplr[i].rgTech[2]++;
         }
-        if (GetRaceGrbit(&rgplr[i], ibitRaceIFE) != 0 && game.fTutorial == 0) {
+        if (GetRaceGrbit(&rgplr[i], ibitRaceIFE) != 0 && !game.fTutorial) {
             rgplr[i].rgTech[2]++;
         }
         for (j = 0; j < 4; j++) {
@@ -851,7 +779,7 @@ L_15bc:
         lpPlanets[iMin].uGuesses = (lpPlanets[iMin].uGuesses & 0xf000) | ((uint32_t)LOWORD(lpPlanets[iMin].rgwtMin[3]) / 4 & 0xfff);
         for (j = 0; j < 3; j++) {
             lpPlanets[iMin].rgwtMin[j] = lpPlanets->rgwtMin[j];
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 lpPlanets[iMin].rgMinConc[j] = 25 <= lpPlanets->rgMinConc[j] ? lpPlanets->rgMinConc[j] : 25;
             } else {
                 lpPlanets[iMin].rgMinConc[j] = 30 <= lpPlanets->rgMinConc[j] ? lpPlanets->rgMinConc[j] : 30;
@@ -864,13 +792,13 @@ L_15bc:
         } else {
             iT = CAdvantagePoints(&rgplr[i]);
         }
-        if (rgplr[i].fAi != 0) {
+        if (rgplr[i].fAi) {
             iT = 50;
             if (rgplr[i].lvlAi >= lvlAiExpert) {
                 lpPlanets[iMin].rgwtMin[3] += (int32_t)(lpPlanets[iMin].rgwtMin[3] / 10);
             }
         }
-        if (game.fBBSPlay != 0) {
+        if (game.fBBSPlay) {
             pct10 = PctTrueMaxGrowth(i) * 2 + 10;
             lpPlanets[iMin].rgwtMin[3] = (uint32_t)(lpPlanets[iMin].rgwtMin[3] * pct10);
             lpPlanets[iMin].rgwtMin[3] = (int32_t)(lpPlanets[iMin].rgwtMin[3] / 10);
@@ -898,9 +826,11 @@ L_15bc:
             for (j = 0; j < 3; j++) {
                 pl[j] += ktLeft;
             }
-            if (rgplr[i].fAi == 0 || rgplr[i].lvlAi < lvlAiTough)
-                break;
+            if (rgplr[i].fAi && rgplr[i].lvlAi >= lvlAiTough)
+                goto LConcentrations;
+            break;
         case 1:
+        LConcentrations:
             if (iT > 0 && iT < 3) {
                 ktLeft = 1;
             } else {
@@ -935,31 +865,25 @@ L_15bc:
         }
         rgplr[i].iPlayer = i;
         rgplr[i].idPlanetHome = iMin;
-        if (rgplr[i].rgEnvVarMax[0] == -1) {
+        if (rgplr[i].rgEnvVarMax[0] == envImmune) {
             iT = Random(99) + 1;
         } else {
             iT = rgplr[i].rgEnvVarMin[0] + (int16_t)(rgplr[i].rgEnvVarMax[0] - rgplr[i].rgEnvVarMin[0]) / 2;
         }
-        t_scratch_m116_15 = iT;
-        lpPlanets[iMin].rgEnvVarOrig[0] = t_scratch_m116_15;
-        lpPlanets[iMin].rgEnvVar[0] = t_scratch_m116_15;
-        if (rgplr[i].rgEnvVarMax[1] == -1) {
+        lpPlanets[iMin].rgEnvVar[0] = lpPlanets[iMin].rgEnvVarOrig[0] = iT;
+        if (rgplr[i].rgEnvVarMax[1] == envImmune) {
             iT = Random(99) + 1;
         } else {
             iT = rgplr[i].rgEnvVarMin[1] + (int16_t)(rgplr[i].rgEnvVarMax[1] - rgplr[i].rgEnvVarMin[1]) / 2;
         }
-        t_scratch_m116_17 = iT;
-        lpPlanets[iMin].rgEnvVarOrig[1] = t_scratch_m116_17;
-        lpPlanets[iMin].rgEnvVar[1] = t_scratch_m116_17;
-        if (rgplr[i].rgEnvVarMax[2] == -1) {
+        lpPlanets[iMin].rgEnvVar[1] = lpPlanets[iMin].rgEnvVarOrig[1] = iT;
+        if (rgplr[i].rgEnvVarMax[2] == envImmune) {
             iT = Random(99) + 1;
         } else {
             iT = rgplr[i].rgEnvVarMin[2] + (int16_t)(rgplr[i].rgEnvVarMax[2] - rgplr[i].rgEnvVarMin[2]) / 2;
         }
-        t_scratch_m116_19 = iT;
-        lpPlanets[iMin].rgEnvVarOrig[2] = t_scratch_m116_19;
-        lpPlanets[iMin].rgEnvVar[2] = t_scratch_m116_19;
-        if (rgplr[i].fAi == 0) {
+        lpPlanets[iMin].rgEnvVar[2] = lpPlanets[iMin].rgEnvVarOrig[2] = iT;
+        if (!rgplr[i].fAi) {
             rgplr[i].pctResearch = 15;
         }
         rgplr[i].iTechCur &= 0xfff0;
@@ -980,7 +904,7 @@ L_15bc:
             lpshdef[j].wFlags = (lpshdef[j].wFlags & 0xfdff) | 0x200;
         }
         if (GetRaceStat(&rgplr[i], rsMajorAdv) == raMassAccel) {
-            lpshdef->hul.rghs[0].iItem = 7;
+            lpshdef->hul.rghs[0].iItem = ispecialSBMassDriver5;
             lpshdef->hul.rghs[0].cItem = 1;
             if ((int16_t)game.mdSize > sizeTiny) {
                 lpshdef[1].fFree = FALSE;
@@ -988,8 +912,8 @@ L_15bc:
                 lpshdef[1].cExist = 1;
                 lpshdef[1].cBuilt = 1;
             }
-        } else if (GetRaceStat(&rgplr[i], rsMajorAdv) == raStargate && game.fTutorial == 0) {
-            lpshdef->hul.rghs[0].iItem = 0;
+        } else if (GetRaceStat(&rgplr[i], rsMajorAdv) == raStargate && !game.fTutorial) {
+            lpshdef->hul.rghs[0].iItem = ispecialSBStargate100250;
             lpshdef->hul.rghs[0].cItem = 1;
             if ((int16_t)game.mdSize > sizeTiny) {
                 lpshdef[1] = lpshdef[2];
@@ -1042,7 +966,7 @@ L_15bc:
             break;
         case raStealth:
             CreateStartupShip(i, idHome, rgplr[i].rgTech[0] < 2 ? 2 : 5, TRUE);
-            if (rgplr[i].fAi != 0)
+            if (rgplr[i].fAi)
                 break;
             CreateStartupShip(i, idHome, 1, TRUE);
             break;
@@ -1065,98 +989,86 @@ L_15bc:
         default:
             ishRet = CreateStartupShip(i, idHome, 9, TRUE);
         }
-        switch (raMajor) {
-        case raMines:
+        if (raMajor == raMines) {
             CreateStartupShip(i, idHome, 16, TRUE);
             CreateStartupShip(i, idHome, 18, TRUE);
-            break;
-        case raTerra:
+        } else if (raMajor == raTerra) {
             CreateStartupShip(i, idHome, 17, TRUE);
-            break;
-        case raStargate:
+        } else if (raMajor == raStargate) {
             CreateStartupShip(i, idHome, 7, TRUE);
             CreateStartupShip(i, idHome, 8, TRUE);
             if ((int16_t)game.mdSize > sizeTiny)
                 goto LGive2ndPlanet;
-            break;
-        case raMassAccel:
-            if ((int16_t)game.mdSize > sizeTiny)
-                goto LGive2ndPlanet;
-        default:
-            if (raMajor == raNone) {
-                CreateStartupShip(i, idHome, rgplr[i].rgTech[3] < 4 ? 6 : 8, TRUE);
-                CreateStartupShip(i, idHome, 7, TRUE);
-                CreateStartupShip(i, idHome, 14, TRUE);
-            }
-        }
-        goto L_39dd;
-    LGive2ndPlanet:
-        lpplPicked = NULL;
-        lpplClosest = NULL;
-        ptHome = rgptPlan[idHome];
-        cFit = 0;
-        lDistMin2 = (int32_t)(dGal * 15) / 100;
-        lDistMin2 = (uint32_t)(lDistMin2 * lDistMin2);
-        lDistMax2 = (int32_t)(dGal * 23) / 100;
-        lDistMax2 = (uint32_t)(lDistMax2 * lDistMax2);
-        lDistIdeal2 = (int32_t)(dGal * 20) / 100;
-        lDistIdeal2 = (uint32_t)(lDistIdeal2 * lDistIdeal2);
-        lBest = 10000000;
-        pptMax = &rgptPlan[cPlanMax];
-        ppt = rgptPlan;
-        lppl = lpPlanets;
-        while (ppt < pptMax) {
-            if (lppl->iPlayer == -1) {
-                dx = ppt->x - ptHome.x;
-                dy = ppt->y - ptHome.y;
-                lDistCur2 = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
-                if (lDistCur2 >= lDistMin2 && lDistCur2 <= lDistMax2) {
-                    cFit++;
-                    if (Random(cFit) == 0) {
-                        lpplPicked = lppl;
+        } else if (raMajor == raMassAccel && (int16_t)game.mdSize > sizeTiny) {
+        LGive2ndPlanet:
+            lpplPicked = NULL;
+            lpplClosest = NULL;
+            ptHome = rgptPlan[idHome];
+            cFit = 0;
+            lDistMin2 = (int32_t)(dGal * 15) / 100;
+            lDistMin2 = (uint32_t)(lDistMin2 * lDistMin2);
+            lDistMax2 = (int32_t)(dGal * 23) / 100;
+            lDistMax2 = (uint32_t)(lDistMax2 * lDistMax2);
+            lDistIdeal2 = (int32_t)(dGal * 20) / 100;
+            lDistIdeal2 = (uint32_t)(lDistIdeal2 * lDistIdeal2);
+            lBest = 10000000;
+            pptMax = &rgptPlan[cPlanMax];
+            ppt = rgptPlan;
+            lppl = lpPlanets;
+            while (ppt < pptMax) {
+                if (lppl->iPlayer == iplrNone) {
+                    dx = ppt->x - ptHome.x;
+                    dy = ppt->y - ptHome.y;
+                    lDistCur2 = (uint32_t)(dx * dx) + (uint32_t)(dy * dy);
+                    if (lDistCur2 >= lDistMin2 && lDistCur2 <= lDistMax2) {
+                        cFit++;
+                        if (Random(cFit) == 0) {
+                            lpplPicked = lppl;
+                        }
+                    } else if (!lpplPicked && lDistCur2 < lBest) {
+                        lBest = lDistCur2;
+                        lpplClosest = lppl;
                     }
-                } else if (lpplPicked == 0 && lDistCur2 < lBest) {
-                    lBest = lDistCur2;
-                    lpplClosest = lppl;
+                }
+                ppt++;
+                lppl++;
+            }
+            if (!lpplPicked) {
+                lpplPicked = lpplClosest;
+            }
+            lpplPicked->iWarpFling = 1;
+            cFit = 0;
+            while (PctPlanetDesirability(lpplPicked, i) < 10 && cFit++ < 100) {
+                for (j = 0; j < 3; j++) {
+                    lpplPicked->rgEnvVar[j] = lpplPicked->rgEnvVarOrig[j] = Random(97) + 2;
                 }
             }
-            ppt++;
-            lppl++;
-        }
-        if (lpplPicked == 0) {
-            lpplPicked = lpplClosest;
-        }
-        lpplPicked->iWarpFling = 1;
-        cFit = 0;
-        while (PctPlanetDesirability(lpplPicked, i) < 10 && cFit++ < 100) {
-            for (j = 0; j < 3; j++) {
-                t_call_361d = Random(97);
-                lpplPicked->rgEnvVarOrig[j] = t_call_361d + 2;
-                lpplPicked->rgEnvVar[j] = t_call_361d + 2;
+            if (cFit >= 100) {
+                for (j = 0; j < 3; j++) {
+                    lpplPicked->rgEnvVar[j] = lpPlanets[idHome].rgEnvVar[j];
+                    lpplPicked->rgEnvVarOrig[j] = lpPlanets[idHome].rgEnvVarOrig[j];
+                }
             }
-        }
-        if (cFit >= 100) {
+            lpplPicked->iPlayer = i;
+            lpplPicked->fStarbase = TRUE;
+            lpplPicked->isb = 1;
+            lpplPicked->fArtifact = FALSE;
+            lpplPicked->cFactories = 4;
+            lpplPicked->cMines = 10;
+            lpplPicked->rgwtMin[3] = (int32_t)(lpPlanets[idHome].rgwtMin[3] * 2) / 5;
+            lpplPicked->uPopGuess = (uint32_t)LOWORD(lpplPicked->rgwtMin[3]) / 4;
             for (j = 0; j < 3; j++) {
-                lpplPicked->rgEnvVar[j] = lpPlanets[idHome].rgEnvVar[j];
-                lpplPicked->rgEnvVarOrig[j] = lpPlanets[idHome].rgEnvVarOrig[j];
+                lpplPicked->rgwtMin[j] = (int16_t)(Random(200) + 100);
             }
+            lpplPicked->iScanner = 0;
+            lpPlanets[idHome].rgwtMin[3] = (int32_t)(lpPlanets[idHome].rgwtMin[3] * 4) / 5;
+            lpPlanets[idHome].uGuesses = (lpPlanets[idHome].uGuesses & 0xf000) | ((uint32_t)LOWORD(lpPlanets[idHome].rgwtMin[3]) / 4 & 0xfff);
+            CreateStartupShip(i, lpplPicked->id, 0, FALSE);
+        } else if (raMajor == raNone) {
+            CreateStartupShip(i, idHome, rgplr[i].rgTech[3] < 4 ? 6 : 8, TRUE);
+            CreateStartupShip(i, idHome, 7, TRUE);
+            CreateStartupShip(i, idHome, 14, TRUE);
         }
-        lpplPicked->iPlayer = i;
-        lpplPicked->fStarbase = TRUE;
-        lpplPicked->isb = 1;
-        lpplPicked->fArtifact = FALSE;
-        lpplPicked->cFactories = 4;
-        lpplPicked->cMines = 10;
-        lpplPicked->rgwtMin[3] = (int32_t)(lpPlanets[idHome].rgwtMin[3] * 2) / 5;
-        lpplPicked->uPopGuess = (uint32_t)LOWORD(lpplPicked->rgwtMin[3]) / 4;
-        for (j = 0; j < 3; j++) {
-            lpplPicked->rgwtMin[j] = (int16_t)(Random(200) + 100);
-        }
-        lpplPicked->iScanner = 0;
-        lpPlanets[idHome].rgwtMin[3] = (int32_t)(lpPlanets[idHome].rgwtMin[3] * 4) / 5;
-        lpPlanets[idHome].uGuesses = (lpPlanets[idHome].uGuesses & 0xf000) | ((uint32_t)LOWORD(lpPlanets[idHome].rgwtMin[3]) / 4 & 0xfff);
-        CreateStartupShip(i, lpplPicked->id, 0, FALSE);
-    L_39dd:
         if (GetRaceGrbit(&rgplr[i], ibitRaceOBRM) == 0 && GetRaceGrbit(&rgplr[i], ibitRaceARM) != 0) {
             ishRet = CreateStartupShip(i, idHome, 15, TRUE);
             CreateStartupShip(i, idHome, ishRet, FALSE);
@@ -1172,7 +1084,7 @@ L_15bc:
                 case hstEngine:
                     if (part.hs.iItem != iengineQuickJump5)
                         break;
-                    if (rgplr[i].rgEnvVar[2] == -1 || rglpshdef[i][j].hul.ihuldef != ihuldefColonyShip || rgplr[i].rgEnvVar[2] >= 85) {
+                    if (rgplr[i].rgEnvVar[2] == envImmune || rglpshdef[i][j].hul.ihuldef != ihuldefColonyShip || rgplr[i].rgEnvVar[2] >= 85) {
                         rgTry[cTry++] = 10;
                     }
                     rgTry[cTry++] = 5;
@@ -1223,7 +1135,7 @@ L_15bc:
                 }
                 for (l = 0; l < cTry; l++) {
                     part.hs.iItem = rgTry[l];
-                    if (FLookupPart(&part) == 1) {
+                    if (FLookupPart(&part) == mdPartAvailAvailable) {
                         lphs->iItem = rgTry[l];
                         break;
                     }
@@ -1236,8 +1148,8 @@ L_15bc:
             lpPlanets[idHome].iScanner = 31;
         }
     }
-    idPlayer = -1;
-    if (lpPlanets->iPlayer == -1) {
+    idPlayer = iplrNone;
+    if (lpPlanets->iPlayer == iplrNone) {
         for (j = 0; j < 3; j++) {
             lpPlanets->rgwtMin[j] = 0;
         }
@@ -1250,11 +1162,10 @@ L_15bc:
         }
     }
     game.cPlanMax = cPlanMax;
-    if (game.fNoRandom != 0) {
+    if (game.fNoRandom) {
         iBest = 0;
     } else {
-        t_scratch_m116_24 = Random(vrgWormholeVar[game.mdSize]);
-        iBest = vrgWormholeMin[game.mdSize] + t_scratch_m116_24;
+        iBest = vrgWormholeMin[game.mdSize] + Random(vrgWormholeVar[game.mdSize]);
     }
     if (iBest > 0) {
         for (i = 0; i < iBest; i++) {
@@ -1288,27 +1199,27 @@ L_15bc:
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgplr[i].fHacker != 0) {
+        if (rgplr[i].fHacker) {
             FSendPlrMsg2(i, idmRaceDefinitionHasTamperedStatisticsHaveAltered, gotoNone, 0, 0);
             for (j = 0; j < game.cPlayer; j++) {
-                if (i != j && rgplr[i].fAi == 0) {
+                if (i != j && !rgplr[i].fAi) {
                     FSendPlrMsg2(j, idmHackedRaceDiscoveredRaceStatisticsHaveAltered, gotoNone, i, 0);
                 }
             }
         }
     }
-    iplrSingle = -1;
+    iplrSingle = iplrNone;
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgplr[i].fAi == 0 || rgplr[i].idAi == idAiMaid) {
-            if (iplrSingle != -1)
+        if (!rgplr[i].fAi || rgplr[i].idAi == idAiMaid) {
+            if (iplrSingle != iplrNone)
                 break;
             iplrSingle = i;
         } else {
             rgplr[i].lSalt = 156085230;
         }
     }
-    game.fSinglePlr = i == game.cPlayer && iplrSingle != -1;
-    if (game.fSinglePlr != 0) {
+    game.fSinglePlr = i == game.cPlayer && iplrSingle != iplrNone;
+    if (game.fSinglePlr) {
         for (i = 0; i < game.cPlayer; i++) {
             for (j = 0; j < game.cPlayer; j++) {
                 if (i != j) {
@@ -1317,14 +1228,14 @@ L_15bc:
             }
         }
     }
-    if (game.fTutorial == 0) {
+    if (!game.fTutorial) {
         game.lid = GetTickCount();
     }
     _wsprintf(szWork, "%s.xy", szBase);
-    if (FCreateFile(dtXY, -1, NULL) == 0) {
+    if (!FCreateFile(dtXY, iplrNone, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateUniverseDefinitionFile, NULL), MB_ICONHAND);
         DestroyCurGame();
-        return 0;
+        return FALSE;
     }
     WriteRt(rtGame, 64, &game);
     xOld = 1000;
@@ -1342,36 +1253,34 @@ L_15bc:
     for (i = -1; i < game.cPlayer; i++) {
         FWriteDataFile(szBase, i, FALSE);
     }
-    if (fBatchMode != 0) {
-        return 1;
+    if (fBatchMode) {
+        return TRUE;
     }
-    if (game.fSinglePlr != 0) {
+    if (game.fSinglePlr) {
         DestroyCurGame();
         _wsprintf(szExt, MPCTD, iplrSingle + 1);
-        if (FLoadGame(szBase, szExt) == 0) {
+        if (!FLoadGame(szBase, szExt)) {
             AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
-            return 0;
+            return FALSE;
         }
         idPlayer = iplrSingle;
         CreateChildWindows();
         SendMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
     } else {
-        idPlayer = -1;
+        idPlayer = iplrNone;
         imemLogCur = 0;
         CreateChildWindows();
     }
-    return 1;
+    return TRUE;
 }
 
 int16_t CreateStartupShip(int16_t iplr, int16_t idPlanet, int16_t ishdef, int16_t fAddShdef) {
     int16_t ishMac;
     FLEET  *lpfl;
-    SHDEF  *t_call_46b8;
 
-    if (fAddShdef != 0) {
+    if (fAddShdef) {
         ishMac = (int16_t)(int8_t)rgplr[iplr].cShDef++;
-        t_call_46b8 = LpshdefT();
-        fmemmove(rglpshdef[iplr] + ishMac, t_call_46b8 + ishdef, sizeof(SHDEF));
+        fmemmove(rglpshdef[iplr] + ishMac, LpshdefT() + ishdef, sizeof(SHDEF));
         rglpshdef[iplr][ishMac].wFlags = (rglpshdef[iplr][ishMac].wFlags & 0x83ff) | (ishMac & 0x1f) * 0x400;
         ishdef = ishMac;
     }
@@ -1405,329 +1314,327 @@ int16_t GenNewGameFromFile(char *pszFile) {
     fSuccess = FALSE;
     strcpy(szWork, pszFile);
     penvMem = &env;
-    if (setjmp(env) == 0) {
-        if (ini.fLogging != 0) {
-            strcpy(szBase, pszFile);
-            pchT = strrchr(szBase, 46);
-            *pchT = 0;
-            TurnLog(idsGeneratingYearD);
-        }
-        memset(&game, 0, sizeof(GAME));
-        StreamOpen(pszFile, mdRead);
-        cb = LOWORD(filelength(hf));
-        if (cb >= 16000) {
-            FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
-        } else {
-            lpbDef = LpAlloc(cb + 1, htPerm);
-            lpbDefMac = lpbDef + cb;
-            RgFromStream(lpbDef, cb);
-            StreamClose();
-            lpbDef[cb] = 0;
-            lpb = lpbDef;
-            lpbStart = PszGetLine(&lpb);
-            if (*lpbStart == 0 || fstrlen(lpbStart) > 31) {
-                AlertSz(PszFormatIds(idsIllegalGameTitle, NULL), MB_ICONHAND);
+    if (setjmp(env) != 0)
+        goto LError;
+    if (ini.fLogging) {
+        strcpy(szBase, pszFile);
+        pchT = strrchr(szBase, 46);
+        *pchT = 0;
+        TurnLog(idsGeneratingYearD);
+    }
+    memset(&game, 0, sizeof(GAME));
+    StreamOpen(pszFile, mdRead);
+    cb = LOWORD(filelength(hf));
+    if (cb >= 16000) {
+        FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
+        goto LError;
+    }
+    lpbDef = LpAlloc(cb + 1, htPerm);
+    lpbDefMac = lpbDef + cb;
+    RgFromStream(lpbDef, cb);
+    StreamClose();
+    lpbDef[cb] = 0;
+    lpb = lpbDef;
+    lpbStart = PszGetLine(&lpb);
+    if (*lpbStart == 0 || fstrlen(lpbStart) > 31) {
+        AlertSz(PszFormatIds(idsIllegalGameTitle, NULL), MB_ICONHAND);
+        goto LError;
+    }
+    fstrcpy(game.szName, lpbStart);
+    if (lpb >= lpbDefMac) {
+    LUniDefShort:
+        AlertSz(PszFormatIds(idsUniverseDefinitionFileAppearsTooShort, NULL), MB_ICONHAND);
+        goto LError;
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 4);
+    if (cNum == -1) {
+    LUniDefError:
+        AlertSz(PszFormatIds(idsLine2HasBadUniverseDefinitionParameter, NULL), MB_ICONHAND);
+        goto LError;
+    }
+    for (i = 0; i < cNum; i++) {
+        if (i < 3 && (rgl[i] < 0 || rgl[i] > 4 || (rgl[i] == 4 && i != 0)))
+            goto LUniDefError;
+    }
+    if (cNum >= 1) {
+        game.mdSize = LOWORD(rgl[0]);
+    }
+    if (cNum >= 2) {
+        game.mdDensity = LOWORD(rgl[1]);
+    }
+    if (cNum >= 3) {
+        game.mdStartDist = LOWORD(rgl[2]);
+    }
+    if (cNum >= 4) {
+        Randomize(rgl[3]);
+    }
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 7);
+    if (cNum == -1) {
+    LUniDefError3:
+        AlertSz(PszFormatIds(idsLine3HasBadUniverseDefinitionParameter, NULL), MB_ICONHAND);
+        goto LError;
+    }
+    for (i = 0; i < cNum; i++) {
+        if (rgl[i] < 0 || rgl[i] > 1)
+            goto LUniDefError3;
+    }
+    if (cNum >= 1) {
+        game.fExtraFuel = LOWORD(rgl[0]);
+    }
+    if (cNum >= 2) {
+        game.fSlowTech = LOWORD(rgl[1]);
+    }
+    if (cNum >= 3) {
+        game.fBBSPlay = LOWORD(rgl[2]);
+    }
+    if (cNum >= 4) {
+        game.fNoRandom = LOWORD(rgl[3]);
+    }
+    if (cNum >= 5) {
+        game.fAisBand = LOWORD(rgl[4]);
+    }
+    if (cNum >= 6) {
+        game.fVisScores = LOWORD(rgl[5]);
+    }
+    if (cNum >= 7) {
+        game.fClumping = LOWORD(rgl[6]);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 1);
+    if (cNum < 1 || rgl[0] < 1 || rgl[0] > 16) {
+        AlertSz(PszFormatIds(idsLine4HasImproperNumberPlayerFiles, NULL), MB_ICONHAND);
+        goto LError;
+    }
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    cPlr = LOWORD(rgl[0]);
+    game.cPlayer = cPlr;
+    for (i = 0; i < cPlr; i++) {
+        lpbStart = PszGetLine(&lpb);
+        if (lpb >= lpbDefMac)
+            goto LUniDefShort;
+        if (i > 0 && *lpbStart == '#') {
+            cNum = CParseNumbers(lpbStart + 1, rgl, 2);
+            idAi = LOWORD(rgl[0]);
+            lvlAi = LOWORD(rgl[1]);
+            if (cNum < 2 || (int16_t)idAi < idAiRobotoid || (int16_t)idAi > idAiRandom || lvlAi < 0 || lvlAi > 4) {
+                fstrcpy(szWork, lpbStart);
+                goto LCantGetRace;
+            }
+            if (lvlAi == 0) {
+                lvlAi = Random(4);
             } else {
-                fstrcpy(game.szName, lpbStart);
-                if (lpb < lpbDefMac) {
-                    lpbStart = PszGetLine(&lpb);
-                    cNum = CParseNumbers(lpbStart, rgl, 4);
-                    if (cNum != -1) {
-                        for (i = 0; i < cNum; i++) {
-                            if (i < 3 && (rgl[i] < 0 || rgl[i] > 4 || (rgl[i] == 4 && i != 0)))
-                                goto LUniDefError;
-                        }
-                        if (cNum >= 1) {
-                            game.mdSize = LOWORD(rgl[0]);
-                        }
-                        if (cNum >= 2) {
-                            game.mdDensity = LOWORD(rgl[1]);
-                        }
-                        if (cNum >= 3) {
-                            game.mdStartDist = LOWORD(rgl[2]);
-                        }
-                        if (cNum >= 4) {
-                            Randomize(rgl[3]);
-                        }
-                        if (lpb >= lpbDefMac)
-                            goto LUniDefShort;
-                        lpbStart = PszGetLine(&lpb);
-                        cNum = CParseNumbers(lpbStart, rgl, 7);
-                        if (cNum != -1) {
-                            for (i = 0; i < cNum; i++) {
-                                if (rgl[i] < 0 || rgl[i] > 1)
-                                    goto LUniDefError3;
-                            }
-                            if (cNum >= 1) {
-                                game.fExtraFuel = LOWORD(rgl[0]);
-                            }
-                            if (cNum >= 2) {
-                                game.fSlowTech = LOWORD(rgl[1]);
-                            }
-                            if (cNum >= 3) {
-                                game.fBBSPlay = LOWORD(rgl[2]);
-                            }
-                            if (cNum >= 4) {
-                                game.fNoRandom = LOWORD(rgl[3]);
-                            }
-                            if (cNum >= 5) {
-                                game.fAisBand = LOWORD(rgl[4]);
-                            }
-                            if (cNum >= 6) {
-                                game.fVisScores = LOWORD(rgl[5]);
-                            }
-                            if (cNum >= 7) {
-                                game.fClumping = LOWORD(rgl[6]);
-                            }
-                            lpbStart = PszGetLine(&lpb);
-                            cNum = CParseNumbers(lpbStart, rgl, 1);
-                            if (cNum < 1 || rgl[0] < 1 || rgl[0] > 16) {
-                                AlertSz(PszFormatIds(idsLine4HasImproperNumberPlayerFiles, NULL), MB_ICONHAND);
-                                goto LError;
-                            }
-                            if (lpb >= lpbDefMac)
-                                goto LUniDefShort;
-                            cPlr = LOWORD(rgl[0]);
-                            game.cPlayer = cPlr;
-                            for (i = 0; i < cPlr; i++) {
-                                lpbStart = PszGetLine(&lpb);
-                                if (lpb >= lpbDefMac)
-                                    goto LUniDefShort;
-                                if (i > 0 && *lpbStart == '#') {
-                                    cNum = CParseNumbers(lpbStart + 1, rgl, 2);
-                                    idAi = LOWORD(rgl[0]);
-                                    lvlAi = LOWORD(rgl[1]);
-                                    if (cNum < 2 || (int16_t)idAi < idAiRobotoid || (int16_t)idAi > idAiRandom || lvlAi < 0 || lvlAi > 4)
-                                        goto L_4e5d;
-                                    if (lvlAi == 0) {
-                                        lvlAi = Random(4);
-                                    } else {
-                                        lvlAi--;
-                                    }
-                                    if (idAi == idAiRobotoid) {
-                                        idAi = Random(6);
-                                    } else {
-                                        idAi--;
-                                    }
-                                    rgplr[i] = *LpplrComp(idAi, lvlAi);
-                                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-                                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
-                                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
-                                } else {
-                                    fstrcpy(szWork, lpbStart);
-                                    if (FWasRaceFile(szWork, FALSE) == 0)
-                                        goto LCantGetRace;
-                                    rgplr[i] = vplr;
-                                }
-                            }
-                            lpbStart = PszGetLine(&lpb);
-                            cNum = CParseNumbers(lpbStart, rgl, 2);
-                            if (lpb >= lpbDefMac)
-                                goto LUniDefShort;
-                            i = 0;
-                            if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                if (rgl[0] == 1) {
-                                    if (cNum < 2 || rgl[1] < 20 || rgl[1] > 100)
-                                        goto LBadDefVc;
-                                    SetVCCheck(&game, vcOwnsPercentPlanets, TRUE);
-                                    SetVCVal(&game, vcOwnsPercentPlanets, (int16_t)(LOWORD(rgl[1]) - 20) / 5);
-                                }
-                                lpbStart = PszGetLine(&lpb);
-                                cNum = CParseNumbers(lpbStart, rgl, 3);
-                                if (lpb >= lpbDefMac)
-                                    goto LUniDefShort;
-                                i = 1;
-                                if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                    if (rgl[0] == 1) {
-                                        if (cNum < 3 || rgl[1] < 8 || rgl[1] > 26 || rgl[2] < 2 || rgl[2] > 6)
-                                            goto LBadDefVc;
-                                        SetVCCheck(&game, vcAttainsTechLevel, TRUE);
-                                        SetVCCheck(&game, vcAttainsTechFields, TRUE);
-                                        SetVCVal(&game, vcAttainsTechLevel, LOWORD(rgl[1]) - 8);
-                                        SetVCVal(&game, vcAttainsTechFields, LOWORD(rgl[2]) - 2);
-                                    }
-                                    lpbStart = PszGetLine(&lpb);
-                                    cNum = CParseNumbers(lpbStart, rgl, 2);
-                                    if (lpb >= lpbDefMac)
-                                        goto LUniDefShort;
-                                    i = 2;
-                                    if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                        if (rgl[0] == 1) {
-                                            if (cNum < 2 || rgl[1] < 1000 || rgl[1] > 20000)
-                                                goto LBadDefVc;
-                                            SetVCCheck(&game, vcExceedsScore, TRUE);
-                                            SetVCVal(&game, vcExceedsScore, (int16_t)(LOWORD(rgl[1]) - 1000) / 1000);
-                                        }
-                                        lpbStart = PszGetLine(&lpb);
-                                        cNum = CParseNumbers(lpbStart, rgl, 2);
-                                        if (lpb >= lpbDefMac)
-                                            goto LUniDefShort;
-                                        i = 3;
-                                        if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                            if (rgl[0] == 1) {
-                                                if (cNum < 2 || rgl[1] < 20 || rgl[1] > 300)
-                                                    goto LBadDefVc;
-                                                SetVCCheck(&game, vcExceedsSecondPlaceBy, TRUE);
-                                                SetVCVal(&game, vcExceedsSecondPlaceBy, (int16_t)(LOWORD(rgl[1]) - 20) / 10);
-                                            }
-                                            lpbStart = PszGetLine(&lpb);
-                                            cNum = CParseNumbers(lpbStart, rgl, 2);
-                                            if (lpb >= lpbDefMac)
-                                                goto LUniDefShort;
-                                            i = 4;
-                                            if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                                if (rgl[0] == 1) {
-                                                    if (cNum < 2 || rgl[1] < 10 || rgl[1] > 500)
-                                                        goto LBadDefVc;
-                                                    SetVCCheck(&game, vcProductionCapacity, TRUE);
-                                                    SetVCVal(&game, vcProductionCapacity, (int16_t)(LOWORD(rgl[1]) - 10) / 10);
-                                                }
-                                                lpbStart = PszGetLine(&lpb);
-                                                cNum = CParseNumbers(lpbStart, rgl, 2);
-                                                if (lpb >= lpbDefMac)
-                                                    goto LUniDefShort;
-                                                i = 5;
-                                                if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                                    if (rgl[0] == 1) {
-                                                        if (cNum < 2 || rgl[1] < 10 || rgl[1] > 300)
-                                                            goto LBadDefVc;
-                                                        SetVCCheck(&game, vcOwnsCapitalShips, TRUE);
-                                                        SetVCVal(&game, vcOwnsCapitalShips, (int16_t)(LOWORD(rgl[1]) - 10) / 10);
-                                                    }
-                                                    lpbStart = PszGetLine(&lpb);
-                                                    cNum = CParseNumbers(lpbStart, rgl, 2);
-                                                    if (lpb >= lpbDefMac)
-                                                        goto LUniDefShort;
-                                                    i = 6;
-                                                    if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 1) {
-                                                        if (rgl[0] == 1) {
-                                                            if (cNum < 2 || rgl[1] < 30 || rgl[1] > 900)
-                                                                goto LBadDefVc;
-                                                            SetVCCheck(&game, vcHighestScoreAfterYears, TRUE);
-                                                            SetVCVal(&game, vcHighestScoreAfterYears, (int16_t)(LOWORD(rgl[1]) - 30) / 10);
-                                                        }
-                                                        lpbStart = PszGetLine(&lpb);
-                                                        cNum = CParseNumbers(lpbStart, rgl, 2);
-                                                        if (lpb >= lpbDefMac)
-                                                            goto LUniDefShort;
-                                                        i = 7;
-                                                        if (cNum >= 1 && rgl[0] >= 0 && rgl[0] <= 7) {
-                                                            if (rgl[0] > 0) {
-                                                                if (cNum < 2 || rgl[1] < 30 || rgl[1] > 500)
-                                                                    goto LBadDefVc;
-                                                                SetVCVal(&game, vcMeetsNumCriteria, LOWORD(rgl[0]));
-                                                                SetVCVal(&game, vcMinYearsBeforeWin, (int16_t)(LOWORD(rgl[1]) - 30) / 10);
-                                                            }
-                                                            lpbStart = PszGetLine(&lpb);
-                                                            lpb = lpbStart + (-1 + fstrlen(lpbStart));
-                                                            if (lpb - lpbStart >= 3 && *lpb == 'y' && lpb[-1] == 'x' && lpb[-2] == '.') {
-                                                                lpb[-2] = 0;
-                                                            }
-                                                            fstrcpy(szBase, lpbStart);
-                                                            if (lpb + 4 < lpbDefMac) {
-                                                                lpbDefUni = lpb;
-                                                            }
-                                                            for (i = 0; i < game.cPlayer; i++) {
-                                                                if (rgplr[i].fAi == 0 && CAdvantagePoints(&rgplr[i]) < 0) {
-                                                                    rgplr[i] = vrgplrDef[0];
-                                                                    rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
-                                                                }
-                                                                if (rgplr[i].szName[0] == 0) {
-                                                                    CchGetString(Random(24) + 1390, rgplr[i].szName);
-                                                                    _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
-                                                                }
-                                                            }
-                                                            for (i = 1; i < game.cPlayer; i++) {
-                                                                for (j = 0; j < i && strcmp(rgplr[i].szName, rgplr[j].szName) != 0; j++) {
-                                                                }
-                                                                if (j < i) {
-                                                                    c = Random(24);
-                                                                    while (1) {
-                                                                        for (j = 0;
-                                                                             j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0;
-                                                                             j++) {
-                                                                        }
-                                                                        if (j == game.cPlayer)
-                                                                            break;
-                                                                        c++;
-                                                                        if (c >= 24) {
-                                                                            c = 0;
-                                                                        }
-                                                                    }
-                                                                    CchGetString(c + 1390, rgplr[i].szName);
-                                                                    strcpy(rgplr[i].szNames, rgplr[i].szName);
-                                                                    strcat(rgplr[i].szNames, "s");
-                                                                }
-                                                            }
-                                                            for (i = 0; i < game.cPlayer; i++) {
-                                                                rgplrbmp[i] = rgplr[i].iPlrBmp;
-                                                                if (rgplrbmp[i] < 0 || rgplrbmp[i] >= 32) {
-                                                                    rgplrbmp[i] = -1;
-                                                                }
-                                                            }
-                                                            for (i = 1; i < game.cPlayer; i++) {
-                                                                if (rgplrbmp[i] != -1) {
-                                                                    for (j = 0; j < i && rgplrbmp[j] != rgplrbmp[i]; j++) {
-                                                                    }
-                                                                    if (j < i) {
-                                                                        rgplrbmp[Random(2) == 0 ? j : i] = -1;
-                                                                    }
-                                                                }
-                                                            }
-                                                            for (i = 0; i < game.cPlayer; i++) {
-                                                                if (rgplrbmp[i] == -1) {
-                                                                    rgplrbmp[i] = Random(32);
-                                                                    while (1) {
-                                                                        for (j = 0; j < game.cPlayer && (j == i || rgplrbmp[i] != rgplrbmp[j]); j++) {
-                                                                        }
-                                                                        if (j == game.cPlayer)
-                                                                            break;
-                                                                        rgplrbmp[i]++;
-                                                                        if (rgplrbmp[i] >= 32) {
-                                                                            rgplrbmp[i] = 0;
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                            for (i = 0; i < game.cPlayer; i++) {
-                                                                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
-                                                            }
-                                                            GenerateWorld(TRUE);
-                                                            fSuccess = TRUE;
-                                                            goto LError;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        LBadDefVc:
-                            i += cPlr + 5;
-                            _wsprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
-                            AlertSz(szWork, MB_ICONHAND);
-                            goto LError;
-                        L_4e5d:
-                            fstrcpy(szWork, lpbStart);
-                        LCantGetRace:
-                            _wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
-                            AlertSz(szWork, MB_ICONHAND);
-                            goto LError;
-                        }
-                    LUniDefError3:
-                        AlertSz(PszFormatIds(idsLine3HasBadUniverseDefinitionParameter, NULL), MB_ICONHAND);
-                        goto LError;
-                    }
-                LUniDefError:
-                    AlertSz(PszFormatIds(idsLine2HasBadUniverseDefinitionParameter, NULL), MB_ICONHAND);
-                    goto LError;
+                lvlAi--;
+            }
+            if (idAi == idAiRobotoid) {
+                idAi = Random(6);
+            } else {
+                idAi--;
+            }
+            rgplr[i] = *LpplrComp(idAi, lvlAi);
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
+        } else {
+            fstrcpy(szWork, lpbStart);
+            if (!FWasRaceFile(szWork, FALSE)) {
+            LCantGetRace:
+                _wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
+                AlertSz(szWork, MB_ICONHAND);
+                goto LError;
+            }
+            rgplr[i] = vplr;
+        }
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 0;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1) {
+    LBadDefVc:
+        i += cPlr + 5;
+        _wsprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
+        AlertSz(szWork, MB_ICONHAND);
+        goto LError;
+    }
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 20 || rgl[1] > 100)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcOwnsPercentPlanets, TRUE);
+        SetVCVal(&game, vcOwnsPercentPlanets, (int16_t)(LOWORD(rgl[1]) - 20) / 5);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 3);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 1;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 3 || rgl[1] < 8 || rgl[1] > 26 || rgl[2] < 2 || rgl[2] > 6)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcAttainsTechLevel, TRUE);
+        SetVCCheck(&game, vcAttainsTechFields, TRUE);
+        SetVCVal(&game, vcAttainsTechLevel, LOWORD(rgl[1]) - 8);
+        SetVCVal(&game, vcAttainsTechFields, LOWORD(rgl[2]) - 2);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 2;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 1000 || rgl[1] > 20000)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcExceedsScore, TRUE);
+        SetVCVal(&game, vcExceedsScore, (int16_t)(LOWORD(rgl[1]) - 1000) / 1000);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 3;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 20 || rgl[1] > 300)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcExceedsSecondPlaceBy, TRUE);
+        SetVCVal(&game, vcExceedsSecondPlaceBy, (int16_t)(LOWORD(rgl[1]) - 20) / 10);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 4;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 10 || rgl[1] > 500)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcProductionCapacity, TRUE);
+        SetVCVal(&game, vcProductionCapacity, (int16_t)(LOWORD(rgl[1]) - 10) / 10);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 5;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 10 || rgl[1] > 300)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcOwnsCapitalShips, TRUE);
+        SetVCVal(&game, vcOwnsCapitalShips, (int16_t)(LOWORD(rgl[1]) - 10) / 10);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 6;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1)
+        goto LBadDefVc;
+    if (rgl[0] == 1) {
+        if (cNum < 2 || rgl[1] < 30 || rgl[1] > 900)
+            goto LBadDefVc;
+        SetVCCheck(&game, vcHighestScoreAfterYears, TRUE);
+        SetVCVal(&game, vcHighestScoreAfterYears, (int16_t)(LOWORD(rgl[1]) - 30) / 10);
+    }
+    lpbStart = PszGetLine(&lpb);
+    cNum = CParseNumbers(lpbStart, rgl, 2);
+    if (lpb >= lpbDefMac)
+        goto LUniDefShort;
+    i = 7;
+    if (cNum < 1 || rgl[0] < 0 || rgl[0] > 7)
+        goto LBadDefVc;
+    if (rgl[0] > 0) {
+        if (cNum < 2 || rgl[1] < 30 || rgl[1] > 500)
+            goto LBadDefVc;
+        SetVCVal(&game, vcMeetsNumCriteria, LOWORD(rgl[0]));
+        SetVCVal(&game, vcMinYearsBeforeWin, (int16_t)(LOWORD(rgl[1]) - 30) / 10);
+    }
+    lpbStart = PszGetLine(&lpb);
+    lpb = lpbStart + (-1 + fstrlen(lpbStart));
+    if (lpb - lpbStart >= 3 && *lpb == 'y' && lpb[-1] == 'x' && lpb[-2] == '.') {
+        lpb[-2] = 0;
+    }
+    fstrcpy(szBase, lpbStart);
+    if (lpb + 4 < lpbDefMac) {
+        lpbDefUni = lpb;
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        if (!rgplr[i].fAi && CAdvantagePoints(&rgplr[i]) < 0) {
+            rgplr[i] = vrgplrDef[0];
+            rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
+        }
+        if (rgplr[i].szName[0] == 0) {
+            CchGetString(Random(24) + 1390, rgplr[i].szName);
+            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+        }
+    }
+    for (i = 1; i < game.cPlayer; i++) {
+        for (j = 0; j < i && strcmp(rgplr[i].szName, rgplr[j].szName) != 0; j++) {
+        }
+        if (j < i) {
+            c = Random(24);
+            while (1) {
+                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
                 }
-            LUniDefShort:
-                AlertSz(PszFormatIds(idsUniverseDefinitionFileAppearsTooShort, NULL), MB_ICONHAND);
+                if (j == game.cPlayer)
+                    break;
+                c++;
+                if (c >= 24) {
+                    c = 0;
+                }
+            }
+            CchGetString(c + 1390, rgplr[i].szName);
+            strcpy(rgplr[i].szNames, rgplr[i].szName);
+            strcat(rgplr[i].szNames, "s");
+        }
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        rgplrbmp[i] = rgplr[i].iPlrBmp;
+        if (rgplrbmp[i] < 0 || rgplrbmp[i] >= 32) {
+            rgplrbmp[i] = -1;
+        }
+    }
+    for (i = 1; i < game.cPlayer; i++) {
+        if (rgplrbmp[i] != -1) {
+            for (j = 0; j < i && rgplrbmp[j] != rgplrbmp[i]; j++) {
+            }
+            if (j < i) {
+                rgplrbmp[Random(2) == 0 ? j : i] = -1;
             }
         }
     }
+    for (i = 0; i < game.cPlayer; i++) {
+        if (rgplrbmp[i] == -1) {
+            rgplrbmp[i] = Random(32);
+            while (1) {
+                for (j = 0; j < game.cPlayer && (j == i || rgplrbmp[i] != rgplrbmp[j]); j++) {
+                }
+                if (j == game.cPlayer)
+                    break;
+                rgplrbmp[i]++;
+                if (rgplrbmp[i] >= 32) {
+                    rgplrbmp[i] = 0;
+                }
+            }
+        }
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
+    }
+    GenerateWorld(TRUE);
+    fSuccess = TRUE;
 LError:
     penvMem = 0;
     StreamClose();
@@ -1800,7 +1707,7 @@ void NewGameWizard(HWND hwnd, int16_t fReadOnly) {
     vrgszFileNew = szFileLocal;
     vcplrNew = 0;
     memset(vrgplrTypeNew, 0, 16);
-    if (fReadOnly == 0) {
+    if (!fReadOnly) {
         gameT = game;
         memset(&game, 0, sizeof(GAME));
         game.cPlanMax = gameT.cPlanMax;
@@ -1860,7 +1767,7 @@ void NewGameWizard(HWND hwnd, int16_t fReadOnly) {
         return;
     }
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgplr[i].fInclude != 0) {
+        if (rgplr[i].fInclude) {
             vrgplrTypeNew[i] = i << 2 | 2;
             vrgplrNew[i] = rgplr[i];
             vrgszFileNew[i * 13] = 0;
@@ -1869,175 +1776,171 @@ void NewGameWizard(HWND hwnd, int16_t fReadOnly) {
         }
     }
 Step1:
-    while (1) {
-        lpProc = MakeProcInstance(NewGameDlg, hInst);
-        mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_1), hwnd, lpProc);
-        FreeProcInstance(lpProc);
-        if (mdRet == 0)
-            goto Cancel;
-        InitNewGamePlr(iStepMaxSoFar, lvlAi);
-        if (mdRet == 3)
-            goto Finish;
-        while (1) {
-            lpProc = MakeProcInstance(NewGameDlg2, hInst);
-            mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_2), hwnd, lpProc);
-            FreeProcInstance(lpProc);
-            if (mdRet == 0)
-                goto Cancel;
-            if (iStepMaxSoFar < 1) {
-                iStepMaxSoFar = 1;
-            }
-            InitNewGamePlr(iStepMaxSoFar, lvlAi);
-            if (mdRet == 1)
-                break;
-            if (mdRet == 3)
-                goto Finish;
-            lpProc = MakeProcInstance(NewGameDlg3, hInst);
-            mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_3), hwnd, lpProc);
-            FreeProcInstance(lpProc);
-            if (mdRet == 0)
-                goto Cancel;
-            if (iStepMaxSoFar < 2) {
-                iStepMaxSoFar = 2;
-            }
-            if (mdRet != 1)
-                goto L_64da;
-        }
-    }
-L_64da:
-    if (mdRet == 3) {
-    }
-Finish:
-    if (fRCWReadOnly == 0) {
-        CchGetString(idsGameXy, szFile);
-        if (FGetNewGameName(szFile) == 0) {
-            if (fEasy == 0)
-                goto Step1;
-        } else {
-            gameT = game;
-            gameT.turn = 0;
-            DestroyCurGame();
+    lpProc = MakeProcInstance(NewGameDlg, hInst);
+    mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_1), hwnd, lpProc);
+    FreeProcInstance(lpProc);
+    if (mdRet == 0) {
+    Cancel:
+        if (!fRCWReadOnly) {
             game = gameT;
-            strcpy(szBase, szFile);
-            szBase[strlen(szBase) - 3] = 0;
-            for (i = 0; i < 16 && vrgplrTypeNew[i] != 0; i++) {
-                switch (vrgplrTypeNew[i] & 3) {
-                case 1:
-                    if (vrgplrTypeNew[i] >> 2 > 6) {
-                        c = Random(7);
-                        rgplr[i] = vrgplrDef[c];
-                        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-                        rgplr[i].wMdPlr &= 0xe3ff;
-                        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | 0xe000;
-                        rgplr[i].lSalt = -1;
-                    } else {
-                        c = vrgplrTypeNew[i] >> 2;
-                        rgplr[i] = vrgplrDef[c];
-                    }
-                    CchGetString(c + 1383, rgplr[i].szName);
-                    _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
-                    break;
-                case 2:
-                    rgplr[i] = rgplrLocal[vrgplrTypeNew[i] >> 2];
-                    break;
-                case 3:
-                    idAi = vrgplrTypeNew[i] >> 2 & 7;
-                    lvlAi = vrgplrTypeNew[i] >> 5;
-                    if (lvlAi >= 4) {
-                        lvlAi = Random(4);
-                    }
-                    if ((int16_t)idAi >= idAiRandom) {
-                        idAi = Random(6);
-                    }
-                    rgplr[i] = *LpplrComp(idAi, lvlAi);
-                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
-                    rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
-                }
+        }
+        gd.fNoIdleChecks = fIdleSav;
+        return;
+    }
+    InitNewGamePlr(iStepMaxSoFar, lvlAi);
+    if (mdRet == 3)
+        goto Finish;
+Step2:
+    lpProc = MakeProcInstance(NewGameDlg2, hInst);
+    mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_2), hwnd, lpProc);
+    FreeProcInstance(lpProc);
+    if (mdRet == 0)
+        goto Cancel;
+    if (iStepMaxSoFar < 1) {
+        iStepMaxSoFar = 1;
+    }
+    InitNewGamePlr(iStepMaxSoFar, lvlAi);
+    if (mdRet == 1)
+        goto Step1;
+    if (mdRet == 3)
+        goto Finish;
+    lpProc = MakeProcInstance(NewGameDlg3, hInst);
+    mdRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_NEW_GAME_3), hwnd, lpProc);
+    FreeProcInstance(lpProc);
+    if (mdRet == 0)
+        goto Cancel;
+    if (iStepMaxSoFar < 2) {
+        iStepMaxSoFar = 2;
+    }
+    if (mdRet == 1)
+        goto Step2;
+    if (mdRet == 3)
+        goto Finish;
+Finish:
+    if (fRCWReadOnly)
+        goto Cancel;
+    CchGetString(idsGameXy, szFile);
+    if (!FGetNewGameName(szFile)) {
+        if (fEasy)
+            goto Cancel;
+        goto Step1;
+    }
+    gameT = game;
+    gameT.turn = 0;
+    DestroyCurGame();
+    game = gameT;
+    strcpy(szBase, szFile);
+    szBase[strlen(szBase) - 3] = 0;
+    for (i = 0; i < 16 && vrgplrTypeNew[i] != 0; i++) {
+        switch (vrgplrTypeNew[i] & 3) {
+        case 1:
+            if (vrgplrTypeNew[i] >> 2 > 6) {
+                c = Random(7);
+                rgplr[i] = vrgplrDef[c];
+                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
+                rgplr[i].wMdPlr &= 0xe3ff;
+                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | 0xe000;
+                rgplr[i].lSalt = -1;
+            } else {
+                c = vrgplrTypeNew[i] >> 2;
+                rgplr[i] = vrgplrDef[c];
             }
-            game.cPlayer = i;
-            for (i = 0; i < game.cPlayer; i++) {
-                if (rgplr[i].fAi == 0 && CAdvantagePoints(&rgplr[i]) < 0) {
-                    rgplr[i] = vrgplrDef[0];
-                    rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
-                }
-                if (rgplr[i].szName[0] == 0) {
-                    CchGetString(Random(24) + 1390, rgplr[i].szName);
-                }
-                if (rgplr[i].szNames[0] == 0) {
-                    _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
-                }
+            CchGetString(c + 1383, rgplr[i].szName);
+            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+            break;
+        case 2:
+            rgplr[i] = rgplrLocal[vrgplrTypeNew[i] >> 2];
+            break;
+        case 3:
+            idAi = vrgplrTypeNew[i] >> 2 & 7;
+            lvlAi = vrgplrTypeNew[i] >> 5;
+            if (lvlAi >= 4) {
+                lvlAi = Random(4);
             }
-            for (i = 1; i < game.cPlayer; i++) {
-                for (j = 0; j < i && strcmp(rgplr[i].szName, rgplr[j].szName) != 0; j++) {
-                }
-                if (j < i) {
-                    c = Random(24);
-                    while (1) {
-                        for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
-                        }
-                        if (j == game.cPlayer)
-                            break;
-                        c++;
-                        if (c >= 24) {
-                            c = 0;
-                        }
-                    }
-                    CchGetString(c + 1390, rgplr[i].szName);
-                    strcpy(rgplr[i].szNames, rgplr[i].szName);
-                    strcat(rgplr[i].szNames, "s");
-                }
+            if ((int16_t)idAi >= idAiRandom) {
+                idAi = Random(6);
             }
-            for (i = 0; i < game.cPlayer; i++) {
-                rgplrbmp[i] = rgplr[i].iPlrBmp;
-                if (rgplrbmp[i] < 0 || rgplrbmp[i] >= 32 || rgplr[i].fAi != 0) {
-                    rgplrbmp[i] = -1;
-                }
-            }
-            for (i = 1; i < game.cPlayer; i++) {
-                if (rgplrbmp[i] != -1) {
-                    for (j = 0; j < i && rgplrbmp[j] != rgplrbmp[i]; j++) {
-                    }
-                    if (j < i) {
-                        rgplrbmp[Random(2) == 0 ? j : i] = -1;
-                    }
-                }
-            }
-            for (i = 0; i < game.cPlayer; i++) {
-                if (rgplrbmp[i] == -1) {
-                    rgplrbmp[i] = Random(32);
-                    while (1) {
-                        for (j = 0; j < game.cPlayer && (j == i || rgplrbmp[i] != rgplrbmp[j]); j++) {
-                        }
-                        if (j == game.cPlayer)
-                            break;
-                        rgplrbmp[i]++;
-                        if (rgplrbmp[i] >= 32) {
-                            rgplrbmp[i] = 0;
-                        }
-                    }
-                }
-            }
-            for (i = 0; i < game.cPlayer; i++) {
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
-            }
-            if (fFreeingTitle == 0) {
-                fFreeingTitle = TRUE;
-                DestroyWindow(hwndTitle);
-                hwndTitle = 0;
-                ShowWindow(hwndFrame, SW_SHOW);
-            }
-            GenerateWorld(FALSE);
-            if (idPlayer == -1) {
-                BringUpHostDlg();
-            }
-            gd.fNoIdleChecks = fIdleSav;
-            return;
+            rgplr[i] = *LpplrComp(idAi, lvlAi);
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
+            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
         }
     }
-Cancel:
-    if (fRCWReadOnly == 0) {
-        game = gameT;
+    game.cPlayer = i;
+    for (i = 0; i < game.cPlayer; i++) {
+        if (!rgplr[i].fAi && CAdvantagePoints(&rgplr[i]) < 0) {
+            rgplr[i] = vrgplrDef[0];
+            rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
+        }
+        if (rgplr[i].szName[0] == 0) {
+            CchGetString(Random(24) + 1390, rgplr[i].szName);
+        }
+        if (rgplr[i].szNames[0] == 0) {
+            _wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+        }
+    }
+    for (i = 1; i < game.cPlayer; i++) {
+        for (j = 0; j < i && strcmp(rgplr[i].szName, rgplr[j].szName) != 0; j++) {
+        }
+        if (j < i) {
+            c = Random(24);
+            while (1) {
+                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
+                }
+                if (j == game.cPlayer)
+                    break;
+                c++;
+                if (c >= 24) {
+                    c = 0;
+                }
+            }
+            CchGetString(c + 1390, rgplr[i].szName);
+            strcpy(rgplr[i].szNames, rgplr[i].szName);
+            strcat(rgplr[i].szNames, "s");
+        }
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        rgplrbmp[i] = rgplr[i].iPlrBmp;
+        if (rgplrbmp[i] < 0 || rgplrbmp[i] >= 32 || rgplr[i].fAi) {
+            rgplrbmp[i] = -1;
+        }
+    }
+    for (i = 1; i < game.cPlayer; i++) {
+        if (rgplrbmp[i] != -1) {
+            for (j = 0; j < i && rgplrbmp[j] != rgplrbmp[i]; j++) {
+            }
+            if (j < i) {
+                rgplrbmp[Random(2) == 0 ? j : i] = -1;
+            }
+        }
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        if (rgplrbmp[i] == -1) {
+            rgplrbmp[i] = Random(32);
+            while (1) {
+                for (j = 0; j < game.cPlayer && (j == i || rgplrbmp[i] != rgplrbmp[j]); j++) {
+                }
+                if (j == game.cPlayer)
+                    break;
+                rgplrbmp[i]++;
+                if (rgplrbmp[i] >= 32) {
+                    rgplrbmp[i] = 0;
+                }
+            }
+        }
+    }
+    for (i = 0; i < game.cPlayer; i++) {
+        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
+    }
+    if (!fFreeingTitle) {
+        fFreeingTitle = TRUE;
+        DestroyWindow(hwndTitle);
+        hwndTitle = 0;
+        ShowWindow(hwndFrame, SW_SHOW);
+    }
+    GenerateWorld(FALSE);
+    if (idPlayer == iplrNone) {
+        BringUpHostDlg();
     }
     gd.fNoIdleChecks = fIdleSav;
     return;
@@ -2048,7 +1951,7 @@ void InitNewGamePlr(int16_t iStepMaxSoFar, AiLevel lvlAi) {
     int16_t c;
     uint8_t ch;
 
-    if (iStepMaxSoFar < 2 && fRCWReadOnly == 0) {
+    if (iStepMaxSoFar < 2 && !fRCWReadOnly) {
         SetVCVal(&game, vcMinYearsBeforeWin, game.mdSize * 2);
         if (iStepMaxSoFar < 1) {
             switch (game.mdSize) {
@@ -2202,7 +2105,7 @@ int16_t FGetNewGameName(char *szFileSuggest) {
     char         szFilter[256];
     OPENFILENAME ofn;
 
-    if (szFileSuggest != 0) {
+    if (szFileSuggest) {
         strcpy(szFile, szFileSuggest);
     } else {
         szFile[0] = 0;
@@ -2252,7 +2155,43 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
     PAINTSTRUCT ps;
     RECT       *prcSav;
 
-    if (message == WM_PAINT) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        CheckRadioButton(hwnd, IDC_SIMPLE_NEW_GAME_EASY, IDC_SIMPLE_NEW_GAME_EXPERT, IDC_SIMPLE_NEW_GAME_STANDARD);
+        CheckRadioButton(hwnd, IDC_SIMPLE_NEW_GAME_TINY, IDC_SIMPLE_NEW_GAME_HUGE, IDC_SIMPLE_NEW_GAME_SMALL);
+        hwndDD = GetDlgItem(hwnd, IDC_COMBOBOX);
+        SendMessage(hwndDD, CB_RESETCONTENT, 0, 0);
+        for (i = 0; i < 7; i++) {
+            SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i + 1383));
+        }
+        SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
+        StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
+        return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 200; i <= 203; i++) {
+            if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
+                i = -1;
+                break;
+            }
+        }
+        if (i != -1) {
+            for (i = 1000; i <= 1004; i++) {
+                if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
+                    i = -1;
+                    break;
+                }
+            }
+        }
+        if (i == -1 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetWindowRect(GetDlgItem(hwnd, IDC_SIMPLE_NEW_GAME_EASY), &rcGBox);
         ScreenToClient(hwnd, (POINT *)&rcGBox);
@@ -2299,46 +2238,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, c);
         EndPaint(hwnd, &ps);
         return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 200; i <= 203; i++) {
-            if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
-                i = -1;
-                break;
-            }
-        }
-        if (i != -1) {
-            for (i = 1000; i <= 1004; i++) {
-                if (GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, i)) {
-                    i = -1;
-                    break;
-                }
-            }
-        }
-        if (i == -1 || HIWORD(lParam) == 6) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    if (message == WM_INITDIALOG) {
-        CheckRadioButton(hwnd, IDC_SIMPLE_NEW_GAME_EASY, IDC_SIMPLE_NEW_GAME_EXPERT, IDC_SIMPLE_NEW_GAME_STANDARD);
-        CheckRadioButton(hwnd, IDC_SIMPLE_NEW_GAME_TINY, IDC_SIMPLE_NEW_GAME_HUGE, IDC_SIMPLE_NEW_GAME_SMALL);
-        hwndDD = GetDlgItem(hwnd, IDC_COMBOBOX);
-        SendMessage(hwndDD, CB_RESETCONTENT, 0, 0);
-        for (i = 0; i < 7; i++) {
-            SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i + 1383));
-        }
-        SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
-        StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
-        return 1;
-    }
-    if (message == WM_COMMAND) {
+    case WM_COMMAND:
         switch (GET_WM_COMMAND_ID(wParam, lParam)) {
         case IDC_FINISH:
         case IDCANCEL:
@@ -2383,6 +2283,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhNewGameSetupBasic);
             return 1;
         }
+        break;
     }
     return 0;
 }
@@ -2396,7 +2297,56 @@ INT_PTR CALLBACK NewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     PAINTSTRUCT ps;
     int16_t     iRet;
 
-    if (message == WM_PAINT) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SetNGWTitle(hwnd, 1);
+        CheckRadioButton(hwnd, IDC_NEW_GAME_TINY, IDC_NEW_GAME_HUGE, game.mdSize + 1000);
+        CheckRadioButton(hwnd, IDC_NEW_GAME_SPARSE, IDC_NEW_GAME_PACKED, game.mdDensity + 1005);
+        CheckRadioButton(hwnd, IDC_NEW_GAME_CLOSE, IDC_NEW_GAME_DISTANT, game.mdStartDist + 1009);
+        SetWindowText(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), game.szName);
+        SendDlgItemMessage(hwnd, IDC_NEW_GAME_NAME, EM_LIMITTEXT, 0x1f, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_MAX_MINERALS), BM_SETCHECK, game.fExtraFuel, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_SLOWER_TECH), BM_SETCHECK, game.fSlowTech, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_ACCELERATED_BBS), BM_SETCHECK, game.fBBSPlay, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS), BM_SETCHECK, game.fNoRandom, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_AI_ALLIANCES), BM_SETCHECK, game.fAisBand, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_PUBLIC_SCORES), BM_SETCHECK, game.fVisScores, 0);
+        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING), BM_SETCHECK, game.fClumping, 0);
+        if (fRCWReadOnly) {
+            for (i = 1000; i <= 1004; i++) {
+                EnableWindow(GetDlgItem(hwnd, i), FALSE);
+            }
+            for (i = 1005; i <= 1008; i++) {
+                EnableWindow(GetDlgItem(hwnd, i), FALSE);
+            }
+            for (i = 1009; i <= 1012; i++) {
+                EnableWindow(GetDlgItem(hwnd, i), FALSE);
+            }
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_MAX_MINERALS), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_SLOWER_TECH), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_ACCELERATED_BBS), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_AI_ALLIANCES), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), FALSE);
+            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_PUBLIC_SCORES), FALSE);
+        }
+        StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 1000; i <= 1021 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 1021 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */ ||
+            GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetWindowRect(GetDlgItem(hwnd, IDC_NEW_GAME_TINY), &rcGBox);
         ScreenToClient(hwnd, (POINT *)&rcGBox);
@@ -2436,90 +2386,41 @@ INT_PTR CALLBACK NewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, c);
         EndPaint(hwnd, &ps);
         return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 1000; i <= 1021 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+    case WM_COMMAND:
+        if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep1SpecifyingTheUniverse);
+            return 1;
         }
-        if (i <= 1021 || HIWORD(lParam) == 6 || GET_WM_CTLCOLOR_HWND(wParam, lParam) == GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING)) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
+        for (iRet = 0; iRet < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[iRet]; iRet++) {
         }
-    } else if (message != WM_INITDIALOG) {
-        if (message == WM_COMMAND) {
-            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
-                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep1SpecifyingTheUniverse);
-                return 1;
-            }
-            for (iRet = 0; iRet < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[iRet]; iRet++) {
-            }
-            if (iRet < 4) {
-                if (iRet != 0) {
-                    for (i = 1000; i <= 1004 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
-                    }
-                    game.mdSize = i - 1000;
-                    for (i = 1005; i <= 1008 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
-                    }
-                    game.mdDensity = i - 1005;
-                    for (i = 1009; i <= 1012 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
-                    }
-                    game.mdStartDist = i - 1009;
-                    game.fExtraFuel = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_MAX_MINERALS);
-                    game.fSlowTech = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_SLOWER_TECH);
-                    game.fBBSPlay = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_ACCELERATED_BBS);
-                    game.fNoRandom = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS);
-                    game.fAisBand = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_AI_ALLIANCES);
-                    game.fVisScores = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_PUBLIC_SCORES);
-                    game.fClumping = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING);
-                    i = GetWindowText(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), game.szName, 32);
-                    if (i == 0) {
-                        strcpy(game.szName, szBase);
-                    }
+        if (iRet < 4) {
+            if (iRet != 0) {
+                for (i = 1000; i <= 1004 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
                 }
-                StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
-                EndDialog(hwnd, iRet);
-                return 1;
+                game.mdSize = i - 1000;
+                for (i = 1005; i <= 1008 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
+                }
+                game.mdDensity = i - 1005;
+                for (i = 1009; i <= 1012 && IsDlgButtonChecked(hwnd, i) == 0; i++) {
+                }
+                game.mdStartDist = i - 1009;
+                game.fExtraFuel = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_MAX_MINERALS);
+                game.fSlowTech = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_SLOWER_TECH);
+                game.fBBSPlay = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_ACCELERATED_BBS);
+                game.fNoRandom = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS);
+                game.fAisBand = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_AI_ALLIANCES);
+                game.fVisScores = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_PUBLIC_SCORES);
+                game.fClumping = IsDlgButtonChecked(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING);
+                i = GetWindowText(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), game.szName, 32);
+                if (i == 0) {
+                    strcpy(game.szName, szBase);
+                }
             }
+            StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
+            EndDialog(hwnd, iRet);
+            return 1;
         }
-    } else {
-        SetNGWTitle(hwnd, 1);
-        CheckRadioButton(hwnd, IDC_NEW_GAME_TINY, IDC_NEW_GAME_HUGE, game.mdSize + 1000);
-        CheckRadioButton(hwnd, IDC_NEW_GAME_SPARSE, IDC_NEW_GAME_PACKED, game.mdDensity + 1005);
-        CheckRadioButton(hwnd, IDC_NEW_GAME_CLOSE, IDC_NEW_GAME_DISTANT, game.mdStartDist + 1009);
-        SetWindowText(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), game.szName);
-        SendDlgItemMessage(hwnd, IDC_NEW_GAME_NAME, EM_LIMITTEXT, 0x1f, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_MAX_MINERALS), BM_SETCHECK, game.fExtraFuel, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_SLOWER_TECH), BM_SETCHECK, game.fSlowTech, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_ACCELERATED_BBS), BM_SETCHECK, game.fBBSPlay, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS), BM_SETCHECK, game.fNoRandom, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_AI_ALLIANCES), BM_SETCHECK, game.fAisBand, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_PUBLIC_SCORES), BM_SETCHECK, game.fVisScores, 0);
-        SendMessage(GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING), BM_SETCHECK, game.fClumping, 0);
-        if (fRCWReadOnly != 0) {
-            for (i = 1000; i <= 1004; i++) {
-                EnableWindow(GetDlgItem(hwnd, i), FALSE);
-            }
-            for (i = 1005; i <= 1008; i++) {
-                EnableWindow(GetDlgItem(hwnd, i), FALSE);
-            }
-            for (i = 1009; i <= 1012; i++) {
-                EnableWindow(GetDlgItem(hwnd, i), FALSE);
-            }
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_MAX_MINERALS), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_SLOWER_TECH), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_ACCELERATED_BBS), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_NO_RANDOM_EVENTS), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_GALAXY_CLUMPING), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_AI_ALLIANCES), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_NAME), FALSE);
-            EnableWindow(GetDlgItem(hwnd, IDC_NEW_GAME_PUBLIC_SCORES), FALSE);
-        }
-        StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
-        return 1;
+        break;
     }
     return 0;
 }
@@ -2547,27 +2448,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     HDC         hdc;
     PAINTSTRUCT ps;
 
-    if (message == WM_PAINT) {
-        hdc = BeginPaint(hwnd, &ps);
-        DrawNewGame2(hwnd, hdc, -1);
-        EndPaint(hwnd, &ps);
-        return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 401; i <= 448 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
-        }
-        if (i <= 448 || HIWORD(lParam) == 6) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    switch (message) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
     case WM_INITDIALOG:
         SetNGWTitle(hwnd, 2);
         dy = (dyArial8 + 4) * 16 + 8;
@@ -2591,8 +2472,20 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
         return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 401; i <= 448 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 448 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
     case WM_SETCURSOR:
-        if (fRCWReadOnly != 0)
+        if (fRCWReadOnly)
             break;
         GetCursorPos16(&pt);
         ScreenToClient16(hwnd, &pt);
@@ -2605,7 +2498,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         return 1;
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
-        if (fRCWReadOnly != 0)
+        if (fRCWReadOnly)
             break;
         pt.x = LOWORD(lParam);
         pt.y = HIWORD(lParam);
@@ -2655,7 +2548,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         iChecked = (iCurVal & 3) == 3 ? 8 : 0;
         AppendMenu(hmenuPopup, 0x10 | iChecked, (UINT_PTR)rghmenuSubPopup[2], PszGetCompressedString(idsComputerPlayer));
         AppendMenu(hmenuPopup, MF_SEPARATOR, 0, NULL);
-        iChecked = (iCurVal & 3) == 0 ? 8 : 0;
+        iChecked = !(iCurVal & 3) ? 8 : 0;
         AppendMenu(hmenuPopup, iChecked, 0x3a9b, PszGetCompressedString(idsPlayer));
         tpm = message == WM_LBUTTONDOWN ? TPM_LEFTBUTTON : TPM_RIGHTBUTTON;
         TrackPopupMenu(hmenuPopup, TPM_CENTERALIGN | tpm, pt.x, pt.y, 0, hwnd, NULL);
@@ -2679,12 +2572,24 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 }
                 vrgrcRCW = prcSav;
             }
-            switch (iPopMenuSel) {
-            case 1:
-                if (FOpenGame(hwnd, TRUE) <= 0)
-                    goto L_9367;
-                goto PlaceNew;
-            case 2:
+            if (iPopMenuSel == 1) {
+                if (FOpenGame(hwnd, TRUE) > 0) {
+                PlaceNew:
+                    if (vcplrNew < 16) {
+                        iNewVal = vcplrNew++;
+                    } else {
+                        for (iNewVal = 15; iNewVal >= 0; iNewVal--) {
+                            for (i = 0; i < 16 && ((vrgplrTypeNew[i] & 3) != 2 || (vrgplrTypeNew[i] >> 2 & 0xf) != iNewVal); i++) {
+                            }
+                            if (i == 16)
+                                break;
+                        }
+                    }
+                    vrgplrNew[iNewVal] = vplr;
+                    strcpy(vrgszFileNew + iNewVal * 13, szRaceFile);
+                    iNewVal = iNewVal << 2 | 2;
+                }
+            } else if (iPopMenuSel == 2) {
                 if ((iCurVal & 3) == 1) {
                     vplr = vrgplrDef[iCurVal >> 2];
                     CchGetString((iCurVal >> 2) + 0x567, vplr.szName);
@@ -2695,8 +2600,8 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 }
                 lSaltCur = vplr.lSalt;
                 lSaltLast = 0;
-                if (FCheckPassword() == 0)
-                    break;
+                if (!FCheckPassword())
+                    goto FinishClick;
                 if (vplr.lSalt != 0) {
                     strcpy(szRacePass, szPassLast);
                 } else {
@@ -2713,55 +2618,24 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     iCurVal = -1;
                 }
                 vrgrcRCW = prcSav;
-                goto L_9367;
-            case 3:
+            } else if (iPopMenuSel == 3) {
                 iNewVal = 0;
-                goto L_9367;
-            default:
-                if (iPopMenuSel >= 16 && iPopMenuSel < 32) {
-                    iNewVal = (iPopMenuSel - 0x10) << 2 | 1;
-                    goto L_9367;
-                }
-                if (iPopMenuSel >= 32 && iPopMenuSel < 48) {
-                    iNewVal = (iPopMenuSel - 0x20) << 2 | 2;
-                    goto L_9367;
-                }
-                if (iPopMenuSel < 48)
-                    goto L_9367;
+            } else if (iPopMenuSel >= 16 && iPopMenuSel < 32) {
+                iNewVal = (iPopMenuSel - 0x10) << 2 | 1;
+            } else if (iPopMenuSel >= 32 && iPopMenuSel < 48) {
+                iNewVal = (iPopMenuSel - 0x20) << 2 | 2;
+            } else if (iPopMenuSel >= 48) {
                 iNewVal = (iPopMenuSel - 0x30) << 2 | 3;
-                goto L_9367;
             }
-            goto FinishClick;
-        PlaceNew:
-            if (vcplrNew < 16) {
-                iNewVal = vcplrNew++;
-            } else {
-                for (iNewVal = 15; iNewVal >= 0; iNewVal--) {
-                    for (i = 0; i < 16 && ((vrgplrTypeNew[i] & 3) != 2 || (vrgplrTypeNew[i] >> 2 & 0xf) != iNewVal); i++) {
-                    }
-                    if (i == 16)
-                        break;
-                }
-            }
-            vrgplrNew[iNewVal] = vplr;
-            strcpy(vrgszFileNew + iNewVal * 13, szRaceFile);
-            iNewVal = iNewVal << 2 | 2;
         }
-    L_9367:
         if (iNewVal != -1 && iNewVal != iCurVal) {
             vrgplrTypeNew[iDiamond] = iNewVal;
             if (iNewVal == 0) {
-                while (1) {
-                    iDiamond++;
-                    if (iDiamond >= 16)
-                        break;
+                while (++iDiamond < 16) {
                     vrgplrTypeNew[iDiamond] = 0;
                 }
             } else if (iDiamond > 0) {
-                while (1) {
-                    iDiamond--;
-                    if (iDiamond < 0 || vrgplrTypeNew[iDiamond] != 0)
-                        break;
+                while (--iDiamond >= 0 && vrgplrTypeNew[iDiamond] == 0) {
                     vrgplrTypeNew[iDiamond] = iNewVal;
                 }
             }
@@ -2770,6 +2644,11 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     FinishClick:
         SetFocus(hwnd);
         break;
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        DrawNewGame2(hwnd, hdc, -1);
+        EndPaint(hwnd, &ps);
+        return 1;
     case WM_COMMAND:
         if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep2SpecifyingThePlayers);
@@ -2778,7 +2657,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         for (i = 0; i < 4 && GET_WM_COMMAND_ID(wParam, lParam) != rgidRaceBtn[i]; i++) {
         }
         if (i < 4) {
-            if (i != 0 && vrgplrTypeNew[0] == 0 && fRCWReadOnly == 0) {
+            if (i != 0 && vrgplrTypeNew[0] == 0 && !fRCWReadOnly) {
                 AlertSz(PszFormatIds(idsMustHaveLeastOnePlayerGame, NULL), MB_ICONHAND);
             } else {
                 StickyDlgPos(hwnd, &ptStickyNewDlg, FALSE);
@@ -2803,7 +2682,7 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
     char     szT[20];
 
     fCreatedDC = FALSE;
-    if (hdc == 0) {
+    if (!hdc) {
         fCreatedDC = TRUE;
         hdc = GetDC(hwnd);
     }
@@ -2813,59 +2692,60 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
     xNewGameDiamond = LOWORD(GetTextExtent(hdc, PszGetCompressedString(idsPlayer16), 11)) + 12;
     yCur = 6;
     SetRect(&rcDiamond, xNewGameDiamond, yCur, xNewGameDiamond + dyArial8 + 1, yCur + dyArial8 + 1);
-    for (i = 0; i < 16 && (fRCWReadOnly == 0 || i < game.cPlayer); i++) {
+    for (i = 0; i < 16 && (!fRCWReadOnly || i < game.cPlayer); i++) {
         cch = _wsprintf(szWork, PszGetCompressedString(idsPlayerD), i + 1);
         szWork[cch++] = ':';
         szWork[cch] = 0;
         RightTextOut(hdc, xNewGameDiamond - 6, yCur, szWork, cch, 0);
         DrawDiamond(hdc, &rcDiamond, hbrBBlue);
         iPlr = vrgplrTypeNew[i] >> 2 & 0xf;
-        if (fRCWReadOnly != 0) {
-            if (rgplr[i].fInclude != 0) {
+        if (fRCWReadOnly) {
+            if (rgplr[i].fInclude) {
                 PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL);
-                if (rgplr[i].fDead != 0) {
-                    _wsprintf(&szWork[strlen(szWork)], " (%s)", PszGetCompressedString(idsDeceased));
-                    SetTextColor(hdc, 127);
-                }
-            } else {
-                CchGetString(idsUnknownPlayer, szWork);
+                if (!rgplr[i].fDead)
+                    goto DisplayName;
+                _wsprintf(&szWork[strlen(szWork)], " (%s)", PszGetCompressedString(idsDeceased));
+                SetTextColor(hdc, 127);
+                goto DisplayName;
             }
-        } else {
-            switch (vrgplrTypeNew[i] & 3) {
-            case 0:
-                CchGetString(idsPlayer2, szWork);
-                break;
-            case 1:
-                if (iPlr >= 6) {
-                    ids = iPlr != 6 ? idsExpansionPlayer : fRCWReadOnly != 0 ? idsUnknownPlayer : idsRandom;
-                    CchGetString(ids, szWork);
-                    break;
-                }
-                CchGetString(idsS, szT);
-                _wsprintf(szWork, szT, PszGetCompressedString(iPlr + 1383));
-                break;
-            case 2:
-                if (fRCWReadOnly == 0 && gd.fNoHostNames != 0 && vrgszFileNew[iPlr * 13] != 0) {
-                    _wsprintf(szWork, " %s", vrgszFileNew + iPlr * 13);
-                    break;
-                }
-                if (vrgszFileNew[iPlr * 13] != 0) {
-                    _wsprintf(szWork, PszGetCompressedString(fRCWReadOnly == 0 ? idsSS2 : idsS), vrgplrNew[iPlr].szNames, vrgszFileNew + iPlr * 13);
-                    break;
-                }
-                _wsprintf(szWork, PszGetCompressedString(idsS), vrgplrNew[iPlr].szNames);
-                break;
-            case 3:
-                _wsprintf(szWork, PszGetCompressedString(idsSSComputerPlayer), vrgszComputerPlayers[iPlr & 7], vrgszComputerLevel[vrgplrTypeNew[i] >> 5]);
-            }
+            CchGetString(idsUnknownPlayer, szWork);
+            goto DisplayName;
         }
+        switch (vrgplrTypeNew[i] & 3) {
+        case 0:
+            CchGetString(idsPlayer2, szWork);
+            break;
+        case 1:
+            if (iPlr >= 6) {
+                ids = iPlr == 6 ? (fRCWReadOnly ? idsUnknownPlayer : idsRandom) : idsExpansionPlayer;
+                CchGetString(ids, szWork);
+                break;
+            }
+            CchGetString(idsS, szT);
+            _wsprintf(szWork, szT, PszGetCompressedString(iPlr + 1383));
+            break;
+        case 2:
+            if (!fRCWReadOnly && gd.fNoHostNames && vrgszFileNew[iPlr * 13] != 0) {
+                _wsprintf(szWork, " %s", vrgszFileNew + iPlr * 13);
+                break;
+            }
+            if (vrgszFileNew[iPlr * 13] != 0) {
+                _wsprintf(szWork, PszGetCompressedString(!fRCWReadOnly ? idsSS2 : idsS), vrgplrNew[iPlr].szNames, vrgszFileNew + iPlr * 13);
+                break;
+            }
+            _wsprintf(szWork, PszGetCompressedString(idsS), vrgplrNew[iPlr].szNames);
+            break;
+        case 3:
+            _wsprintf(szWork, PszGetCompressedString(idsSSComputerPlayer), vrgszComputerPlayers[iPlr & 7], vrgszComputerLevel[vrgplrTypeNew[i] >> 5]);
+        }
+    DisplayName:
         TextOut(hdc, rcDiamond.right + 6, yCur, szWork, strlen(szWork));
         SetTextColor(hdc, crButtonText);
         OffsetRect(&rcDiamond, 0, dyArial8 + 4);
         yCur += dyArial8 + 4;
     }
     SetBkMode(hdc, bkMode);
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwnd, hdc);
     }
     return;
@@ -2877,40 +2757,30 @@ INT_PTR CALLBACK NewGameDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     POINT16     pt;
     HDC         hdc;
     PAINTSTRUCT ps;
-    HWND        t_call_9a24;
 
-    if (message == WM_PAINT) {
-        hdc = BeginPaint(hwnd, &ps);
-        DrawNewGame3(hwnd, hdc, -1);
-        EndPaint(hwnd, &ps);
-        return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 291; i <= 297 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
-        }
-        if (i <= 297 || HIWORD(lParam) == 6) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    switch (message) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
     case WM_INITDIALOG:
         SetNGWTitle(hwnd, 3);
         for (i = 0; i < 7; i++) {
-            t_call_9a24 = GetDlgItem(hwnd, i + 291);
-            SendMessage(t_call_9a24, BM_SETCHECK, GetVCCheck(&game, (i >= 2) + i), 0);
-            if (fRCWReadOnly != 0) {
+            SendMessage(GetDlgItem(hwnd, i + 291), BM_SETCHECK, GetVCCheck(&game, (i >= 2) + i), 0);
+            if (fRCWReadOnly) {
                 EnableWindow(GetDlgItem(hwnd, i + 291), FALSE);
             }
         }
         StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
         return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 291; i <= 297 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 297 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
     case WM_SETCURSOR:
         GetCursorPos16(&pt);
         ScreenToClient16(hwnd, &pt);
@@ -2923,6 +2793,11 @@ INT_PTR CALLBACK NewGameDlg3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         pt.x = LOWORD(lParam);
         pt.y = HIWORD(lParam);
         return FTrackNewGameDlg3(hwnd, pt, wParam);
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        DrawNewGame3(hwnd, hdc, -1);
+        EndPaint(hwnd, &ps);
+        return 1;
     case WM_COMMAND:
         if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
             WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhStep3VictoryConditions);
@@ -2963,8 +2838,8 @@ void DrawNewGame3(HWND hwnd, HDC hdc, int16_t iDraw) {
     RECT     rc;
 
     fCreatedDC = FALSE;
-    bt = fRCWReadOnly == 0 ? 0 : 4;
-    if (hdc == 0) {
+    bt = !fRCWReadOnly ? 0 : 4;
+    if (!hdc) {
         fCreatedDC = TRUE;
         hdc = GetDC(hwnd);
     }
@@ -3034,7 +2909,7 @@ void DrawNewGame3(HWND hwnd, HDC hdc, int16_t iDraw) {
     crcRCW = irc;
     SetBkColor(hdc, crBkSav);
     SetBkMode(hdc, bkMode);
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwnd, hdc);
     }
     return;
@@ -3063,10 +2938,10 @@ int16_t FTrackNewGameDlg3(HWND hwnd, POINT16 pt, int16_t kbd) {
         bt = 161;
     }
     InitBtnTrack(&btnt, hwnd, NULL, vrgrcRCW + irc, bt, 80, FALSE, FALSE, NULL);
-    if ((kbd & 0xc) != 0) {
+    if (kbd & 0xc) {
         dShift = 5 * dShift;
     }
-    while (FTrackBtn(&btnt) != 0) {
+    while (FTrackBtn(&btnt)) {
         iStat = GetVCVal(&game, i, TRUE);
         if (SetVCVal(&game, i, iStat + dShift) != iStat) {
             DrawNewGame3(hwnd, btnt.hdc, i);
@@ -3088,15 +2963,15 @@ void SetNGWTitle(HWND hwnd, int16_t iStep) {
 PLAYER *LpplrComp(AiRace idAi, AiLevel lvlAi) { return &vrgplrComp[idAi][lvlAi]; }
 
 void SetVCCheck(GAME *pgame, VictoryCondition vc, int16_t fChecked) {
-    pgame->rgvc[vc] = (pgame->rgvc[vc] & 0x7f) | (fChecked == 0 ? 0 : 0x80);
+    pgame->rgvc[vc] = (pgame->rgvc[vc] & 0x7f) | (!fChecked ? 0 : 0x80);
     return;
 }
 
 int16_t GetVCCheck(GAME *pgame, VictoryCondition vc) {
-    if ((pgame->rgvc[vc] & 0x80) != 0) {
-        return 1;
+    if (pgame->rgvc[vc] & 0x80) {
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 int16_t SetVCVal(GAME *pgame, VictoryCondition vc, int16_t val) {
@@ -3124,50 +2999,47 @@ int16_t GetVCVal(GAME *pgame, VictoryCondition vc, int16_t fRaw) {
     int16_t val;
 
     val = pgame->rgvc[vc] & 0x7f;
-    if (fRaw != 0) {
+    if (fRaw) {
         return val;
     }
-    if (vc <= vcMinYearsBeforeWin) {
-        switch (vc) {
-        case vcOwnsPercentPlanets:
-            val = 5 * val + 20;
-            break;
-        case vcAttainsTechLevel:
-            val += 8;
-            break;
-        case vcAttainsTechFields:
-            val += 2;
-            break;
-        case vcExceedsScore:
-            val = 1000 * val + 1000;
-            break;
-        case vcExceedsSecondPlaceBy:
-            val = 10 * val + 20;
-            break;
-        case vcProductionCapacity:
-        case vcOwnsCapitalShips:
-            val = 10 * val + 10;
-            break;
-        case vcHighestScoreAfterYears:
-            val = 10 * val + 30;
-            break;
-        case vcMinYearsBeforeWin:
-            val = 10 * val + 30;
-            break;
-        case vcMeetsNumCriteria:
-            goto L_b7b8;
+    switch (vc) {
+    case vcOwnsPercentPlanets:
+        val = 5 * val + 20;
+        break;
+    case vcAttainsTechLevel:
+        val += 8;
+        break;
+    case vcAttainsTechFields:
+        val += 2;
+        break;
+    case vcExceedsScore:
+        val = 1000 * val + 1000;
+        break;
+    case vcExceedsSecondPlaceBy:
+        val = 10 * val + 20;
+        break;
+    case vcProductionCapacity:
+    case vcOwnsCapitalShips:
+        val = 10 * val + 10;
+        break;
+    case vcHighestScoreAfterYears:
+        val = 10 * val + 30;
+        break;
+    case vcMinYearsBeforeWin:
+        val = 10 * val + 30;
+        break;
+    case vcMeetsNumCriteria:
+    default:
+        c = 0;
+        for (i = 0; i < 8; i++) {
+            if (i != 2 && (game.rgvc[i] & 0x80)) {
+                c++;
+            }
         }
-        return val;
-    }
-L_b7b8:
-    c = 0;
-    for (i = 0; i < 8; i++) {
-        if (i != 2 && (game.rgvc[i] & 0x80) != 0) {
-            c++;
+        if (c < val) {
+            val = c;
         }
-    }
-    if (c < val) {
-        val = c;
+        break;
     }
     return val;
 }

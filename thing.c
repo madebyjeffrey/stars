@@ -33,7 +33,7 @@ THING *LpthNew(int16_t iplr, ThingType ith) {
     }
     if (cThing >= cThingAlloc) {
         cThingAlloc += 10;
-        if (lpThings == 0) {
+        if (!lpThings) {
             lpThings = LpAlloc(cThingAlloc * sizeof(THING), htThings);
         } else {
             lpThings = LpReAlloc(lpThings, cThingAlloc * sizeof(THING), htThings);
@@ -131,7 +131,7 @@ void DrawThingGauge(HDC hdc, RECT *prc, THING *lpth, int16_t md) {
     }
     l = LDrawGauge(hdc, prc, cSections, rgSize, rghbr, lMax);
     iMode = SetBkMode(hdc, TRANSPARENT);
-    if (fDisabled != 0) {
+    if (fDisabled) {
         l = 0;
     }
     if (cSections == 1) {
@@ -183,7 +183,7 @@ int16_t IValidateWormholePos(THING *lpthWorm) {
     }
     for (ifl = 0; ifl < cFleet; ifl++) {
         lpfl = rglpfl[ifl];
-        if (rglpfl[ifl] == 0)
+        if (!rglpfl[ifl])
             break;
         if (pt.x == lpfl->pt.x && pt.y == lpfl->pt.y) {
             return 15;
@@ -294,7 +294,7 @@ void DoThingInteractions(int16_t fPostMove) {
     int16_t     iLvl;
     int16_t     iPass;
 
-    if (fPostMove != 0) {
+    if (fPostMove) {
         lpth = lpThings;
         lpthMac = lpThings + cThing;
         for (; lpth < lpthMac; lpth++) {
@@ -302,37 +302,37 @@ void DoThingInteractions(int16_t fPostMove) {
                 pt = lpth->pt;
                 for (ifl = 0; ifl < cFleet; ifl++) {
                     lpfl = rglpfl[ifl];
-                    if (rglpfl[ifl] == 0)
+                    if (!rglpfl[ifl])
                         break;
-                    if (lpfl->fDead == 0 && lpfl->pt.x == pt.x && lpfl->pt.y == pt.y) {
+                    if (!lpfl->fDead && lpfl->pt.x == pt.x && lpfl->pt.y == pt.y) {
                         wtMin = 0;
                         for (i = 0; i <= 2; i++) {
                             wtMin += lpfl->rgwtMin[i];
                         }
                         if (wtMin < 5000) {
-                            if (lpfl->fHereAllTurn == 0) {
+                            if (!lpfl->fHereAllTurn) {
                                 FSendPlrMsg2(lpfl->iplr, idmMysteryTraderHasRefusedGiveCaptainAudience, lpfl->id | 0x8000, lpfl->id, 0);
                             }
                         } else {
-                            cPlrTrueMaxTech = rgplr[lpfl->iPlayer].fCrippled == 0 ? 26 : 10;
+                            cPlrTrueMaxTech = !rgplr[lpfl->iPlayer].fCrippled ? 26 : 10;
                             for (i = 0; i < 6 && rgplr[lpfl->iPlayer].rgTech[i] >= cPlrTrueMaxTech; i++) {
                             }
                             fMaxTech = i == 6;
                             grbitPlrTrader = rgplr[lpfl->iPlayer].grbitTrader;
                             iplr = lpfl->iPlayer;
-                            if ((1 << iplr & lpth->tht.grbitPlr) != 0) {
+                            if (1 << iplr & lpth->tht.grbitPlr) {
                                 FSendPlrMsg2(lpfl->iplr, idmMysteryTraderEyesCaptainSuspiciouslySuggestsHe, lpfl->id | 0x8000, lpfl->id, 0);
                             } else {
                                 lpth->tht.grbitPlr |= 1 << iplr;
                                 FRemovePlayerMessage(iplr, idmHasCompletedAssignedOrders, lpfl->id | 0x8000);
                                 lpfl->fDead = TRUE;
-                                if (lpth->tht.grbitTrader == grbitTraderNone || (lpth->tht.grbitTrader & grbitPlrTrader) != 0) {
-                                    if (fMaxTech != 0) {
-                                        if (Random(5) == 0) {
-                                            idm = idmHasAbsorbedMysteryTraderHoweverTraderUnable2;
-                                            FSendPlrMsg2(lpfl->iplr, idm, gotoNone, WFromLpfl(lpfl), 0);
-                                            continue;
-                                        }
+                                if (lpth->tht.grbitTrader == grbitTraderNone || (lpth->tht.grbitTrader & grbitPlrTrader)) {
+                                    if (fMaxTech) {
+                                        if (Random(5) != 0)
+                                            goto LGivePart;
+                                        idm = idmHasAbsorbedMysteryTraderHoweverTraderUnable2;
+                                        FSendPlrMsg2(lpfl->iplr, idm, gotoNone, WFromLpfl(lpfl), 0);
+                                        continue;
                                     } else {
                                         cTechCur = 0;
                                         cTech = (int32_t)((wtMin - 5000) / 1200) + 6;
@@ -391,6 +391,7 @@ void DoThingInteractions(int16_t fPostMove) {
                                         continue;
                                     }
                                 }
+                            LGivePart:
                                 cTry = 25;
                                 grbitTrader = lpth->tht.grbitTrader;
                                 if (grbitTrader == grbitTraderNone) {
@@ -402,28 +403,30 @@ void DoThingInteractions(int16_t fPostMove) {
                                     grbitTrader = grbitTraderLifeboat;
                                 }
                                 lpth->tht.grbitPlr |= 1 << iplr;
-                                if (grbitTrader != grbitTraderLifeboat) {
-                                    idm = IdmGiveTraderPart(grbitTrader, iplr, &iGoto);
-                                    FSendPlrMsg2(lpfl->iplr, idm, iGoto, WFromLpfl(lpfl), 0);
-                                } else if (rgplr[iplr].fAi == 0) {
-                                    iOffset = Random(4 - (game.turn > 100));
-                                    if (iOffset >= 1) {
-                                        iOffset = Random(2) + 1;
-                                    }
-                                    fmemmove(&shdef, LpshdefT() + (iOffset + 19), sizeof(SHDEF));
-                                    ish = IshFindSimilarDesign(&shdef.hul, iplr);
-                                    if (ish < 0) {
-                                        do {
-                                            ish++;
-                                        } while (ish < 16 && rglpshdef[iplr][ish].fFree == 0);
-                                    }
-                                    if (ish < 16 && rgplr[lpfl->iplr].cFleet < 0x200) {
+                                if (grbitTrader == grbitTraderLifeboat) {
+                                    if (!rgplr[iplr].fAi) {
+                                        iOffset = Random(4 - (game.turn > 100));
+                                        if (iOffset >= 1) {
+                                            iOffset = Random(2) + 1;
+                                        }
+                                        fmemmove(&shdef, LpshdefT() + (iOffset + 19), sizeof(SHDEF));
+                                        ish = IshFindSimilarDesign(&shdef.hul, iplr);
+                                        if (ish < 0) {
+                                            do {
+                                                ish++;
+                                            } while (ish < 16 && !rglpshdef[iplr][ish].fFree);
+                                        }
+                                        if (ish >= 16 || rgplr[lpfl->iplr].cFleet >= 0x200) {
+                                        LNoLifeboat:
+                                            FSendPlrMsg2(lpfl->iplr, idmHasAbsorbedMysteryTraderReturnTraderTried, gotoNone, WFromLpfl(lpfl), 0);
+                                            continue;
+                                        }
                                         if (Random(3) == 0) {
                                             cGive = 2;
                                         } else {
                                             cGive = 1;
                                         }
-                                        if (game.turn > 100 && game.fSinglePlr == 0) {
+                                        if (game.turn > 100 && !game.fSinglePlr) {
                                             cGive += Random((uint32_t)game.turn / 100 + 1);
                                         }
                                         if (cGive > 5) {
@@ -433,34 +436,36 @@ void DoThingInteractions(int16_t fPostMove) {
                                             cGive += Random(cGive + 1);
                                         }
                                         lpflNew = LpflNew(iplr, lpfl->idPlanet);
-                                        if (lpflNew != 0) {
-                                            FSendPlrMsg2(lpfl->iplr, idmHasAbsorbedMysteryTraderReturnHaveGiven3, lpflNew->id | 0x8000, WFromLpfl(lpfl), cGive);
-                                            if (lpflNew->id < lpfl->id) {
-                                                ifl++;
-                                            }
-                                            lpflNew->pt = lpfl->pt;
-                                            lpflNew->lpplord->rgord[0].pt = lpfl->pt;
-                                            lpflNew->fHereAllTurn = TRUE;
-                                            lpshdefDest = rglpshdef[iplr] + ish;
-                                            if (lpshdefDest->fFree != 0) {
-                                                *lpshdefDest = shdef;
-                                                lpshdefDest->ishdef = ish;
-                                                lpshdefDest->fGift = TRUE;
-                                                lpshdefDest->cBuilt = 0;
-                                                lpshdefDest->cExist = 0;
-                                                rgplr[iplr].cShDef++;
-                                                idPlayer = lpfl->iplr;
-                                                UpdateShdefCost(lpshdefDest);
-                                                idPlayer = -1;
-                                            }
-                                            lpshdefDest->cBuilt += cGive;
-                                            lpshdefDest->cExist += cGive;
-                                            lpflNew->rgcsh[ish] = cGive;
-                                            lpflNew->rgwtMin[4] = LGetFleetStat(lpflNew, 1);
-                                            continue;
+                                        if (!lpflNew)
+                                            goto LNoLifeboat;
+                                        FSendPlrMsg2(lpfl->iplr, idmHasAbsorbedMysteryTraderReturnHaveGiven3, lpflNew->id | 0x8000, WFromLpfl(lpfl), cGive);
+                                        if (lpflNew->id < lpfl->id) {
+                                            ifl++;
                                         }
+                                        lpflNew->pt = lpfl->pt;
+                                        lpflNew->lpplord->rgord[0].pt = lpfl->pt;
+                                        lpflNew->fHereAllTurn = TRUE;
+                                        lpshdefDest = rglpshdef[iplr] + ish;
+                                        if (lpshdefDest->fFree) {
+                                            *lpshdefDest = shdef;
+                                            lpshdefDest->ishdef = ish;
+                                            lpshdefDest->fGift = TRUE;
+                                            lpshdefDest->cBuilt = 0;
+                                            lpshdefDest->cExist = 0;
+                                            rgplr[iplr].cShDef++;
+                                            idPlayer = lpfl->iplr;
+                                            UpdateShdefCost(lpshdefDest);
+                                            idPlayer = iplrNone;
+                                        }
+                                        lpshdefDest->cBuilt += cGive;
+                                        lpshdefDest->cExist += cGive;
+                                        lpflNew->rgcsh[ish] = cGive;
+                                        lpflNew->rgwtMin[4] = LGetFleetStat(lpflNew, 1);
+                                        continue;
                                     }
-                                    FSendPlrMsg2(lpfl->iplr, idmHasAbsorbedMysteryTraderReturnTraderTried, gotoNone, WFromLpfl(lpfl), 0);
+                                } else {
+                                    idm = IdmGiveTraderPart(grbitTrader, iplr, &iGoto);
+                                    FSendPlrMsg2(lpfl->iplr, idm, iGoto, WFromLpfl(lpfl), 0);
                                 }
                             }
                         }
@@ -469,8 +474,8 @@ void DoThingInteractions(int16_t fPostMove) {
                 lppl = lpPlanets;
                 lpplMac = lpPlanets + cPlanet;
                 for (; lppl < lpplMac; lppl++) {
-                    if (lppl->iPlayer != -1 && lppl->fStarbase != 0 && rgplr[lppl->iPlayer].fAi != 0 && rgplr[lppl->iPlayer].lvlAi >= lvlAiTough &&
-                        (1 << lppl->iPlayer & lpth->tht.grbitPlr) == 0) {
+                    if (lppl->iPlayer != iplrNone && lppl->fStarbase && rgplr[lppl->iPlayer].fAi && rgplr[lppl->iPlayer].lvlAi >= lvlAiTough &&
+                        !(1 << lppl->iPlayer & lpth->tht.grbitPlr)) {
                         dx = (int16_t)(rgptPlan[lppl->id].x - pt.x);
                         if (dx > 100)
                             break;
@@ -484,21 +489,29 @@ void DoThingInteractions(int16_t fPostMove) {
                             iplr = lppl->iPlayer;
                             wtThreshhold = (uint32_t)(rgplr[iplr].lvlAi == lvlAiTough ? 3500 : 5000);
                             if (wtNext >= wtThreshhold) {
-                                if (lpth->tht.grbitTrader != grbitTraderNone) {
-                                    cTry = 50;
-                                    for (grbitTrader = lpth->tht.grbitTrader; (grbitTrader & rgplr[iplr].grbitTrader) != 0 && cTry-- > 0;
-                                         grbitTrader = 1 << Random(13)) {
-                                    }
-                                    if (cTry > 0) {
-                                        rgplr[iplr].grbitTrader |= grbitTrader;
-                                        goto LChgMin;
-                                    }
+                                if (lpth->tht.grbitTrader == grbitTraderNone)
+                                    goto LAutoTech;
+                                cTry = 50;
+                                for (grbitTrader = lpth->tht.grbitTrader; (grbitTrader & rgplr[iplr].grbitTrader) != 0 && cTry-- > 0;
+                                     grbitTrader = 1 << Random(13)) {
                                 }
+                                if (cTry <= 0)
+                                    goto LAutoTech;
+                                rgplr[iplr].grbitTrader |= grbitTrader;
+                            LChgMin:
+                                lpth->tht.grbitPlr |= 1 << iplr;
+                                for (i = 2; wtNext > 0 && i >= 0; i--) {
+                                    wtMin = wtNext < lppl->rgwtMin[i] ? wtNext : lppl->rgwtMin[i];
+                                    lppl->rgwtMin[i] -= wtMin;
+                                    wtNext -= wtMin;
+                                }
+                                continue;
+                            LAutoTech:
                                 iLvl = 0;
                                 for (i = 0; i < 6; i++) {
                                     iLvl += rgplr[iplr].rgTech[i];
                                 }
-                                cPlrTrueMaxTech = rgplr[lpfl->iPlayer].fCrippled == 0 ? 26 : 10;
+                                cPlrTrueMaxTech = !rgplr[lpfl->iPlayer].fCrippled ? 26 : 10;
                                 if (iLvl >= 6 * cPlrTrueMaxTech - 6)
                                     continue;
                                 for (iPass = 0; iPass < 6; iPass++) {
@@ -511,13 +524,7 @@ void DoThingInteractions(int16_t fPostMove) {
                                     rgplr[iplr].rgTech[iLvl]++;
                                 }
                                 wtNext = wtThreshhold;
-                            LChgMin:
-                                lpth->tht.grbitPlr |= 1 << iplr;
-                                for (i = 2; wtNext > 0 && i >= 0; i--) {
-                                    wtMin = wtNext < lppl->rgwtMin[i] ? wtNext : lppl->rgwtMin[i];
-                                    lppl->rgwtMin[i] -= wtMin;
-                                    wtNext -= wtMin;
-                                }
+                                goto LChgMin;
                             }
                         }
                     }

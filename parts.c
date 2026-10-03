@@ -27,7 +27,6 @@ SHDEF     rgshdefSBT[4] = {{
                                .det = detMinimal,
                                .fInclude = TRUE,
                                .ishdef = 16,
-                               .wFlags = 16641,
                                .turn = 1,
                        },
                            {
@@ -49,7 +48,6 @@ SHDEF     rgshdefSBT[4] = {{
                                .det = detMinimal,
                                .fInclude = TRUE,
                                .ishdef = 17,
-                               .wFlags = 17665,
                                .turn = 1,
                        },
                            {
@@ -72,7 +70,6 @@ SHDEF     rgshdefSBT[4] = {{
                                .det = detMinimal,
                                .fInclude = TRUE,
                                .ishdef = 18,
-                               .wFlags = 18689,
                                .turn = 1,
                        },
                            {
@@ -91,7 +88,6 @@ SHDEF     rgshdefSBT[4] = {{
                                .det = detMinimal,
                                .fInclude = TRUE,
                                .ishdef = 19,
-                               .wFlags = 19713,
                                .turn = 1,
                        }};
 BEAM      rgbeam[24] = {{
@@ -704,7 +700,6 @@ SHDEF     rgshdefT[22] = {{
                               },
                               .det = detAll,
                               .fInclude = TRUE,
-                              .wFlags = 263,
                               .turn = 1,
                       },
                           {
@@ -720,7 +715,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 1,
-                              .wFlags = 1287,
                               .turn = 1,
                       },
                           {
@@ -738,7 +732,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 2,
-                              .wFlags = 2311,
                               .turn = 1,
                       },
                           {
@@ -756,7 +749,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 3,
-                              .wFlags = 3335,
                               .turn = 1,
                       },
                           {
@@ -774,7 +766,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 4,
-                              .wFlags = 4359,
                               .turn = 1,
                       },
                           {
@@ -792,7 +783,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 5,
-                              .wFlags = 5383,
                               .turn = 1,
                       },
                           {
@@ -808,7 +798,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 6,
-                              .wFlags = 6407,
                               .turn = 1,
                       },
                           {
@@ -831,7 +820,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 7,
-                              .wFlags = 7431,
                               .turn = 1,
                       },
                           {
@@ -850,7 +838,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 8,
-                              .wFlags = 8455,
                               .turn = 1,
                       },
                           {
@@ -867,7 +854,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 9,
-                              .wFlags = 9479,
                               .turn = 1,
                       },
                           {
@@ -884,7 +870,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 10,
-                              .wFlags = 10503,
                               .turn = 1,
                       },
                           {
@@ -901,7 +886,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 11,
-                              .wFlags = 11527,
                               .turn = 1,
                       },
                           {
@@ -918,7 +902,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 12,
-                              .wFlags = 12551,
                               .turn = 1,
                       },
                           {
@@ -933,7 +916,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 13,
-                              .wFlags = 13575,
                               .turn = 1,
                       },
                           {
@@ -951,7 +933,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 14,
-                              .wFlags = 14599,
                               .turn = 1,
                       },
                           {
@@ -966,7 +947,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 15,
-                              .wFlags = 15623,
                               .turn = 1,
                       },
                           {
@@ -985,7 +965,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 16,
-                              .wFlags = 16647,
                               .turn = 1,
                       },
                           {
@@ -1004,7 +983,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 17,
-                              .wFlags = 17671,
                               .turn = 1,
                       },
                           {
@@ -1023,7 +1001,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 18,
-                              .wFlags = 18695,
                               .turn = 1,
                       },
                           {
@@ -1051,7 +1028,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 19,
-                              .wFlags = 19719,
                               .turn = 1,
                       },
                           {
@@ -1073,7 +1049,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 20,
-                              .wFlags = 20743,
                               .turn = 1,
                       },
                           {
@@ -1095,7 +1070,6 @@ SHDEF     rgshdefT[22] = {{
                               .det = detAll,
                               .fInclude = TRUE,
                               .ishdef = 21,
-                              .wFlags = 21767,
                               .turn = 1,
                       }};
 ENGINE    rgengine[16] = {{
@@ -3498,56 +3472,56 @@ int16_t FLookupPart(PART *ppart) {
     hs = ppart->hs;
     switch (hs.grhst) {
     default:
-        return 0;
+        return mdPartAvailInvalid;
     case hstEngine:
         if (hs.iItem >= iengineCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pengine = &rgengine[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if (hs.iItem == iengineSettlersDelight && raMajor != raCheapCol) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (((hs.iItem >= iengineSubGalacticFuelScoop && hs.iItem <= iengineGalaxyScoop) || hs.iItem == iengineRadiatingHydroRamScoop) &&
             GetRaceGrbit(&rgplr[idPlayer], ibitRaceNoRamscoops) != 0) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if ((hs.iItem == iengineGalaxyScoop || hs.iItem == iengineFuelMizer) && GetRaceGrbit(&rgplr[idPlayer], ibitRaceIFE) == 0) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem == iengineInterspace10 && GetRaceGrbit(&rgplr[idPlayer], ibitRaceNoRamscoops) == 0) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstShield:
         if (hs.iItem >= ishieldCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pshield = &rgshield[hs.iItem];
         if (hs.iItem == ishieldShadowShield && raMajor != raStealth) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem == ishieldCrobySharmor && raMajor != raDefend) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstHull:
         if (hs.iItem >= ihuldefOrbitalFort) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->phul = &rghuldef[hs.iItem].hul;
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if ((hs.iItem == ihuldefMiniColonyShip || hs.iItem == ihuldefMetaMorph) && raMajor != raCheapCol) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if ((hs.iItem == ihuldefFuelTransport || hs.iItem == ihuldefSuperFreighter) && raMajor != raDefend) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         switch (hs.iItem) {
         case ihuldefMiner:
@@ -3555,96 +3529,97 @@ int16_t FLookupPart(PART *ppart) {
         case ihuldefMidgetMiner:
         case ihuldefUltraMiner:
             if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceOBRM) != 0) {
-                return -1;
+                return mdPartAvailRestricted;
             }
+            /* fallthrough */
         default:
             switch (hs.iItem) {
             case ihuldefMidgetMiner:
             case ihuldefMiner:
             case ihuldefUltraMiner:
                 if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceARM) == 0) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
+                /* fallthrough */
             default:
                 if ((hs.iItem == ihuldefDreadnought || hs.iItem == ihuldefBattleCruiser) && raMajor != raAttack) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
                 if (hs.iItem == ihuldefRogue && raMajor != raStealth) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
                 if (hs.iItem == ihuldefStealthBomber && raMajor != raStealth) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
                 if ((hs.iItem == ihuldefMiniMineLayer || hs.iItem == ihuldefSuperMineLayer) && raMajor != raMines) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
-                if (FShouldPartBeHidden(ppart) == 0)
-                    goto L_609c;
-                return -1;
+                if (!FShouldPartBeHidden(ppart))
+                    break;
+                return mdPartAvailRestricted;
             }
         }
+        break;
     case hstSBHull:
         if (hs.iItem >= isbhullCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->phul = &rghuldefSB[hs.iItem].hul;
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if ((hs.iItem == isbhullSpaceDock || hs.iItem == isbhullUltraStation) && GetRaceGrbit(&rgplr[idPlayer], ibitRaceISB) == 0) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem != isbhullDeathStar || raMajor == raMacintosh)
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstArmor:
         if (hs.iItem >= iarmorCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->parmor = &rgarmor[hs.iItem];
         if (hs.iItem == iarmorDepletedNeutronium && raMajor != raStealth) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem == iarmorFieldedKelarium && raMajor != raDefend) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstSpecialE:
         if (hs.iItem >= ispecialECount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pspecial = &rgspecialE[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
-        if (FShouldPartBeHidden(ppart) != 0) {
-            return -1;
+        if (FShouldPartBeHidden(ppart)) {
+            return mdPartAvailRestricted;
         }
-        if (hs.iItem > ispecialEAntiMatterGenerator)
-            break;
         switch (hs.iItem) {
         case ispecialETransportCloaking:
         case ispecialEUltraStealthCloak:
             if (raMajor == raStealth)
-                goto L_609c;
-            return -1;
+                break;
+            return mdPartAvailRestricted;
         case ispecialEEnergyDampener:
             if (raMajor == raMines)
-                goto L_609c;
-            return -1;
+                break;
+            return mdPartAvailRestricted;
         case ispecialEAntiMatterGenerator:
             if (raMajor == raStargate)
-                goto L_609c;
-            return -1;
+                break;
+            return mdPartAvailRestricted;
         case ispecialEFluxCapacitor:
             if (raMajor == raCheapCol)
-                goto L_609c;
-            return -1;
+                break;
+            return mdPartAvailRestricted;
         case ispecialEJammer10:
         case ispecialEJammer50:
         case ispecialETachyonDetector:
             if (raMajor != raDefend) {
-                return -1;
+                return mdPartAvailRestricted;
             }
         case ispecialEStealthCloak:
         case ispecialESuperStealthCloak:
@@ -3655,50 +3630,51 @@ int16_t FLookupPart(PART *ppart) {
         case ispecialEJammer20:
         case ispecialEJammer30:
         case ispecialEEnergyCapacitor:
-            goto L_609c;
+            break;
         }
+        break;
     case hstSpecialM:
         if (hs.iItem >= ispecialMCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pspecial = &rgspecialM[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
-        if (FShouldPartBeHidden(ppart) != 0) {
-            return -1;
+        if (FShouldPartBeHidden(ppart)) {
+            return mdPartAvailRestricted;
         }
         if (hs.iItem == ispecialMColonizationModule && raMajor == raMacintosh) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem != ispecialMOrbitalConstructionModule || raMajor == raMacintosh)
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstSpecialSB:
         if (hs.iItem >= ispecialSBCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pspecialsb = &rgspecialSB[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if (hs.iItem >= ispecialSBMassDriver5 && hs.iItem <= ispecialSBUltraDriver13) {
             if (hs.iItem == ispecialSBMassDriver7 || hs.iItem == ispecialSBUltraDriver10 || raMajor == raMassAccel)
                 break;
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem < ispecialSBStargate100250 || hs.iItem > ispecialSBStargateAnyAny)
             break;
         if (raMajor != raStargate && (hs.iItem == ispecialSBStargateAny300 || hs.iItem >= ispecialSBStargate100Any)) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (raMajor != raCheapCol)
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstMines:
         if (hs.iItem >= iminesCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pmines = &rgmines[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         switch (hs.iItem) {
         case iminesMineDispenser40:
@@ -3710,22 +3686,24 @@ int16_t FLookupPart(PART *ppart) {
         case iminesSpeedTrap30:
         case iminesSpeedTrap50:
             if (raMajor != raMines) {
-                return -1;
+                return mdPartAvailRestricted;
             }
+            /* fallthrough */
         default:
             if (hs.iItem == iminesSpeedTrap20 && raMajor != raMines && raMajor != raDefend) {
-                return -1;
+                return mdPartAvailRestricted;
             }
             if (hs.iItem != iminesMineDispenser50 || raMajor != raAttack)
-                goto L_609c;
-            return -1;
+                break;
+            return mdPartAvailRestricted;
         }
+        break;
     case hstMining:
         if (hs.iItem >= iminingCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pmining = &rgmining[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         switch (hs.iItem) {
         case iminingRoboMiner:
@@ -3734,123 +3712,127 @@ int16_t FLookupPart(PART *ppart) {
         case iminingRoboMidgetMiner:
         case iminingRoboUltraMiner:
             if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceOBRM) != 0) {
-                return -1;
+                return mdPartAvailRestricted;
             }
+            /* fallthrough */
         default:
             if ((hs.iItem == iminingRoboMidgetMiner || hs.iItem == iminingRoboUltraMiner) && GetRaceGrbit(&rgplr[idPlayer], ibitRaceARM) == 0) {
-                return -1;
+                return mdPartAvailRestricted;
             }
             if (hs.iItem == iminingOrbitalAdjuster && raMajor != raTerra) {
-                return -1;
+                return mdPartAvailRestricted;
             }
-            if (FShouldPartBeHidden(ppart) == 0)
-                goto L_609c;
-            return -1;
+            if (!FShouldPartBeHidden(ppart))
+                break;
+            return mdPartAvailRestricted;
         }
+        break;
     case hstScanner:
         if (hs.iItem >= iscannerCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pscanner = &rgscanner[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         switch (hs.iItem) {
         case iscannerFerretScanner:
         case iscannerDolphinScanner:
         case iscannerElephantScanner:
             if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceNoAdvScanner) != 0) {
-                return -1;
+                return mdPartAvailRestricted;
             }
+            /* fallthrough */
         default:
             switch (hs.iItem) {
             case iscannerChameleonScanner:
             case iscannerPickPocketScanner:
             case iscannerRobberBaronScanner:
                 if (raMajor != raStealth) {
-                    return -1;
+                    return mdPartAvailRestricted;
                 }
             default:
-                goto L_609c;
+                break;
             }
         }
+        break;
     case hstBeam:
         if (hs.iItem >= ibeamCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pbeam = &rgbeam[hs.iItem];
         if (hs.iItem == ibeamMiniGun && raMajor != raDefend) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if ((hs.iItem == ibeamBlunderbuss || hs.iItem == ibeamGatlingNeutrinoCannon) && raMajor != raAttack) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstTorp:
         if (hs.iItem >= itorpCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->ptorp = &rgtorp[hs.iItem];
-        if (idPlayer == -1 || FShouldPartBeHidden(ppart) == 0)
+        if (idPlayer == iplrNone || !FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstBomb:
         if (hs.iItem >= ibombCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pbomb = &rgbomb[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if (hs.iItem >= ibombSmartBomb && hs.iItem <= ibombAnnihilatorBomb && raMajor == raDefend) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem == ibombRetroBomb && raMajor != raTerra) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstPlanetary:
         if (hs.iItem >= iplanetaryCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pplanetary = &rgplanetary[hs.iItem];
-        if (idPlayer == -1)
+        if (idPlayer == iplrNone)
             break;
         if (hs.iItem >= iplanetaryViewer50 && hs.iItem <= iplanetarySnooper620X && ppart->pplanetary->grAbility < 0 &&
             GetRaceGrbit(&rgplr[idPlayer], ibitRaceNoAdvScanner) != 0) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem >= iplanetaryViewer50 && hs.iItem <= iplanetarySnooper620X && raMajor == raMacintosh) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem >= iplanetarySDI && hs.iItem <= iplanetaryNeutronShield && raMajor == raMacintosh) {
-            return -1;
+            return mdPartAvailRestricted;
         }
         if (hs.iItem >= iplanetaryLaserBattery && hs.iItem <= iplanetaryNeutronShield && raMajor == raAttack) {
-            return -1;
+            return mdPartAvailRestricted;
         }
-        if (FShouldPartBeHidden(ppart) == 0)
+        if (!FShouldPartBeHidden(ppart))
             break;
-        return -1;
+        return mdPartAvailRestricted;
     case hstTerra:
         if (hs.iItem >= iterraCount) {
-            return 0;
+            return mdPartAvailInvalid;
         }
         ppart->pterra = &rgterra[hs.iItem];
-        if (idPlayer != -1 && hs.iItem >= iterraTotalTerraform3 && hs.iItem <= iterraTotalTerraform30 && GetRaceGrbit(&rgplr[idPlayer], ibitRaceTT) == 0) {
-            return -1;
+        if (idPlayer != iplrNone && hs.iItem >= iterraTotalTerraform3 && hs.iItem <= iterraTotalTerraform30 &&
+            GetRaceGrbit(&rgplr[idPlayer], ibitRaceTT) == 0) {
+            return mdPartAvailRestricted;
         }
     }
-L_609c:
     return TechStatus(ppart->pcom->rgTech);
 }
 
 void LookupBestPlanetaryScanner(PART *ppart) {
-    ppart->hs.iItem = 8;
+    ppart->hs.iItem = iplanetarySnooper620X;
     ppart->hs.grhst = hstPlanetary;
-    while (ppart->hs.iItem >= 0 && FLookupPart(ppart) != 1 && ppart->hs.iItem != 0) {
+    while (ppart->hs.iItem >= iplanetaryViewer50 && FLookupPart(ppart) != mdPartAvailAvailable && ppart->hs.iItem != iplanetaryViewer50) {
         ppart->hs.iItem--;
     }
     return;
@@ -3878,13 +3860,13 @@ int16_t TechStatus(char *rgTech) {
         }
     }
     if (cMiss == 0) {
-        return 1;
+        return mdPartAvailAvailable;
     }
-    if (cMiss == 1 && fAlmost != 0) {
-        return 2;
+    if (cMiss == 1 && fAlmost) {
+        return mdPartAvailNextTech;
     }
-    if (cMiss == 1 && fInAWhile != 0) {
+    if (cMiss == 1 && fInAWhile) {
         return rgTech[fInAWhile - 1] - rgplr[idPlayer].rgTech[fInAWhile - 1] + 1;
     }
-    return 99;
+    return mdPartAvailOtherTech;
 }

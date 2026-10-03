@@ -23,28 +23,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     int16_t     iResTechNext;
     int16_t     fChg;
 
-    if (message == WM_PAINT) {
-        hdc = BeginPaint(hwnd, &ps);
-        GetClientRect(hwnd, &rc);
-        DrawResearchDlg(hwnd, hdc, &rc, -1);
-        EndPaint(hwnd, &ps);
-        return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 1073; i <= 1078 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
-        }
-        if (i <= 1078 || HIWORD(lParam) == 6) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    switch (message) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
     case WM_INITDIALOG:
         pctResGlob = rgplr[idPlayer].pctResearch;
         iResTechNow = rgplr[idPlayer].iTechCur & 0xf;
@@ -116,13 +95,31 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             }
         }
         lResBudget = ProjectedResearchSpending(pctResGlob);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
         return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 1073; i <= 1078 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 1078 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
         return FTrackResearchDlg(hwnd, LOWORD(lParam), HIWORD(lParam), wParam);
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        GetClientRect(hwnd, &rc);
+        DrawResearchDlg(hwnd, hdc, &rc, -1);
+        EndPaint(hwnd, &ps);
+        return 1;
     case WM_SETCURSOR:
         GetCursorPos16(&pt);
         ScreenToClient16(hwnd, &pt);
@@ -134,6 +131,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             SetCursor(hcurArrowHelp);
             return 1;
         }
+        /* fallthrough */
     case WM_COMMAND:
         if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_RESEARCH_ENERGY &&
             GET_WM_COMMAND_ID(wParam, lParam) <= IDC_RESEARCH_BIOTECH) {
@@ -159,7 +157,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     i = rgplr[idPlayer].iTechCur * 256 + pctResGlob;
                     WriteMemRt(rtLogResearch, 2, &i);
                     fChg = TRUE;
-                    if (gd.fTutorial != 0 && idPlayer == 0) {
+                    if (gd.fTutorial && idPlayer == 0) {
                         tutor.fChange = TRUE;
                         AdvanceTutor();
                     }
@@ -167,7 +165,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 StickyDlgPos(hwnd, &ptStickyResDlg, FALSE);
                 EndDialog(hwnd, fChg);
                 pctResGlob = -1;
-                if (gd.fTutorial != 0) {
+                if (gd.fTutorial) {
                     AdvanceTutor();
                 }
                 return 1;
@@ -189,7 +187,7 @@ void DrawResearchDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t grbitDraw) {
     int16_t      iTechSav;
     int16_t      iter;
     int16_t      fCreatedDC;
-    int16_t      mdAvail;
+    mdPartAvail  mdAvail;
     int16_t      i;
     int16_t      c;
     HullSlotType grbitCur;
@@ -210,254 +208,274 @@ void DrawResearchDlg(HWND hwnd, HDC hdc, RECT *prc, int16_t grbitDraw) {
     int16_t      cch;
 
     fCreatedDC = FALSE;
-    if (hdc == 0) {
+    if (!hdc) {
         fCreatedDC = TRUE;
         hdc = GetDC(hwnd);
     }
     hfontSav = SelectObject(hdc, rghfontArial8[1]);
     crForeSav = SetTextColor(hdc, 0);
     crBackSav = SetBkColor(hdc, crButtonFace);
-    if ((grbitDraw & 0xff) != 0) {
-        c = CchGetString(idsCurrent, szWork);
-        dxCurrent = LOWORD(GetTextExtent(hdc, szWork, c));
-        SetRect(&rc, 8, dyArial8, dxResLeft - 8, 12 * dyArial8 + dyArial8);
-        if ((grbitDraw & 3) != 0) {
-            _Draw3dFrame(hdc, &rc, -1);
-            c = CchGetString(idsTechnologyStatus, szWork);
-            TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
-            rc.top += dyArial8 >> 1;
-            c = CchGetString(idsCurrent, szWork);
-            TextOut(hdc, rc.right - 8 - dxCurrent, rc.top, szWork, c);
-            rc.top += dyArial8;
-            i = CchGetString(idsFieldStudy, szWork);
-            TextOut(hdc, rc.left + 26, rc.top, szWork, i);
-            xCtr = rc.right - 8 - (dxCurrent >> 1);
-            i = CchGetString(idsLevel, szWork);
-            CtrTextOut(hdc, xCtr, rc.top, szWork, i);
-            PatBlt(hdc, rc.left + 8, rc.top + dyArial8, rc.right - rc.left - 16, 1, BLACKNESS);
-            rc.top += (dyArial8 >> 2) + dyArial8 + 2;
-            for (i = 0; i < 6; i++) {
-                c = _wsprintf(szWork, PCTD, rgplr[idPlayer].rgTech[i]);
-                CtrTextOut(hdc, xCtr, rc.top, szWork, c);
-                rc.top += (int16_t)(3 * dyArial8) / 2;
-            }
-        }
-        SetRect(&rc, 8, (int16_t)(3 * dyArial8) / 2 + rc.bottom, dxResLeft - 8, prc->bottom - 8);
-        if ((grbitDraw & 4) != 0 && (grbitDraw & 3) == 0) {
-            ExpandRc(&rc, -6, -(dyArial8 >> 1));
-            rc.top += dyArial8 >> 1;
-            InvalidateRect(hwnd, &rc, TRUE);
-        } else {
-            _Draw3dFrame(hdc, &rc, -1);
-            c = CchGetString(idsExpectedResearchBenefits, szWork);
-            TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
-            iTechSav = rgplr[idPlayer].iTechCur & 0xf;
-            cFutureTech = 0;
-            yTopFutureTech = rc.top + dyArial8;
-            for (iter = 1; iter < 10; iter++) {
-                iMax = iter;
-                iMin = iter;
-                if (iter == 1) {
-                    SetTextColor(hdc, 32512);
-                } else if (iter >= 2 && iter <= 4) {
-                    SetTextColor(hdc, 8323072);
-                } else {
-                    SetTextColor(hdc, 0);
-                    if (iter == 9) {
-                        iMax = 26;
-                    }
-                }
-                grbitCur = hstEngine;
-                rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xfff0) | iResTechNow;
-                for (; grbitCur != hstNone; grbitCur *= 2) {
-                    if ((grbitCur & (hstEngine | hstScanner | hstShield | hstArmor | hstBeam | hstTorp | hstBomb | hstMining | hstMines | hstSpecialSB |
-                                     hstSBHull | hstSpecialE | hstSpecialM | hstTerra | hstHull | hstPlanetary)) != 0) {
-                        i = 0;
-                        part.hs.grhst = grbitCur;
-                        while (1) {
-                            part.hs.iItem = i;
-                            mdAvail = FLookupPart(&part);
-                            if (mdAvail == 0)
-                                break;
-                            if (part.hs.grhst == hstTerra && GetRaceGrbit(&rgplr[idPlayer], ibitRaceTT) != 0) {
-                                switch (part.hs.iItem) {
-                                default:
-                                    goto L_0dde;
-                                case iterraGravityTerraform3:
-                                case iterraTempTerraform3:
-                                case iterraRadiationTerraform3:
-                                    goto L_0e8a;
-                                }
-                                goto TooManyToFinish;
-                            }
-                        L_0dde:
-                            if (iMin <= mdAvail - 1 && iMax >= mdAvail - 1) {
-                                rc.top += dyArial8;
-                                if (rc.top + dyArial8 > rc.bottom)
-                                    goto TooManyToFinish;
-                                fstrcpy(szWork, part.pcom->szName);
-                                TextOut(hdc, rc.left + 8, rc.top, szWork, strlen(szWork));
-                                if (cFutureTech < 8) {
-                                    rghsFutureTech[cFutureTech++] = part.hs;
-                                }
-                            }
-                            i++;
-                        }
-                    }
-                L_0e8a:;
-                }
-            }
-        TooManyToFinish:
-            rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xfff0) | iTechSav;
-            SetTextColor(hdc, 0);
-        }
+    if (!(grbitDraw & 0xff))
+        goto DrawRightSide;
+
+    c = CchGetString(idsCurrent, szWork);
+    dxCurrent = LOWORD(GetTextExtent(hdc, szWork, c));
+    SetRect(&rc, 8, dyArial8, dxResLeft - 8, 12 * dyArial8 + dyArial8);
+    if (!(grbitDraw & 3))
+        goto DrawComingAttractions;
+
+    _Draw3dFrame(hdc, &rc, -1);
+    c = CchGetString(idsTechnologyStatus, szWork);
+    TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
+    rc.top += dyArial8 >> 1;
+    c = CchGetString(idsCurrent, szWork);
+    TextOut(hdc, rc.right - 8 - dxCurrent, rc.top, szWork, c);
+    rc.top += dyArial8;
+    i = CchGetString(idsFieldStudy, szWork);
+    TextOut(hdc, rc.left + 26, rc.top, szWork, i);
+    xCtr = rc.right - 8 - (dxCurrent >> 1);
+    i = CchGetString(idsLevel, szWork);
+    CtrTextOut(hdc, xCtr, rc.top, szWork, i);
+    PatBlt(hdc, rc.left + 8, rc.top + dyArial8, rc.right - rc.left - 16, 1, BLACKNESS);
+    rc.top += (dyArial8 >> 2) + dyArial8 + 2;
+    for (i = 0; i < 6; i++) {
+        c = _wsprintf(szWork, PCTD, rgplr[idPlayer].rgTech[i]);
+        CtrTextOut(hdc, xCtr, rc.top, szWork, c);
+        rc.top += (int16_t)(3 * dyArial8) / 2;
     }
-    SetRect(&rc, dxResLeft + 8, dyArial8, dxResLeft + dxResRight - 8, (int16_t)(14 * dyArial8) / 2 + dyArial8);
-    xCtr = rc.left + 8 + dxResStrRight;
-    xNum = LOWORD(GetTextExtent(hdc, "999999", 6)) + xCtr;
-    if ((grbitDraw & 4) != 0 && (grbitDraw & 3) == 0) {
+
+DrawComingAttractions:
+    SetRect(&rc, 8, (int16_t)(3 * dyArial8) / 2 + rc.bottom, dxResLeft - 8, prc->bottom - 8);
+    if ((grbitDraw & 4) && !(grbitDraw & 3)) {
         ExpandRc(&rc, -6, -(dyArial8 >> 1));
         rc.top += dyArial8 >> 1;
         InvalidateRect(hwnd, &rc, TRUE);
+        goto DrawRightSide;
     } else {
-        if ((grbitDraw & 0x300) != 0) {
-            if (rgplr[idPlayer].rgTech[iResTechNow] >= 26) {
-                l = -1;
+        _Draw3dFrame(hdc, &rc, -1);
+        c = CchGetString(idsExpectedResearchBenefits, szWork);
+        TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
+        iTechSav = rgplr[idPlayer].iTechCur & 0xf;
+        cFutureTech = 0;
+        yTopFutureTech = rc.top + dyArial8;
+        for (iter = 1; iter < 10; iter++) {
+            iMax = iter;
+            iMin = iter;
+            if (iter == 1) {
+                SetTextColor(hdc, 32512);
+            } else if (iter >= 2 && iter <= 4) {
+                SetTextColor(hdc, 8323072);
             } else {
-                l = GetTechLevelCost(iResTechNow, rgplr[idPlayer].rgTech[iResTechNow] + 1, idPlayer);
-                lSpent = rgplr[idPlayer].rgResSpent[iResTechNow];
-                if (game.fSlowTech != 0) {
-                    lSpent = (int32_t)(lSpent * 2);
+                SetTextColor(hdc, 0);
+                if (iter == 9) {
+                    iMax = 26;
                 }
-                l = 0 <= l - lSpent ? l - lSpent : 0;
             }
-            if ((grbitDraw & 0x200) != 0 && (grbitDraw & 0xf) == 0) {
-                rc.top += (int16_t)(3 * dyArial8) / 2 * 2 + dyArial8;
-                hbrSav = SelectObject(hdc, hbrButtonFace);
-                PatBlt(hdc, xCtr, rc.top, xNum - xCtr, dyArial8, PATCOPY);
-                SelectObject(hdc, hbrSav);
-            } else {
-                _Draw3dFrame(hdc, &rc, -1);
-                c = CchGetString(idsCurrentlyResearching, szWork);
-                TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
-                rc.top += dyArial8;
-                CchGetString(iResTechNow + 84, szTemp);
-                CchGetString(idsSTechLevelD, szTemp2);
-                c = _wsprintf(szWork, szTemp2, szTemp, rgplr[idPlayer].rgTech[iResTechNow] + 1);
-                RightTextOut(hdc, xCtr, rc.top, szWork, c, 0);
-                rc.top += (int16_t)(3 * dyArial8) / 2;
-                RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsResourcesNeededComplete), 0, 0);
-                if (l == -1) {
-                    c = CchGetString(idsMaxed, szWork);
-                } else {
-                    c = _wsprintf(szWork, PCTLD, l);
-                }
-                TextOut(hdc, xCtr, rc.top, szWork, c);
-                rc.top += (int16_t)(3 * dyArial8) / 2;
-                RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsEstimatedTimeCompletion), 0, 0);
-            }
-            if (l == -1) {
-                c = CchGetString(idsMaxed, szWork);
-                TextOut(hdc, xCtr, rc.top, szWork, c);
-            } else {
-                if (l == 0) {
-                    l = 1;
-                } else {
-                    if (lResBudget == 0) {
-                        c = CchGetString(idsNever2, szWork);
-                        TextOut(hdc, xCtr, rc.top, szWork, c);
-                        goto L_144a;
+            grbitCur = hstEngine;
+            rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xfff0) | iResTechNow;
+            for (; grbitCur != hstNone; grbitCur *= 2) {
+                if (grbitCur & (hstEngine | hstScanner | hstShield | hstArmor | hstBeam | hstTorp | hstBomb | hstMining | hstMines | hstSpecialSB | hstSBHull |
+                                hstSpecialE | hstSpecialM | hstTerra | hstHull | hstPlanetary)) {
+                    i = 0;
+                    part.hs.grhst = grbitCur;
+                    while (1) {
+                        part.hs.iItem = i;
+                        mdAvail = FLookupPart(&part);
+                        if (mdAvail == mdPartAvailInvalid)
+                            break;
+                        if (part.hs.grhst == hstTerra && GetRaceGrbit(&rgplr[idPlayer], ibitRaceTT) != 0 &&
+                            (part.hs.iItem == iterraGravityTerraform3 || part.hs.iItem == iterraTempTerraform3 || part.hs.iItem == iterraRadiationTerraform3))
+                            break;
+                        if (iMin <= mdAvail - 1 && iMax >= mdAvail - 1) {
+                            rc.top += dyArial8;
+                            if (rc.top + dyArial8 > rc.bottom)
+                                goto TooManyToFinish;
+                            fstrcpy(szWork, part.pcom->szName);
+                            TextOut(hdc, rc.left + 8, rc.top, szWork, strlen(szWork));
+                            if (cFutureTech < 8) {
+                                rghsFutureTech[cFutureTech++] = part.hs;
+                            }
+                        }
+                        i++;
                     }
-                    lRBEffective = lResBudget;
-                    if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0) {
-                        lRBEffective -= (int32_t)(lRBEffective >> 1);
-                    }
-                    l = (int32_t)((l + lRBEffective - 1) / lRBEffective);
                 }
-                c = _wsprintf(szWork, PszGetCompressedString(idsLdYearC), l, l == 1 ? 32 : 115);
-                TextOut(hdc, xCtr, rc.top, szWork, c);
-            }
-        L_144a:
-            RightTextOut(hdc, xCtr - 60, rc.top + dyArial8 + 5, PszGetCompressedString(idsFieldResearch), 0, 0);
-            GetClientRect(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), &rcT);
-            MapWindowPoints(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), hwnd, (POINT *)&rcT, 2);
-            if (rcT.top != rc.top + dyArial8 + 2) {
-                SetWindowPos(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), NULL, xCtr - 60, rc.top + dyArial8 + 2, rc.right - xCtr + 50, 9 * dyArial8,
-                             SWP_NOZORDER | SWP_NOREDRAW);
             }
         }
-        rc.top = (int16_t)(3 * dyArial8) / 2 + rc.bottom;
-        rc.bottom = dyArial8 * 8 + rc.top;
-        if ((grbitDraw & 0x400) != 0) {
-            _Draw3dFrame(hdc, &rc, -1);
-            c = CchGetString(idsResourceAllocation, szWork);
-            TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
-        }
-        rc.top += dyArial8;
-        if ((grbitDraw & 0x800) != 0) {
-            RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsAnnualResourcesPlanets), 0, 0);
-            c = _wsprintf(szWork, PCTLD, lResTotal);
-            RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
-        }
-        rc.top += (int16_t)(3 * dyArial8) / 2;
-        if ((grbitDraw & 0x1000) != 0) {
-            RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsTotalResourcesSpentResearchLastYear), 0, 0);
-            c = _wsprintf(szWork, PCTLD, rgplr[idPlayer].lResLastYear);
-            RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
-        }
-        rc.top += (int16_t)(3 * dyArial8) / 2;
-        dx = 0;
-        if ((grbitDraw & 0x2000) != 0) {
-            RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsResourcesBudgetedResearch), 0, 0);
-        } else if ((grbitDraw & 0x4000) != 0 && (grbitDraw & 0xf) == 0) {
-            dx = LOWORD(GetTextExtent(hdc, "100", 3));
-        }
-        c = _wsprintf(szWork, PCTD, pctResGlob);
-        RightTextOut(hdc, xNum, rc.top, szWork, c, dx);
-        if ((grbitDraw & 0x4000) == 0 || (grbitDraw & 0xf) != 0) {
-            dx = LOWORD(GetTextExtent(hdc, "%", 1));
-            TextOut(hdc, xNum, rc.top, "%", 1);
-            rcSpinTop.left = xNum + dx + 4;
-            rcSpinTop.top = rc.top - 4;
-            rcSpinTop.right = rcSpinTop.left + 15;
-            rcSpinTop.bottom = (dyArial8 >> 1) + rc.top + 1;
-            rcSpinBot = rcSpinTop;
-            OffsetRect(&rcSpinBot, 0, rcSpinTop.bottom - rcSpinTop.top - 1);
-            DrawBtn(hdc, &rcSpinTop, 160, FALSE, NULL);
-            DrawBtn(hdc, &rcSpinBot, 161, FALSE, NULL);
-        }
-        rc.top += (int16_t)(3 * dyArial8) / 2;
-        if ((grbitDraw & 0x4000) == 0 || (grbitDraw & 0xf) != 0) {
-            RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsYearsProjectedResearchBudget), 0, 0);
-        }
-        c = _wsprintf(szWork, PCTLD, lResBudget);
-        RightTextOut(hdc, xNum, rc.top, szWork, c, xNum - xCtr);
-        if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0 || GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) != 0) {
-            cch = CchGetString(idsRaceHas, szTemp);
-            SelectObject(hdc, rghfontArial8[1]);
-            rc.top += 3 * dyArial8;
-            rc.left = dxResLeft + 8;
-            yTopTechNote = rc.top;
-            dx = LOWORD(GetTextExtent(hdc, szTemp, cch));
-            if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0) {
-                TextOut(hdc, rc.left, rc.top, szTemp, cch);
-                c = CchGetString(idsGeneralizedResearch, szWork);
-                TextOut(hdc, rc.left + dx, rc.top, szWork, c);
-                rc.top += dyArial8 + 2;
-            }
-            if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) != 0) {
-                TextOut(hdc, rc.left, rc.top, szTemp, cch);
-                c = CchGetString(idsBleedingEdgeTechnology, szWork);
-                TextOut(hdc, rc.left + dx, rc.top, szWork, c);
-            }
-        } else {
-            yTopTechNote = -1;
-        }
+    TooManyToFinish:
+        rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xfff0) | iTechSav;
+        SetTextColor(hdc, 0);
     }
+
+DrawRightSide:
+    SetRect(&rc, dxResLeft + 8, dyArial8, dxResLeft + dxResRight - 8, (int16_t)(14 * dyArial8) / 2 + dyArial8);
+    xCtr = rc.left + 8 + dxResStrRight;
+    xNum = LOWORD(GetTextExtent(hdc, "999999", 6)) + xCtr;
+    if ((grbitDraw & 4) && !(grbitDraw & 3)) {
+        ExpandRc(&rc, -6, -(dyArial8 >> 1));
+        rc.top += dyArial8 >> 1;
+        InvalidateRect(hwnd, &rc, TRUE);
+        goto CleanUp;
+    }
+    if (!(grbitDraw & 0x300))
+        goto DrawResourceAlloc;
+
+    if (rgplr[idPlayer].rgTech[iResTechNow] >= 26) {
+        l = -1;
+    } else {
+        l = GetTechLevelCost(iResTechNow, rgplr[idPlayer].rgTech[iResTechNow] + 1, idPlayer);
+        lSpent = rgplr[idPlayer].rgResSpent[iResTechNow];
+        if (game.fSlowTech) {
+            lSpent = (int32_t)(lSpent * 2);
+        }
+        l = 0 <= l - lSpent ? l - lSpent : 0;
+    }
+    if ((grbitDraw & 0x200) && !(grbitDraw & 0xf)) {
+        rc.top += (int16_t)(3 * dyArial8) / 2 * 2 + dyArial8;
+        hbrSav = SelectObject(hdc, hbrButtonFace);
+        PatBlt(hdc, xCtr, rc.top, xNum - xCtr, dyArial8, PATCOPY);
+        SelectObject(hdc, hbrSav);
+        goto DrawYearComplete;
+    } else {
+        _Draw3dFrame(hdc, &rc, -1);
+        c = CchGetString(idsCurrentlyResearching, szWork);
+        TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
+        rc.top += dyArial8;
+        CchGetString(iResTechNow + 84, szTemp);
+        CchGetString(idsSTechLevelD, szTemp2);
+        c = _wsprintf(szWork, szTemp2, szTemp, rgplr[idPlayer].rgTech[iResTechNow] + 1);
+        RightTextOut(hdc, xCtr, rc.top, szWork, c, 0);
+        rc.top += (int16_t)(3 * dyArial8) / 2;
+        RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsResourcesNeededComplete), 0, 0);
+        if (l == -1) {
+            c = CchGetString(idsMaxed, szWork);
+        } else {
+            c = _wsprintf(szWork, PCTLD, l);
+        }
+        TextOut(hdc, xCtr, rc.top, szWork, c);
+        rc.top += (int16_t)(3 * dyArial8) / 2;
+        RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsEstimatedTimeCompletion), 0, 0);
+    }
+DrawYearComplete:
+    if (l == -1) {
+        c = CchGetString(idsMaxed, szWork);
+        TextOut(hdc, xCtr, rc.top, szWork, c);
+    } else if (l == 0) {
+        l = 1;
+        goto PrintYear;
+    } else if (lResBudget == 0) {
+        c = CchGetString(idsNever2, szWork);
+        TextOut(hdc, xCtr, rc.top, szWork, c);
+    } else {
+        lRBEffective = lResBudget;
+        if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0) {
+            lRBEffective -= (int32_t)(lRBEffective >> 1);
+        }
+        l = (int32_t)((l + lRBEffective - 1) / lRBEffective);
+    PrintYear:
+        c = _wsprintf(szWork, PszGetCompressedString(idsLdYearC), l, l == 1 ? 32 : 115);
+        TextOut(hdc, xCtr, rc.top, szWork, c);
+    }
+    RightTextOut(hdc, xCtr - 60, rc.top + dyArial8 + 5, PszGetCompressedString(idsFieldResearch), 0, 0);
+    GetClientRect(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), &rcT);
+    MapWindowPoints(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), hwnd, (POINT *)&rcT, 2);
+    if (rcT.top != rc.top + dyArial8 + 2) {
+        SetWindowPos(GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD), NULL, xCtr - 60, rc.top + dyArial8 + 2, rc.right - xCtr + 50, 9 * dyArial8,
+                     SWP_NOZORDER | SWP_NOREDRAW);
+    }
+
+DrawResourceAlloc:
+    rc.top = (int16_t)(3 * dyArial8) / 2 + rc.bottom;
+    rc.bottom = dyArial8 * 8 + rc.top;
+    if (!(grbitDraw & 0x400))
+        goto DrawAnnualRes;
+
+    _Draw3dFrame(hdc, &rc, -1);
+    c = CchGetString(idsResourceAllocation, szWork);
+    TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
+
+DrawAnnualRes:
+    rc.top += dyArial8;
+    if (!(grbitDraw & 0x800))
+        goto DrawTotalSpent;
+
+    RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsAnnualResourcesPlanets), 0, 0);
+    c = _wsprintf(szWork, PCTLD, lResTotal);
+    RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
+
+DrawTotalSpent:
+    rc.top += (int16_t)(3 * dyArial8) / 2;
+    if (!(grbitDraw & 0x1000))
+        goto DrawBudget;
+
+    RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsTotalResourcesSpentResearchLastYear), 0, 0);
+    c = _wsprintf(szWork, PCTLD, rgplr[idPlayer].lResLastYear);
+    RightTextOut(hdc, xNum, rc.top, szWork, c, 0);
+
+DrawBudget:
+    rc.top += (int16_t)(3 * dyArial8) / 2;
+    dx = 0;
+    if (grbitDraw & 0x2000) {
+        RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsResourcesBudgetedResearch), 0, 0);
+    } else if ((grbitDraw & 0x4000) && !(grbitDraw & 0xf)) {
+        dx = LOWORD(GetTextExtent(hdc, "100", 3));
+        goto DrawResPct;
+    }
+DrawResPct:
+    c = _wsprintf(szWork, PCTD, pctResGlob);
+    RightTextOut(hdc, xNum, rc.top, szWork, c, dx);
+    if ((grbitDraw & 0x4000) && !(grbitDraw & 0xf))
+        goto DrawProjBudg;
+
+    dx = LOWORD(GetTextExtent(hdc, "%", 1));
+    TextOut(hdc, xNum, rc.top, "%", 1);
+    rcSpinTop.left = xNum + dx + 4;
+    rcSpinTop.top = rc.top - 4;
+    rcSpinTop.right = rcSpinTop.left + 15;
+    rcSpinTop.bottom = (dyArial8 >> 1) + rc.top + 1;
+    rcSpinBot = rcSpinTop;
+    OffsetRect(&rcSpinBot, 0, rcSpinTop.bottom - rcSpinTop.top - 1);
+    DrawBtn(hdc, &rcSpinTop, 160, FALSE, NULL);
+    DrawBtn(hdc, &rcSpinBot, 161, FALSE, NULL);
+
+DrawProjBudg:
+    rc.top += (int16_t)(3 * dyArial8) / 2;
+    if ((grbitDraw & 0x4000) && !(grbitDraw & 0xf))
+        goto DrawProjBudgData;
+
+    RightTextOut(hdc, xCtr, rc.top, PszGetCompressedString(idsYearsProjectedResearchBudget), 0, 0);
+
+DrawProjBudgData:
+    c = _wsprintf(szWork, PCTLD, lResBudget);
+    RightTextOut(hdc, xNum, rc.top, szWork, c, xNum - xCtr);
+    if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0 || GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) != 0) {
+        cch = CchGetString(idsRaceHas, szTemp);
+        SelectObject(hdc, rghfontArial8[1]);
+        rc.top += 3 * dyArial8;
+        rc.left = dxResLeft + 8;
+        yTopTechNote = rc.top;
+        dx = LOWORD(GetTextExtent(hdc, szTemp, cch));
+        if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0) {
+            TextOut(hdc, rc.left, rc.top, szTemp, cch);
+            c = CchGetString(idsGeneralizedResearch, szWork);
+            TextOut(hdc, rc.left + dx, rc.top, szWork, c);
+            rc.top += dyArial8 + 2;
+        }
+        if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) == 0)
+            goto CleanUp;
+
+        TextOut(hdc, rc.left, rc.top, szTemp, cch);
+        c = CchGetString(idsBleedingEdgeTechnology, szWork);
+        TextOut(hdc, rc.left + dx, rc.top, szWork, c);
+
+    } else {
+        yTopTechNote = -1;
+    }
+
+CleanUp:
     SetBkColor(hdc, crBackSav);
     SetTextColor(hdc, crForeSav);
     SelectObject(hdc, hfontSav);
-    if (fCreatedDC != 0) {
+    if (fCreatedDC) {
         ReleaseDC(hwnd, hdc);
     }
     return;
@@ -509,12 +527,12 @@ int16_t FTrackResearchDlg(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
     }
     GetClientRect(hwnd, &rc);
     InitBtnTrack(&btnt, hwnd, NULL, prc, bt, 80, FALSE, FALSE, NULL);
-    if ((fkb & 4) != 0) {
+    if (fkb & 4) {
         dChg = 10;
     } else {
         dChg = 1;
     }
-    while (FTrackBtn(&btnt) != 0) {
+    while (FTrackBtn(&btnt)) {
         cNew = dChg * i + pctResGlob;
         if (100 < (0 <= cNew ? cNew : 0)) {
             cNew = 100;
@@ -548,7 +566,7 @@ int32_t GetTechLevelCost(TechFieldType iTech, int16_t iLevel, int16_t iplr) {
             lCost = (int32_t)(lCost / 2);
         }
     }
-    if (game.fSlowTech != 0) {
+    if (game.fSlowTech) {
         lCost = (int32_t)(lCost * 2);
     }
     return lCost;
@@ -565,26 +583,62 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     RECT        rc;
     HWND        hwndDD;
     int32_t     lSel;
-    int16_t     md;
+    mdPartAvail md;
     int16_t     fShowAll;
     int16_t     fAllHsts;
     uint16_t    iItemStart;
     int16_t     iStart;
     int16_t     cIter;
     int16_t     iOff;
-    uint16_t    t_scratch_m3a;
-    uint16_t    t_merge_1f1d_0001;
-    int16_t     t_scratch_m3c;
-    uint16_t    t_scratch_m3e;
-    uint16_t    t_scratch_m4a;
-    HS         *t_fields_1;
-    uint32_t    t_fields_3;
 
-    switch (message) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        hwndBrowser = hwnd;
+        SetWindowPos(hwnd, NULL, 0, 0, (dyArial8 <= 14 ? 0 : 40) + 358 + GetSystemMetrics(SM_CXDLGFRAME) * 2,
+                     dyArial10 + 72 + 12 * dyArial8 + 6 + 3 * dyArial8 + 25 + GetSystemMetrics(SM_CYDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION),
+                     SWP_NOMOVE | SWP_NOZORDER);
+        StickyDlgPos(hwnd, &ptStickyBrowserDlg, TRUE);
+        hdc = GetDC(hwnd);
+        hfontSav = SelectObject(hdc, rghfontArial8[1]);
+        hwndDD = GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY);
+        c = GetDlgItemText(hwnd, IDC_BACK, szWork, 80);
+        dx = LOWORD(GetTextExtent(hdc, szWork, c)) + 14;
+        SetWindowPos(GetDlgItem(hwnd, IDC_BACK), NULL, 6, 6, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+        SetWindowPos(GetDlgItem(hwnd, IDC_NEXT), NULL, (dyArial8 <= 14 ? 0 : 40) + 350 - dx, 6, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+        SetWindowPos(hwndDD, NULL, dx + 12, 6, (dyArial8 <= 14 ? 0 : 40) + 344 - dx * 2 - 12, 18 * dyArial8, SWP_NOZORDER);
+        SetWindowPos(GetDlgItem(hwnd, IDCANCEL), NULL, (dyArial8 <= 14 ? 0 : 40) + 350 - dx,
+                     dyArial10 + 72 + 12 * dyArial8 + 6 + (int16_t)(3 * dyArial8) / 2 + 18, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+        SetWindowPos(GetDlgItem(hwnd, IDC_BROWSER_AVAILABLE_ONLY), NULL, 6, dyArial10 + 72 + 12 * dyArial8 + 6 + (int16_t)(3 * dyArial8) / 2 + 18,
+                     (dyArial8 <= 14 ? 0 : 40) + 344 - dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
+        SelectObject(hdc, hfontSav);
+        ReleaseDC(hwnd, hdc);
+        if (!fBrowserValid) {
+            vpartBrowser.hs.grhst = hstArmor;
+            vpartBrowser.hs.iItem = 0;
+        }
+        FLookupPart(&vpartBrowser);
+        hwndBrowserChild = CreateWindow(szBrowser, NULL, WS_CHILD | WS_VISIBLE, 6, (int16_t)(3 * dyArial8) / 2 + 12, (dyArial8 <= 14 ? 0 : 40) + 344,
+                                        dyArial10 + 72 + 12 * dyArial8 + 6, hwnd, NULL, hInst, NULL);
+        for (i = 1087; i < 1104; i++) {
+            SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i));
+        }
+        SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
+        if (gd.fTutorial) {
+            AdvanceTutor();
+        }
+        return 1;
     case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
+    case WM_CTLCOLOR:
+        for (i = 266; i <= 267 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 267 || message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
     case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         EndPaint(hwnd, &ps);
@@ -596,158 +650,98 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         hmenu = GetASubMenu(hwndFrame, menuHelp);
         CheckMenuItem(hmenu, IDM_VIEW_BROWSER_TOGGLE2, MF_UNCHECKED);
         break;
-    default:
-        if (IS_WM_CTLCOLOR(message) == 0) {
-            if (message == WM_INITDIALOG) {
-                hwndBrowser = hwnd;
-                t_scratch_m3a = GetSystemMetrics(SM_CXDLGFRAME) * 2;
-                t_merge_1f1d_0001 = dyArial8 <= 14 ? 0 : 40;
-                t_scratch_m3c = GetSystemMetrics(SM_CYCAPTION);
-                t_scratch_m3e = GetSystemMetrics(SM_CYDLGFRAME) * 2;
-                SetWindowPos(hwnd, NULL, 0, 0, t_merge_1f1d_0001 + 358 + t_scratch_m3a,
-                             dyArial10 + 72 + 12 * dyArial8 + 6 + 3 * dyArial8 + 25 + t_scratch_m3e + t_scratch_m3c, SWP_NOMOVE | SWP_NOZORDER);
-                StickyDlgPos(hwnd, &ptStickyBrowserDlg, TRUE);
-                hdc = GetDC(hwnd);
-                hfontSav = SelectObject(hdc, rghfontArial8[1]);
-                hwndDD = GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY);
-                c = GetDlgItemText(hwnd, IDC_BACK, szWork, 80);
-                dx = LOWORD(GetTextExtent(hdc, szWork, c)) + 14;
-                SetWindowPos(GetDlgItem(hwnd, IDC_BACK), NULL, 6, 6, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                SetWindowPos(GetDlgItem(hwnd, IDC_NEXT), NULL, (dyArial8 <= 14 ? 0 : 40) + 350 - dx, 6, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                SetWindowPos(hwndDD, NULL, dx + 12, 6, (dyArial8 <= 14 ? 0 : 40) + 344 - dx * 2 - 12, 18 * dyArial8, SWP_NOZORDER);
-                SetWindowPos(GetDlgItem(hwnd, IDCANCEL), NULL, (dyArial8 <= 14 ? 0 : 40) + 350 - dx,
-                             dyArial10 + 72 + 12 * dyArial8 + 6 + (int16_t)(3 * dyArial8) / 2 + 18, dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                SetWindowPos(GetDlgItem(hwnd, IDC_BROWSER_AVAILABLE_ONLY), NULL, 6, dyArial10 + 72 + 12 * dyArial8 + 6 + (int16_t)(3 * dyArial8) / 2 + 18,
-                             (dyArial8 <= 14 ? 0 : 40) + 344 - dx, (int16_t)(3 * dyArial8) / 2, SWP_NOZORDER);
-                SelectObject(hdc, hfontSav);
-                ReleaseDC(hwnd, hdc);
-                if (fBrowserValid == 0) {
-                    vpartBrowser.hs.grhst = hstArmor;
-                    vpartBrowser.hs.iItem = 0;
-                }
-                FLookupPart(&vpartBrowser);
-                hwndBrowserChild = CreateWindow(szBrowser, NULL, WS_CHILD | WS_VISIBLE, 6, (int16_t)(3 * dyArial8) / 2 + 12, (dyArial8 <= 14 ? 0 : 40) + 344,
-                                                dyArial10 + 72 + 12 * dyArial8 + 6, hwnd, NULL, hInst, NULL);
-                for (i = 1087; i < 1104; i++) {
-                    SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i));
-                }
-                SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
-                if (gd.fTutorial != 0) {
-                    AdvanceTutor();
-                }
-                return 1;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDCANCEL:
+            StickyDlgPos(hwnd, &ptStickyBrowserDlg, FALSE);
+            hwndBrowser = 0;
+            fBrowserValid = FALSE;
+            hmenu = GetASubMenu(hwndFrame, menuHelp);
+            CheckMenuItem(hmenu, IDM_VIEW_BROWSER_TOGGLE2, MF_UNCHECKED);
+            EndDialog(hwnd, 1);
+            if (gd.fTutorial) {
+                AdvanceTutor();
             }
-            if (message == WM_COMMAND) {
-                switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-                case IDCANCEL:
-                    StickyDlgPos(hwnd, &ptStickyBrowserDlg, FALSE);
-                    hwndBrowser = 0;
-                    fBrowserValid = FALSE;
-                    hmenu = GetASubMenu(hwndFrame, menuHelp);
-                    CheckMenuItem(hmenu, IDM_VIEW_BROWSER_TOGGLE2, MF_UNCHECKED);
-                    EndDialog(hwnd, 1);
-                    if (gd.fTutorial != 0) {
-                        AdvanceTutor();
-                    }
-                    return 1;
-                case IDC_BROWSER_COMPONENT_CATEGORY:
-                    if (GET_WM_COMMAND_CMD(wParam, lParam) != 1)
-                        break;
-                    fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
-                    lSel = SendMessage(GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY), CB_GETCURSEL, 0, 0);
-                    if (lSel < 0)
-                        break;
-                    vpartBrowser.hs.grhst = rggrbitBrParts[lSel <= 1 ? 1 : lSel];
-                    vpartBrowser.hs.iItem = 0;
-                    while (1) {
-                        md = FLookupPart(&vpartBrowser);
-                        if (md == 0)
-                            break;
-                        if (md == 1 || fShowAll != 0)
-                            goto L_2557;
-                        vpartBrowser.hs.iItem++;
-                    }
+            return 1;
+        case IDC_BROWSER_COMPONENT_CATEGORY:
+            if (GET_WM_COMMAND_CMD(wParam, lParam) != 1)
+                break;
+            fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
+            lSel = SendMessage(GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY), CB_GETCURSEL, 0, 0);
+            if (lSel < 0)
+                break;
+            vpartBrowser.hs.grhst = rggrbitBrParts[lSel <= 1 ? 1 : lSel];
+            vpartBrowser.hs.iItem = 0;
+            while (1) {
+                md = FLookupPart(&vpartBrowser);
+                if (md == mdPartAvailInvalid) {
                     vpartBrowser.pcom = NULL;
-                L_2557:
-                    InvalidateRect(hwndBrowserChild, NULL, TRUE);
                     break;
-                case IDC_NEXT:
-                case IDC_BACK:
-                    iItemStart = vpartBrowser.hs.iItem;
-                    cIter = 0;
-                    lSel = SendMessage(GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY), CB_GETCURSEL, 0, 0);
-                    fAllHsts = lSel == 0;
-                    for (i = 0; i < 17 && vpartBrowser.hs.grhst != rggrbitBrParts[i]; i++) {
-                    }
-                    iStart = i;
-                    fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
-                    iOff = GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT ? 1 : -1;
-                    while (1) {
-                        t_scratch_m4a = iOff + (vpartBrowser.hs.iItem | vpartBrowser.hs.cItem << 8) & 0xff;
-                        vpartBrowser.hs.iItem = 0;
-                        t_fields_1 = &vpartBrowser.hs;
-                        t_fields_3 = t_fields_1->cItem | ((uint32_t)t_scratch_m4a >> 8 & 0xff);
-                        t_fields_1->iItem |= (uint32_t)t_scratch_m4a & 0xff;
-                        t_fields_1->cItem = t_fields_3;
-                        if (t_scratch_m4a == iItemStart && fAllHsts == 0)
-                            goto L_27b3;
-                        while (1) {
-                            if (cIter++ > 350)
-                                goto NullItem;
-                            md = FLookupPart(&vpartBrowser);
-                            if (md != 0)
-                                break;
-                            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT && fAllHsts != 0) {
-                                i++;
-                                if (i >= 17) {
-                                    i = 1;
-                                }
-                                vpartBrowser.hs.grhst = rggrbitBrParts[i];
-                                vpartBrowser.hs.iItem = 0;
-                            } else {
-                                if (vpartBrowser.hs.iItem == 0 && fAllHsts == 0)
-                                    goto L_26f9;
-                                if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_BACK && fAllHsts != 0) {
-                                    if (vpartBrowser.hs.iItem <= 100)
-                                        break;
-                                    i--;
-                                    if (i <= 0) {
-                                        i = 16;
-                                    }
-                                    vpartBrowser.hs.grhst = rggrbitBrParts[i];
-                                    vpartBrowser.hs.iItem = 100;
-                                } else {
-                                    if (GET_WM_COMMAND_ID(wParam, lParam) != IDC_NEXT)
-                                        break;
-                                    vpartBrowser.hs.iItem = 0;
-                                }
-                            }
-                        }
-                        if (md == 1 || (md != 0 && fShowAll != 0 && (md != -1 || FShouldPartBeHidden(&vpartBrowser) == 0)))
-                            goto L_27b3;
-                    }
-                L_26f9:
-                    vpartBrowser.pcom = NULL;
-                L_27b3:
-                    if (vpartBrowser.hs.iItem == iItemStart && iStart == i && (md == 1 || fShowAll != 0))
-                        break;
-                    if (vpartBrowser.hs.iItem != iItemStart || iStart != i)
-                        goto L_281a;
-                    if (FLookupPart(&vpartBrowser) == 1)
-                        break;
-                NullItem:
-                    vpartBrowser.pcom = NULL;
-                L_281a:
-                    InvalidateRect(hwndBrowserChild, NULL, TRUE);
                 }
+                if (md == mdPartAvailAvailable || fShowAll)
+                    break;
+                vpartBrowser.hs.iItem++;
             }
-        } else {
-            for (i = 266; i <= 267 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+            InvalidateRect(hwndBrowserChild, NULL, TRUE);
+            break;
+        case IDC_NEXT:
+        case IDC_BACK:
+            iItemStart = vpartBrowser.hs.iItem;
+            cIter = 0;
+            lSel = SendMessage(GetDlgItem(hwnd, IDC_BROWSER_COMPONENT_CATEGORY), CB_GETCURSEL, 0, 0);
+            fAllHsts = lSel == 0;
+            for (i = 0; i < 17 && vpartBrowser.hs.grhst != rggrbitBrParts[i]; i++) {
             }
-            if (i <= 267 || HIWORD(lParam) == 6) {
-                SetBkColor((HDC)wParam, crButtonFace);
-                return (INT_PTR)hbrButtonFace;
+            iStart = i;
+            fShowAll = IsDlgButtonChecked(hwnd, IDC_BROWSER_AVAILABLE_ONLY) == 0;
+            iOff = GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT ? 1 : -1;
+            do {
+                if ((vpartBrowser.hs.iItem += iOff) == iItemStart && !fAllHsts)
+                    break;
+            Top:
+                if (cIter++ > 350)
+                    goto NullItem;
+                md = FLookupPart(&vpartBrowser);
+                if (md == mdPartAvailInvalid) {
+                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT && fAllHsts) {
+                        i++;
+                        if (i >= 17) {
+                            i = 1;
+                        }
+                        vpartBrowser.hs.grhst = rggrbitBrParts[i];
+                        vpartBrowser.hs.iItem = 0;
+                        goto Top;
+                    }
+                    if (vpartBrowser.hs.iItem == 0 && !fAllHsts) {
+                        vpartBrowser.pcom = NULL;
+                        break;
+                    }
+                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_BACK && fAllHsts) {
+                        if (vpartBrowser.hs.iItem > 100) {
+                            i--;
+                            if (i <= 0) {
+                                i = 16;
+                            }
+                            vpartBrowser.hs.grhst = rggrbitBrParts[i];
+                            vpartBrowser.hs.iItem = 100;
+                            goto Top;
+                        }
+                    } else if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_NEXT) {
+                        vpartBrowser.hs.iItem = 0;
+                        goto Top;
+                    }
+                }
+            } while (md != mdPartAvailAvailable &&
+                     (md == mdPartAvailInvalid || !fShowAll || (md == mdPartAvailRestricted && FShouldPartBeHidden(&vpartBrowser))));
+            if (vpartBrowser.hs.iItem == iItemStart && iStart == i && (md == mdPartAvailAvailable || fShowAll))
+                break;
+            if (vpartBrowser.hs.iItem == iItemStart && iStart == i) {
+                if (FLookupPart(&vpartBrowser) == mdPartAvailAvailable)
+                    break;
+            NullItem:
+                vpartBrowser.pcom = NULL;
             }
+            InvalidateRect(hwndBrowserChild, NULL, TRUE);
         }
     }
     return 0;
@@ -761,6 +755,8 @@ LRESULT CALLBACK BrowserWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     RECT        rc;
 
     switch (message) {
+    case WM_CREATE:
+        return 0;
     case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetClientRect(hwnd, &rc);
@@ -770,7 +766,7 @@ LRESULT CALLBACK BrowserWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     case WM_SETCURSOR:
         GetCursorPos16(&pt);
         ScreenToClient16(hwnd, &pt);
-        break;
+        goto Validate;
     case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
@@ -778,33 +774,31 @@ LRESULT CALLBACK BrowserWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     case WM_LBUTTONDOWN:
         pt.x = LOWORD(lParam);
         pt.y = HIWORD(lParam);
-        break;
+    Validate:
+        if ((vpartBrowser.hs.grhst != hstHull && vpartBrowser.hs.grhst != hstSBHull) || hwndSlotDlg || pt.x < 5 || pt.x >= 69 || pt.y < dyArial10 + 5 ||
+            pt.y >= dyArial10 + 69)
+            goto Default;
+        if (message == WM_LBUTTONDOWN) {
+            GlobalPD.grPopup = grPopupShdefSB;
+            if (vpartBrowser.hs.grhst == hstSBHull) {
+                shdefBuild.hul = LphuldefSBFromId(vpartBrowser.hs.iItem)->hul;
+            } else {
+                shdefBuild.hul = LphuldefFromId(vpartBrowser.hs.iItem)->hul;
+            }
+            for (i = 0; i < shdefBuild.hul.chs; i++) {
+                shdefBuild.hul.rghs[i].cItem = 0;
+            }
+            GlobalPD.lpshdef = &shdefBuild;
+            GlobalPD.fShowDamage = FALSE;
+            Popup(hwnd, pt.x, pt.y);
+        } else {
+            SetCursor(hcurArrowHelp);
+        }
+        return 1;
     default:
     Default:
         return DefWindowProc(hwnd, message, wParam, lParam);
-    case WM_CREATE:
-        return 0;
     }
-    if ((vpartBrowser.hs.grhst != hstHull && vpartBrowser.hs.grhst != hstSBHull) || hwndSlotDlg != 0 || pt.x < 5 || pt.x >= 69 || pt.y < dyArial10 + 5 ||
-        pt.y >= dyArial10 + 69)
-        goto Default;
-    if (message == WM_LBUTTONDOWN) {
-        GlobalPD.grPopup = grPopupShdefSB;
-        if (vpartBrowser.hs.grhst == hstSBHull) {
-            shdefBuild.hul = LphuldefSBFromId(vpartBrowser.hs.iItem)->hul;
-        } else {
-            shdefBuild.hul = LphuldefFromId(vpartBrowser.hs.iItem)->hul;
-        }
-        for (i = 0; i < shdefBuild.hul.chs; i++) {
-            shdefBuild.hul.rghs[i].cItem = 0;
-        }
-        GlobalPD.lpshdef = &shdefBuild;
-        GlobalPD.fShowDamage = FALSE;
-        Popup(hwnd, pt.x, pt.y);
-    } else {
-        SetCursor(hcurArrowHelp);
-    }
-    return 1;
 }
 
 void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
@@ -856,11 +850,6 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
     char     ch;
     int32_t  ldelta;
     RECT     rcT;
-    uint16_t t_merge_5094_0001;
-    uint16_t t_merge_522a_0001;
-    uint16_t t_merge_526a_0001;
-    uint16_t t_merge_52aa_0001;
-    uint16_t t_merge_6105_0001;
 
     SelectObject(hdc, hbrButtonShadow);
     PatBlt(hdc, 0, dy - 1, dx, 1, PATCOPY);
@@ -870,7 +859,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
     PatBlt(hdc, 0, 0, 1, dy, PATCOPY);
     PatBlt(hdc, 4, dy - dyArial8 * 2 - 2, dx - 8, 1, PATCOPY);
     SetBkMode(hdc, TRANSPARENT);
-    if (ppart->pcom == 0) {
+    if (!ppart->pcom) {
         SetRect(&rcData, 5, 5, dx - 5, dy - 5);
         c = CchGetString(idsNoneAvailable, szWork);
         DiaganolTextOut(hdc, &rcData, szWork, c);
@@ -884,7 +873,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             SelectPalette(hdc, vhpal, FALSE);
             RealizePalette(hdc);
             DibBlt(hdc, 5, dyArial10 + 5, 64, 64, rghdibInventory[ppart->pcom->ibmp >> 5], (ppart->pcom->ibmp & 7) * 0x40,
-                   (3 - (ppart->pcom->ibmp >> 3) & 3) * 0x40, 64, 64, 13369376);
+                   ((3 - (ppart->pcom->ibmp >> 3)) & 3) * 0x40, 64, 64, 13369376);
         }
         SelectObject(hdc, rghfontArial8[1]);
         yCur = dyArial10 + 71;
@@ -913,12 +902,12 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 fReq = TRUE;
             }
         }
-        if (fReq == 0) {
+        if (!fReq) {
             yCur += dyArial8;
             c = CchGetString(idsNone3, szWork);
             CtrTextOut(hdc, 37, yCur, szWork, c);
         }
-        if (FLookupPart(ppart) <= 0) {
+        if (FLookupPart(ppart) <= mdPartAvailInvalid) {
             l = -1;
         } else {
             l = CostOfDevelopingItem(ppart->pcom->rgTech);
@@ -989,13 +978,13 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
         PatBlt(hdc, rcData.left, rcData.bottom - 1, rcData.right - rcData.left, 1, PATCOPY);
         PatBlt(hdc, rcData.right - 1, rcData.top, 1, rcData.bottom - rcData.top, PATCOPY);
         ExpandRc(&rcData, -3, -3);
-        if (gd.fBleedingEdge != 0 && l == 0) {
+        if (gd.fBleedingEdge && l == 0) {
             SetTextColor(hdc, crButtonHilite);
             c = CchGetString(idsBleedingEdge, szWork);
             DiaganolTextOut(hdc, &rcData, szWork, c);
             SetTextColor(hdc, crWindowText);
         }
-        ids = 0xffff;
+        ids = idsNoString;
         switch (ppart->hs.grhst) {
         case hstEngine:
             SelectObject(hdc, rghfontArial8[1]);
@@ -1049,7 +1038,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                     cch = 2;
                     rgch[0] = '1';
                     rgch[1] = '0';
-                    if (fWarp10 == 0) {
+                    if (!fWarp10) {
                         hbrSav = SelectObject(hdc, rghbrPat[0]);
                         SetTextColor(hdc, 0xffff);
                         crBack = SetBkColor(hdc, crButtonFace);
@@ -1058,8 +1047,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                         SelectObject(hdc, hbrSav);
                     }
                 }
-                if (ppart->pengine->rgcFuelUsed[i] <= 120 &&
-                    ((i == 10 && fWarp10 != 0) || ppart->pengine->rgcFuelUsed[i + 1] > 120 || (i == 9 && fWarp10 == 0))) {
+                if (ppart->pengine->rgcFuelUsed[i] <= 120 && ((i == 10 && fWarp10) || ppart->pengine->rgcFuelUsed[i + 1] > 120 || (i == 9 && !fWarp10))) {
                     SetTextColor(hdc, 8323072);
                 } else {
                     SetTextColor(hdc, crButtonText);
@@ -1088,7 +1076,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 } else if (iEff == 0) {
                     y--;
                 } else {
-                    y -= 1 <= (int16_t)(iEff * 4 * dyPct) / 100 ? (int16_t)(iEff * 4 * dyPct) / 100 : 1;
+                    y -= max(1, (int16_t)(iEff * 4 * dyPct) / 100);
                 }
                 if (i == 0) {
                     MoveTo(hdc, x, y);
@@ -1098,34 +1086,31 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 x += dxWarp;
             }
             SelectObject(hdc, hpenSav);
-            if (ppart->pengine->grfAbilities <= engineEnigmaPulsar) {
-                switch (ppart->pengine->grfAbilities) {
-                case engineAbilityNone:
-                    goto L_3a6c;
-                case engineSettlersDelight:
-                    ids = idsEngineCanMountedMiniColonizerHullRequires;
+            switch (ppart->pengine->grfAbilities) {
+            case engineAbilityNone:
+            default:
+                if (ppart->hs.iItem < iengineSubGalacticFuelScoop || ppart->hs.iItem > iengineTransGalacticMizerScoop)
                     break;
-                case engineRadiatingRamScoop:
-                    ids = idsEngineCreatesPowerfulWavesRadiationWillKill;
-                    break;
-                case engineFuelMizer:
-                    ids = idsEngineRequiresLesserRacialTraitImprovedFuel;
-                    break;
-                case engineGalaxyScoop:
-                    ids = idsEngineRequiresLesserRacialTraitImprovedFuel2;
-                    break;
-                case engineInterspace10:
-                    ids = idsEngineRequiresLesserRacialTraitRamScoop;
-                    break;
-                case engineEnigmaPulsar:
-                    ids = idsOriginEngineUnknownAdds14Square;
-                }
+                ids = idsEngineWillUnavailableIfHaveLesserRacial;
                 break;
+            case engineSettlersDelight:
+                ids = idsEngineCanMountedMiniColonizerHullRequires;
+                break;
+            case engineRadiatingRamScoop:
+                ids = idsEngineCreatesPowerfulWavesRadiationWillKill;
+                break;
+            case engineFuelMizer:
+                ids = idsEngineRequiresLesserRacialTraitImprovedFuel;
+                break;
+            case engineGalaxyScoop:
+                ids = idsEngineRequiresLesserRacialTraitImprovedFuel2;
+                break;
+            case engineInterspace10:
+                ids = idsEngineRequiresLesserRacialTraitRamScoop;
+                break;
+            case engineEnigmaPulsar:
+                ids = idsOriginEngineUnknownAdds14Square;
             }
-        L_3a6c:
-            if (ppart->hs.iItem < iengineSubGalacticFuelScoop || ppart->hs.iItem > iengineTransGalacticMizerScoop)
-                break;
-            ids = idsEngineWillUnavailableIfHaveLesserRacial;
             break;
         case hstScanner:
             ExpandRc(&rcData, -4, -4);
@@ -1309,26 +1294,25 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             SelectObject(hdc, rghfontArial8[0]);
             c = _wsprintf(szWork, PCTD, ppart->pshield->dp);
             DxStreamTextOut(hdc, &xText, rcData.top, szWork, c, TRUE);
-            switch (ppart->hs.iItem) {
-            case ishieldShadowShield:
+            if (ppart->hs.iItem == ishieldShadowShield) {
                 ids = idsArmorShieldRequiresPrimaryRacialTraitSuper;
                 idsT = 60;
-                goto LShieldDisp;
-            case ishieldCrobySharmor:
+            LShieldDisp:
+                c = CchGetString(idsT, szWork);
+                rcData.top += dyArial8 + 4;
+                DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
+                break;
+            } else if (ppart->hs.iItem == ishieldCrobySharmor) {
                 ids = idsShieldRequiresPrimaryRacialTraitInnerStrength;
                 idsT = 63;
                 goto LShieldDisp;
-            case ishieldLangstonShell:
+            } else if (ppart->hs.iItem == ishieldLangstonShell) {
                 ids = idsOriginPartUnknown;
                 idsT = 64;
                 goto LShieldDisp;
             }
             break;
-        LShieldDisp:
-            c = CchGetString(idsT, szWork);
-            rcData.top += dyArial8 + 4;
-            DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
-            break;
+
         case hstArmor:
             ExpandRc(&rcData, -4, -4);
             SelectObject(hdc, rghfontArial8[1]);
@@ -1337,16 +1321,19 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             SelectObject(hdc, rghfontArial8[0]);
             c = _wsprintf(szWork, PCTD, ppart->parmor->dp);
             DxStreamTextOut(hdc, &xText, rcData.top, szWork, c, TRUE);
-            switch (ppart->hs.iItem) {
-            case iarmorDepletedNeutronium:
+            if (ppart->hs.iItem == iarmorDepletedNeutronium) {
                 ids = idsArmorShieldRequiresPrimaryRacialTraitSuper;
                 idsT = idsArmorDecreasesRangeWhichEnemyShipsCan;
-                goto LArmDisp;
-            case iarmorFieldedKelarium:
+            LArmDisp:
+                c = CchGetString(idsT, szWork);
+                rcData.top += dyArial8 + 4;
+                DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
+                break;
+            } else if (ppart->hs.iItem == iarmorFieldedKelarium) {
                 ids = idsArmorRequiresPrimaryRacialTraitInnerStrength;
                 idsT = idsArmorAlsoActsPartShieldWhichWill;
                 goto LArmDisp;
-            case iarmorMegaPolyShell:
+            } else if (ppart->hs.iItem == iarmorMegaPolyShell) {
                 ids = idsOriginPartUnknown;
                 c = CchGetString(idsPartAlsoActs100dpShield20Cloak, szWork);
                 rcData.top += dyArial8 + 4;
@@ -1354,11 +1341,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
             }
             break;
-        LArmDisp:
-            c = CchGetString(idsT, szWork);
-            rcData.top += dyArial8 + 4;
-            DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
-            break;
+
         case hstBeam:
             ExpandRc(&rcData, -4, -4);
             xText = (int16_t)(rcData.right - rcData.left) / 3 + rcData.left;
@@ -1387,11 +1370,11 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             rcData.top = yText;
             if (ppart->pbeam->grfAbilities != 0) {
                 SelectObject(hdc, rghfontArial7[0]);
-                if ((ppart->pbeam->grfAbilities & beamSapper) != 0) {
+                if (ppart->pbeam->grfAbilities & beamSapper) {
                     c = CchGetString(idsWeaponWillDamageShieldsHasEffectArmor, szWork);
                     rcData.top += DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
                 }
-                if ((ppart->pbeam->grfAbilities & beamGatling) != 0) {
+                if (ppart->pbeam->grfAbilities & beamGatling) {
                     c = CchGetString(idsWeaponHitsTargetsRangeEachTimeFired, szWork);
                     rcData.top += DrawText(hdc, szWork, c, &rcData, DT_WORDBREAK | DT_NOPREFIX);
                     c = _wsprintf(szWork, PszGetCompressedString(idsWeaponAlsoMakesExcellentMineSweeperCapable), ppart->pbeam->dp * 16);
@@ -1509,117 +1492,115 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             xText = rcData.left;
             yText = rcData.top;
             SelectObject(hdc, rghfontArial8[0]);
-            if (ppart->hs.iItem <= ispecialEAntiMatterGenerator) {
-                switch (ppart->hs.iItem) {
-                case ispecialETransportCloaking:
-                    idsT = idsCloaksUnarmedHullsReducingRangeWhichScanners;
-                    ids = idsCloakRequiresPrimaryRacialTraitSuperStealth;
-                    goto L_5168;
-                case ispecialEStealthCloak:
-                case ispecialESuperStealthCloak:
-                case ispecialEUltraStealthCloak:
-                    if (ppart->hs.iItem == ispecialEUltraStealthCloak) {
-                        ids = idsCloakRequiresPrimaryRacialTraitSuperStealth;
-                        idsT = idsWeapons;
-                    } else {
-                        idsT = ppart->hs.iItem == ispecialEStealthCloak ? idsWarningColonizeMissionCannotCarriedBecauseNone
-                                                                        : idsScannerCanDeterminePlanetsStatsDistance120;
-                    }
-                    c = _wsprintf(szWork, PszGetCompressedString(idsCloaksAnyShipReducingRangeWhichScanners), idsT);
-                    goto PrintSpecial;
-                case ispecialEMultiFunctionPod:
-                    idsT = idsCloaksAnyShip30Acts10Jammer;
-                    ids = idsOriginPartUnknown;
-                    goto L_5168;
-                case ispecialEEnergyDampener:
-                    ids = idsDeviceRequiresPrimaryRacialTraitSpaceDemolition;
-                    idsT = idsSlowsShipsCombat1SquareMovement;
-                    goto L_5168;
-                case ispecialETachyonDetector:
-                    ids = idsDeviceRequiresPrimaryRacialTraitInnerStrength;
-                    idsT = idsReducesEffectivenessOtherPlayersCloaks5;
-                    goto L_5168;
-                case ispecialEAntiMatterGenerator:
-                    ids = idsDeviceRequiresPrimaryRacialTraitInterstellarTrav;
-                    idsT = idsActs200mgAntiMatterFuelTankGenerates;
-                    goto L_5168;
-                case ispecialEFluxCapacitor:
-                    ids = idsDeviceRequiresPrimaryRacialTraitHyperExpansion;
-                case ispecialEEnergyCapacitor:
-                    t_merge_5094_0001 = ppart->hs.iItem == ispecialEEnergyCapacitor ? 10 : 20;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesDamageDoneBeamWeaponsShipD), t_merge_5094_0001);
-                    goto PrintSpecial;
-                case ispecialEJammer10:
-                case ispecialEJammer50:
-                    ids = idsJammingDeviceRequiresPrimaryRacialTraitInner;
-                case ispecialEJammer20:
-                case ispecialEJammer30:
-                    idsT = idsHasDChanceDeflectingIncomingTorpedoesDeflected;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility);
-                    goto PrintSpecial;
-                case ispecialEBattleComputer:
-                case ispecialEBattleSuperComputer:
-                case ispecialEBattleNexus:
-                    idsT = idsModuleIncreasesAccuracyTorpedoesDIncreasesInitia;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility, ppart->hs.iItem - 4);
-                    goto PrintSpecial;
-                }
+            switch (ppart->hs.iItem) {
+            default:
+                idsT = idsNoString;
                 break;
+            case ispecialETransportCloaking:
+                idsT = idsCloaksUnarmedHullsReducingRangeWhichScanners;
+                ids = idsCloakRequiresPrimaryRacialTraitSuperStealth;
+                break;
+            case ispecialEStealthCloak:
+            case ispecialESuperStealthCloak:
+            case ispecialEUltraStealthCloak:
+                if (ppart->hs.iItem == ispecialEUltraStealthCloak) {
+                    ids = idsCloakRequiresPrimaryRacialTraitSuperStealth;
+                    idsT = idsWeapons;
+                } else {
+                    idsT = ppart->hs.iItem == ispecialEStealthCloak ? idsWarningColonizeMissionCannotCarriedBecauseNone
+                                                                    : idsScannerCanDeterminePlanetsStatsDistance120;
+                }
+                c = _wsprintf(szWork, PszGetCompressedString(idsCloaksAnyShipReducingRangeWhichScanners), idsT);
+                goto PrintSpecial;
+            case ispecialEMultiFunctionPod:
+                idsT = idsCloaksAnyShip30Acts10Jammer;
+                ids = idsOriginPartUnknown;
+                break;
+            case ispecialEEnergyDampener:
+                ids = idsDeviceRequiresPrimaryRacialTraitSpaceDemolition;
+                idsT = idsSlowsShipsCombat1SquareMovement;
+                break;
+            case ispecialETachyonDetector:
+                ids = idsDeviceRequiresPrimaryRacialTraitInnerStrength;
+                idsT = idsReducesEffectivenessOtherPlayersCloaks5;
+                break;
+            case ispecialEAntiMatterGenerator:
+                ids = idsDeviceRequiresPrimaryRacialTraitInterstellarTrav;
+                idsT = idsActs200mgAntiMatterFuelTankGenerates;
+                break;
+            case ispecialEFluxCapacitor:
+                ids = idsDeviceRequiresPrimaryRacialTraitHyperExpansion;
+                /* fallthrough */
+            case ispecialEEnergyCapacitor:
+                c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesDamageDoneBeamWeaponsShipD), ppart->hs.iItem == ispecialEEnergyCapacitor ? 10 : 20);
+                goto PrintSpecial;
+            case ispecialEJammer10:
+            case ispecialEJammer50:
+                ids = idsJammingDeviceRequiresPrimaryRacialTraitInner;
+                /* fallthrough */
+            case ispecialEJammer20:
+            case ispecialEJammer30:
+                idsT = idsHasDChanceDeflectingIncomingTorpedoesDeflected;
+                c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility);
+                goto PrintSpecial;
+            case ispecialEBattleComputer:
+            case ispecialEBattleSuperComputer:
+            case ispecialEBattleNexus:
+                idsT = idsModuleIncreasesAccuracyTorpedoesDIncreasesInitia;
+                c = _wsprintf(szWork, PszGetCompressedString(idsT), ppart->pspecial->grAbility, ppart->hs.iItem - 4);
+                goto PrintSpecial;
             }
-            idsT = 0xffff;
-        L_5168:
-            if (idsT == 0xffff)
+            if (idsT == idsNoString)
                 break;
             c = CchGetString(idsT, szWork);
-            goto PrintSpecial;
+        PrintSpecial:
+            WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, FALSE, TRUE);
+            xText = rcData.left;
+            yText += dyArial8 * 2;
+            break;
         case hstSpecialM:
             ExpandRc(&rcData, -4, -4);
             SelectObject(hdc, rghfontArial8[1]);
             xText = rcData.left;
             yText = rcData.top;
             SelectObject(hdc, rghfontArial8[0]);
-            if (ppart->hs.iItem <= ispecialMBeamDeflector) {
-                switch (ppart->hs.iItem) {
-                case ispecialMManeuveringJet:
-                case ispecialMOverthruster:
-                    t_merge_522a_0001 = ppart->hs.iItem == ispecialMManeuveringJet ? 4 : 2;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesSpeedBattle1DSquareMovement), t_merge_522a_0001);
-                    goto PrintSpecial;
-                case ispecialMFuelTank:
-                case ispecialMSuperFuelTank:
-                    t_merge_526a_0001 = ppart->hs.iItem == ispecialMFuelTank ? 250 : 500;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesFuelCapacityShipDmg), t_merge_526a_0001);
-                    goto PrintSpecial;
-                case ispecialMCargoPod:
-                case ispecialMSuperCargoPod:
-                    t_merge_52aa_0001 = ppart->hs.iItem == ispecialMCargoPod ? 50 : 100;
-                    c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesCargoCapacityShipDkt), t_merge_52aa_0001);
-                    goto PrintSpecial;
-                case ispecialMMultiCargoPod:
-                    idsT = idsPodIncreasesCargoCapacityShip250ktProvides;
-                    ids = idsOriginPartUnknown;
-                    goto L_5336;
-                case ispecialMJumpGate:
-                    idsT = idsDeviceAllowsShipJumpPlanetaryStargatesRange;
-                    ids = idsOriginPartUnknown;
-                    goto L_5336;
-                case ispecialMColonizationModule:
-                    idsT = idsPodAllowsShipColonizePlanetWillDismantle;
-                    ids = idsPartAvailableAlternateRealityRaces;
-                    goto L_5336;
-                case ispecialMOrbitalConstructionModule:
-                    idsT = idsModuleContainsEmptyOrbitalHullWhichCan;
-                    ids = idsPartRequiresPrimaryRacialTraitAlternateReality;
-                    goto L_5336;
-                case ispecialMBeamDeflector:
-                    idsT = idsDeflectorDecreasesDamageDoneBeamWeaponsShip;
-                    goto L_5336;
-                }
+            switch (ppart->hs.iItem) {
+            default:
+                idsT = idsNoString;
+                break;
+            case ispecialMManeuveringJet:
+            case ispecialMOverthruster:
+                c = _wsprintf(szWork, PszGetCompressedString(idsIncreasesSpeedBattle1DSquareMovement), ppart->hs.iItem == ispecialMManeuveringJet ? 4 : 2);
+                goto PrintSpecial;
+            case ispecialMFuelTank:
+            case ispecialMSuperFuelTank:
+                c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesFuelCapacityShipDmg), ppart->hs.iItem == ispecialMFuelTank ? 250 : 500);
+                goto PrintSpecial;
+            case ispecialMCargoPod:
+            case ispecialMSuperCargoPod:
+                c = _wsprintf(szWork, PszGetCompressedString(idsPodIncreasesCargoCapacityShipDkt), ppart->hs.iItem == ispecialMCargoPod ? 50 : 100);
+                goto PrintSpecial;
+            case ispecialMMultiCargoPod:
+                idsT = idsPodIncreasesCargoCapacityShip250ktProvides;
+                ids = idsOriginPartUnknown;
+                break;
+            case ispecialMJumpGate:
+                idsT = idsDeviceAllowsShipJumpPlanetaryStargatesRange;
+                ids = idsOriginPartUnknown;
+                break;
+            case ispecialMColonizationModule:
+                idsT = idsPodAllowsShipColonizePlanetWillDismantle;
+                ids = idsPartAvailableAlternateRealityRaces;
+                break;
+            case ispecialMOrbitalConstructionModule:
+                idsT = idsModuleContainsEmptyOrbitalHullWhichCan;
+                ids = idsPartRequiresPrimaryRacialTraitAlternateReality;
+                break;
+            case ispecialMBeamDeflector:
+                idsT = idsDeflectorDecreasesDamageDoneBeamWeaponsShip;
                 break;
             }
-            idsT = 0xffff;
-        L_5336:
-            if (idsT == 0xffff)
+            if (idsT == idsNoString)
                 break;
             c = CchGetString(idsT, szWork);
             goto PrintSpecial;
@@ -1652,12 +1633,13 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 case ispecialSBUltraDriver12:
                 case ispecialSBUltraDriver13:
                     ids = idsMassDriverRequiresPrimaryRacialTraitPacket;
+                    /* fallthrough */
                 case ispecialSBMassDriver7:
                 case ispecialSBUltraDriver10:
                     idsT = idsAllowsPlanetsFlingMineralPacketsOtherPlanets;
                 }
             } else {
-                idsT = 0xffff;
+                idsT = idsNoString;
             }
             c = CchGetString(idsT, szWork);
             WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, FALSE, TRUE);
@@ -1701,7 +1683,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 DxStreamTextOut(hdc, &xText, yText, szWork, c, TRUE);
                 if (ppart->pspecialsb->grAbility == -1) {
                     if (ppart->pspecialsb->grAbility2 == -1) {
-                        idsT = 0xffff;
+                        idsT = idsNoString;
                     } else {
                         c = _wsprintf(szWork, PszGetCompressedString(idsWarningShipsCanSuccessfullyGatedDL), 5 * ppart->pspecialsb->grAbility2);
                     }
@@ -1712,7 +1694,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                                   5 * ppart->pspecialsb->grAbility2);
                 }
             }
-            if (idsT == 0xffff)
+            if (idsT == idsNoString)
                 break;
             xText = rcData.left;
             yText += (dyArial8 > 14 ? 0 : 4) + dyArial8;
@@ -1814,12 +1796,14 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             case iminingRoboMidgetMiner:
             case iminingRoboUltraMiner:
                 ids = idsRobotMinerRequiresLesserRacialTraitAdvanced;
+                /* fallthrough */
             case iminingRoboMiner:
             case iminingRoboMaxiMiner:
             case iminingRoboSuperMiner:
-                if (ids == 0xffff) {
+                if (ids == idsNoString) {
                     ids = idsRobotMinerWillAvailableIfLesserRacial;
                 }
+                /* fallthrough */
             case iminingRoboMiniMiner:
             case iminingAlienMiner:
                 c = CchGetString(idsModuleContainsRobotsCapableMining, szWork);
@@ -1897,8 +1881,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 ch = '0';
                 for (i = 0; i <= 5; i++) {
                     cch = _wsprintf(szWork, PCTD, 20 * i);
-                    t_merge_6105_0001 = i == 0 ? dxDigit >> 1 : i == 5 ? (int16_t)(3 * dxDigit) / 2 : dxDigit;
-                    TextOut(hdc, x - t_merge_6105_0001, y, szWork, cch);
+                    TextOut(hdc, x - (i == 0 ? dxDigit >> 1 : i == 5 ? (int16_t)(3 * dxDigit) / 2 : dxDigit), y, szWork, cch);
                     if (i > 0) {
                         PatBlt(hdc, x, y - 6, 1, 5, BLACKNESS);
                     }
@@ -1954,13 +1937,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, FALSE, TRUE);
             }
         }
-        goto L_64d4;
-    PrintSpecial:
-        WrapTextOut(hdc, &xText, &yText, szWork, c, rcData.left, rcData.right - rcData.left, NULL, FALSE, TRUE);
-        xText = rcData.left;
-        yText += dyArial8 * 2;
-    L_64d4:
-        if (ids != 0xffff) {
+        if (ids != idsNoString) {
             c = CchGetString(ids, szWork);
             SetRect(&rcT, 4, dy - dyArial8 * 2, dx - 4, dy - 5);
             if (dyArial8 > 14) {
@@ -1995,10 +1972,10 @@ int32_t ProjectedResearchSpending(int32_t pct) {
     for (; lppl < lpplMac; lppl++) {
         if (lppl->iPlayer == idPlayer) {
             lRes = CResourcesAtPlanet(lppl, idPlayer);
-            if (lppl->lpplprod == 0 || lppl->lpplprod->iprodMac == 0) {
+            if (!lppl->lpplprod || lppl->lpplprod->iprodMac == 0) {
                 lSpend += lRes;
             } else {
-                EstimateItemProdSched(lppl, NULL, 0xffff, &cRes, &cBogus);
+                EstimateItemProdSched(lppl, NULL, iprodEstimateResearchResources, &cRes, &cBogus);
                 lSpend += cRes;
             }
         }
@@ -2008,14 +1985,13 @@ int32_t ProjectedResearchSpending(int32_t pct) {
 }
 
 int32_t CostOfDevelopingItem(char *rgTech) {
-    int32_t  lSpent;
-    char    *pTech;
-    char     rgTechSav[6];
-    int32_t  lCost;
-    int16_t  fUnreachable;
-    int16_t  i;
-    int32_t  lCur;
-    uint16_t t_merge_6879_0001;
+    int32_t lSpent;
+    char   *pTech;
+    char    rgTechSav[6];
+    int32_t lCost;
+    int16_t fUnreachable;
+    int16_t i;
+    int32_t lCur;
 
     fUnreachable = FALSE;
     lCost = 0;
@@ -2029,7 +2005,7 @@ int32_t CostOfDevelopingItem(char *rgTech) {
         rgTechSav[i] = pTech[i];
         if (rgTech[i] > pTech[i]) {
             lSpent = rgplr[idPlayer].rgResSpent[i];
-            if (game.fSlowTech != 0) {
+            if (game.fSlowTech) {
                 lSpent = (int32_t)(lSpent * 2);
             }
             lCur = -lSpent;
@@ -2037,8 +2013,7 @@ int32_t CostOfDevelopingItem(char *rgTech) {
                 lCur += GetTechLevelCost(i, pTech[i] + 1, idPlayer);
                 pTech[i]++;
             }
-            t_merge_6879_0001 = 0 <= lCur ? lCur : 0;
-            lCost += t_merge_6879_0001;
+            lCost += max(0, lCur);
         }
     }
     for (i = 0; i < 6; i++) {
@@ -2051,72 +2026,72 @@ int16_t FShouldPartBeHidden(PART *ppart) {
     int16_t     iItem;
     GrbitTrader grbitTrader;
 
-    if (idPlayer == -1) {
+    if (idPlayer == iplrNone) {
         return FALSE;
     }
     grbitTrader = grbitTraderNone;
     iItem = ppart->hs.iItem;
     switch (ppart->hs.grhst) {
     case hstBeam:
-        if (iItem != 18)
+        if (iItem != ibeamMultiContainedMunition)
             break;
         grbitTrader = grbitTraderBeam;
         break;
     case hstTorp:
-        if (iItem != 7)
+        if (iItem != itorpAntiMatterTorpedo)
             break;
         grbitTrader = grbitTraderTorp;
         break;
     case hstArmor:
-        if (iItem != 9)
+        if (iItem != iarmorMegaPolyShell)
             break;
         grbitTrader = grbitTraderArmor;
         break;
     case hstShield:
-        if (iItem != 6)
+        if (iItem != ishieldLangstonShell)
             break;
         grbitTrader = grbitTraderShield;
         break;
     case hstBomb:
-        if (iItem != 8)
+        if (iItem != ibombHushABoom)
             break;
         grbitTrader = grbitTraderBomb;
         break;
     case hstMining:
-        if (iItem != 6)
+        if (iItem != iminingAlienMiner)
             break;
         grbitTrader = grbitTraderMiner;
         break;
     case hstEngine:
-        if (iItem != 8)
+        if (iItem != iengineEnigmaPulsar)
             break;
         grbitTrader = grbitTraderEngine;
         break;
     case hstHull:
-        if (iItem != 30)
+        if (iItem != ihuldefMiniMorph)
             break;
         grbitTrader = grbitTraderHull;
         break;
     case hstSpecialE:
-        if (iItem != 4)
+        if (iItem != ispecialEMultiFunctionPod)
             break;
         grbitTrader = grbitTraderSpecial;
         break;
     case hstSpecialM:
-        if (iItem == 4) {
+        if (iItem == ispecialMMultiCargoPod) {
             grbitTrader = grbitTraderCargo;
             break;
         }
-        if (iItem != 9)
+        if (iItem != ispecialMJumpGate)
             break;
         grbitTrader = grbitTraderJumpgate;
         break;
     case hstPlanetary:
-        if (iItem == 14) {
+        if (iItem == iplanetaryGenesisDevice) {
             grbitTrader = grbitTraderGenesis;
         }
     }
-    if (grbitTrader != grbitTraderNone && (rgplr[idPlayer].grbitTrader & grbitTrader) == 0) {
+    if (grbitTrader != grbitTraderNone && !(rgplr[idPlayer].grbitTrader & grbitTrader)) {
         return TRUE;
     }
     return FALSE;

@@ -13,10 +13,52 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     int16_t        xCtr;
     XferActionType iAction;
     FARPROC        lpProc;
-    char          *t_00bd;
-    char          *t_065c;
 
-    if (message == WM_PAINT) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SetWindowText(hwnd, PszGetCompressedString(idsCustomizeZipOrders));
+        ShowWindow(GetDlgItem(hwnd, IDC_ZIP_PROD_QUEUE), SW_HIDE);
+        hwndZipOrderDlg = hwnd;
+        CheckRadioButton(hwnd, IDC_ZIP_PROD_PRESET_1, IDC_ZIP_PROD_PRESET_4, IDC_ZIP_PROD_PRESET_1);
+        EnableZipBtns(hwnd, 0);
+        iResTechNow = Energy;
+        for (i = 1073; i <= 1076; i++) {
+            if (vrgZip[i - 1073].fValid) {
+                pszT = szWork;
+                psz = vrgZip[i - 1073].szName;
+                while (*psz != 0) {
+                    if ((*pszT++ = *psz++) == '&') {
+                        *pszT++ = '&';
+                    }
+                }
+                *pszT = 0;
+                psz = szWork;
+            } else {
+                psz = PszGetCompressedString(idsUnusedD);
+                _wsprintf(szWork, psz, i - 1072);
+                psz = szWork;
+            }
+            hwndRad = GetDlgItem(hwnd, i);
+            SetWindowText(hwndRad, psz);
+        }
+        StickyDlgPos(hwnd, &ptStickyZipOrderDlg, TRUE);
+        if (gd.fTutorial) {
+            AdvanceTutor();
+        }
+        return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
+        }
+        if (i <= 1076) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetClientRect(hwnd, &rc);
         GetWindowRect(GetDlgItem(hwnd, IDC_ZIP_PROD_PRESET_1), &rcGBox);
@@ -32,7 +74,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         cch = CchGetString(idsCustomOrders, szWork);
         TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, cch);
         rcGBox.top = rcGBox.bottom + 8;
-        if (vrgZip[iResTechNow].fValid != 0) {
+        if (vrgZip[iResTechNow].fValid) {
             xCtr = LOWORD(GetTextExtent(hdc, rgszMinerals[2], 9)) + 8;
             for (i = 0; i < 5; i++) {
                 SetTextColor(hdc, rgcrMinerals[i]);
@@ -52,57 +94,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         EndPaint(hwnd, &ps);
         return 1;
-    }
-    if (message == WM_ERASEBKGND) {
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) != 0) {
-        for (i = 1073; i <= 1076 && GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, i); i++) {
-        }
-        if (i <= 1076) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        return 0;
-    }
-    if (message == WM_INITDIALOG) {
-        SetWindowText(hwnd, PszGetCompressedString(idsCustomizeZipOrders));
-        ShowWindow(GetDlgItem(hwnd, IDC_ZIP_PROD_QUEUE), SW_HIDE);
-        hwndZipOrderDlg = hwnd;
-        CheckRadioButton(hwnd, IDC_ZIP_PROD_PRESET_1, IDC_ZIP_PROD_PRESET_4, IDC_ZIP_PROD_PRESET_1);
-        EnableZipBtns(hwnd, 0);
-        iResTechNow = Energy;
-        for (i = 1073; i <= 1076; i++) {
-            if (vrgZip[i - 1073].fValid != 0) {
-                pszT = szWork;
-                psz = vrgZip[i - 1073].szName;
-                while (*psz != 0) {
-                    t_00bd = psz;
-                    psz++;
-                    *pszT++ = *t_00bd;
-                    if (*t_00bd == '&') {
-                        *pszT++ = '&';
-                    }
-                }
-                *pszT = 0;
-                psz = szWork;
-            } else {
-                psz = PszGetCompressedString(idsUnusedD);
-                _wsprintf(szWork, psz, i - 1072);
-                psz = szWork;
-            }
-            hwndRad = GetDlgItem(hwnd, i);
-            SetWindowText(hwndRad, psz);
-        }
-        StickyDlgPos(hwnd, &ptStickyZipOrderDlg, TRUE);
-        if (gd.fTutorial != 0) {
-            AdvanceTutor();
-        }
-        return 1;
-    }
-    if (message == WM_COMMAND) {
+    case WM_COMMAND:
         if (GET_WM_COMMAND_CMD(wParam, lParam) == 0 && GET_WM_COMMAND_ID(wParam, lParam) >= IDC_ZIP_PROD_PRESET_1 &&
             GET_WM_COMMAND_ID(wParam, lParam) <= IDC_ZIP_PROD_PRESET_4) {
             iResTechNow = GET_WM_COMMAND_ID(wParam, lParam) - 1073;
@@ -115,13 +107,13 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 hwndZipOrderDlg = 0;
                 StickyDlgPos(hwnd, &ptStickyZipOrderDlg, FALSE);
                 EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                if (gd.fTutorial != 0) {
+                if (gd.fTutorial) {
                     AdvanceTutor();
                 }
                 return 1;
             case IDC_IMPORT:
             case IDC_RENAME:
-                if (vrgZip[iResTechNow].fValid != 0) {
+                if (vrgZip[iResTechNow].fValid) {
                     strcpy(szWork, vrgZip[iResTechNow].szName);
                 } else {
                     _wsprintf(szWork, PszGetCompressedString(idsCustomD), iResTechNow);
@@ -135,10 +127,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     pszT = &szWork[64];
                     psz = szWork;
                     while (*psz != 0) {
-                        t_065c = psz;
-                        psz++;
-                        *pszT++ = *t_065c;
-                        if (*t_065c == '&') {
+                        if ((*pszT++ = *psz++) == '&') {
                             *pszT++ = '&';
                         }
                     }
@@ -184,98 +173,99 @@ INT_PTR CALLBACK RenameZipDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
     StringId ids;
     RECT     rc;
 
-    if (message != WM_ERASEBKGND) {
-        if (IS_WM_CTLCOLOR(message) == 0) {
-            if (message == WM_INITDIALOG) {
-                if (hwndZipOrderDlg != 0) {
-                    ids = idsRenameZipOrder;
-                } else {
-                    ids = idsRenameProductionTemplate;
-                }
-                SetWindowText(hwnd, PszGetCompressedString(ids));
-                SetWindowPos(hwnd, NULL, ptStickyRenameDlg.x + 70, ptStickyRenameDlg.y + 70, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-                SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0xc, 0);
-                SetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szWork);
-                StickyDlgPos(hwnd, &ptStickyRenameDlg, TRUE);
-                return 1;
-            }
-            if (message == WM_COMMAND) {
-                switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-                case IDOK:
-                case IDCANCEL:
-                    if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                        GetDlgItemText(hwnd, IDC_EDIT1, szWork, 14);
-                    }
-                    StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
-                    EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                    return 1;
-                case IDC_HELP:
-                    WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(hwndZipOrderDlg == 0 ? 1106 : 3103));
-                    return 1;
-                }
-            }
-        } else if (HIWORD(lParam) == 6) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        if (hwndZipOrderDlg) {
+            ids = idsRenameZipOrder;
+        } else {
+            ids = idsRenameProductionTemplate;
+        }
+        SetWindowText(hwnd, PszGetCompressedString(ids));
+        SetWindowPos(hwnd, NULL, ptStickyRenameDlg.x + 70, ptStickyRenameDlg.y + 70, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0xc, 0);
+        SetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szWork);
+        StickyDlgPos(hwnd, &ptStickyRenameDlg, TRUE);
+        return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        if (message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
-        return 0;
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetDlgItemText(hwnd, IDC_EDIT1, szWork, 14);
+            }
+            StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, (uint32_t)(!hwndZipOrderDlg ? 1106 : 3103));
+            return 1;
+        }
     }
-    GetClientRect(hwnd, &rc);
-    FillRect((HDC)wParam, &rc, hbrButtonFace);
-    return 1;
+    return 0;
 }
 
 INT_PTR CALLBACK RenameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     RECT    rc;
     int32_t lSel;
 
-    if (message == WM_ERASEBKGND) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SetWindowText(hwnd, PszGetCompressedString(idsRenameFleet));
+        SetWindowPos(hwnd, NULL, ptStickyRenameDlg.x + 70, ptStickyRenameDlg.y + 70, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x1f, 0);
+        SetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szWork);
+        StickyDlgPos(hwnd, &ptStickyRenameDlg, TRUE);
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) == 0) {
-        if (message == WM_INITDIALOG) {
-            SetWindowText(hwnd, PszGetCompressedString(idsRenameFleet));
-            SetWindowPos(hwnd, NULL, ptStickyRenameDlg.x + 70, ptStickyRenameDlg.y + 70, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-            SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x1f, 0);
-            SetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szWork);
-            StickyDlgPos(hwnd, &ptStickyRenameDlg, TRUE);
-            return 1;
+    case WM_CTLCOLOR:
+        if (message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
         }
-        if (message == WM_COMMAND) {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-            case IDOK:
-            case IDCANCEL:
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                    GetDlgItemText(hwnd, IDC_EDIT1, szWork, 32);
-                    FStringFitsScreen(szWork, 160);
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetDlgItemText(hwnd, IDC_EDIT1, szWork, 32);
+                FStringFitsScreen(szWork, 160);
+            }
+            StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_EDIT1:
+            if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400 && !fInEditUpdate) {
+                fInEditUpdate = TRUE;
+                GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 250);
+                lSel = SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_GETSEL, 0, 0);
+                if (!FStringFitsScreen(szWork, 160)) {
+                    SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork);
+                    SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
                 }
-                StickyDlgPos(hwnd, &ptStickyRenameDlg, FALSE);
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+                fInEditUpdate = FALSE;
+                break;
+            }
+            /* fallthrough */
+        default:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
+                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhRenameFleetDialog);
                 return 1;
-            case IDC_EDIT1:
-                if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400 && fInEditUpdate == 0) {
-                    fInEditUpdate = TRUE;
-                    GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 250);
-                    lSel = SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_GETSEL, 0, 0);
-                    if (FStringFitsScreen(szWork, 160) == 0) {
-                        SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork);
-                        SendMessage(GET_WM_COMMAND_HWND(wParam, lParam), EM_SETSEL, LOWORD(lSel), (int16_t)HIWORD(lSel));
-                    }
-                    fInEditUpdate = FALSE;
-                    break;
-                }
-            default:
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDC_HELP) {
-                    WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhRenameFleetDialog);
-                    return 1;
-                }
             }
         }
-    } else if (HIWORD(lParam) == 6) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
     }
     return 0;
 }
@@ -300,7 +290,6 @@ int16_t FStargateJump(FLEET *lpfl, int16_t isbsSrc, int16_t isbsDst, int16_t dDi
     int16_t   dpPerShdefOld;
     int16_t   cshDamagedOld;
     FLEET     flDead;
-    int16_t   t_call_0e31;
 
     cshdef = 0;
     cshKill = 0;
@@ -318,8 +307,7 @@ int16_t FStargateJump(FLEET *lpfl, int16_t isbsSrc, int16_t isbsDst, int16_t dDi
         if (flSrc.rgcsh[ishdef] != 0) {
             cshdef++;
             cshOrig += flSrc.rgcsh[ishdef];
-            t_call_0e31 = MdCalcStargateDamage(isbsSrc, isbsDst, dDist, rglpshdef[flSrc.iPlayer][ishdef].hul.wtEmpty, &rgpct[ishdef]);
-            switch (t_call_0e31) {
+            switch (MdCalcStargateDamage(isbsSrc, isbsDst, dDist, rglpshdef[flSrc.iPlayer][ishdef].hul.wtEmpty, &rgpct[ishdef])) {
             case -1:
                 FSendPlrMsg(flSrc.iPlayer, idmAttemptedUseStargateReachCouldBecauseDestination, flSrc.id | 0x8000, flSrc.id, flSrc.idPlanet, id, 0, 0, 0, 0);
                 return FALSE;
@@ -334,105 +322,106 @@ int16_t FStargateJump(FLEET *lpfl, int16_t isbsSrc, int16_t isbsDst, int16_t dDi
             }
         }
     }
-    if (cshdef != 0) {
-        memset(&flDead, 0, sizeof(FLEET));
-        for (ishdef = 0; ishdef < 16; ishdef++) {
-            if (flSrc.rgcsh[ishdef] != 0 && rgpct[ishdef] != 0) {
-                if (rgpct[ishdef] == 100) {
-                    cshKill += flSrc.rgcsh[ishdef];
-                    flSrc.rgcsh[ishdef] = 0;
-                    flSrc.rgdv[ishdef].dp = 0;
-                    cshdef--;
+    if (cshdef == 0) {
+    LKilledEmAll:
+        lpfl->fDead = TRUE;
+        FSendPlrMsg(flSrc.iPlayer, idmHeedlessDangerAttemptedUseStargateReachFleet, flSrc.id | 0x8000, flSrc.id, flSrc.idPlanet, id, 0, 0, 0, 0);
+        return FALSE;
+    }
+    memset(&flDead, 0, sizeof(FLEET));
+    for (ishdef = 0; ishdef < 16; ishdef++) {
+        if (flSrc.rgcsh[ishdef] != 0 && rgpct[ishdef] != 0) {
+            if (rgpct[ishdef] == 100) {
+                cshKill += flSrc.rgcsh[ishdef];
+                flSrc.rgcsh[ishdef] = 0;
+                flSrc.rgdv[ishdef].dp = 0;
+                cshdef--;
+            } else {
+                cshT = flSrc.rgcsh[ishdef];
+                if (GetRaceStat(&rgplr[lpfl->iPlayer], rsMajorAdv) == raStargate) {
+                    pctKill = 0;
                 } else {
-                    cshT = flSrc.rgcsh[ishdef];
-                    if (GetRaceStat(&rgplr[lpfl->iPlayer], rsMajorAdv) == raStargate) {
-                        pctKill = 0;
-                    } else {
-                        pctKill = rgpct[ishdef] / 3;
+                    pctKill = rgpct[ishdef] / 3;
+                }
+                dpShdef = rglpshdef[lpfl->iPlayer][ishdef].hul.dp;
+                if (flSrc.rgdv[ishdef].dp != 0) {
+                    cshDamagedOld = LOWORD((int32_t)(cshT * (int16_t)flSrc.rgdv[ishdef].pctSh) / 100);
+                    if (cshDamagedOld == 0) {
+                        cshDamagedOld = 1;
                     }
-                    dpShdef = rglpshdef[lpfl->iPlayer][ishdef].hul.dp;
-                    if (flSrc.rgdv[ishdef].dp != 0) {
-                        cshDamagedOld = LOWORD((int32_t)(cshT * (int16_t)flSrc.rgdv[ishdef].pctSh) / 100);
-                        if (cshDamagedOld == 0) {
-                            cshDamagedOld = 1;
-                        }
-                    } else {
-                        cshDamagedOld = 0;
-                    }
-                    if (pctKill > 0) {
-                        for (i = 0; i < flSrc.rgcsh[ishdef]; i++) {
-                            if (Random(100) < pctKill) {
-                                cshT--;
-                                if (cshDamagedOld != 0 && (uint16_t)Random(500) < flSrc.rgdv[ishdef].pctDp) {
-                                    cshDamagedOld--;
-                                }
+                } else {
+                    cshDamagedOld = 0;
+                }
+                if (pctKill > 0) {
+                    for (i = 0; i < flSrc.rgcsh[ishdef]; i++) {
+                        if (Random(100) < pctKill) {
+                            cshT--;
+                            if (cshDamagedOld != 0 && (uint16_t)Random(500) < flSrc.rgdv[ishdef].pctDp) {
+                                cshDamagedOld--;
                             }
                         }
-                        cshKill += (int16_t)(flSrc.rgcsh[ishdef] - cshT);
+                    }
+                    cshKill += (int16_t)(flSrc.rgcsh[ishdef] - cshT);
+                }
+                if (cshT != 0) {
+                    if (flSrc.rgdv[ishdef].dp != 0) {
+                        dpPerShdefOld = LOWORD((int32_t)(dpShdef * (int16_t)flSrc.rgdv[ishdef].pctDp) / 500);
+                        if (dpPerShdefOld == 0) {
+                            dpPerShdefOld = 1;
+                        }
+                    } else {
+                        dpPerShdefOld = 0;
+                    }
+                    dpPerShdefNew = LOWORD((int32_t)(dpShdef * rgpct[ishdef]) / 100);
+                    if (dpPerShdefNew == 0) {
+                        dpPerShdefNew = 1;
+                    }
+                    if (cshDamagedOld != 0 && dpPerShdefNew + dpPerShdefOld >= dpShdef) {
+                        cshKill += cshDamagedOld;
+                        cshT -= cshDamagedOld;
                     }
                     if (cshT != 0) {
-                        if (flSrc.rgdv[ishdef].dp != 0) {
-                            dpPerShdefOld = LOWORD((int32_t)(dpShdef * (int16_t)flSrc.rgdv[ishdef].pctDp) / 500);
-                            if (dpPerShdefOld == 0) {
-                                dpPerShdefOld = 1;
-                            }
-                        } else {
-                            dpPerShdefOld = 0;
+                        dp = (uint32_t)(dpPerShdefNew * cshT) + (uint32_t)(dpPerShdefOld * cshDamagedOld);
+                        pct = LOWORD((int32_t)((int32_t)(dp / cshT) * 500 / dpShdef));
+                        if (pct == 0) {
+                            pct = 1;
                         }
-                        dpPerShdefNew = LOWORD((int32_t)(dpShdef * rgpct[ishdef]) / 100);
-                        if (dpPerShdefNew == 0) {
-                            dpPerShdefNew = 1;
-                        }
-                        if (cshDamagedOld != 0 && dpPerShdefNew + dpPerShdefOld >= dpShdef) {
-                            cshKill += cshDamagedOld;
-                            cshT -= cshDamagedOld;
-                        }
-                        if (cshT != 0) {
-                            dp = (uint32_t)(dpPerShdefNew * cshT) + (uint32_t)(dpPerShdefOld * cshDamagedOld);
-                            pct = LOWORD((int32_t)((int32_t)(dp / cshT) * 500 / dpShdef));
-                            if (pct == 0) {
-                                pct = 1;
-                            }
-                            flSrc.rgdv[ishdef].pctDp = pct;
-                            flSrc.rgdv[ishdef].pctSh = 100;
-                        }
-                    }
-                    flSrc.rgcsh[ishdef] = cshT;
-                    if (cshT == 0) {
-                        flSrc.rgdv[ishdef].dp = 0;
-                        cshdef--;
+                        flSrc.rgdv[ishdef].pctDp = pct;
+                        flSrc.rgdv[ishdef].pctSh = 100;
                     }
                 }
-                flDead.rgcsh[ishdef] = lpfl->rgcsh[ishdef] - flSrc.rgcsh[ishdef];
-            }
-        }
-        if (cshdef != 0) {
-            if (cshKill != 0) {
-                if ((cshKill & 0xffff0000) != 0) {
-                    FSendPlrMsg(lpfl->iPlayer, idmUsedStargateReachLosingUnbelievableShipsJump, lpfl->id | 0x8000, lpfl->id, lpfl->idPlanet, id,
-                                LOWORD(cshKill), HIWORD(cshKill), 0, 0);
-                } else {
-                    if (cshKill < (int32_t)(cshOrig >> 2)) {
-                        idm = idmUsedStargateReachLosingShipsTreacherousVoid;
-                    } else if (cshKill > (int32_t)(cshOrig >> 1)) {
-                        idm = idmUsedStargateReachUnfortunatelyLosingShipsGreat;
-                    } else {
-                        idm = idmUsedStargateReachLosingShipsUnforgivingVoid;
-                    }
-                    FSendPlrMsg(lpfl->iPlayer, idm, lpfl->id | 0x8000, lpfl->id, lpfl->idPlanet, id, LOWORD(cshKill), 0, 0, 0);
+                flSrc.rgcsh[ishdef] = cshT;
+                if (cshT == 0) {
+                    flSrc.rgdv[ishdef].dp = 0;
+                    cshdef--;
                 }
-                flDead.iPlayer = flSrc.iPlayer;
-                flDead.fDead = TRUE;
-                flDead.det = detAll;
-                FleetTransferCargoBalance(&flSrc, &flDead);
             }
-            *lpfl = flSrc;
-            return TRUE;
+            flDead.rgcsh[ishdef] = lpfl->rgcsh[ishdef] - flSrc.rgcsh[ishdef];
         }
     }
-    lpfl->fDead = TRUE;
-    FSendPlrMsg(flSrc.iPlayer, idmHeedlessDangerAttemptedUseStargateReachFleet, flSrc.id | 0x8000, flSrc.id, flSrc.idPlanet, id, 0, 0, 0, 0);
-    return FALSE;
+    if (cshdef == 0)
+        goto LKilledEmAll;
+    if (cshKill != 0) {
+        if (cshKill & 0xffff0000) {
+            FSendPlrMsg(lpfl->iPlayer, idmUsedStargateReachLosingUnbelievableShipsJump, lpfl->id | 0x8000, lpfl->id, lpfl->idPlanet, id, LOWORD(cshKill),
+                        HIWORD(cshKill), 0, 0);
+        } else {
+            if (cshKill < (int32_t)(cshOrig >> 2)) {
+                idm = idmUsedStargateReachLosingShipsTreacherousVoid;
+            } else if (cshKill > (int32_t)(cshOrig >> 1)) {
+                idm = idmUsedStargateReachUnfortunatelyLosingShipsGreat;
+            } else {
+                idm = idmUsedStargateReachLosingShipsUnforgivingVoid;
+            }
+            FSendPlrMsg(lpfl->iPlayer, idm, lpfl->id | 0x8000, lpfl->id, lpfl->idPlanet, id, LOWORD(cshKill), 0, 0, 0);
+        }
+        flDead.iPlayer = flSrc.iPlayer;
+        flDead.fDead = TRUE;
+        flDead.det = detAll;
+        FleetTransferCargoBalance(&flSrc, &flDead);
+    }
+    *lpfl = flSrc;
+    return TRUE;
 }
 
 int16_t MdCalcStargateDamage(int16_t isbsSrc, int16_t isbsDst, int16_t dDist, int16_t wt, int16_t *ppctDmg) {
@@ -490,26 +479,23 @@ void KillUsedWaypoints() {
     FLEET  *lpfl;
     int16_t fRep;
     PLANET *lppl;
-    int16_t t_scratch_me;
 
     if (cFleet > 0) {
         for (i = 0; i < cFleet; i++) {
             lpfl = rglpfl[i];
-            if (rglpfl[i] == 0)
+            if (!rglpfl[i])
                 break;
             if (lpfl->cord > 1) {
-                if (lpfl->fMark != 0) {
+                if (lpfl->fMark) {
                     DeleteWpFar(lpfl, 1, FALSE);
                     FSendPlrMsg(lpfl->iPlayer, idmHasExecutedOrdersFollowFleetAwaitsFurther, lpfl->id | 0x8000, lpfl->id, 0, 0, 0, 0, 0, 0);
                 } else {
                     for (j = 1; j < lpfl->cord; j++) {
                         if (lpfl->lpplord->rgord[j].grobj == grobjFleet) {
                             lpfl->lpflNext = LpflFromId(lpfl->lpplord->rgord[j].id);
-                            if (lpfl->lpflNext != 0) {
-                                if (lpfl->lpplord->rgord[j].fNoAutoTrack == 0) {
-                                    t_scratch_me = lpfl->lpflNext->pt.y;
-                                    lpfl->lpplord->rgord[j].pt.x = lpfl->lpflNext->pt.x;
-                                    lpfl->lpplord->rgord[j].pt.y = t_scratch_me;
+                            if (lpfl->lpflNext) {
+                                if (!lpfl->lpplord->rgord[j].fNoAutoTrack) {
+                                    lpfl->lpplord->rgord[j].pt = lpfl->lpflNext->pt;
                                 }
                                 lpfl->lpflNext = NULL;
                             } else {
@@ -520,16 +506,20 @@ void KillUsedWaypoints() {
                     }
                     if (lpfl->pt.x == lpfl->lpplord->rgord[1].pt.x && lpfl->pt.y == lpfl->lpplord->rgord[1].pt.y) {
                         lpfl->lpplord->rgord[0] = lpfl->lpplord->rgord[1];
-                        if (lpfl->lpplord->rgord[0].grobj == grobjFleet && lpfl->lpplord->rgord[0].grTask != grTaskXfer &&
-                            lpfl->lpplord->rgord[0].grTask != grTaskMerge) {
-                            if (lpfl->idPlanet == -1) {
-                                lpfl->lpplord->rgord[0].grobj = grobjOther;
-                                lpfl->lpplord->rgord[0].id = 0;
-                            } else {
-                                lpfl->lpplord->rgord[0].grobj = grobjPlanet;
-                                lpfl->lpplord->rgord[0].id = lpfl->idPlanet;
-                            }
+                        if (lpfl->lpplord->rgord[0].grobj != grobjFleet)
+                            goto NoOrdFixupYet;
+                        if (lpfl->lpplord->rgord[0].grTask == grTaskXfer)
+                            goto NoOrdFixupYet;
+                        if (lpfl->lpplord->rgord[0].grTask == grTaskMerge)
+                            goto NoOrdFixupYet;
+                        if (lpfl->idPlanet == idPlanetDeepSpace) {
+                            lpfl->lpplord->rgord[0].grobj = grobjOther;
+                            lpfl->lpplord->rgord[0].id = 0;
+                            goto NoOrdFixupYet;
                         }
+                        lpfl->lpplord->rgord[0].grobj = grobjPlanet;
+                        lpfl->lpplord->rgord[0].id = lpfl->idPlanet;
+                    NoOrdFixupYet:
                         if (lpfl->lpplord->rgord[1].grTask != grTaskPatrol || lpfl->lpplord->rgord[1].grobj != grobjFleet) {
                             fRep = lpfl->fRepOrders;
                         } else {
@@ -546,11 +536,12 @@ void KillUsedWaypoints() {
                             case grTaskPatrol:
                                 break;
                             case grTaskAutoRoute:
-                                if (lpfl->idPlanet != -1) {
+                                if (lpfl->idPlanet != idPlanetDeepSpace) {
                                     lppl = LpplFromId(lpfl->idPlanet);
                                     if (lppl->iPlayer == lpfl->iPlayer && lppl->idRoute != 0)
                                         break;
                                 }
+                                /* fallthrough */
                             default:
                                 FSendPlrMsg(lpfl->iPlayer, idmHasCompletedAssignedOrders, lpfl->id | 0x8000, lpfl->id, 0, 0, 0, 0, 0, 0);
                             }
@@ -575,7 +566,7 @@ void NoAutoTrackFleet(FLEET *lpflTarget) {
     idTarget = lpflTarget->id;
     for (ifl = 0; ifl < cFleet; ifl++) {
         lpfl = rglpfl[ifl];
-        if (rglpfl[ifl] == 0)
+        if (!rglpfl[ifl])
             break;
         if (lpfl->iPlayer != iplr && lpfl->cord > 1) {
             lpord = &lpfl->lpplord->rgord[1];
@@ -619,7 +610,7 @@ void AutoRouteFleet(FLEET *lpfl, PLANET *lppl) {
     lpord->fValidTask = TRUE;
     iWarp = IFindIdealWarp(lpfl, FALSE);
     dTravel = (int32_t)((long double)DGetDistance(lpfl->pt.x, lpfl->pt.y, lpord->pt.x, lpord->pt.y) + 0.999);
-    if (lppl->iPlayer == lpplRoute->iPlayer && lppl->fStarbase != 0 && lpplRoute->fStarbase != 0) {
+    if (lppl->iPlayer == lpplRoute->iPlayer && lppl->fStarbase && lpplRoute->fStarbase) {
         isbsDst = IStargateFromLppl(lpplRoute);
         isbsSrc = IStargateFromLppl(lppl);
         for (i = 0; i < 4 && lpfl->rgwtMin[i] == 0; i++) {
@@ -627,7 +618,7 @@ void AutoRouteFleet(FLEET *lpfl, PLANET *lppl) {
         if (i == 4 && isbsDst != -1 && isbsSrc != -1) {
             wt = 0;
             wtBig = 0;
-            ishdefBig = -1;
+            ishdefBig = ishdefNone;
             for (ishdef = 0; ishdef < 16; ishdef++) {
                 if (lpfl->rgcsh[ishdef] != 0) {
                     wt = rglpshdef[lpfl->iPlayer][ishdef].hul.wtEmpty;
@@ -670,7 +661,7 @@ int16_t FColonizer(FLEET *lpfl) {
     for (i = 0; i < 16; i++) {
         if (lpfl->rgcsh[i] != 0) {
             l = 1 << rglpshdef[lpfl->iPlayer][i].hul.ihuldef;
-            if ((l & 0xc000) != 0) {
+            if (l & 0xc000) {
                 return TRUE;
             }
         }
@@ -685,7 +676,7 @@ int16_t FScout(FLEET *lpfl) {
     for (i = 0; i < 16; i++) {
         if (lpfl->rgcsh[i] != 0) {
             l = 1 << rglpshdef[lpfl->iPlayer][i].hul.ihuldef;
-            if ((l & 0x70) != 0) {
+            if (l & 0x70) {
                 return TRUE;
             }
         }
@@ -702,14 +693,14 @@ void AutoFleetOrder(FLEET *lpfl, PLANET *lppl) {
 
     fFoundFleet = FALSE;
     lpord = lpfl->lpplord->rgord;
-    if ((lppl->iPlayer == -1 || (GetRaceStat(&rgplr[lpfl->iPlayer], rsMajorAdv) == raMacintosh && lppl->iPlayer == lpfl->iPlayer)) &&
+    if ((lppl->iPlayer == iplrNone || (GetRaceStat(&rgplr[lpfl->iPlayer], rsMajorAdv) == raMacintosh && lppl->iPlayer == lpfl->iPlayer)) &&
         CMineFromLpfl(lpfl) != 0) {
-        if (lppl->iPlayer == -1) {
+        if (lppl->iPlayer == iplrNone) {
             for (ifl = 0; ifl < cFleet; ifl++) {
                 lpflT = rglpfl[ifl];
-                if (rglpfl[ifl] == 0)
+                if (!rglpfl[ifl])
                     break;
-                if (lpflT->iPlayer >= lpfl->iPlayer && lpflT->fDead == 0 && lpfl != lpflT) {
+                if (lpflT->iPlayer >= lpfl->iPlayer && !lpflT->fDead && lpfl != lpflT) {
                     if (lpflT->iPlayer > lpfl->iPlayer)
                         break;
                     if (lpflT->pt.x == lpfl->pt.x && lpflT->pt.y == lpfl->pt.y) {
@@ -722,7 +713,7 @@ void AutoFleetOrder(FLEET *lpfl, PLANET *lppl) {
                 }
             }
         }
-        if (fFoundFleet != 0) {
+        if (fFoundFleet) {
             lpord->grTask = grTaskMerge;
             lpord->grobj = grobjFleet;
             lpord->id = lpflT->id;
@@ -814,7 +805,7 @@ int32_t CLayMinesFromLpfl(FLEET *lpfl, MineFieldType iType, int16_t ishdef) {
 
     cMineTot = 0;
     switch (iType) {
-    case 0xffff:
+    case mineAll:
     default:
         iMin = 0;
         iMax = 9;
@@ -832,7 +823,7 @@ int32_t CLayMinesFromLpfl(FLEET *lpfl, MineFieldType iType, int16_t ishdef) {
         iMax = 9;
     }
     for (i = 0; i < 16; i++) {
-        if (lpfl->rgcsh[i] > 0 && (ishdef == -1 || i == ishdef)) {
+        if (lpfl->rgcsh[i] > 0 && (ishdef == ishdefAll || i == ishdef)) {
             lphul = &rglpshdef[lpfl->iPlayer][i].hul;
             chs = lphul->chs;
             cMine = 0;
@@ -893,27 +884,22 @@ int32_t CMineSweepFromLphul(HUL *lphul) {
     fStarbase = (int16_t)lphul->ihuldef >= ihuldefOrbitalFort;
     chs = lphul->chs;
     lPow = 0;
-    j = 0;
-    lphs = lphul->rghs;
-    while (j < chs) {
+    for (j = 0, lphs = lphul->rghs; j < chs; j++, lphs++) {
         if (lphs->grhst == hstBeam) {
             part.hs = *lphs;
             FLookupPart(&part);
-            if ((part.pbeam->grfAbilities & beamGatling) != 0) {
+            if (part.pbeam->grfAbilities & beamGatling) {
                 lRange = 4;
             } else {
-                if ((part.pbeam->grfAbilities & beamSapper) != 0)
-                    goto L_2c4d;
+                if (part.pbeam->grfAbilities & beamSapper)
+                    continue;
                 lRange = part.pbeam->dRangeMax;
             }
-            if (fStarbase != 0) {
+            if (fStarbase) {
                 lRange++;
             }
             lPow += (uint32_t)((uint32_t)((uint32_t)(lRange * lRange) * lphs->cItem) * part.pbeam->dp);
         }
-    L_2c4d:
-        j++;
-        lphs++;
     }
     if (lPow <= 0) {
         return 0;
@@ -958,29 +944,29 @@ int16_t PctCloakFromLpfl(FLEET *lpfl) {
                 lphs++;
             }
             if (cPtsCur > 0) {
-                if (fUseFloat == 0 && (cPtsCur > 4000 || wtFleetCur > 500000 || cPts > 100000000 || wtFleet > 50000000)) {
+                if (!fUseFloat && (cPtsCur > 4000 || wtFleetCur > 500000 || cPts > 100000000 || wtFleet > 50000000)) {
                     dcPts = (double)cPts;
                     dwtFleet = (double)wtFleet;
                     fUseFloat = TRUE;
                 }
-                if (fUseFloat != 0) {
+                if (fUseFloat) {
                     dcPts = (double)(dcPts + (long double)cPtsCur * wtFleetCur);
                 } else {
                     cPts += (uint32_t)(cPtsCur * wtFleetCur);
                 }
             }
-            if (fUseFloat != 0) {
+            if (fUseFloat) {
                 dwtFleet = (double)((long double)dwtFleet + wtFleetCur);
             } else {
                 wtFleet += wtFleetCur;
             }
         }
     }
-    if (fUseFloat == 0 && cPts == 0) {
+    if (!fUseFloat && cPts == 0) {
         return 0;
     }
     if (GetRaceStat(&rgplr[lpfl->iPlayer], rsMajorAdv) != raStealth) {
-        if (fUseFloat != 0) {
+        if (fUseFloat) {
             for (i = 0; i <= 3; i++) {
                 dwtFleet = (double)((long double)dwtFleet + lpfl->rgwtMin[i]);
             }
@@ -990,7 +976,7 @@ int16_t PctCloakFromLpfl(FLEET *lpfl) {
             }
         }
     }
-    if (fUseFloat != 0) {
+    if (fUseFloat) {
         cPts = (int32_t)((long double)dcPts / dwtFleet);
     } else {
         cPts = (int32_t)(cPts / wtFleet);
@@ -1092,62 +1078,58 @@ INT_PTR CALLBACK MergeFleetsDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     RECT    rc;
     char    szT[80];
     char   *psz;
-    HWND    t_call_343f;
-    WPARAM  t_merge_3487_0001;
 
-    if (msg == WM_ERASEBKGND) {
+    switch (IS_WM_CTLCOLOR(msg) ? WM_CTLCOLOR : msg) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        StickyDlgPos(hwnd, &ptStickyMergeFleetsDlg, TRUE);
+        for (i = 0; i < vcflMerge; i++) {
+            psz = PszGetFleetName(rglpfl[vrgiflMerge[i]]->id);
+            strcpy(szT, psz);
+            if (rglpfl[vrgiflMerge[i]]->cord > 1) {
+                strcat(szT, " *");
+            }
+            SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_ADDSTRING, 0, (LPARAM)szT);
+            SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_SETSEL, vcflMerge == 2 || rglpfl[vrgiflMerge[i]]->id == sel.fl.id, i);
+        }
+        if (gd.fTutorial) {
+            AdvanceTutor();
+        }
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    }
-    if (IS_WM_CTLCOLOR(msg) == 0) {
-        if (msg == WM_INITDIALOG) {
-            StickyDlgPos(hwnd, &ptStickyMergeFleetsDlg, TRUE);
+    case WM_CTLCOLOR:
+        if (GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST)) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
             for (i = 0; i < vcflMerge; i++) {
-                psz = PszGetFleetName(rglpfl[vrgiflMerge[i]]->id);
-                strcpy(szT, psz);
-                if (rglpfl[vrgiflMerge[i]]->cord > 1) {
-                    strcat(szT, " *");
+                if (SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_GETSEL, i, 0) == 0) {
+                    vrgiflMerge[i] = iflNone;
                 }
-                SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_ADDSTRING, 0, (LPARAM)szT);
-                t_call_343f = GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST);
-                t_merge_3487_0001 = vcflMerge == 2 || rglpfl[vrgiflMerge[i]]->id == sel.fl.id;
-                SendMessage(t_call_343f, LB_SETSEL, t_merge_3487_0001, i);
             }
-            if (gd.fTutorial != 0) {
-                AdvanceTutor();
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK && gd.fTutorial && !FOKMergeDialog()) {
+                return 1;
+            }
+            StickyDlgPos(hwnd, &ptStickyMergeFleetsDlg, FALSE);
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhMergeFleetsDialog);
+            return 1;
+        case IDC_MERGE_FLEETS_SELECT_ALL:
+        case IDC_MERGE_FLEETS_UNSELECT_ALL:
+            for (i = 0; i < vcflMerge; i++) {
+                SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_SETSEL, GET_WM_COMMAND_ID(wParam, lParam) == IDC_MERGE_FLEETS_SELECT_ALL, i);
             }
             return 1;
         }
-        if (msg == WM_COMMAND) {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-            case IDOK:
-            case IDCANCEL:
-                for (i = 0; i < vcflMerge; i++) {
-                    if (SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_GETSEL, i, 0) == 0) {
-                        vrgiflMerge[i] = -1;
-                    }
-                }
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK && gd.fTutorial != 0 && FOKMergeDialog() == 0) {
-                    return 1;
-                }
-                StickyDlgPos(hwnd, &ptStickyMergeFleetsDlg, FALSE);
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                return 1;
-            case IDC_HELP:
-                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhMergeFleetsDialog);
-                return 1;
-            case IDC_MERGE_FLEETS_SELECT_ALL:
-            case IDC_MERGE_FLEETS_UNSELECT_ALL:
-                for (i = 0; i < vcflMerge; i++) {
-                    SendMessage(GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST), LB_SETSEL, GET_WM_COMMAND_ID(wParam, lParam) == IDC_MERGE_FLEETS_SELECT_ALL, i);
-                }
-                return 1;
-            }
-        }
-    } else if (GET_WM_CTLCOLOR_HWND(wParam, lParam) != GetDlgItem(hwnd, IDC_MERGE_FLEETS_LIST)) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
     }
     return 0;
 }

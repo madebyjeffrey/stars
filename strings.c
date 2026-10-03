@@ -1172,7 +1172,7 @@ char *PszGetCompressedString(StringId ids) {
     pszOut = szLastStrGet;
     iBuild = 0;
     while (iLen-- != 0) {
-        if (fHigh != 0) {
+        if (fHigh) {
             i = *pch >> 4;
         } else {
             i = *pch++ & 0xf;

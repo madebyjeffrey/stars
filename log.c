@@ -1,7 +1,7 @@
 #include "common.h"
 
 void LogSplitFleet(int16_t id) {
-    if (gd.fGeneratingTurn != 0) {
+    if (gd.fGeneratingTurn) {
         LpflFromId(id)->fCompChg = TRUE;
     } else {
         WriteMemRt(rtLogFleetSplit, 2, &id);
@@ -15,13 +15,13 @@ void LogMergeFleet(int16_t id) {
     uint16_t rgid[512];
     int16_t  j;
 
-    if (gd.fGeneratingTurn == 0) {
+    if (!gd.fGeneratingTurn) {
         i = 0;
         while (i < vcflMerge) {
             rgid[0] = id;
             j = 1;
             for (; j < 511 && i < vcflMerge; i++) {
-                if (vrgiflMerge[i] != -1) {
+                if (vrgiflMerge[i] != iflNone) {
                     idCur = vrgiflMerge[i];
                     if (idCur != id) {
                         rgid[j++] = idCur;
@@ -38,10 +38,10 @@ void LogChangeShDef(SHDEF *lpshdefNew) {
     uint8_t  rgb[149];
     uint8_t *pb;
 
-    if (gd.fGeneratingTurn == 0) {
+    if (!gd.fGeneratingTurn) {
         ((RTCHGSHDEF *)rgb)->ishdef = lpshdefNew->ishdef;
         ((RTCHGSHDEF *)rgb)->iPlr = idPlayer;
-        if (lpshdefNew->fFree != 0) {
+        if (lpshdefNew->fFree) {
             ((RTCHGSHDEF *)rgb)->mdChg = 0;
             WriteMemRt(rtLogShDef, 2, rgb);
         } else {
@@ -51,7 +51,7 @@ void LogChangeShDef(SHDEF *lpshdefNew) {
             WriteRtShDef(lpshdefNew, &pb);
             WriteMemRt(rtLogShDef, pb - rgb, rgb);
         }
-        if (gd.fTutorial != 0 && idPlayer == 0) {
+        if (gd.fTutorial && idPlayer == 0) {
             tutor.fChange = TRUE;
             AdvanceTutor();
         }
@@ -65,11 +65,11 @@ void LogChangeName(GrobjClass grobj, int16_t id, char *szName) {
     RTCHGNAME rtchgname;
 
     lpfl = LpflFromId(id);
-    if (lpfl != 0) {
-        if (lpfl->lpszName != 0) {
+    if (lpfl) {
+        if (lpfl->lpszName) {
             FreeLp(lpfl->lpszName, htString);
         }
-        if (szName == 0 || *szName == 0) {
+        if (!szName || *szName == 0) {
             rtchgname.rgb[0] = 0;
             rtchgname.rgb[1] = 0;
             cOut = 1;
@@ -78,7 +78,7 @@ void LogChangeName(GrobjClass grobj, int16_t id, char *szName) {
             cOut = strlen(szName);
             lpfl->lpszName = LpAlloc(strlen(szName) + 1, htString);
             fstrcpy(lpfl->lpszName, szName);
-            if (FCompressUserString(szName, &rtchgname.rgb[1], &cOut) != 0) {
+            if (FCompressUserString(szName, &rtchgname.rgb[1], &cOut)) {
                 rtchgname.rgb[0] = cOut;
             } else {
                 rtchgname.rgb[0] = 0;
@@ -89,7 +89,7 @@ void LogChangeName(GrobjClass grobj, int16_t id, char *szName) {
         rtchgname.grobj = grobj;
         rtchgname.id = id;
         WriteMemRt(rtLogFleetName, cOut + 5, &rtchgname);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
     }
@@ -111,105 +111,107 @@ void LogChangeFleet(FLEET *pfl, FLEET *pflNew) {
     HDR       hdr;
 
     fChg = FALSE;
-    if (gd.fGeneratingTurn == 0) {
-        lxfNew.id = pfl->id;
-        lxfNew.grobj = grobjFleet;
-        for (i = 0; i < 16; i++) {
-            lxfNew.rgdItem[i] = pflNew->rgcsh[i] - pfl->rgcsh[i];
-            if (pflNew->rgcsh[i] - pfl->rgcsh[i] != 0) {
-                fChg = TRUE;
-            }
-        }
-        if (fChg != 0) {
-            if (fValidLxf != 0) {
-                LogMakeValidXferf(&lxf, &lxfNew);
-                fValidLxf = FALSE;
-            } else {
-                lxf = lxfNew;
-                fValidLxf = TRUE;
-            }
-        } else {
-            lxNew.id = pfl->id;
-            lxNew.grobj = grobjFleet;
-            for (i = 0; i < 5; i++) {
-                lxNew.rgdItem[i] = pflNew->rgwtMin[i] - pfl->rgwtMin[i];
-                if (pflNew->rgwtMin[i] - pfl->rgwtMin[i] != 0) {
-                    fChg = TRUE;
-                }
-            }
-            if (fChg != 0) {
-                if (fValidLx != 0) {
-                    LogMakeValidXfer(&lx, &lxNew);
-                    fValidLx = FALSE;
-                } else {
-                    lx = lxNew;
-                    fValidLx = TRUE;
-                }
-            } else {
-                if (pfl->iplan != pflNew->iplan) {
-                    rtsi.id = pflNew->id;
-                    rtsi.i = pflNew->iplan;
-                    WriteMemRt(rtLogFleetPlan, 4, &rtsi);
-                }
-                if (pfl->fRepOrders != pflNew->fRepOrders) {
-                    rtsi.id = pflNew->id;
-                    rtsi.i = pflNew->fRepOrders;
-                    WriteMemRt(rtLogFleetFlagBit9, 4, &rtsi);
-                }
-                d = pflNew->cord - pfl->cord;
-                for (iordOld = 0; iordOld < pfl->cord && iordOld < pflNew->cord &&
-                                  fmemcmp(&pfl->lpplord->rgord[iordOld], &pflNew->lpplord->rgord[iordOld], sizeof(ORDER)) == 0;
-                     iordOld++) {
-                }
-                iordNew = iordOld;
-                if (iordOld != pfl->cord || d != 0) {
-                    if (d < 0) {
-                        rtsi.id = pflNew->id;
-                        rtsi.i = iordOld;
-                        if (d == -2) {
-                            rtsi.i |= 0x8000;
-                        }
-                        WriteMemRt(rtLogFleetOrderDelete, 4, &rtsi);
-                    } else if (d > 0) {
-                        cbWp = 22;
-                        rtwp.id = pflNew->id;
-                        rtwp.iWaypt = iordNew;
-                        rtwp.order = pflNew->lpplord->rgord[iordNew];
-                        pbWp = (char *)&rtwp;
-                        while (cbWp-- > 0 && pbWp[cbWp] == 0) {
-                        }
-                        cbWp++;
-                        WriteMemRt(rtLogFleetOrderInsert, cbWp, &rtwp);
-                    } else {
-                        cbWp = 22;
-                        if (FGetPrevLogRt(&hdr, rgbCur) != 0 && hdr.rt == rtLogFleetOrderUpdate && RawLoad16(rgbCur) == pflNew->id &&
-                            RawLoad16(&rgbCur[2]) == iordNew) {
-                            imemLogCur = imemLogPrev;
-                        }
-                        rtwp.id = pflNew->id;
-                        rtwp.iWaypt = iordNew;
-                        rtwp.order = pflNew->lpplord->rgord[iordNew];
-                        pbWp = (char *)&rtwp;
-                        while (cbWp-- > 0 && pbWp[cbWp] == 0) {
-                        }
-                        cbWp++;
-                        WriteMemRt(rtLogFleetOrderUpdate, cbWp, &rtwp);
-                    }
-                }
-            }
+    if (gd.fGeneratingTurn)
+        return;
+    lxfNew.id = pfl->id;
+    lxfNew.grobj = grobjFleet;
+    for (i = 0; i < 16; i++) {
+        lxfNew.rgdItem[i] = pflNew->rgcsh[i] - pfl->rgcsh[i];
+        if (pflNew->rgcsh[i] - pfl->rgcsh[i] != 0) {
+            fChg = TRUE;
         }
     }
+    if (fChg) {
+        if (fValidLxf) {
+            LogMakeValidXferf(&lxf, &lxfNew);
+            fValidLxf = FALSE;
+        } else {
+            lxf = lxfNew;
+            fValidLxf = TRUE;
+        }
+        return;
+    }
+    lxNew.id = pfl->id;
+    lxNew.grobj = grobjFleet;
+    for (i = 0; i < 5; i++) {
+        lxNew.rgdItem[i] = pflNew->rgwtMin[i] - pfl->rgwtMin[i];
+        if (pflNew->rgwtMin[i] - pfl->rgwtMin[i] != 0) {
+            fChg = TRUE;
+        }
+    }
+    if (fChg) {
+        if (fValidLx) {
+            LogMakeValidXfer(&lx, &lxNew);
+            fValidLx = FALSE;
+        } else {
+            lx = lxNew;
+            fValidLx = TRUE;
+        }
+        return;
+    }
+    if (pfl->iplan != pflNew->iplan) {
+        rtsi.id = pflNew->id;
+        rtsi.i = pflNew->iplan;
+        WriteMemRt(rtLogFleetPlan, 4, &rtsi);
+    }
+    if (pfl->fRepOrders != pflNew->fRepOrders) {
+        rtsi.id = pflNew->id;
+        rtsi.i = pflNew->fRepOrders;
+        WriteMemRt(rtLogFleetFlagBit9, 4, &rtsi);
+    }
+    d = pflNew->cord - pfl->cord;
+    for (iordOld = 0;
+         iordOld < pfl->cord && iordOld < pflNew->cord && fmemcmp(&pfl->lpplord->rgord[iordOld], &pflNew->lpplord->rgord[iordOld], sizeof(ORDER)) == 0;
+         iordOld++) {
+    }
+    iordNew = iordOld;
+    if (iordOld == pfl->cord && d == 0)
+        goto NextTest;
+    if (d < 0) {
+        rtsi.id = pflNew->id;
+        rtsi.i = iordOld;
+        if (d == -2) {
+            rtsi.i |= 0x8000;
+        }
+        WriteMemRt(rtLogFleetOrderDelete, 4, &rtsi);
+        goto NextTest;
+    } else if (d > 0) {
+        cbWp = 22;
+        rtwp.id = pflNew->id;
+        rtwp.iWaypt = iordNew;
+        rtwp.order = pflNew->lpplord->rgord[iordNew];
+        pbWp = (char *)&rtwp;
+        while (cbWp-- > 0 && pbWp[cbWp] == 0) {
+        }
+        cbWp++;
+        WriteMemRt(rtLogFleetOrderInsert, cbWp, &rtwp);
+        goto NextTest;
+    } else {
+        cbWp = 22;
+        if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogFleetOrderUpdate && RawLoad16(rgbCur) == pflNew->id && RawLoad16(&rgbCur[2]) == iordNew) {
+            imemLogCur = imemLogPrev;
+        }
+        rtwp.id = pflNew->id;
+        rtwp.iWaypt = iordNew;
+        rtwp.order = pflNew->lpplord->rgord[iordNew];
+        pbWp = (char *)&rtwp;
+        while (cbWp-- > 0 && pbWp[cbWp] == 0) {
+        }
+        cbWp++;
+        WriteMemRt(rtLogFleetOrderUpdate, cbWp, &rtwp);
+    }
+NextTest:
     return;
 }
 
 void LogChangeRelations() {
     HDR hdr;
 
-    if (FGetPrevLogRt(&hdr, rgbCur) != 0 && hdr.rt == rtLogRelations) {
+    if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogRelations) {
         imemLogCur = imemLogPrev;
     }
     WriteMemRt(rtLogRelations, game.cPlayer, rgplr[idPlayer].rgmdRelation);
-    if (gd.fTutorial != 0 && idPlayer == 0) {
+    if (gd.fTutorial && idPlayer == 0) {
         tutor.fChange = TRUE;
         AdvanceTutor();
     }
@@ -218,7 +220,7 @@ void LogChangeRelations() {
 
 void LogChangeBtlplan(BTLPLAN *pbtlplan) {
     WriteBattlePlan(pbtlplan, TRUE);
-    if (gd.fTutorial != 0 && idPlayer == 0) {
+    if (gd.fTutorial && idPlayer == 0) {
         tutor.fChange = TRUE;
         AdvanceTutor();
     }
@@ -232,9 +234,9 @@ void LogChangePlanet(PLANET *ppl, PLANET *pplNew) {
     LOGXFER lxNew;
 
     fChg = FALSE;
-    if (gd.fGeneratingTurn == 0) {
-        if (ppl == 0) {
-            if (fValidLx == 0) {
+    if (!gd.fGeneratingTurn) {
+        if (!ppl) {
+            if (!fValidLx) {
                 return;
             }
             lxNew.id = -1;
@@ -242,33 +244,34 @@ void LogChangePlanet(PLANET *ppl, PLANET *pplNew) {
             for (i = 0; i < 5; i++) {
                 lxNew.rgdItem[i] = -lx.rgdItem[i];
             }
-        } else {
-            lxNew.id = ppl->id;
-            lxNew.grobj = grobjPlanet;
-            for (i = 0; i < 4; i++) {
-                lxNew.rgdItem[i] = pplNew->rgwtMin[i] - ppl->rgwtMin[i];
-                if (pplNew->rgwtMin[i] - ppl->rgwtMin[i] != 0) {
-                    fChg = TRUE;
-                }
+            goto ChgIt;
+        }
+
+        lxNew.id = ppl->id;
+        lxNew.grobj = grobjPlanet;
+        for (i = 0; i < 4; i++) {
+            lxNew.rgdItem[i] = pplNew->rgwtMin[i] - ppl->rgwtMin[i];
+            if (pplNew->rgwtMin[i] - ppl->rgwtMin[i] != 0) {
+                fChg = TRUE;
             }
-            lxNew.rgdItem[4] = 0;
-            if (fChg == 0)
-                goto L_9573;
         }
-        if (fValidLx != 0) {
-            LogMakeValidXfer(&lx, &lxNew);
-            fValidLx = FALSE;
-        } else {
-            lx = lxNew;
-            fValidLx = TRUE;
+        lxNew.rgdItem[4] = 0;
+        if (fChg) {
+        ChgIt:
+            if (fValidLx) {
+                LogMakeValidXfer(&lx, &lxNew);
+                fValidLx = FALSE;
+            } else {
+                lx = lxNew;
+                fValidLx = TRUE;
+            }
         }
-    L_9573:
-        if (ppl != 0) {
-            if (pplNew->lpplprod == 0 && ppl->lpplprod != 0) {
+        if (ppl) {
+            if (!pplNew->lpplprod && ppl->lpplprod) {
                 WriteMemRt(rtLogPlanetProdQ, 2, &lxNew);
-            } else if (pplNew->lpplprod != 0 && (ppl->lpplprod == 0 || ppl->lpplprod->iprodMac != pplNew->lpplprod->iprodMac ||
-                                                 fmemcmp(ppl->lpplprod->rgprod, pplNew->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4) != 0)) {
-                if (FGetPrevLogRt(&hdr, rgbCur) != 0 && hdr.rt == rtLogPlanetProdQ && ((RTCHGPRODQ *)rgbCur)->id == ppl->id) {
+            } else if (pplNew->lpplprod && (!ppl->lpplprod || ppl->lpplprod->iprodMac != pplNew->lpplprod->iprodMac ||
+                                            fmemcmp(ppl->lpplprod->rgprod, pplNew->lpplprod->rgprod, ppl->lpplprod->iprodMac * 4) != 0)) {
+                if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogPlanetProdQ && ((RTCHGPRODQ *)rgbCur)->id == ppl->id) {
                     imemLogCur = imemLogPrev;
                 }
                 ((RTCHGPRODQ *)rgbCur)->id = ppl->id;
@@ -296,7 +299,7 @@ void LogChangeThing(THING *lpth, THING *pthNew) {
     LOGXFER lxNew;
 
     fChg = FALSE;
-    if (gd.fGeneratingTurn == 0) {
+    if (!gd.fGeneratingTurn) {
         memset(&lxNew, 0, sizeof(LOGXFER));
         lxNew.id = pthNew->idFull;
         lxNew.grobj = grobjThing;
@@ -306,8 +309,8 @@ void LogChangeThing(THING *lpth, THING *pthNew) {
                 fChg = TRUE;
             }
         }
-        if (fChg != 0) {
-            if (fValidLx != 0) {
+        if (fChg) {
+            if (fValidLx) {
                 LogMakeValidXfer(&lx, &lxNew);
                 fValidLx = FALSE;
             } else {
@@ -350,13 +353,13 @@ void LogMakeValidXfer(LOGXFER *plx1, LOGXFER *plx2) {
     default:
         prt = NULL;
     }
-    if (prt != 0 && prt->grobj1 == (plx1->grobj & 0xff) && prt->grobj2 == (plx2->grobj & 0xff) && prt->id1 == plx1->id && prt->id2 == plx2->id) {
+    if (prt && prt->grobj1 == (plx1->grobj & 0xff) && prt->grobj2 == (plx2->grobj & 0xff) && prt->id1 == plx1->id && prt->id2 == plx2->id) {
         grbit = prt->grbitItems;
         iOff = 0;
         switch (hdrPrev.rt) {
         case rtLogCargoXfer8:
             for (i = 0; i < 5; i++) {
-                if ((1 << i & grbit) != 0) {
+                if (1 << i & grbit) {
                     rgQuan[i] = (int16_t)prt->rgcQuan[iOff];
                     iOff++;
                 }
@@ -365,7 +368,7 @@ void LogMakeValidXfer(LOGXFER *plx1, LOGXFER *plx2) {
         case rtLogCargoXfer16:
             prtx = (RTXFERX *)prt;
             for (i = 0; i < 5; i++) {
-                if ((1 << i & grbit) != 0) {
+                if (1 << i & grbit) {
                     rgQuan[i] = prtx->rgcQuan[iOff];
                     iOff++;
                 }
@@ -374,7 +377,7 @@ void LogMakeValidXfer(LOGXFER *plx1, LOGXFER *plx2) {
         case rtLogCargoXfer32:
             prtl = (RTXFERL *)prt;
             for (i = 0; i < 5; i++) {
-                if ((1 << i & grbit) != 0) {
+                if (1 << i & grbit) {
                     rgQuan[i] = prtl->rgcQuan[iOff];
                     iOff++;
                 }
@@ -485,7 +488,7 @@ void WriteMemRt(RecordType rt, int16_t cb, void *rg) {
     HDR      hdr;
     uint8_t *lpv;
 
-    if (fLogOff == 0) {
+    if (!fLogOff) {
         if (imemLogCur + cb + 2 > 32000) {
             AlertSz(PszFormatIds(idsLogFileHasReachedMaximumAllowableSize, NULL), MB_ICONHAND);
         }
@@ -510,7 +513,7 @@ void WriteMemRt(RecordType rt, int16_t cb, void *rg) {
 void DirtyGame(int16_t fDirty) {
     if (fDirty != game.fDirty) {
         game.fDirty = fDirty;
-        if (fAi == 0) {
+        if (!fAi) {
             SetMsgTitle(hwndMessage);
         }
     }
@@ -581,521 +584,468 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
     MessageId idm;
 
     lpxfCur = NULL;
-    if (rt <= rtLogPlayerZpq1) {
-        switch (rt) {
-        case rtLogPlanetProdQ:
-            lppl = lpPlanets;
-            lpplMac = lpPlanets + cPlanet;
-            for (; lppl < lpplMac && lppl->id != ((RTCHGPRODQ *)lpb)->id; lppl++) {
-            }
-            if (lppl != lpplMac && lppl->iPlayer == idPlayer) {
-                i = (uint32_t)(cb - 2) / 4;
-                if (i > 0) {
-                    if (lppl->lpplprod == 0) {
-                        lppl->lpplprod = (PLPROD *)LpplAlloc(4, i + 2, htOrd);
-                    } else if (lppl->lpplprod->iprodMax < i) {
-                        lppl->lpplprod = (PLPROD *)LpplReAlloc((PL *)lppl->lpplprod, i + 2);
-                    }
-                    for (iPass = 0; iPass < i; iPass++) {
-                        if (((RTCHGPRODQ *)lpb)->rgprod[iPass].pct != 0) {
-                            for (iLook = 0; iLook < lppl->lpplprod->iprodMac; iLook++) {
-                                if (lppl->lpplprod->rgprod[iLook].pct != 0 && lppl->lpplprod->rgprod[iLook].iItem == ((RTCHGPRODQ *)lpb)->rgprod[iPass].iItem &&
-                                    lppl->lpplprod->rgprod[iLook].grobj == ((RTCHGPRODQ *)lpb)->rgprod[iPass].grobj) {
-                                    lppl->lpplprod->rgprod[iLook].pct = 0;
-                                    break;
-                                }
-                            }
-                            if (iLook == lppl->lpplprod->iprodMac) {
-                                ((RTCHGPRODQ *)lpb)->rgprod[iPass].pct = 0;
+    switch (rt) {
+    case rtEOF:
+        break;
+    case rtLogPlanetProdQ:
+        lppl = lpPlanets;
+        lpplMac = lpPlanets + cPlanet;
+        for (; lppl < lpplMac && lppl->id != ((RTCHGPRODQ *)lpb)->id; lppl++) {
+        }
+        if (lppl != lpplMac && lppl->iPlayer == idPlayer) {
+            i = (uint32_t)(cb - 2) / 4;
+            if (i > 0) {
+                if (!lppl->lpplprod) {
+                    lppl->lpplprod = (PLPROD *)LpplAlloc(4, i + 2, htOrd);
+                } else if (lppl->lpplprod->iprodMax < i) {
+                    lppl->lpplprod = (PLPROD *)LpplReAlloc((PL *)lppl->lpplprod, i + 2);
+                }
+                for (iPass = 0; iPass < i; iPass++) {
+                    if (((RTCHGPRODQ *)lpb)->rgprod[iPass].pct != 0) {
+                        for (iLook = 0; iLook < lppl->lpplprod->iprodMac; iLook++) {
+                            if (lppl->lpplprod->rgprod[iLook].pct != 0 && lppl->lpplprod->rgprod[iLook].iItem == ((RTCHGPRODQ *)lpb)->rgprod[iPass].iItem &&
+                                lppl->lpplprod->rgprod[iLook].grobj == ((RTCHGPRODQ *)lpb)->rgprod[iPass].grobj) {
+                                lppl->lpplprod->rgprod[iLook].pct = 0;
+                                break;
                             }
                         }
+                        if (iLook == lppl->lpplprod->iprodMac) {
+                            ((RTCHGPRODQ *)lpb)->rgprod[iPass].pct = 0;
+                        }
                     }
-                    fmemmove(lppl->lpplprod->rgprod, ((RTCHGPRODQ *)lpb)->rgprod, i * 4);
-                    lppl->lpplprod->iprodMac = i;
-                    return TRUE;
                 }
-                if (lppl->lpplprod == 0) {
-                    return TRUE;
-                }
+                fmemmove(lppl->lpplprod->rgprod, ((RTCHGPRODQ *)lpb)->rgprod, i * 4);
+                lppl->lpplprod->iprodMac = i;
+            } else if (!lppl->lpplprod) {
+                return TRUE;
+            } else {
                 FreeLp(lppl->lpplprod, htOrd);
                 lppl->lpplprod = NULL;
-                return TRUE;
             }
-            return FALSE;
-        case rtLogRelations:
-            fmemcpy(rgplr[idPlayer].rgmdRelation, lpb, game.cPlayer);
-            return TRUE;
-        case rtLogPlayerZpq1:
-            if (gd.fGeneratingTurn == 0) {
-                return TRUE;
-            }
+            break;
+        }
+        return FALSE;
+    case rtLogRelations:
+        fmemcpy(rgplr[idPlayer].rgmdRelation, lpb, game.cPlayer);
+        break;
+    case rtLogPlayerZpq1:
+        if (gd.fGeneratingTurn) {
             if ((uint16_t)cb > 26) {
                 return FALSE;
             }
             fmemcpy(&rgplr[idPlayer].zpq1, lpb, cb);
-            return TRUE;
-        case rtLogFleetName:
-            cOut = 32;
-            lpfl = LpflFromId(((RTCHGNAME *)lpb)->id);
-            if (lpfl == 0) {
-                return FALSE;
-            }
-            if (lpfl->lpszName != 0) {
-                FreeLp(lpfl->lpszName, htString);
-            }
-            i = ((RTCHGNAME *)lpb)->rgb[0];
-            if (i != 0 && FDecompressUserString(&((RTCHGNAME *)lpb)->rgb[1], i, szT, &cOut) != 0) {
-                lpfl->lpszName = LpAlloc(strlen(szT) + 1, htString);
-                fstrcpy(lpfl->lpszName, szT);
-                return TRUE;
-            }
-            if (((RTCHGNAME *)lpb)->rgb[1] == 0) {
-                lpfl->lpszName = NULL;
-                return TRUE;
-            }
+        }
+        break;
+    case rtLogFleetName:
+        cOut = 32;
+        if ((lpfl = LpflFromId(((RTCHGNAME *)lpb)->id)) == 0) {
+            return FALSE;
+        }
+        if (lpfl->lpszName) {
+            FreeLp(lpfl->lpszName, htString);
+        }
+        i = ((RTCHGNAME *)lpb)->rgb[0];
+        if (i != 0 && FDecompressUserString(&((RTCHGNAME *)lpb)->rgb[1], i, szT, &cOut)) {
+            lpfl->lpszName = LpAlloc(strlen(szT) + 1, htString);
+            fstrcpy(lpfl->lpszName, szT);
+        } else if (((RTCHGNAME *)lpb)->rgb[1] == 0) {
+            lpfl->lpszName = NULL;
+        } else {
             lpfl->lpszName = LpAlloc(fstrlen(&((RTCHGNAME *)lpb)->rgb[1]) + 1, htString);
             fstrcpy(lpfl->lpszName, &((RTCHGNAME *)lpb)->rgb[1]);
-            return TRUE;
-        case rtThing:
-            lpth = LpthFromId(((RTLOGTHING *)lpb)->idFull);
-            if (lpth == 0 || lpth->ith != ithMinefield) {
+        }
+        break;
+    case rtThing:
+        lpth = LpthFromId(((RTLOGTHING *)lpb)->idFull);
+        if (!lpth || lpth->ith != ithMinefield) {
+            return FALSE;
+        }
+        lpth->thm.fDetonate = ((RTLOGTHING *)lpb)->fDetonate;
+        break;
+    case rtLogShDef:
+        i = ((RTCHGSHDEF *)lpb)->ishdef;
+        iLook = ((RTCHGSHDEF *)lpb)->iPlr;
+        if (iLook >= game.cPlayer || iLook != idPlayer) {
+            return FALSE;
+        }
+        if (i >= 16) {
+            if (i >= 26) {
                 return FALSE;
             }
-            lpth->thm.fDetonate = ((RTLOGTHING *)lpb)->fDetonate;
-            return TRUE;
-        case rtLogShDef:
-            i = ((RTCHGSHDEF *)lpb)->ishdef;
-            iLook = ((RTCHGSHDEF *)lpb)->iPlr;
-            if (iLook >= game.cPlayer || iLook != idPlayer) {
-                return FALSE;
-            }
-            if (i >= 16) {
-                if (i >= 26) {
-                    return FALSE;
-                }
-                lpshdef = rglpshdefSB[iLook] + (i - 16);
-            } else {
-                lpshdef = rglpshdef[iLook] + i;
-            }
-            if (lpshdef->fFree == 0 && lpshdef->cExist != 0 && ((RTCHGSHDEF *)lpb)->mdChg != 0) {
-                return FALSE;
-            }
-            if (((RTCHGSHDEF *)lpb)->mdChg != 0) {
-                if (((RTCHGSHDEF *)lpb)->mdChg != 1) {
-                    return TRUE;
-                }
-                if (lpshdef->fFree != 0) {
-                    if (i >= 16) {
-                        rgplr[iLook].cshdefSB++;
-                    } else {
-                        rgplr[iLook].cShDef++;
-                    }
-                }
-                if (i >= 16) {
-                    if (FReadShDef(&((RTCHGSHDEF *)lpb)->rtshdef, rglpshdefSB[iLook], idPlayer) != 0) {
-                        return TRUE;
-                    }
-                    rgplr[iLook].cshdefSB += 15;
-                    return FALSE;
-                }
-                if (FReadShDef(&((RTCHGSHDEF *)lpb)->rtshdef, rglpshdef[iLook], idPlayer) != 0) {
-                    return TRUE;
-                }
-                rgplr[iLook].cShDef--;
-                return FALSE;
-            }
-            if (lpshdef->fFree != 0) {
-                return TRUE;
-            }
+            lpshdef = rglpshdefSB[iLook] + (i - 16);
+        } else {
+            lpshdef = rglpshdef[iLook] + i;
+        }
+        if (!lpshdef->fFree && lpshdef->cExist != 0 && ((RTCHGSHDEF *)lpb)->mdChg != 0) {
+            return FALSE;
+        }
+        switch (((RTCHGSHDEF *)lpb)->mdChg) {
+        case 0:
+            if (lpshdef->fFree)
+                break;
             DestroyAllIshdef(i, idPlayer);
             lpshdef->fFree = TRUE;
             if (i >= 16) {
                 rgplr[iLook].cshdefSB += 15;
-                return TRUE;
+            } else {
+                rgplr[iLook].cShDef--;
             }
-            rgplr[iLook].cShDef--;
-            return TRUE;
-        case rtLogCargoXfer8:
-        case rtLogCargoXfer16:
-        case rtLogCargoXfer32:
-            if (FLookupObject(((RTXFER *)lpb)->grobj1, ((RTXFER *)lpb)->id1, &rgxf[0].fl) == 0) {
-                return FALSE;
-            }
-            rgxf[1].fl.id = -1;
-            if (((RTXFER *)lpb)->grobj2 != grobjOther && FLookupObject(((RTXFER *)lpb)->grobj2, ((RTXFER *)lpb)->id2, &rgxf[1].fl) == 0) {
-                if (((RTXFER *)lpb)->grobj2 == grobjFleet && (((RTXFER *)lpb)->id2 >> 9 & 0xf) != idPlayer) {
-                    return TRUE;
+            break;
+        case 1:
+            if (lpshdef->fFree) {
+                if (i >= 16) {
+                    rgplr[iLook].cshdefSB++;
+                } else {
+                    rgplr[iLook].cShDef++;
                 }
+            }
+            if (i >= 16) {
+                if (FReadShDef(&((RTCHGSHDEF *)lpb)->rtshdef, rglpshdefSB[iLook], idPlayer))
+                    break;
+                rgplr[iLook].cshdefSB += 15;
                 return FALSE;
             }
-            grbit = ((RTXFER *)lpb)->grbitItems;
+            if (FReadShDef(&((RTCHGSHDEF *)lpb)->rtshdef, rglpshdef[iLook], idPlayer))
+                break;
+            rgplr[iLook].cShDef--;
+            return FALSE;
+        }
+        break;
+    case rtLogCargoXfer8:
+    case rtLogCargoXfer16:
+    case rtLogCargoXfer32:
+        if (!FLookupObject(((RTXFER *)lpb)->grobj1, ((RTXFER *)lpb)->id1, &rgxf[0].fl)) {
+            return FALSE;
+        }
+        rgxf[1].fl.id = idflNone;
+        if (((RTXFER *)lpb)->grobj2 != grobjOther && !FLookupObject(((RTXFER *)lpb)->grobj2, ((RTXFER *)lpb)->id2, &rgxf[1].fl)) {
+            if (((RTXFER *)lpb)->grobj2 == grobjFleet && (((RTXFER *)lpb)->id2 >> 9 & 0xf) != idPlayer)
+                break;
+            return FALSE;
+        }
+        grbit = ((RTXFER *)lpb)->grbitItems;
+        for (i = 0, iLook = 0; i < 5; i++, grbit >>= 1) {
+            if (grbit & 1) {
+                if (rt == rtLogCargoXfer8) {
+                    rgcXfer[i] = (int16_t)((RTXFER *)lpb)->rgcQuan[iLook];
+                } else if (rt == rtLogCargoXfer16) {
+                    rgcXfer[i] = ((RTXFERX *)lpb)->rgcQuan[iLook];
+                } else {
+                    rgcXfer[i] = ((RTXFERL *)lpb)->rgcQuan[iLook];
+                }
+                iLook++;
+            } else {
+                rgcXfer[i] = 0;
+            }
+        }
+        for (iPass = 0; iPass < 2; iPass++) {
+            for (i = 0; i < 5; i++, grbit >>= 1) {
+                if (rgcXfer[i] != 0) {
+                    cXfer = rgcXfer[i];
+                    if ((iPass == 0 && cXfer < 0) || (iPass == 1 && cXfer >= 0)) {
+                        l = ChgCargo(((RTXFER *)lpb)->grobj1, ((RTXFER *)lpb)->id1, i, cXfer, &rgxf[0].fl);
+                        if (l != cXfer) {
+                            id = ((RTXFER *)lpb)->grobj1 == grobjFleet ? -32768 : 0;
+                            id |= rgxf[0].fl.id;
+                            FSendPlrMsg(rgxf[0].fl.iPlayer, idmUnableTransferKtKtRequest, id, id, LOWORD(cXfer) - LOWORD(l), i, LOWORD(cXfer), 0, 0, 0);
+                            rgcXfer[i] = l;
+                        }
+                    }
+                    if (((iPass == 0 && cXfer >= 0) || (iPass == 1 && cXfer < 0)) && ((RTXFER *)lpb)->grobj2 != grobjOther) {
+                        if (i == 3 && cXfer != 0 && gd.fGeneratingTurn && ((RTXFER *)lpb)->grobj2 == grobjPlanet && ((RTXFER *)lpb)->grobj1 == grobjFleet &&
+                            rgxf[0].fl.iPlayer != rgxf[1].fl.iPlayer) {
+                            lpcdT = lpcd;
+                            iColDrop = 0;
+                            if (cXfer > 0) {
+                                for (; iColDrop < cColDrop && cXfer > 0; iColDrop++) {
+                                    if (lpcdT->idPlanetDst == rgxf[1].pl.id && lpcdT->idPlr == rgxf[0].fl.iPlayer) {
+                                        l = cXfer < lpcdT->cColonist ? cXfer : lpcdT->cColonist;
+                                        cXfer -= l;
+                                        lpcdT->cColonist -= l;
+                                    }
+                                    lpcdT++;
+                                }
+                            } else {
+                                for (; iColDrop < cColDrop && (lpcdT->idFleetSrc != rgxf[0].fl.id || lpcdT->idPlanetDst != rgxf[1].pl.id); iColDrop++) {
+                                    lpcdT++;
+                                }
+                                if (iColDrop == cColDrop) {
+                                    lpcdT->idFleetSrc = rgxf[0].fl.id;
+                                    lpcdT->idPlr = rgxf[0].fl.iPlayer;
+                                    lpcdT->idPlanetDst = rgxf[1].fl.id;
+                                    lpcdT->cColonist = 0;
+                                    lpcdT->fCanColonize = rgxf[1].fl.iPlayer != iplrNone;
+                                    cColDrop++;
+                                }
+                                lpcdT->cColonist -= cXfer;
+                            }
+                        } else {
+                            if (cXfer != 0 && gd.fGeneratingTurn && rgxf[1].fl.iPlayer != rgxf[0].fl.iPlayer && ((RTXFER *)lpb)->grobj2 != grobjThing) {
+                                lpxfMax = lpxf + cXferFull;
+                                if (cXfer > 0) {
+                                    for (lpxfCur = lpxf; lpxfCur < lpxfMax && cXfer > 0; lpxfCur++) {
+                                        if (lpxfCur->grobj2 == ((RTXFER *)lpb)->grobj2 && lpxfCur->id2 == ((RTXFER *)lpb)->id2 && lpxfCur->grobj1 == 2 &&
+                                            (lpxfCur->id1 & 0xfe00) == (((RTXFER *)lpb)->id1 & 0xfe00)) {
+                                            l = cXfer < lpxfCur->rgcQuan[i] ? cXfer : lpxfCur->rgcQuan[i];
+                                            cXfer -= l;
+                                            lpxfCur->rgcQuan[i] -= l;
+                                        }
+                                    }
+                                    lpxfCur = NULL;
+                                    if (cXfer > 0)
+                                        goto StealCargo;
+                                    goto DoNext;
+                                }
+                                if (iPass == 1)
+                                    goto StealCargo;
+                                if (!lpxfCur) {
+                                    for (lpxfCur = lpxf; lpxfCur < lpxfMax && fmemcmp(lpxfCur, lpb, 5) != 0; lpxfCur++) {
+                                    }
+                                    if (lpxfCur == lpxfMax) {
+                                        cXferFull++;
+                                        fmemset(lpxfCur, 0, sizeof(XFERFULL));
+                                        lpxfCur->id1 = ((RTXFER *)lpb)->id1;
+                                        lpxfCur->id2 = ((RTXFER *)lpb)->id2;
+                                    }
+                                }
+                                lpxfCur->rgcQuan[i] -= cXfer;
+                                goto DoNext;
+                            }
+                        StealCargo:
+                            l = ChgCargo(((RTXFER *)lpb)->grobj2, ((RTXFER *)lpb)->id2, i, -cXfer, &rgxf[1].fl);
+                            if (l != -cXfer) {
+                                rgcXfer[i] = -l;
+                                if (((RTXFER *)lpb)->grobj2 == grobjThing) {
+                                    idm = idmDidntGetAttemptedTransferMineralPacketAnother;
+                                    if (l == 0) {
+                                        idm++;
+                                    }
+                                    FSendPlrMsg(rgxf[0].fl.iPlayer, idm, rgxf[0].fl.id | 0x8000, rgxf[0].fl.id, i, -LOWORD(l), i, 0, 0, 0);
+                                } else {
+                                    id = ((RTXFER *)lpb)->grobj1 == grobjFleet ? -32768 : 0;
+                                    id |= rgxf[0].fl.id;
+                                    FSendPlrMsg(rgxf[0].fl.iPlayer, idmUnableTransferKtKtRequest, id, id, -LOWORD(l) - LOWORD(cXfer), i, -LOWORD(cXfer), 0, 0,
+                                                0);
+                                }
+                            }
+                        }
+                    }
+                }
+            DoNext:;
+            }
+        }
+        if (((RTXFER *)lpb)->grobj1 == grobjFleet) {
+            FLookupFleet(idWriteBack, &rgxf[0].fl);
+        } else {
+            FLookupPlanet(idWriteBack, &rgxf[0].pl);
+        }
+        switch (((RTXFER *)lpb)->grobj2) {
+        case grobjFleet:
+            FLookupFleet(idWriteBack, &rgxf[1].fl);
+            break;
+        case grobjPlanet:
+        case grobjOther:
+            FLookupPlanet(idWriteBack, &rgxf[1].pl);
+            break;
+        case grobjThing:
+            FLookupThing(idWriteBack, &rgxf[1].th);
+        }
+        break;
+    case rtLogFleetSplit:
+    case rtLogFleetMerge:
+        if (!FLookupObject(grobjFleet, RawLoad16(lpb), &rgxf[0].fl)) {
+            return FALSE;
+        }
+        if (rt == rtLogFleetSplit) {
+            if (LpflNewSplit(&rgxf[0].fl) != 0)
+                break;
+            return FALSE;
+        }
+        vrgiflMerge = rgifl;
+        vcflMerge = 0;
+        if (cb == 2) {
+            for (ifl = 0; ifl < cFleet; ifl++) {
+                lpfl = rglpfl[ifl];
+                if (!rglpfl[ifl])
+                    break;
+                if (lpfl->iPlayer == idPlayer && !lpfl->fDead && lpfl->pt.x == rgxf[0].fl.pt.x && lpfl->pt.y == rgxf[0].fl.pt.y) {
+                    rgifl[vcflMerge++] = lpfl->id;
+                    lpfl->fCompChg = TRUE;
+                }
+            }
+        } else {
+            for (i = 0; i < (uint32_t)cb / 2; i++) {
+                for (ifl = 0; ifl < cFleet; ifl++) {
+                    lpfl = rglpfl[ifl];
+                    if (!rglpfl[ifl])
+                        break;
+                    if (lpfl->id == RawLoad16(lpb)) {
+                        rgifl[vcflMerge++] = lpfl->id;
+                        lpfl->fCompChg = TRUE;
+                        break;
+                    }
+                }
+                lpb += 2;
+            }
+        }
+        if (FFleetMergeAll(&rgxf[0].fl))
+            break;
+        return FALSE;
+    case rtLogFleetCargoXfer:
+        if (!FLookupObject(grobjFleet, ((RTXFERF *)lpb)->id1, &rgxf[0].fl)) {
+            return FALSE;
+        }
+        if (!FLookupObject(grobjFleet, ((RTXFERF *)lpb)->id2, &rgxf[1].fl)) {
+            return FALSE;
+        }
+        if (rgxf[1].fl.iPlayer != rgxf[0].fl.iPlayer) {
+            return FALSE;
+        }
+        for (iPass = 0; iPass < 2; iPass++) {
+            grbit = ((RTXFERF *)lpb)->grbitItems;
             i = 0;
             iLook = 0;
-            while (i < 5) {
-                if ((grbit & 1) != 0) {
-                    if (rt == rtLogCargoXfer8) {
-                        rgcXfer[i] = (int16_t)((RTXFER *)lpb)->rgcQuan[iLook];
-                    } else if (rt == rtLogCargoXfer16) {
-                        rgcXfer[i] = ((RTXFERX *)lpb)->rgcQuan[iLook];
-                    } else {
-                        rgcXfer[i] = ((RTXFERL *)lpb)->rgcQuan[iLook];
+            while (i < 16) {
+                if (grbit & 1) {
+                    cXfer = ((RTXFERF *)lpb)->rgcQuan[iLook];
+                    if ((iPass == 0 && cXfer < 0) || (iPass == 1 && cXfer >= 0)) {
+                        if (rgxf[0].fl.rgcsh[i] + cXfer < 0) {
+                            cXfer = (int16_t)-rgxf[0].fl.rgcsh[i];
+                        } else if ((int16_t)(32766 - rgxf[0].fl.rgcsh[i]) <= cXfer) {
+                            cXfer = (int16_t)(32766 - rgxf[0].fl.rgcsh[i] - 1);
+                        }
+                        rgxf[0].fl.rgcsh[i] += LOWORD(cXfer);
+                    }
+                    if ((iPass == 0 && cXfer >= 0) || (iPass == 1 && cXfer < 0)) {
+                        if (rgxf[1].fl.rgcsh[i] - cXfer < 0) {
+                            cXfer = rgxf[1].fl.rgcsh[i];
+                        } else if ((int16_t)(32766 - rgxf[1].fl.rgcsh[i]) <= -cXfer) {
+                            cXfer = (int16_t)-(32766 - rgxf[1].fl.rgcsh[i] - 1);
+                        }
+                        rgxf[1].fl.rgcsh[i] -= LOWORD(cXfer);
                     }
                     iLook++;
-                } else {
-                    rgcXfer[i] = 0;
                 }
                 i++;
                 grbit >>= 1;
             }
-            for (iPass = 0; iPass < 2; iPass++) {
-                i = 0;
-                while (i < 5) {
-                    if (rgcXfer[i] != 0) {
-                        cXfer = rgcXfer[i];
-                        if ((iPass == 0 && cXfer < 0) || (iPass == 1 && cXfer >= 0)) {
-                            l = ChgCargo(((RTXFER *)lpb)->grobj1, ((RTXFER *)lpb)->id1, i, cXfer, &rgxf[0].fl);
-                            if (l != cXfer) {
-                                id = ((RTXFER *)lpb)->grobj1 == grobjFleet ? -32768 : 0;
-                                id |= rgxf[0].fl.id;
-                                FSendPlrMsg(rgxf[0].fl.iPlayer, idmUnableTransferKtKtRequest, id, id, LOWORD(cXfer) - LOWORD(l), i, LOWORD(cXfer), 0, 0, 0);
-                                rgcXfer[i] = l;
-                            }
-                        }
-                        if (((iPass == 0 && cXfer >= 0) || (iPass == 1 && cXfer < 0)) && ((RTXFER *)lpb)->grobj2 != grobjOther) {
-                            if (i == 3 && cXfer != 0 && gd.fGeneratingTurn != 0 && ((RTXFER *)lpb)->grobj2 == grobjPlanet &&
-                                ((RTXFER *)lpb)->grobj1 == grobjFleet && rgxf[0].fl.iPlayer != rgxf[1].fl.iPlayer) {
-                                lpcdT = lpcd;
-                                iColDrop = 0;
-                                if (cXfer > 0) {
-                                    for (; iColDrop < cColDrop && cXfer > 0; iColDrop++) {
-                                        if (lpcdT->idPlanetDst == rgxf[1].pl.id && lpcdT->idPlr == rgxf[0].fl.iPlayer) {
-                                            l = cXfer < lpcdT->cColonist ? cXfer : lpcdT->cColonist;
-                                            cXfer -= l;
-                                            lpcdT->cColonist -= l;
-                                        }
-                                        lpcdT++;
-                                    }
-                                } else {
-                                    for (; iColDrop < cColDrop && (lpcdT->idFleetSrc != rgxf[0].fl.id || lpcdT->idPlanetDst != rgxf[1].pl.id); iColDrop++) {
-                                        lpcdT++;
-                                    }
-                                    if (iColDrop == cColDrop) {
-                                        lpcdT->idFleetSrc = rgxf[0].fl.id;
-                                        lpcdT->idPlr = rgxf[0].fl.iPlayer;
-                                        lpcdT->idPlanetDst = rgxf[1].fl.id;
-                                        lpcdT->cColonist = 0;
-                                        lpcdT->fCanColonize = rgxf[1].fl.iPlayer != -1;
-                                        cColDrop++;
-                                    }
-                                    lpcdT->cColonist -= cXfer;
-                                }
-                            } else {
-                                if (cXfer != 0 && gd.fGeneratingTurn != 0 && rgxf[1].fl.iPlayer != rgxf[0].fl.iPlayer &&
-                                    ((RTXFER *)lpb)->grobj2 != grobjThing) {
-                                    lpxfMax = lpxf + cXferFull;
-                                    if (cXfer > 0) {
-                                        for (lpxfCur = lpxf; lpxfCur < lpxfMax && cXfer > 0; lpxfCur++) {
-                                            if (lpxfCur->grobj2 == ((RTXFER *)lpb)->grobj2 && lpxfCur->id2 == ((RTXFER *)lpb)->id2 && lpxfCur->grobj1 == 2 &&
-                                                (lpxfCur->id1 & 0xfe00) == (((RTXFER *)lpb)->id1 & 0xfe00)) {
-                                                l = cXfer < lpxfCur->rgcQuan[i] ? cXfer : lpxfCur->rgcQuan[i];
-                                                cXfer -= l;
-                                                lpxfCur->rgcQuan[i] -= l;
-                                            }
-                                        }
-                                        lpxfCur = NULL;
-                                        if (cXfer <= 0)
-                                            goto L_af00;
-                                    } else if (iPass != 1) {
-                                        if (lpxfCur == 0) {
-                                            for (lpxfCur = lpxf; lpxfCur < lpxfMax && fmemcmp(lpxfCur, lpb, 5) != 0; lpxfCur++) {
-                                            }
-                                            if (lpxfCur == lpxfMax) {
-                                                cXferFull++;
-                                                fmemset(lpxfCur, 0, sizeof(XFERFULL));
-                                                lpxfCur->id1 = ((RTXFER *)lpb)->id1;
-                                                lpxfCur->id2 = ((RTXFER *)lpb)->id2;
-                                            }
-                                        }
-                                        lpxfCur->rgcQuan[i] -= cXfer;
-                                        goto L_af00;
-                                    }
-                                }
-                                l = ChgCargo(((RTXFER *)lpb)->grobj2, ((RTXFER *)lpb)->id2, i, -cXfer, &rgxf[1].fl);
-                                if (l != -cXfer) {
-                                    rgcXfer[i] = -l;
-                                    if (((RTXFER *)lpb)->grobj2 == grobjThing) {
-                                        idm = idmDidntGetAttemptedTransferMineralPacketAnother;
-                                        if (l == 0) {
-                                            idm++;
-                                        }
-                                        FSendPlrMsg(rgxf[0].fl.iPlayer, idm, rgxf[0].fl.id | 0x8000, rgxf[0].fl.id, i, -LOWORD(l), i, 0, 0, 0);
-                                    } else {
-                                        id = ((RTXFER *)lpb)->grobj1 == grobjFleet ? -32768 : 0;
-                                        id |= rgxf[0].fl.id;
-                                        FSendPlrMsg(rgxf[0].fl.iPlayer, idmUnableTransferKtKtRequest, id, id, -LOWORD(l) - LOWORD(cXfer), i, -LOWORD(cXfer), 0,
-                                                    0, 0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                L_af00:
-                    i++;
-                    grbit >>= 1;
-                }
-            }
-            if (((RTXFER *)lpb)->grobj1 == grobjFleet) {
-                FLookupFleet(-1, &rgxf[0].fl);
-            } else {
-                FLookupPlanet(-1, &rgxf[0].pl);
-            }
-            switch (((RTXFER *)lpb)->grobj2) {
-            case grobjFleet:
-                FLookupFleet(-1, &rgxf[1].fl);
-                break;
-            case grobjPlanet:
-            case grobjOther:
-                FLookupPlanet(-1, &rgxf[1].pl);
-                break;
-            case grobjThing:
-                FLookupThing(-1, &rgxf[1].th);
-            }
-            return TRUE;
-        case rtLogFleetSplit:
-        case rtLogFleetMerge:
-            if (FLookupObject(grobjFleet, RawLoad16(lpb), &rgxf[0].fl) == 0) {
-                return FALSE;
-            }
-            if (rt == rtLogFleetSplit) {
-                if (LpflNewSplit(&rgxf[0].fl) != 0) {
-                    return TRUE;
-                }
-                return FALSE;
-            }
-            vrgiflMerge = rgifl;
-            vcflMerge = 0;
-            if (cb == 2) {
-                for (ifl = 0; ifl < cFleet; ifl++) {
-                    lpfl = rglpfl[ifl];
-                    if (rglpfl[ifl] == 0)
-                        break;
-                    if (lpfl->iPlayer == idPlayer && lpfl->fDead == 0 && lpfl->pt.x == rgxf[0].fl.pt.x && lpfl->pt.y == rgxf[0].fl.pt.y) {
-                        rgifl[vcflMerge++] = lpfl->id;
-                        lpfl->fCompChg = TRUE;
-                    }
-                }
-            } else {
-                for (i = 0; i < (uint32_t)cb / 2; i++) {
-                    for (ifl = 0; ifl < cFleet; ifl++) {
-                        lpfl = rglpfl[ifl];
-                        if (rglpfl[ifl] == 0)
-                            break;
-                        if (lpfl->id == RawLoad16(lpb)) {
-                            rgifl[vcflMerge++] = lpfl->id;
-                            lpfl->fCompChg = TRUE;
-                            break;
-                        }
-                    }
-                    lpb += 2;
-                }
-            }
-            if (FFleetMergeAll(&rgxf[0].fl) != 0) {
-                return TRUE;
-            }
-            return FALSE;
-        case rtLogFleetCargoXfer:
-            if (FLookupObject(grobjFleet, ((RTXFERF *)lpb)->id1, &rgxf[0].fl) == 0) {
-                return FALSE;
-            }
-            if (FLookupObject(grobjFleet, ((RTXFERF *)lpb)->id2, &rgxf[1].fl) == 0) {
-                return FALSE;
-            }
-            if (rgxf[1].fl.iPlayer != rgxf[0].fl.iPlayer) {
-                return FALSE;
-            }
-            for (iPass = 0; iPass < 2; iPass++) {
-                grbit = ((RTXFERF *)lpb)->grbitItems;
-                i = 0;
-                iLook = 0;
-                while (i < 16) {
-                    if ((grbit & 1) != 0) {
-                        cXfer = ((RTXFERF *)lpb)->rgcQuan[iLook];
-                        if ((iPass == 0 && cXfer < 0) || (iPass == 1 && cXfer >= 0)) {
-                            if (rgxf[0].fl.rgcsh[i] + cXfer < 0) {
-                                cXfer = (int16_t)-rgxf[0].fl.rgcsh[i];
-                            } else if ((int16_t)(32766 - rgxf[0].fl.rgcsh[i]) <= cXfer) {
-                                cXfer = (int16_t)(32766 - rgxf[0].fl.rgcsh[i] - 1);
-                            }
-                            rgxf[0].fl.rgcsh[i] += LOWORD(cXfer);
-                        }
-                        if ((iPass == 0 && cXfer >= 0) || (iPass == 1 && cXfer < 0)) {
-                            if (rgxf[1].fl.rgcsh[i] - cXfer < 0) {
-                                cXfer = rgxf[1].fl.rgcsh[i];
-                            } else if ((int16_t)(32766 - rgxf[1].fl.rgcsh[i]) <= -cXfer) {
-                                cXfer = (int16_t)-(32766 - rgxf[1].fl.rgcsh[i] - 1);
-                            }
-                            rgxf[1].fl.rgcsh[i] -= LOWORD(cXfer);
-                        }
-                        iLook++;
-                    }
-                    i++;
-                    grbit >>= 1;
-                }
-            }
-            FleetTransferCargoBalance(&rgxf[0].fl, &rgxf[1].fl);
-            for (iPass = 0; iPass < 2; iPass++) {
-                FLookupFleet(-1, &rgxf[iPass].fl);
-                lpfl = LpflFromId(rgxf[iPass].fl.id);
-                if (lpfl != 0) {
-                    lpfl->fCompChg = TRUE;
-                }
-                for (i = 0; i < 16 && rgxf[iPass].fl.rgcsh[i] == 0; i++) {
-                }
-                if (i == 16) {
-                    FDeleteFleet(rgxf[iPass].fl.id, grobjNone, 0);
-                }
-            }
-            return TRUE;
-        case rtLogFleetOrderDelete:
-            lpfl = LpflFromId(((RTSHIPINT *)lpb)->id);
-            if (lpfl != 0 && lpfl->cord > 0) {
-                iLook = ((RTSHIPINT *)lpb)->i & 0x7fff;
-                if ((((RTSHIPINT *)lpb)->i & 0x7fff) < lpfl->cord) {
-                    fExtra = (((RTSHIPINT *)lpb)->i & 0x8000) != 0;
-                    if (fExtra != 0 && iLook + 1 >= lpfl->cord) {
-                        return FALSE;
-                    }
-                    fmemmove(&lpfl->lpplord->rgord[iLook], &lpfl->lpplord->rgord[iLook + fExtra + 1], (lpfl->cord - iLook - fExtra - 1) * sizeof(ORDER));
-                    lpfl->cord -= fExtra + 1;
-                    lpfl->lpplord->iordMac -= fExtra + 1;
-                    return TRUE;
-                }
-            }
-            return FALSE;
-        case rtLogFleetOrderInsert:
-            lpfl = LpflFromId(((RTWAYPT *)lpb)->id);
-            if (lpfl == 0 || ((RTWAYPT *)lpb)->iWaypt < 0 || ((RTWAYPT *)lpb)->iWaypt > lpfl->cord) {
-                return FALSE;
-            }
-            if (lpfl->cord == lpfl->lpplord->iordMax) {
-                lpfl->lpplord = (PLORD *)LpplReAlloc((PL *)lpfl->lpplord, lpfl->cord + 3);
-            }
-            fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt + 1], &lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt],
-                     (lpfl->cord - ((RTWAYPT *)lpb)->iWaypt) * sizeof(ORDER));
-            if ((uint16_t)cb < 22) {
-                fmemset(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], 0, sizeof(ORDER));
-            }
-            fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], &((RTWAYPT *)lpb)->order, cb - 4);
-            lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt].fNoAutoTrack = FALSE;
-            lpfl->cord++;
-            lpfl->lpplord->iordMac++;
-            return TRUE;
-        case rtLogFleetOrderUpdate:
-            lpfl = LpflFromId(((RTWAYPT *)lpb)->id);
-            if (lpfl != 0 && lpfl->cord >= 0) {
-                iLook = ((RTWAYPT *)lpb)->iWaypt;
-                if (((RTWAYPT *)lpb)->iWaypt < lpfl->cord) {
-                    if ((uint16_t)cb < 22) {
-                        fmemset(&lpfl->lpplord->rgord[iLook], 0, sizeof(ORDER));
-                    }
-                    fmemmove(&lpfl->lpplord->rgord[iLook], &((RTWAYPT *)lpb)->order, cb - 4);
-                    lpfl->lpplord->rgord[iLook].fNoAutoTrack = FALSE;
-                    return TRUE;
-                }
-            }
-            return FALSE;
-        case rtBtlPlan:
-            i = ((BTLPLAN *)lpb)->iplan;
-            if (((BTLPLAN *)lpb)->iplr != idPlayer || i < 0 || i > rgcbtlplan[idPlayer]) {
-                if (((BTLPLAN *)lpb)->fDelete != 0) {
-                    return TRUE;
-                }
-                break;
-            }
-            if (((BTLPLAN *)lpb)->fDelete != 0) {
-                FDeleteBattlePlan(i, FALSE);
-                return TRUE;
-            }
-            if (((BTLPLAN *)lpb)->mdTactic > 6 || ((BTLPLAN *)lpb)->mdTarget1 > 8 || ((BTLPLAN *)lpb)->mdTarget2 > 8)
-                break;
-            if (i == rgcbtlplan[idPlayer]) {
-                if (i >= 16)
-                    break;
-                rgcbtlplan[idPlayer]++;
-            }
-            UnpackBattlePlan(lpb, rglpbtlplan[idPlayer] + i, i);
-            return TRUE;
-        case rtLogFleetPlan:
-            lpfl = LpflFromId(((RTSHIPINT *)lpb)->id);
-            if (lpfl == 0)
-                break;
-            lpfl->iplan = ((RTSHIPINT *)lpb)->i;
-            return TRUE;
-        case rtLogFleetFlagBit9:
-        case rtLogFleetOrderAttrNib:
-            lpfl = LpflFromId(((RTSHIPINT *)lpb)->id);
-            if (lpfl == 0)
-                break;
-            if (rt == rtLogFleetFlagBit9) {
-                lpfl->fRepOrders = ((RTSHIPINT *)lpb)->i;
-                return TRUE;
-            }
-            if (lpfl->cord <= ((RTSHIPINT2 *)lpb)->i || ((RTSHIPINT2 *)lpb)->i2 >= 10)
-                break;
-            lpfl->lpplord->rgord[((RTSHIPINT2 *)lpb)->i].grTask = ((RTSHIPINT2 *)lpb)->i2;
-            return TRUE;
-        case rtLogPlanetRouting:
-            lppl = LpplFromId(((RTCHGPLANETLONG *)lpb)->id);
-            if (lppl == 0 || lppl->iPlayer != idPlayer)
-                break;
-            lppl->fNoResearch = ((RTCHGPLANETLONG *)lpb)->fNoResearch;
-            lppl->idFling = ((RTCHGPLANETLONG *)lpb)->idFling;
-            lppl->iWarpFling = ((RTCHGPLANETLONG *)lpb)->iWarpFling;
-            lppl->idRoute = ((RTCHGPLANETLONG *)lpb)->idRoute;
-            return TRUE;
-        case rtChgPassword:
-            if (gd.fGeneratingTurn == 0) {
-                return TRUE;
-            }
-            rgplr[idPlayer].lSalt = RawLoad32(lpb);
-            return TRUE;
-        case rtLogResearch:
-            ch = *lpb;
-            if (ch < 0 || ch > 100)
-                break;
-            rgplr[idPlayer].pctResearch = ch;
-            ch = lpb[1];
-            if ((ch & 0xf) >= 6 || (ch >> 4 & 0xf) > 7)
-                break;
-            rgplr[idPlayer].iTechCur = ch;
-        case rtEOF:
-        case rtPlr:
-        case rtGame:
-        case rtBOF:
-        case 9:
-        case rtMsg:
-        case rtPlanet:
-        case rtPlanetB:
-        case 15:
-        case rtFleetA:
-        case rtFleetB:
-        case 18:
-        case rtOrderA:
-        case rtOrderB:
-        case rtString:
-        case rtSel:
-        case rtShDef:
-        case rtProdQ:
-        case rtBtlData:
-        case rtHistHdr:
-        case rtMsgFilt:
-        case rtContinue:
-        case rtPlrMsg:
-        case rtAiData:
-        case rtScore:
-            return TRUE;
         }
-        return FALSE;
+        FleetTransferCargoBalance(&rgxf[0].fl, &rgxf[1].fl);
+        for (iPass = 0; iPass < 2; iPass++) {
+            FLookupFleet(idWriteBack, &rgxf[iPass].fl);
+            lpfl = LpflFromId(rgxf[iPass].fl.id);
+            if (lpfl) {
+                lpfl->fCompChg = TRUE;
+            }
+            for (i = 0; i < 16 && rgxf[iPass].fl.rgcsh[i] == 0; i++) {
+            }
+            if (i == 16) {
+                FDeleteFleet(rgxf[iPass].fl.id, grobjNone, 0);
+            }
+        }
+        break;
+    case rtLogFleetOrderDelete:
+        if ((lpfl = LpflFromId(((RTSHIPINT *)lpb)->id)) == 0 || lpfl->cord <= 0 || (iLook = ((RTSHIPINT *)lpb)->i & 0x7fff) >= lpfl->cord) {
+            return FALSE;
+        }
+        fExtra = (((RTSHIPINT *)lpb)->i & 0x8000) != 0;
+        if (fExtra && iLook + 1 >= lpfl->cord) {
+            return FALSE;
+        }
+        fmemmove(&lpfl->lpplord->rgord[iLook], &lpfl->lpplord->rgord[iLook + fExtra + 1], (lpfl->cord - iLook - fExtra - 1) * sizeof(ORDER));
+        lpfl->cord -= fExtra + 1;
+        lpfl->lpplord->iordMac -= fExtra + 1;
+        break;
+    case rtLogFleetOrderInsert:
+        if ((lpfl = LpflFromId(((RTWAYPT *)lpb)->id)) == 0 || ((RTWAYPT *)lpb)->iWaypt < 0 || ((RTWAYPT *)lpb)->iWaypt > lpfl->cord) {
+            return FALSE;
+        }
+        if (lpfl->cord == lpfl->lpplord->iordMax) {
+            lpfl->lpplord = (PLORD *)LpplReAlloc((PL *)lpfl->lpplord, lpfl->cord + 3);
+        }
+        fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt + 1], &lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt],
+                 (lpfl->cord - ((RTWAYPT *)lpb)->iWaypt) * sizeof(ORDER));
+        if ((uint16_t)cb < 22) {
+            fmemset(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], 0, sizeof(ORDER));
+        }
+        fmemmove(&lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt], &((RTWAYPT *)lpb)->order, cb - 4);
+        lpfl->lpplord->rgord[((RTWAYPT *)lpb)->iWaypt].fNoAutoTrack = FALSE;
+        lpfl->cord++;
+        lpfl->lpplord->iordMac++;
+        break;
+    case rtLogFleetOrderUpdate:
+        if ((lpfl = LpflFromId(((RTWAYPT *)lpb)->id)) == 0 || lpfl->cord < 0 || (iLook = ((RTWAYPT *)lpb)->iWaypt) >= lpfl->cord) {
+            return FALSE;
+        }
+        if ((uint16_t)cb < 22) {
+            fmemset(&lpfl->lpplord->rgord[iLook], 0, sizeof(ORDER));
+        }
+        fmemmove(&lpfl->lpplord->rgord[iLook], &((RTWAYPT *)lpb)->order, cb - 4);
+        lpfl->lpplord->rgord[iLook].fNoAutoTrack = FALSE;
+        break;
+    case rtBtlPlan:
+        i = ((BTLPLAN *)lpb)->iplan;
+        if (((BTLPLAN *)lpb)->iplr != idPlayer || i < 0 || i > rgcbtlplan[idPlayer]) {
+            if (((BTLPLAN *)lpb)->fDelete != 0)
+                break;
+            goto BombOut;
+        }
+        if (((BTLPLAN *)lpb)->fDelete != 0) {
+            FDeleteBattlePlan(i, FALSE);
+            break;
+        }
+        if (((BTLPLAN *)lpb)->mdTactic > 6 || ((BTLPLAN *)lpb)->mdTarget1 > 8 || ((BTLPLAN *)lpb)->mdTarget2 > 8)
+            goto BombOut;
+        if (i == rgcbtlplan[idPlayer]) {
+            if (i >= 16)
+                goto BombOut;
+            rgcbtlplan[idPlayer]++;
+        }
+        UnpackBattlePlan(lpb, rglpbtlplan[idPlayer] + i, i);
+        break;
+    case rtLogFleetPlan:
+        if ((lpfl = LpflFromId(((RTSHIPINT *)lpb)->id)) == 0)
+            goto BombOut;
+        lpfl->iplan = ((RTSHIPINT *)lpb)->i;
+        break;
+    case rtLogFleetFlagBit9:
+    case rtLogFleetOrderAttrNib:
+        if ((lpfl = LpflFromId(((RTSHIPINT *)lpb)->id)) == 0) {
+        BombOut:
+            return FALSE;
+        }
+        if (rt == rtLogFleetFlagBit9) {
+            lpfl->fRepOrders = ((RTSHIPINT *)lpb)->i;
+            break;
+        }
+        if (lpfl->cord <= ((RTSHIPINT2 *)lpb)->i || ((RTSHIPINT2 *)lpb)->i2 >= 10)
+            goto BombOut;
+        lpfl->lpplord->rgord[((RTSHIPINT2 *)lpb)->i].grTask = ((RTSHIPINT2 *)lpb)->i2;
+        break;
+    case rtLogPlanetRouting:
+        lppl = LpplFromId(((RTCHGPLANETLONG *)lpb)->id);
+        if (!lppl || lppl->iPlayer != idPlayer)
+            goto BombOut;
+        lppl->fNoResearch = ((RTCHGPLANETLONG *)lpb)->fNoResearch;
+        lppl->idFling = ((RTCHGPLANETLONG *)lpb)->idFling;
+        lppl->iWarpFling = ((RTCHGPLANETLONG *)lpb)->iWarpFling;
+        lppl->idRoute = ((RTCHGPLANETLONG *)lpb)->idRoute;
+        break;
+    case rtChgPassword:
+        if (gd.fGeneratingTurn) {
+            rgplr[idPlayer].lSalt = RawLoad32(lpb);
+        }
+        break;
+    case rtLogResearch:
+        ch = *lpb;
+        if (ch < 0 || ch > 100)
+            goto BombOut;
+        rgplr[idPlayer].pctResearch = ch;
+        ch = lpb[1];
+        if ((ch & 0xf) >= 6 || (ch >> 4 & 0xf) > 7)
+            goto BombOut;
+        rgplr[idPlayer].iTechCur = ch;
+        break;
     }
     return TRUE;
 }
@@ -1118,7 +1068,7 @@ int16_t FLoadLogFile(char *pszLog) {
     penvMem = &env;
     if (setjmp(env) != 0) {
         penvMem = penvMemSav;
-        if (vlpMemStream != 0) {
+        if (vlpMemStream) {
             GlobalUnlock(hres);
             FreeResource(hres);
             return FALSE;
@@ -1129,97 +1079,108 @@ int16_t FLoadLogFile(char *pszLog) {
         StreamClose();
         return FALSE;
     }
-    if (game.fTutorial != 0 && idPlayer == 0 && gd.fGeneratingTurn != 0) {
+    if (game.fTutorial && idPlayer == 0 && gd.fGeneratingTurn) {
         cSkip = game.turn;
         hrsrc = FindResource(hInst, MAKEINTRESOURCE(10001), MAKEINTRESOURCE(10000));
         hres = LoadResource(hInst, hrsrc);
-        if (hres != 0) {
-            vlpMemStream = LockResource(hres);
-            if (vlpMemStream != 0) {
-                if (game.turn >= *vlpMemStream) {
-                    vlpMemStream = NULL;
-                    GlobalUnlock(hres);
-                    FreeResource(hres);
-                    goto StrOpen;
-                }
-                vlpMemStream++;
-                while (cSkip-- != 0) {
-                    do {
-                        vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-                    } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
-                }
-                goto L_c944;
-            }
+        if (!hres) {
+        BailOut:
+            penvMem = penvMemSav;
+            return FALSE;
+        }
+        vlpMemStream = LockResource(hres);
+        if (!vlpMemStream)
+            goto BailOut;
+        if (game.turn >= *vlpMemStream) {
+            vlpMemStream = NULL;
+            GlobalUnlock(hres);
+            FreeResource(hres);
+            goto StrOpen;
+        }
+        vlpMemStream++;
+        while (cSkip-- != 0) {
+            do {
+                vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
+            } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+        }
+    } else {
+    StrOpen:
+        StreamOpen(pszLog, 16416);
+    }
+
+    ReadRt();
+    if (LOWORD(game.lid) != RawLoad16(&rgbCur[4]) || HIWORD(game.lid) != RawLoad16(&rgbCur[6]) || game.turn > RawLoad16(&rgbCur[10])) {
+    FailSuccess:
+        if (vlpMemStream) {
+            vlpMemStream = NULL;
+            GlobalUnlock(hres);
+            FreeResource(hres);
+        } else {
+            StreamClose();
         }
         penvMem = penvMemSav;
-        return FALSE;
+        return TRUE;
     }
-StrOpen:
-    StreamOpen(pszLog, 16416);
-L_c944:
+    if (RawLoad16(&rgbCur[10]) != game.turn) {
+        FileError(idmForcesDiedValiantlyTakingManyVerminThem);
+        goto FailSuccess;
+    }
+    if ((RawLoad16(&rgbCur[14]) >> 0xd & 7) != game.wGen) {
+        FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
+        goto FailSuccess;
+    }
+    wVersFile = RawLoad16(&rgbCur[8]);
+    gd.fFileCrippled = RawLoad16(&rgbCur[14]) >> 0xc & 1;
+    if (gd.fGeneratingTurn) {
+        rgplr[idPlayer].wFlags = (rgplr[idPlayer].wFlags & 0xfffd) | (RawLoad16(&rgbCur[14]) >> 0xc & 1 & 1) * 2;
+    }
     ReadRt();
-    if (LOWORD(game.lid) == RawLoad16(&rgbCur[4]) && HIWORD(game.lid) == RawLoad16(&rgbCur[6]) && game.turn <= RawLoad16(&rgbCur[10])) {
-        if (RawLoad16(&rgbCur[10]) != game.turn) {
-            FileError(idmForcesDiedValiantlyTakingManyVerminThem);
-        } else if ((RawLoad16(&rgbCur[14]) >> 0xd & 7) != game.wGen) {
-            FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
-        } else {
-            wVersFile = RawLoad16(&rgbCur[8]);
-            gd.fFileCrippled = RawLoad16(&rgbCur[14]) >> 0xc & 1;
-            if (gd.fGeneratingTurn != 0) {
-                rgplr[idPlayer].wFlags = (rgplr[idPlayer].wFlags & 0xfffd) | (RawLoad16(&rgbCur[14]) >> 0xc & 1 & 1) * 2;
-            }
-            ReadRt();
-            cbLog = RawLoad16(rgbCur);
-            if (gd.fGeneratingTurn != 0 && vrgts != 0) {
-                fmemset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
-                if (hdrCur.cb == 17) {
-                    vrgts[idPlayer].lSerialNumber = RawLoad32(&rgbCur[2]);
-                    fmemcpy(vrgts[idPlayer].rgbConfig, &rgbCur[6], 11);
-                }
-            }
-            for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
-                ReadRt();
-                fmemmove(lpLog + iCur, &hdrCur, sizeof(HDR));
-                fmemmove(lpLog + (2 + iCur), rgbCur, hdrCur.cb);
-            }
-            ReadRt();
-            for (lpmp = (MSGPLR *)&vlpmsgplrOut; lpmp->lpmsgplrNext != 0; lpmp = lpmp->lpmsgplrNext) {
-            }
-            while (hdrCur.rt == rtPlrMsg) {
-                lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
-                lpmp = lpmp->lpmsgplrNext;
-                fmemcpy((uint8_t *)&lpmp->iPlrFrom - 4, rgbCur, hdrCur.cb);
-                lpmp->lpmsgplrNext = NULL;
-                vcmsgplrOut++;
-                ReadRt();
-            }
-            if (hdrCur.rt != rtEOF) {
-                fRet = FALSE;
-            } else {
-                imemLogCur = cbLog;
-            }
-            if (vlpMemStream != 0) {
-                GlobalUnlock(hres);
-                FreeResource(hres);
-                vlpMemStream = NULL;
-            } else {
-                StreamClose();
-            }
-            penvMem = penvMemSav;
-            DirtyGame(FALSE);
-            return fRet;
+    cbLog = RawLoad16(rgbCur);
+    if (gd.fGeneratingTurn && vrgts) {
+        fmemset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
+        if (hdrCur.cb == 17) {
+            vrgts[idPlayer].lSerialNumber = RawLoad32(&rgbCur[2]);
+            fmemcpy(vrgts[idPlayer].rgbConfig, &rgbCur[6], 11);
         }
     }
-    if (vlpMemStream != 0) {
-        vlpMemStream = NULL;
+    for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
+        ReadRt();
+        fmemmove(lpLog + iCur, &hdrCur, sizeof(HDR));
+        fmemmove(lpLog + (2 + iCur), rgbCur, hdrCur.cb);
+    }
+    ReadRt();
+    for (lpmp = (MSGPLR *)&vlpmsgplrOut; lpmp->lpmsgplrNext; lpmp = lpmp->lpmsgplrNext) {
+    }
+    while (hdrCur.rt == rtPlrMsg) {
+        /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
+        if (hdrCur.cb < 12 || abs((int16_t)RawLoad16(&rgbCur[10])) + 12 > hdrCur.cb) {
+            ReadRt();
+            continue;
+        }
+        lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
+        lpmp = lpmp->lpmsgplrNext;
+        /* NATIVE: skip the serialized Win16 link pointer. */
+        fmemcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
+        lpmp->lpmsgplrNext = NULL;
+        vcmsgplrOut++;
+        ReadRt();
+    }
+    if (hdrCur.rt != rtEOF) {
+        fRet = FALSE;
+        goto Done;
+    }
+    imemLogCur = cbLog;
+Done:
+    if (vlpMemStream) {
         GlobalUnlock(hres);
         FreeResource(hres);
+        vlpMemStream = NULL;
     } else {
         StreamClose();
     }
     penvMem = penvMemSav;
-    return TRUE;
+    DirtyGame(FALSE);
+    return fRet;
 }
 
 int16_t FCheckLogFile(int16_t iplr, int16_t *pfError) {
@@ -1244,7 +1205,7 @@ int16_t FCheckLogFile(int16_t iplr, int16_t *pfError) {
         return FALSE;
     }
     idsFileError = 0;
-    if (FOpenFile(dtLog, iplr, 32) == 0) {
+    if (!FOpenFile(dtLog, iplr, 32)) {
         if (idsFileError != 4) {
             *pfError = idsFileError;
         }
@@ -1262,9 +1223,10 @@ int16_t FCheckLogFile(int16_t iplr, int16_t *pfError) {
     if (hdrCur.rt != rtEOF) {
         *pfError = 3;
         fRet = FALSE;
-    } else {
-        imemLogCur = cbLog;
+        goto Done;
     }
+    imemLogCur = cbLog;
+Done:
     StreamClose();
     penvMem = penvMemSav;
     return fRet;
@@ -1278,16 +1240,17 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     RTLOGHDR rtlh;
     MSGPLR  *lpmp;
     int16_t  cb;
+    uint8_t  rgb[1024]; /* NATIVE: Win16 player-message record buffer. */
 
     iCur = 0;
-    if (iPlayer == idPlayer && rgplr[iPlayer].fAi == 0 && hdrPrev.rt != rtLogPlayerZpq1) {
+    if (iPlayer == idPlayer && !rgplr[iPlayer].fAi && hdrPrev.rt != rtLogPlayerZpq1) {
         cb = 26 - (12 - vrgZipProd[0].cpq) * 2;
         if (memcmp(&rgplr[iPlayer].zpq1, (uint8_t *)(ZIPPRODQ *)vrgZipProd + 14, cb) != 0) {
             WriteMemRt(rtLogPlayerZpq1, cb, (uint8_t *)(ZIPPRODQ *)vrgZipProd + 14);
         }
     }
     strcpy(szBase, pszFileBase);
-    if (FCreateFile(dtLog, iPlayer, NULL) == 0) {
+    if (!FCreateFile(dtLog, iPlayer, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateLogFile, NULL), MB_ICONHAND);
         return FALSE;
     }
@@ -1309,7 +1272,10 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     iCur = vcmsgplrOut;
     lpmp = vlpmsgplrOut;
     while (iCur-- != 0) {
-        WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, (uint8_t *)&lpmp->iPlrFrom - 4);
+        /* NATIVE: serialize a zero Win16 link, then the fixed-width payload. */
+        memset(rgb, 0, 4);
+        fmemcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
+        WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, rgb);
         lpmp = lpmp->lpmsgplrNext;
     }
     WriteRt(rtEOF, 0, NULL);
@@ -1334,7 +1300,7 @@ int16_t FWriteTutorialMFile(int16_t iTurn) {
     penvMem = &env;
     if (setjmp(env) != 0) {
         penvMem = penvMemSav;
-        if (vlpMemStream != 0) {
+        if (vlpMemStream) {
             GlobalUnlock(hres);
             FreeResource(hres);
             return 0;
@@ -1352,39 +1318,40 @@ int16_t FWriteTutorialMFile(int16_t iTurn) {
         cSkip -= 32;
     }
     hres = LoadResource(hInst, hrsrc);
-    if (hres != 0) {
-        vlpMemStream = LockResource(hres);
-        if (vlpMemStream != 0) {
-            if (cSkip >= *vlpMemStream) {
-                vlpMemStream = NULL;
-                GlobalUnlock(hres);
-                FreeResource(hres);
-                penvMem = penvMemSav;
-                return 2;
-            }
-            vlpMemStream++;
-            while (cSkip-- != 0) {
-                do {
-                    vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-                } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
-            }
-            cch = CchGetString(idsTutorial, szT);
-            strcpy(&szT[cch], iTurn == 37 ? ".hst" : ".m1");
-            StreamOpen(szT, mdCreate);
-            do {
-                RgToStream(vlpMemStream, (RawLoad16(vlpMemStream) & 0x3ff) + 2);
-                vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-            } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
-            StreamClose();
-            vlpMemStream = NULL;
-            GlobalUnlock(hres);
-            FreeResource(hres);
-            penvMem = penvMemSav;
-            return 1;
-        }
+    if (!hres) {
+    BailOut:
+        penvMem = penvMemSav;
+        return 0;
     }
+    vlpMemStream = LockResource(hres);
+    if (!vlpMemStream)
+        goto BailOut;
+    if (cSkip >= *vlpMemStream) {
+        vlpMemStream = NULL;
+        GlobalUnlock(hres);
+        FreeResource(hres);
+        penvMem = penvMemSav;
+        return 2;
+    }
+    vlpMemStream++;
+    while (cSkip-- != 0) {
+        do {
+            vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
+        } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+    }
+    cch = CchGetString(idsTutorial, szT);
+    strcpy(&szT[cch], iTurn == 37 ? ".hst" : ".m1");
+    StreamOpen(szT, mdCreate);
+    do {
+        RgToStream(vlpMemStream, (RawLoad16(vlpMemStream) & 0x3ff) + 2);
+        vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
+    } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+    StreamClose();
+    vlpMemStream = NULL;
+    GlobalUnlock(hres);
+    FreeResource(hres);
     penvMem = penvMemSav;
-    return 0;
+    return 1;
 }
 
 int16_t FWriteHistFile(int16_t iPlayer) {
@@ -1398,7 +1365,7 @@ int16_t FWriteHistFile(int16_t iPlayer) {
     RTHISTHDR rthh;
     uint8_t  *lpb;
 
-    if (FCreateFile(dtHist, iPlayer, NULL) == 0) {
+    if (!FCreateFile(dtHist, iPlayer, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateHistoryFile, NULL), MB_ICONHAND);
         return FALSE;
     }
@@ -1426,20 +1393,20 @@ int16_t FWriteHistFile(int16_t iPlayer) {
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgplr[i].fInclude != 0 && i != iPlayer) {
+        if (rgplr[i].fInclude && i != iPlayer) {
             lpshdef = rglpshdef[i];
             for (j = 0; j < 16; j++) {
-                if (lpshdef[j].fFree == 0) {
+                if (!lpshdef[j].fFree) {
                     WriteRtShDef(lpshdef + j, NULL);
                 }
             }
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgplr[i].fInclude != 0 && i != iPlayer) {
+        if (rgplr[i].fInclude && i != iPlayer) {
             lpshdef = rglpshdefSB[i];
             for (j = 0; j < 10; j++) {
-                if (lpshdef[j].fFree == 0) {
+                if (!lpshdef[j].fFree) {
                     WriteRtShDef(lpshdef + j, NULL);
                 }
             }
@@ -1451,7 +1418,7 @@ int16_t FWriteHistFile(int16_t iPlayer) {
         cTurnBase = game.turn - 100;
     }
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgsxPlr[i] != 0) {
+        if (rgsxPlr[i]) {
             for (j = 0; j < rgcsxPlr[i]; j++) {
                 if (rgsxPlr[i][j].turn >= cTurnBase) {
                     WriteRt(rtScore, 24, rgsxPlr[i] + j);
@@ -1459,7 +1426,7 @@ int16_t FWriteHistFile(int16_t iPlayer) {
             }
         }
     }
-    if (vlpbAiData != 0 && ((AIHIST *)vlpbAiData)->cbAiHist > 2) {
+    if (vlpbAiData && ((AIHIST *)vlpbAiData)->cbAiHist > 2) {
         i = ((AIHIST *)vlpbAiData)->cbAiHist;
         lpb = vlpbAiData;
         for (; i >= 1024; i -= 1023) {

@@ -35,9 +35,10 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         StickyDlgPos(hwnd, &vprptCur->ptDlg, TRUE);
         vprptCur->hwndVScroll = CreateWindow("SCROLLBAR", NULL, SBS_VERT | WS_CHILD, 0, 0, 50, 50, hwnd, NULL, hInst, NULL);
         vprptCur->hwndHScroll = CreateWindow("SCROLLBAR", NULL, WS_CHILD, 0, 0, 50, 50, hwnd, NULL, hInst, NULL);
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
+        /* fallthrough */
     case WM_SIZE:
         GetClientRect(hwnd, &rc);
         cRow = (int16_t)(rc.bottom - 36) / (dyArial8 + 4);
@@ -79,20 +80,20 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         pt.x = LOWORD(lParam);
         pt.y = HIWORD(lParam);
         if (pt.y < 2 || pt.x < 2)
-            goto L_09c8;
+            break;
         if (pt.y < dyArial8 + 6) {
             iRow = -1;
         } else {
             iRow = (int16_t)(pt.y - 2 - (dyArial8 + 4)) / (dyArial8 + 4);
             if (iRow >= vprptCur->cRowsVis)
-                goto L_09c8;
+                break;
             iRow += vprptCur->irowFirst;
         }
         iCol = -1;
         i = 0;
         ibit = 1;
         while (i < vprptCur->cFields) {
-            if ((ibit & vprptCur->grbitVisible) != 0 && (i == 0 || i >= vprptCur->cFieldFirst)) {
+            if ((ibit & vprptCur->grbitVisible) && (i == 0 || i >= vprptCur->cFieldFirst)) {
                 xCur += vprptCur->rgbdx[i] * 2;
                 if (xCur > pt.x) {
                     iCol = i;
@@ -103,16 +104,16 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             ibit *= 2;
         }
         if (iCol == -1)
-            goto L_09c8;
+            break;
         if (iRow == -1) {
             ReportColumnPopup(pt, iCol, msg == WM_RBUTTONDOWN);
         } else {
             ExecuteReportClick(pt, vprptCur->irpt, iCol, iRow);
         }
-        if (gd.fTutorial == 0)
-            goto L_09c8;
-        AdvanceTutor();
-        goto L_09c8;
+        if (gd.fTutorial) {
+            AdvanceTutor();
+        }
+        break;
     case WM_VSCROLL:
         iCur = GetScrollPos(GET_WM_VSCROLL_HWND(wParam, lParam), SB_CTL);
         iNew = iCur;
@@ -198,7 +199,7 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             iNew = GetScrollPos(GET_WM_HSCROLL_HWND(wParam, lParam), SB_CTL);
             if (iNew != iCur) {
                 i = 1;
-                for (ibit = 2; i < vprptCur->cFields && ((ibit & vprptCur->grbitVisible) == 0 || iNew-- > 0); ibit *= 2) {
+                for (ibit = 2; i < vprptCur->cFields && (!(ibit & vprptCur->grbitVisible) || iNew-- > 0); ibit *= 2) {
                     i++;
                 }
                 vprptCur->cFieldFirst = i;
@@ -236,19 +237,18 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         CheckMenuItem(hmenu, idm, MF_UNCHECKED);
         vprptCur = 0;
-        if (gd.fTutorial == 0)
-            goto L_09c8;
-        AdvanceTutor();
-        goto L_09c8;
+        if (gd.fTutorial) {
+            AdvanceTutor();
+        }
+        break;
     case WM_COMMAND:
         if (GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
             DestroyWindow(hwnd);
             return 1;
         }
-    default:
-    L_09c8:
-        return DefWindowProc(hwnd, msg, wParam, lParam);
+        break;
     }
+    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 void SetHScrollBar() {
@@ -272,7 +272,7 @@ void SetHScrollBar() {
     i = vprptCur->cFields - 1;
     ibit = 1 << vprptCur->cFields;
     while (i > 0) {
-        if ((ibit & vprptCur->grbitVisible) != 0) {
+        if (ibit & vprptCur->grbitVisible) {
             if (i < vprptCur->cFieldFirst) {
                 ccolSkipped++;
             }
@@ -320,28 +320,31 @@ void DrawReport(HWND hwnd, HDC hdc, RECT *prc) {
     yRow = 2;
     SelectObject(hdc, rghfontArial8[1]);
     SetBkMode(hdc, TRANSPARENT);
-    if (prc->top <= dyArial8 + 4 + yRow) {
-        i = 0;
-        while (i < vprptCur->cFields) {
-            if ((ibit & vprptCur->grbitVisible) != 0 && (i == 0 || i >= vprptCur->cFieldFirst)) {
-                dx = DxReportColHdr(vprptCur->irpt, i, szTit, hdc);
-                vprptCur->rgbdx[i] = dx / 2;
-                SetRect(&rc, xCol, yRow, xCol + dx - 1, dyArial8 + 4 + yRow);
-                if (gd.fRptSafeDraw != 0) {
-                    FillRect(hdc, &rc, hbrButtonFace);
-                }
-                if (i == 0) {
-                    TextOut(hdc, rc.left + 3, rc.top + 2, szTit, strlen(szTit));
-                } else {
-                    CtrTextOut(hdc, (int16_t)(rc.right - rc.left) / 2 + rc.left, rc.top + 2, szTit, 0);
-                }
-                _Draw3dFrame(hdc, &rc, 0);
-                xCol += dx;
+    if (prc->top > dyArial8 + 4 + yRow)
+        goto NoHdrDraw;
+
+    i = 0;
+    while (i < vprptCur->cFields) {
+        if ((ibit & vprptCur->grbitVisible) && (i == 0 || i >= vprptCur->cFieldFirst)) {
+            dx = DxReportColHdr(vprptCur->irpt, i, szTit, hdc);
+            vprptCur->rgbdx[i] = dx / 2;
+            SetRect(&rc, xCol, yRow, xCol + dx - 1, dyArial8 + 4 + yRow);
+            if (gd.fRptSafeDraw) {
+                FillRect(hdc, &rc, hbrButtonFace);
             }
-            i++;
-            ibit *= 2;
+            if (i == 0) {
+                TextOut(hdc, rc.left + 3, rc.top + 2, szTit, strlen(szTit));
+            } else {
+                CtrTextOut(hdc, (int16_t)(rc.right - rc.left) / 2 + rc.left, rc.top + 2, szTit, 0);
+            }
+            _Draw3dFrame(hdc, &rc, 0);
+            xCol += dx;
         }
+        i++;
+        ibit *= 2;
     }
+
+NoHdrDraw:
     irowLast = vprptCur->irowFirst + vprptCur->cRowsVis;
     if (irowLast > vprptCur->cRows) {
         irowLast = vprptCur->cRows;
@@ -356,14 +359,14 @@ void DrawReport(HWND hwnd, HDC hdc, RECT *prc) {
         j = 0;
         ibit = 1;
         while (j < vprptCur->cFields) {
-            if ((ibit & vprptCur->grbitVisible) != 0 && (j == 0 || j >= vprptCur->cFieldFirst)) {
+            if ((ibit & vprptCur->grbitVisible) && (j == 0 || j >= vprptCur->cFieldFirst)) {
                 dx = vprptCur->rgbdx[j] * 2;
                 if (yRow >= prc->top - (dyArial8 + 4) && yRow <= prc->bottom) {
                     SelectObject(hdc, hbrButtonShadow);
                     PatBlt(hdc, xCol + dx - 1, yRow, 1, dyArial8 + 4, PATCOPY);
                     PatBlt(hdc, xCol, dyArial8 + 4 + yRow, dx, 1, PATCOPY);
                     SetRect(&rc, xCol + 2, yRow + 2, xCol + dx - 3, dyArial8 + 4 + yRow - 1);
-                    if (gd.fRptSafeDraw != 0) {
+                    if (gd.fRptSafeDraw) {
                         FillRect(hdc, &rc, hbrButtonFace);
                     }
                     DrawReportItem(hdc, &rc, vprptCur->irpt, i, j);
@@ -398,7 +401,7 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         fInScoreDialog = TRUE;
         StickyDlgPos(hwnd, &ptStickyScoreXDlg, TRUE);
         hwndScoreXDlg = hwnd;
-        if (gd.fTutorial != 0) {
+        if (gd.fTutorial) {
             AdvanceTutor();
         }
         return 1;
@@ -410,7 +413,7 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         hdc = BeginPaint(hwnd, &ps);
         if (gd.fScoreVictory == 2) {
             DrawHistoryReport(hdc);
-        } else if (gd.fScoreVictory != 0) {
+        } else if (gd.fScoreVictory) {
             DrawVCReport(hdc);
         } else {
             DrawScoreReport(hdc);
@@ -458,7 +461,7 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
             EndDialog(hwnd, i);
             fInScoreDialog = FALSE;
             hwndScoreXDlg = 0;
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 AdvanceTutor();
             }
             return 1;
@@ -469,26 +472,26 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
             gd.fScoreVictory = (uint32_t)(gd.fScoreVictory + 1) % 3;
             InvalidateRect(hwnd, NULL, TRUE);
             InitScoreDlg(hwnd, gd.fScoreVictory);
-            if (gd.fTutorial != 0) {
+            if (gd.fTutorial) {
                 AdvanceTutor();
             }
         }
+        /* fallthrough */
     default:
         return 0;
     }
 }
 
 void InitScoreDlg(HWND hwnd, int16_t fVictory) {
-    HDC      hdc;
-    int16_t  dxDig;
-    int16_t  dy;
-    int16_t  dyFrame;
-    int16_t  dxFrame;
-    RECT     rcWindow;
-    char    *psz;
-    int16_t  dx;
-    RECT     rc;
-    uint16_t t_scratch_m22_2;
+    HDC     hdc;
+    int16_t dxDig;
+    int16_t dy;
+    int16_t dyFrame;
+    int16_t dxFrame;
+    RECT    rcWindow;
+    char   *psz;
+    int16_t dx;
+    RECT    rc;
 
     hdc = GetDC(hwnd);
     SelectObject(hdc, rghfontArial8[1]);
@@ -496,7 +499,7 @@ void InitScoreDlg(HWND hwnd, int16_t fVictory) {
     if (fVictory == 2) {
         dx = 600;
         dy = 400;
-    } else if (fVictory != 0) {
+    } else if (fVictory) {
         psz = PszGetCompressedString(idsExceedsSecondPlaceScore);
         vdxScoreX = (uint32_t)(LOWORD(GetTextExtent(hdc, psz, strlen(psz))) * 3) / 2 + 6 * dxDig;
         dx = (int16_t)((4 <= game.cPlayer ? game.cPlayer : 4) * dyArial8 * 3) / 2 + vdxScoreX + 8;
@@ -519,8 +522,7 @@ void InitScoreDlg(HWND hwnd, int16_t fVictory) {
     dx = (int16_t)(dx - (rc.right - rc.left) * 3) / 4;
     SetWindowPos(GetDlgItem(hwnd, IDC_SCORE_SWITCH), NULL, dx, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     SetWindowPos(GetDlgItem(hwnd, IDCANCEL), NULL, dx * 2 + (rc.right - rc.left), rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-    t_scratch_m22_2 = (rc.right - rc.left) * 2;
-    SetWindowPos(GetDlgItem(hwnd, IDC_HELP), NULL, 3 * dx + t_scratch_m22_2, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(GetDlgItem(hwnd, IDC_HELP), NULL, 3 * dx + (rc.right - rc.left) * 2, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     SetWindowText(hwnd, PszGetCompressedString(fVictory + 1210));
     return;
 }
@@ -546,7 +548,6 @@ void DrawVCReport(HDC hdc) {
     int32_t  l;
     StringId idsT;
     int16_t  vcVal;
-    COLORREF t_merge_1c4c_0001;
 
     yTop = 88;
     SetBkMode(hdc, TRANSPARENT);
@@ -557,9 +558,9 @@ void DrawVCReport(HDC hdc) {
         cch = strlen(psz);
         l = GetTextExtent(hdc, psz, cch);
         dxDig = LOWORD((int32_t)((long double)(uint32_t)LOWORD(l) / 1.4142));
-        if (rgplr[i].fInclude != 0 && rgplr[i].fDead != 0) {
+        if (rgplr[i].fInclude && rgplr[i].fDead) {
             cr = 8355711;
-        } else if (vlprgScoreX[i].fWinner != 0) {
+        } else if (vlprgScoreX[i].fWinner) {
             cr = 16711680;
         } else {
             cr = 0;
@@ -582,25 +583,21 @@ void DrawVCReport(HDC hdc) {
     pt.y = (int16_t)((int16_t)(3 * dyArial8) / 2 - 11) / 2 - dyArial8 / 4;
     for (i = 0; i < game.cPlayer; i++) {
         grbitVC = vlprgScoreX[i].grbitVC;
-        j = 0;
-        while (j < 7) {
-            if ((grbitVC & 1) != 0) {
+        for (j = 0; j < 7; j++, grbitVC >>= 1) {
+            if (grbitVC & 1) {
                 BitBlt(hdc, xLeft + pt.x, yTop + pt.y + (int16_t)(j * dyArial8 * 3) / 2, 14, 12, hdcMem, 0, 0, SRCAND);
-                if ((rgplr[i].fInclude != 0 && rgplr[i].fDead != 0) || GetVCCheck(&game, (j > 1) + j) == 0) {
+                if ((rgplr[i].fInclude && rgplr[i].fDead) || GetVCCheck(&game, (j > 1) + j) == 0) {
                     SetTextColor(hdc, crButtonShadow);
-                } else {
-                    if (vlprgScoreX[i].fWinner == 0)
-                        goto L_1917;
+                LOrIt:
+                    SetBkColor(hdc, 0);
+                    BitBlt(hdc, xLeft + pt.x, yTop + pt.y + (int16_t)(j * dyArial8 * 3) / 2, 14, 12, hdcMem, 0, 0, SRCPAINT);
+                    SetTextColor(hdc, 0);
+                    SetBkColor(hdc, 0xffffff);
+                } else if (vlprgScoreX[i].fWinner) {
                     SetTextColor(hdc, 16711680);
+                    goto LOrIt;
                 }
-                SetBkColor(hdc, 0);
-                BitBlt(hdc, xLeft + pt.x, yTop + pt.y + (int16_t)(j * dyArial8 * 3) / 2, 14, 12, hdcMem, 0, 0, SRCPAINT);
-                SetTextColor(hdc, 0);
-                SetBkColor(hdc, 0xffffff);
             }
-        L_1917:
-            j++;
-            grbitVC >>= 1;
         }
         PatBlt(hdc, xLeft, yTop - dyArial8 / 4, 1, (int16_t)(7 * dyArial8 * 3) / 2 + 1, PATCOPY);
         xLeft += (int16_t)(3 * dyArial8) / 2;
@@ -631,8 +628,7 @@ void DrawVCReport(HDC hdc) {
             }
             cch = CchGetString(ids++, szWork);
             if (iPass == 1) {
-                t_merge_1c4c_0001 = i >= 7 || GetVCCheck(&game, cCur) != 0 ? 0 : 8355711;
-                SetTextColor(hdc, t_merge_1c4c_0001);
+                SetTextColor(hdc, i >= 7 || GetVCCheck(&game, cCur) != 0 ? 0 : 8355711);
                 TextOut(hdc, xLeft, yTop, szWork, cch);
             }
             xLeft += LOWORD(GetTextExtent(hdc, szWork, cch));
@@ -704,9 +700,9 @@ void DrawScoreReport(HDC hdc) {
         cch = strlen(psz);
         l = GetTextExtent(hdc, psz, cch);
         dx45 = LOWORD((int32_t)((long double)(uint32_t)LOWORD(l) / 1.4142));
-        if (rgplr[i].fInclude != 0 && rgplr[i].fDead != 0) {
+        if (rgplr[i].fInclude && rgplr[i].fDead) {
             cr = 8355711;
-        } else if (vlprgScoreX[i].fWinner != 0) {
+        } else if (vlprgScoreX[i].fWinner) {
             cr = 16711680;
         } else {
             cr = 0;
@@ -735,7 +731,7 @@ void DrawScoreReport(HDC hdc) {
         lMax = 0;
         for (iPass = 0; iPass < 2; iPass++) {
             for (j = 0; j < game.cPlayer; j++) {
-                if (vlprgScoreX[j].fValid == 0) {
+                if (!vlprgScoreX[j].fValid) {
                     lVal = -1;
                 } else {
                     switch (i) {
@@ -767,7 +763,7 @@ void DrawScoreReport(HDC hdc) {
                     if (lVal > lMax) {
                         lMax = lVal;
                     }
-                } else if (lVal >= 0 && (rgplr[j].fInclude == 0 || rgplr[j].fDead == 0)) {
+                } else if (lVal >= 0 && (!rgplr[j].fInclude || !rgplr[j].fDead)) {
                     if (i == 8) {
                         SetTextColor(hdc, lVal == 1 ? 16711680 : 0);
                     } else {
@@ -876,7 +872,7 @@ void DrawHistoryReport(HDC hdc) {
     }
     cScaleMax = -1;
     for (i = 0; i < game.cPlayer; i++) {
-        if (rgsxPlr[i] != 0) {
+        if (rgsxPlr[i]) {
             for (j = 0; j < rgcsxPlr[i]; j++) {
                 cCur = LFetchScoreXVal(rgsxPlr[i] + j, gd.iCurGraph);
                 if (cCur > cScaleMax) {
@@ -922,7 +918,7 @@ void DrawHistoryReport(HDC hdc) {
         xCur = rcChart.left + 6;
         yCur = rcChart.top + 6;
         for (i = 0; i < game.cPlayer; i++) {
-            if (rgsxPlr[i] != 0) {
+            if (rgsxPlr[i]) {
                 psz = PszPlayerName(i, TRUE, TRUE, FALSE, 0, NULL);
                 SetTextColor(hdc, i == idPlayer ? 0xffffff : rgcrPlrHistory[i]);
                 TextOut(hdc, xCur, yCur, psz, strlen(psz));
@@ -930,7 +926,7 @@ void DrawHistoryReport(HDC hdc) {
             }
         }
         for (i = 0; i < game.cPlayer; i++) {
-            if (rgsxPlr[i] != 0) {
+            if (rgsxPlr[i]) {
                 cDrawn = 0;
                 hpen = CreatePen(0, 1, i == idPlayer ? 0xffffff : rgcrPlrHistory[i]);
                 hpenSav = SelectObject(hdc, hpen);
@@ -1014,7 +1010,15 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
             break;
         case colPlanetValue:
             ids = idsN100100;
-            goto ChkAltString;
+        ChkAltString:
+            cch = CchGetString(ids, szT);
+            dx2 = LOWORD(GetTextExtent(hdc, szT, cch));
+        DxChk:
+            if (dx2 <= dx)
+                break;
+            dx = dx2;
+            break;
+
         case colPlanetResources:
             ids = idsN10001000;
             goto ChkAltString;
@@ -1033,14 +1037,6 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
             dx2 = dxDigit * 4 + 2;
             goto DxChk;
         }
-        break;
-    ChkAltString:
-        cch = CchGetString(ids, szT);
-        dx2 = LOWORD(GetTextExtent(hdc, szT, cch));
-    DxChk:
-        if (dx2 <= dx)
-            break;
-        dx = dx2;
         break;
     case rptFleets:
         cch = CchGetString(iCol + 1138, psz);
@@ -1125,11 +1121,6 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
     int16_t  iItem;
     PLANET   pl;
     int16_t  fEnough;
-    int16_t  t_call_3d42;
-    uint16_t t_scratch_m8a;
-    uint16_t t_scratch_m8a_2;
-    uint16_t t_scratch_m8a_3;
-    uint16_t t_scratch_m8a_4;
 
     szT[0] = '8';
     dx = LOWORD(GetTextExtent(hdc, szT, 1));
@@ -1143,7 +1134,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             break;
         switch (icol) {
         case colPlanetStarbase:
-            if (lppl->fStarbase == 0) {
+            if (!lppl->fStarbase) {
                 lpsz = szDblDash;
             } else {
                 lpsz = rglpshdefSB[idPlayer][lppl->isb].hul.szClass;
@@ -1172,7 +1163,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             }
             psz = PszGetPlanetName(lppl->id);
             ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
-            if (lppl->fStarbase == 0)
+            if (!lppl->fStarbase)
                 break;
             rc = *prc;
             dx = (int16_t)(rc.bottom - rc.top) / 3 - 1;
@@ -1229,7 +1220,14 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
         case colPlanetMines:
             i = lppl->cMines;
             j = CMaxOperableMines(lppl, idPlayer, FALSE);
-            goto DrawMineFact;
+        DrawMineFact:
+            cch = CommaFormatLong(szT, i);
+        DrawPlusDef:
+            if (i >= j) {
+                SetTextColor(hdc, i == j ? 32512 : 0xff);
+            }
+            RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
+            break;
         case colPlanetValue:
             cch = CchGetString(idsN100, szT);
             dx = LOWORD(GetTextExtent(hdc, szT, cch));
@@ -1287,10 +1285,8 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
         case colPlanetResources:
             cch = CchGetString(idsN1000, szT);
             dx = LOWORD(GetTextExtent(hdc, szT, cch));
-            t_call_3d42 = CResourcesAtPlanet(lppl, idPlayer);
-            j = t_call_3d42;
-            i = t_call_3d42;
-            if (lppl->fNoResearch == 0) {
+            i = j = CResourcesAtPlanet(lppl, idPlayer);
+            if (!lppl->fNoResearch) {
                 i -= MulDiv(i, rgplr[idPlayer].pctResearch, 100);
             }
             CchGetString(idsD4, szT);
@@ -1300,14 +1296,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
         }
         break;
-    DrawMineFact:
-        cch = CommaFormatLong(szT, i);
-    DrawPlusDef:
-        if (i >= j) {
-            SetTextColor(hdc, i == j ? 32512 : 0xff);
-        }
-        RightTextOut(hdc, prc->right, prc->top, szT, cch, 0);
-        break;
+
     case rptFleets:
         lpfl = rglpfl[vlprgidFleet[irow]];
         SelectObject(hdc, rghfontArial8[1]);
@@ -1330,7 +1319,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
             break;
         case colFleetLocation:
-            if (lpfl->idPlanet != -1) {
+            if (lpfl->idPlanet != idPlanetDeepSpace) {
                 psz = PszGetPlanetName(lpfl->idPlanet);
             } else {
                 psz = szT;
@@ -1375,12 +1364,10 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             psz = szT;
             cch = _wsprintf(psz, PCTD, lpfl->rgcsh[i]);
             chT = '+';
-            t_scratch_m8a = LOWORD(GetTextExtent(hdc, &chT, 1));
-            RightTextOut(hdc, 6 * dx + prc->right - t_scratch_m8a, prc->top, psz, cch, 0);
+            RightTextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, psz, cch, 0);
             if (j <= 1)
                 break;
-            t_scratch_m8a_2 = LOWORD(GetTextExtent(hdc, &chT, 1));
-            TextOut(hdc, 6 * dx + prc->right - t_scratch_m8a_2, prc->top, &chT, 1);
+            TextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, &chT, 1);
             break;
         case colFleetCloak:
             i = PctCloakFromLpfl(lpfl);
@@ -1404,7 +1391,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
         break;
     case rptBattles:
         lpbd = BtlDataGet(vlprgidMisc[irow]);
-        if (lpbd == 0)
+        if (!lpbd)
             break;
         SelectObject(hdc, rghfontArial8[1]);
         SetTextColor(hdc, 0);
@@ -1413,7 +1400,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             break;
         switch (icol) {
         case colBattleLocation:
-            if (lpbd->idPlanet != 0xffff) {
+            if (lpbd->idPlanet != idPlanetNone) {
                 psz = PszGetPlanetName(lpbd->idPlanet);
             } else {
                 psz = szT;
@@ -1460,7 +1447,9 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             goto BtlUnitsCom;
         case colBattleTheirs:
             i = 254;
-            goto BtlUnitsCom;
+        BtlUnitsCom:
+            DrawMineralItem(hdc, prc->right - 2, prc->top, -1, CBattleUnits(lpbd, i));
+            break;
         case colBattleOurDead:
         case colBattleTheirDead:
             l = CBattleKills(lpbd, icol == colBattleOurDead);
@@ -1468,20 +1457,17 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
             break;
         case colBattleOursLeft:
             i = 253;
-            goto LUnitsLeft;
+        LUnitsLeft:
+            l = CBattleUnits(lpbd, i);
+            l -= CBattleKills(lpbd, icol == colBattleOursLeft);
+            DrawMineralItem(hdc, prc->right - 2, prc->top, -1, l);
+            break;
         case colBattleTheirsLeft:
             i = 254;
             goto LUnitsLeft;
         }
         break;
-    LUnitsLeft:
-        l = CBattleUnits(lpbd, i);
-        l -= CBattleKills(lpbd, icol == colBattleOursLeft);
-        DrawMineralItem(hdc, prc->right - 2, prc->top, -1, l);
-        break;
-    BtlUnitsCom:
-        DrawMineralItem(hdc, prc->right - 2, prc->top, -1, CBattleUnits(lpbd, i));
-        break;
+
     case rptEnemyFleets:
         lpfl = rglpfl[vlprgidMisc[irow]];
         SelectObject(hdc, rghfontArial8[1]);
@@ -1497,7 +1483,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 ExtTextOut(hdc, prc->left, prc->top, ETO_CLIPPED, prc, psz, strlen(psz), NULL);
                 break;
             case colEnemyFleetLocation:
-                if (lpfl->idPlanet != -1) {
+                if (lpfl->idPlanet != idPlanetDeepSpace) {
                     psz = PszGetPlanetName(lpfl->idPlanet);
                 } else {
                     psz = szT;
@@ -1513,12 +1499,10 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 psz = szT;
                 cch = _wsprintf(psz, PCTD, lpfl->rgcsh[i]);
                 chT = '+';
-                t_scratch_m8a_3 = LOWORD(GetTextExtent(hdc, &chT, 1));
-                RightTextOut(hdc, 6 * dx + prc->right - t_scratch_m8a_3, prc->top, psz, cch, 0);
+                RightTextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, psz, cch, 0);
                 if (j <= 1)
                     break;
-                t_scratch_m8a_4 = LOWORD(GetTextExtent(hdc, &chT, 1));
-                TextOut(hdc, 6 * dx + prc->right - t_scratch_m8a_4, prc->top, &chT, 1);
+                TextOut(hdc, 6 * dx + prc->right - LOWORD(GetTextExtent(hdc, &chT, 1)), prc->top, &chT, 1);
                 break;
             case colEnemyFleetShips:
                 l = 0;
@@ -1541,7 +1525,15 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 break;
             case colEnemyFleetScout:
                 j = 2;
-                goto LEFleetCount;
+            LEFleetCount:
+                l = 0;
+                for (i = 0; i < 16; i++) {
+                    if (lpfl->rgcsh[i] != 0 && LphuldefFromId(rglpshdef[lpfl->iPlayer][i].hul.ihuldef)->imdCategory == j) {
+                        l += lpfl->rgcsh[i];
+                    }
+                }
+                DrawMineralItem(hdc, prc->right - 2, prc->top, -1, l);
+                break;
             case colEnemyFleetWarship:
                 j = 3;
                 goto LEFleetCount;
@@ -1560,7 +1552,7 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 RightTextOut(hdc, prc->right - 2, prc->top, psz, cch, 0);
                 break;
             case colEnemyFleetWarp:
-                if (lpfl->fdirValid == 0 || lpfl->iwarpFlt <= 0) {
+                if (!lpfl->fdirValid || lpfl->iwarpFlt <= 0) {
                     psz = "--";
                     cch = 2;
                 } else {
@@ -1570,14 +1562,6 @@ void DrawReportItem(HDC hdc, RECT *prc, ReportType irpt, int16_t irow, int16_t i
                 RightTextOut(hdc, prc->right - 2, prc->top, psz, cch, 0);
             }
             break;
-        LEFleetCount:
-            l = 0;
-            for (i = 0; i < 16; i++) {
-                if (lpfl->rgcsh[i] != 0 && LphuldefFromId(rglpshdef[lpfl->iPlayer][i].hul.ihuldef)->imdCategory == j) {
-                    l += lpfl->rgcsh[i];
-                }
-            }
-            DrawMineralItem(hdc, prc->right - 2, prc->top, -1, l);
         }
     }
     return;
@@ -1607,36 +1591,38 @@ char *PszGetDestName(FLEET *lpfl, HDC hdc) {
     ORDER   ord;
 
     ord = lpfl->lpplord->rgord[0];
-    if (lpfl->cord > 1) {
-        if (ord.fValidTask != 0) {
-            switch (ord.grTask) {
-            case grTaskXfer:
-                for (i = 0; i < 5; i++) {
-                    if (ord.txp.rgia[i].iAction == iActionWaitPercent)
-                        goto LDelayed;
-                }
-                goto L_5064;
-            case grTaskColonize:
-                if (ord.grobj != grobjPlanet)
-                    break;
-                return szDblDash;
-            case grTaskLayMines:
-            LDelayed:
-                if (hdc != 0) {
-                    SetTextColor(hdc, 127);
-                }
-                return PszGetCompressedString(idsDelayed);
-            default:
-                break;
-            case grTaskMerge:
-            case grTaskScrap:
-                return szDblDash;
+    if (lpfl->cord <= 1)
+        goto LNoDest;
+
+    if (ord.fValidTask) {
+        switch (ord.grTask) {
+        case grTaskXfer:
+            for (i = 0; i < 5; i++) {
+                if (ord.txp.rgia[i].iAction == iActionWaitPercent)
+                    goto LDelayed;
             }
+            break;
+        case grTaskColonize:
+            if (ord.grobj != grobjPlanet)
+                break;
+            goto LNoDest;
+        case grTaskMerge:
+        case grTaskScrap:
+            goto LNoDest;
+        case grTaskLayMines:
+        LDelayed:
+            if (hdc) {
+                SetTextColor(hdc, 127);
+            }
+            return PszGetCompressedString(idsDelayed);
+        default:
+            break;
         }
-    L_5064:
-        ord = lpfl->lpplord->rgord[1];
-        return PszGetLocName(ord.grobj, ord.id, ord.pt.x, ord.pt.y);
     }
+    ord = lpfl->lpplord->rgord[1];
+    return PszGetLocName(ord.grobj, ord.id, ord.pt.x, ord.pt.y);
+
+LNoDest:
     return szDblDash;
 }
 
@@ -1646,7 +1632,7 @@ int16_t FDestIsWP0(FLEET *lpfl) {
 
     ord = lpfl->lpplord->rgord[0];
     if (lpfl->cord > 1) {
-        if (ord.fValidTask != 0) {
+        if (ord.fValidTask) {
             switch (ord.grTask) {
             case grTaskXfer:
                 for (i = 0; i < 5; i++) {
@@ -1658,6 +1644,7 @@ int16_t FDestIsWP0(FLEET *lpfl) {
             case grTaskColonize:
                 if (ord.grobj != grobjPlanet)
                     break;
+                /* fallthrough */
             case grTaskMerge:
             case grTaskScrap:
             case grTaskLayMines:
@@ -1679,14 +1666,14 @@ char *PszGetETA(HDC hdc, FLEET *lpfl, int16_t *pcYears) {
     ord = lpfl->lpplord->rgord[0];
     pt = ord.pt;
     if (lpfl->cord > 1) {
-        if (ord.fValidTask != 0) {
+        if (ord.fValidTask) {
             switch (ord.grTask) {
             case grTaskXfer:
                 for (i = 0; i < 5; i++) {
                     if (ord.txp.rgia[i].iAction == iActionWaitPercent)
                         goto LNoETA;
                 }
-                goto L_5290;
+                break;
             case grTaskColonize:
                 if (ord.grobj == grobjPlanet)
                     goto LNoETA;
@@ -1698,13 +1685,12 @@ char *PszGetETA(HDC hdc, FLEET *lpfl, int16_t *pcYears) {
                 goto LNoETA;
             }
         }
-    L_5290:
         ord = lpfl->lpplord->rgord[1];
         CchGetETA(hdc, lpfl, szWork, 1, TRUE);
-        if (hdc != 0 && EstFuelUse(lpfl, 0, ord.iWarp, -1, FALSE) > lpfl->rgwtMin[4]) {
+        if (hdc && EstFuelUse(lpfl, 0, ord.iWarp, -1, FALSE) > lpfl->rgwtMin[4]) {
             SetTextColor(hdc, 0xff);
         }
-        if (pcYears != 0) {
+        if (pcYears) {
             psz = szWork;
             c = 0;
             for (; *psz >= '0' && *psz <= '9'; psz++) {
@@ -1718,7 +1704,7 @@ char *PszGetETA(HDC hdc, FLEET *lpfl, int16_t *pcYears) {
         return szWork;
     }
 LNoETA:
-    if (pcYears != 0) {
+    if (pcYears) {
         *pcYears = 0;
     }
     return szDblDash;
@@ -1737,36 +1723,33 @@ char *PszGetTaskName(FLEET *lpfl, int16_t *picr) {
     icr = -1;
     ord = lpfl->lpplord->rgord[0];
     *picr = -1;
-    if (ord.fValidTask != 0) {
+    if (ord.fValidTask) {
         switch (ord.grTask) {
         case grTaskXfer:
             for (i = 0; i < 4; i++) {
                 if (ord.txp.rgia[i].iAction == iActionWaitPercent)
                     goto LShowTask;
             }
-        default:
-            goto L_5476;
+            break;
         case grTaskColonize:
         case grTaskMerge:
         case grTaskScrap:
         case grTaskLayMines:
         case grTaskAutoRoute:
-            break;
+            goto LShowTask;
         }
-        goto LShowTask;
     }
-L_5476:
     if (lpfl->cord > 1) {
         ord = lpfl->lpplord->rgord[1];
     }
 LShowTask:
-    if (ord.fValidTask != 0) {
+    if (ord.fValidTask) {
         ids = ord.grTask + 99;
         switch (ord.grTask) {
         case grTaskXfer:
             for (i = 0; i < 4; i++) {
-                if (vrgZip[i].fValid != 0 && memcmp(&vrgZip[i], &ord.txp, 10) == 0)
-                    goto L_5513;
+                if (vrgZip[i].fValid && memcmp(&vrgZip[i], &ord.txp, 10) == 0)
+                    return vrgZip[i].szName;
             }
             ids = idsAction;
             iZip = -1;
@@ -1812,18 +1795,20 @@ LShowTask:
                 if (icr == 4) {
                     ids = idsLoadOptimal;
                 }
+                /* fallthrough */
             case iActionLoadAll:
             case iActionUnloadAll:
                 return PszGetCompressedString(ids);
             case iActionFillPercent:
             case iActionWaitPercent:
                 fPercent = TRUE;
+                /* fallthrough */
             case iActionUnloadExact:
             case iActionSetAmount:
             case iActionSetWaypoint:
                 psz = PszGetCompressedString(ids);
                 psz[strlen(psz) - 3] = 0;
-                if (fPercent != 0) {
+                if (fPercent) {
                     _wsprintf(szWork, "%s %d%%", psz, ord.txp.rgia[icr].cQuan);
                 } else {
                     _wsprintf(szWork, icr == 4 ? "%s %dmg" : "%s %dkT", psz, ord.txp.rgia[icr].cQuan);
@@ -1832,8 +1817,6 @@ LShowTask:
             default:
                 return szDblDash;
             }
-        L_5513:
-            return vrgZip[i].szName;
         case grTaskLayMines:
             if (ord.tlm.cTime < 5) {
                 _wsprintf(szWork, "%s  %dy", PszGetCompressedString(ids), ord.tlm.cTime + 1);
@@ -1874,13 +1857,13 @@ void SortReportCache(ReportType irpt, int16_t icol) {
         vprptCur->icolSort = icol;
         gd.fChgReports = TRUE;
     }
-    if (hwndReportDlg != 0 || vprptCur->fCached == 0) {
+    if (hwndReportDlg || !vprptCur->fCached) {
         switch (irpt) {
         case rptFleets:
             vlprgidRep = vlprgidFleet;
             for (iItem = 0; (int16_t)iItem < cFleet; iItem++) {
                 lpfl = rglpfl[iItem];
-                if (rglpfl[iItem] == 0)
+                if (!rglpfl[iItem])
                     break;
                 if (lpfl->iplr == idPlayer) {
                     rgidRep[cRows++] = iItem;
@@ -1892,7 +1875,7 @@ void SortReportCache(ReportType irpt, int16_t icol) {
             vrptBattle.fCached = FALSE;
             for (iItem = 0; (int16_t)iItem < cFleet; iItem++) {
                 lpfl = rglpfl[iItem];
-                if (rglpfl[iItem] == 0)
+                if (!rglpfl[iItem])
                     break;
                 if (lpfl->iplr != idPlayer) {
                     rgidRep[cRows++] = iItem;
@@ -1959,9 +1942,6 @@ int ICompReport(uint16_t *pid1, uint16_t *pid2) {
     int16_t      ibtl2;
     int16_t      ibtl1;
     BTLDATA     *lpbd2;
-    int16_t      t_scratch_m7a;
-    int16_t      t_scratch_m7a_2;
-    int16_t      t_scratch_m7a_3;
 
     iRet = 0;
     iSubsort = vprptCur->iSubsort;
@@ -1969,201 +1949,413 @@ int ICompReport(uint16_t *pid1, uint16_t *pid2) {
     icolSort = vprptCur->icolSort;
     fAscending = vprptCur->fAscending;
     fTier2 = FALSE;
-    while (1) {
-        switch (irpt) {
-        case rptPlanets:
-            lppl1 = lpPlanets + *pid1;
-            lppl2 = lpPlanets + *pid2;
-            if ((uint16_t)icolSort > colPlanetRoutingDest)
+TryTier2:
+    switch (irpt) {
+    case rptPlanets:
+        lppl1 = lpPlanets + *pid1;
+        lppl2 = lpPlanets + *pid2;
+        if ((uint16_t)icolSort > colPlanetRoutingDest)
+            break;
+        switch (icolSort) {
+        case colPlanetStarbase:
+            if (!lppl1->fStarbase) {
+                if (!lppl2->fStarbase) {
+                    iRet = 0;
+                    break;
+                }
+                iRet = 1;
                 break;
-            switch (icolSort) {
-            case colPlanetStarbase:
-                if (lppl1->fStarbase == 0) {
-                    if (lppl2->fStarbase == 0) {
-                        iRet = 0;
-                        break;
-                    }
-                    iRet = 1;
-                    break;
-                }
-                if (lppl2->fStarbase == 0) {
-                    iRet = -1;
-                    break;
-                }
-                iRet = fstrcmp(rglpshdefSB[idPlayer][lppl1->isb].hul.szClass, rglpshdefSB[idPlayer][lppl2->isb].hul.szClass);
+            }
+            if (!lppl2->fStarbase) {
+                iRet = -1;
                 break;
-            case colPlanetRoutingDest:
-                if (lppl1->idRoute == 0) {
-                    if (lppl2->idRoute == 0) {
-                        iRet = 0;
-                        break;
-                    }
-                    iRet = 1;
-                    break;
-                }
+            }
+            iRet = fstrcmp(rglpshdefSB[idPlayer][lppl1->isb].hul.szClass, rglpshdefSB[idPlayer][lppl2->isb].hul.szClass);
+            break;
+        case colPlanetRoutingDest:
+            if (lppl1->idRoute == 0) {
                 if (lppl2->idRoute == 0) {
-                    iRet = -1;
+                    iRet = 0;
                     break;
                 }
-                psz = PszGetPlanetName(lppl1->idRoute - 1);
-                strcpy(szT, psz);
-                psz = PszGetPlanetName(lppl2->idRoute - 1);
-                iRet = strcmp(szT, psz);
+                iRet = 1;
                 break;
-            case colPlanetDriverDest:
-                if (lppl1->idFling == 0) {
-                    if (lppl2->idFling == 0) {
-                        iRet = 0;
-                        break;
-                    }
-                    iRet = 1;
-                    break;
-                }
+            }
+            if (lppl2->idRoute == 0) {
+                iRet = -1;
+                break;
+            }
+            psz = PszGetPlanetName(lppl1->idRoute - 1);
+            strcpy(szT, psz);
+            psz = PszGetPlanetName(lppl2->idRoute - 1);
+            iRet = strcmp(szT, psz);
+            break;
+        case colPlanetDriverDest:
+            if (lppl1->idFling == 0) {
                 if (lppl2->idFling == 0) {
-                    iRet = -1;
+                    iRet = 0;
                     break;
                 }
-                psz = PszGetPlanetName(lppl1->idFling - 1);
+                iRet = 1;
+                break;
+            }
+            if (lppl2->idFling == 0) {
+                iRet = -1;
+                break;
+            }
+            psz = PszGetPlanetName(lppl1->idFling - 1);
+            strcpy(szT, psz);
+            psz = PszGetPlanetName(lppl2->idFling - 1);
+            iRet = strcmp(szT, psz);
+            break;
+        case colPlanetName:
+            psz = PszGetPlanetName(lppl1->id);
+            strcpy(szT, psz);
+            psz = PszGetPlanetName(lppl2->id);
+            iRet = strcmp(szT, psz);
+            break;
+        case colPlanetProduction:
+            FillPlanetProdLB(NULL, NULL, lppl1);
+            strcpy(szT, szWork);
+            FillPlanetProdLB(NULL, NULL, lppl2);
+            iRet = strcmp(&szT[6], &szWork[6]);
+            break;
+        case colPlanetCapacity:
+            iRet = PctPlanetCapacity(lppl1) - PctPlanetCapacity(lppl2);
+            break;
+        case colPlanetPopulation:
+            iRet = LOWORD(lppl1->rgwtMin[3]) - LOWORD(lppl2->rgwtMin[3]);
+            break;
+        case colPlanetValue:
+            iRet = PctPlanetDesirability(lppl1, idPlayer) - PctPlanetDesirability(lppl2, idPlayer);
+            break;
+        case colPlanetMinConc:
+            if (iSubsort == 3) {
+                i2 = 0;
+                i1 = 0;
+                for (i = 0; i < 3; i++) {
+                    i1 += lppl1->rgMinConc[i];
+                    i2 += lppl2->rgMinConc[i];
+                }
+            } else {
+                i1 = lppl1->rgMinConc[iSubsort];
+                i2 = lppl2->rgMinConc[iSubsort];
+            }
+            iRet = i1 - i2;
+            break;
+        case colPlanetDefense:
+            if (lppl1->cDefenses == 0) {
+                pct1 = (float)0;
+            } else {
+                CalcPctSurvive(lppl1, &pct1, NULL);
+                pct1 = (float)((long double)1.0 - pct1);
+            }
+            if (lppl2->cDefenses == 0) {
+                pct2 = (float)0;
+            } else {
+                CalcPctSurvive(lppl2, &pct2, NULL);
+                pct2 = (float)((long double)1.0 - pct2);
+            }
+            if ((long double)pct1 < (long double)pct2) {
+                iRet = -1;
+                break;
+            }
+            if ((long double)pct1 > (long double)pct2) {
+                iRet = 1;
+                break;
+            }
+            iRet = 0;
+            break;
+        case colPlanetFactories:
+            iRet = lppl1->cFactories - lppl2->cFactories;
+            break;
+        case colPlanetMines:
+            iRet = lppl1->cMines - lppl2->cMines;
+            break;
+        case colPlanetMiningRate:
+            if (iSubsort == 3) {
+                iFirst = 0;
+                iLast = 2;
+            } else {
+                iLast = iSubsort;
+                iFirst = iSubsort;
+            }
+            EstMineralsMined(lppl1, rgl, -1, FALSE);
+            l1 = 0;
+            for (i = iFirst; i <= iLast; i++) {
+                l1 += rgl[i];
+            }
+            EstMineralsMined(lppl2, rgl, -1, FALSE);
+            l2 = 0;
+            for (i = iFirst; i <= iLast; i++) {
+                l2 += rgl[i];
+            }
+            iRet = LOWORD(l1) - LOWORD(l2);
+            break;
+        case colPlanetMinerals:
+            if (iSubsort == 3) {
+                iFirst = 0;
+                iLast = 2;
+            } else {
+                iLast = iSubsort;
+                iFirst = iSubsort;
+            }
+            l2 = 0;
+            l1 = 0;
+            for (i = iFirst; i <= iLast; i++) {
+                l1 += lppl1->rgwtMin[i];
+                l2 += lppl2->rgwtMin[i];
+            }
+            l1 -= l2;
+            if (l1 < 0) {
+                iRet = -1;
+                break;
+            }
+            if (l1 > 0) {
+                iRet = 1;
+                break;
+            }
+            iRet = 0;
+            break;
+        case colPlanetResources:
+            iRet = CResourcesAtPlanet(lppl1, idPlayer) - CResourcesAtPlanet(lppl2, idPlayer);
+        }
+        break;
+    case rptFleets:
+        lpfl1 = rglpfl[*pid1];
+        lpfl2 = rglpfl[*pid2];
+        if ((uint16_t)icolSort > colFleetMass)
+            break;
+        switch (icolSort) {
+        case colFleetName:
+            psz = PszGetFleetName(lpfl1->id);
+            strcpy(szT, psz);
+            psz = PszGetFleetName(lpfl2->id);
+            iRet = strcmp(szT, psz);
+            break;
+        case colFleetLocation:
+            if (lpfl1->idPlanet != idPlanetDeepSpace) {
+                psz = PszGetPlanetName(lpfl1->idPlanet);
                 strcpy(szT, psz);
-                psz = PszGetPlanetName(lppl2->idFling - 1);
-                iRet = strcmp(szT, psz);
+            } else {
+                _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
+            }
+            if (lpfl2->idPlanet != idPlanetDeepSpace) {
+                psz = PszGetPlanetName(lpfl2->idPlanet);
+            } else {
+                _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
+                psz = szWork;
+            }
+            iRet = strcmp(szT, psz);
+            break;
+        case colFleetBattlePlan:
+            iRet = lpfl1->iplan - lpfl2->iplan;
+            break;
+        case colFleetDestination:
+            psz = PszGetDestName(lpfl1, NULL);
+            strcpy(szT, psz);
+            psz = PszGetDestName(lpfl2, NULL);
+            iRet = strcmp(szT, psz);
+            if (iRet < 0) {
+                iRet = -1;
                 break;
-            case colPlanetName:
-                psz = PszGetPlanetName(lppl1->id);
-                strcpy(szT, psz);
-                psz = PszGetPlanetName(lppl2->id);
-                iRet = strcmp(szT, psz);
+            }
+            if (iRet <= 0)
                 break;
-            case colPlanetProduction:
-                FillPlanetProdLB(NULL, NULL, lppl1);
-                strcpy(szT, szWork);
-                FillPlanetProdLB(NULL, NULL, lppl2);
-                iRet = strcmp(&szT[6], &szWork[6]);
-                break;
-            case colPlanetCapacity:
-                t_scratch_m7a = PctPlanetCapacity(lppl2);
-                iRet = PctPlanetCapacity(lppl1) - t_scratch_m7a;
-                break;
-            case colPlanetPopulation:
-                iRet = LOWORD(lppl1->rgwtMin[3]) - LOWORD(lppl2->rgwtMin[3]);
-                break;
-            case colPlanetValue:
-                t_scratch_m7a_2 = PctPlanetDesirability(lppl2, idPlayer);
-                iRet = PctPlanetDesirability(lppl1, idPlayer) - t_scratch_m7a_2;
-                break;
-            case colPlanetMinConc:
-                if (iSubsort == 3) {
-                    i2 = 0;
-                    i1 = 0;
-                    for (i = 0; i < 3; i++) {
-                        i1 += lppl1->rgMinConc[i];
-                        i2 += lppl2->rgMinConc[i];
-                    }
-                } else {
-                    i1 = lppl1->rgMinConc[iSubsort];
-                    i2 = lppl2->rgMinConc[iSubsort];
+            iRet = 1;
+            break;
+        case colFleetEta:
+            PszGetETA(NULL, lpfl1, &i1);
+            PszGetETA(NULL, lpfl2, &i2);
+            iRet = i1 - i2;
+            break;
+        case colFleetCloak:
+            l1 = PctCloakFromLpfl(lpfl1);
+            l2 = PctCloakFromLpfl(lpfl2);
+            goto LRetDiff;
+        case colFleetComposition:
+            l1 = IshdefPrimaryFromLpfl(lpfl1, &i1);
+            l2 = IshdefPrimaryFromLpfl(lpfl2, &i2);
+            if (l1 == l2) {
+                iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
+            } else {
+                iRet = strcmp(rgshdef[l1].hul.szClass, rgshdef[l2].hul.szClass);
+                if (iRet == 0) {
+                    iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
                 }
-                iRet = i1 - i2;
+                if (iRet == 0) {
+                    iRet = LOWORD(l1) - LOWORD(l2);
+                }
+            }
+            if (iRet != 0)
                 break;
-            case colPlanetDefense:
-                if (lppl1->cDefenses == 0) {
-                    pct1 = (float)0;
-                } else {
-                    CalcPctSurvive(lppl1, &pct1, NULL);
-                    pct1 = (float)((long double)1.0 - pct1);
-                }
-                if (lppl2->cDefenses == 0) {
-                    pct2 = (float)0;
-                } else {
-                    CalcPctSurvive(lppl2, &pct2, NULL);
-                    pct2 = (float)((long double)1.0 - pct2);
-                }
-                if ((long double)pct1 < (long double)pct2) {
-                    iRet = -1;
-                    break;
-                }
-                if ((long double)pct1 > (long double)pct2) {
-                    iRet = 1;
-                    break;
-                }
-                iRet = 0;
+            iRet = i1 - i2;
+            break;
+        case colFleetTask:
+            psz = PszGetTaskName(lpfl1, &i1);
+            strcpy(szT, psz);
+            psz = PszGetTaskName(lpfl2, &i2);
+            iRet = strcmp(szT, psz);
+            if (iRet < 0) {
+                iRet = -1;
                 break;
-            case colPlanetFactories:
-                iRet = lppl1->cFactories - lppl2->cFactories;
+            }
+            if (iRet > 0) {
+                iRet = 1;
                 break;
-            case colPlanetMines:
-                iRet = lppl1->cMines - lppl2->cMines;
+            }
+            if (i1 > i2) {
+                iRet = 1;
                 break;
-            case colPlanetMiningRate:
-                if (iSubsort == 3) {
-                    iFirst = 0;
-                    iLast = 2;
-                } else {
-                    iLast = iSubsort;
-                    iFirst = iSubsort;
-                }
-                EstMineralsMined(lppl1, rgl, -1, FALSE);
-                l1 = 0;
-                for (i = iFirst; i <= iLast; i++) {
-                    l1 += rgl[i];
-                }
-                EstMineralsMined(lppl2, rgl, -1, FALSE);
-                l2 = 0;
-                for (i = iFirst; i <= iLast; i++) {
-                    l2 += rgl[i];
-                }
-                iRet = LOWORD(l1) - LOWORD(l2);
+            }
+            if (i1 >= i2)
                 break;
-            case colPlanetMinerals:
-                if (iSubsort == 3) {
-                    iFirst = 0;
-                    iLast = 2;
-                } else {
-                    iLast = iSubsort;
-                    iFirst = iSubsort;
-                }
+            iRet = -1;
+            break;
+        case colFleetFuel:
+            iSubsort = -1;
+            /* fallthrough */
+        case colFleetCargo:
+            if (iSubsort == 4) {
                 l2 = 0;
                 l1 = 0;
-                for (i = iFirst; i <= iLast; i++) {
-                    l1 += lppl1->rgwtMin[i];
-                    l2 += lppl2->rgwtMin[i];
+                for (i = 0; i <= 3; i++) {
+                    l1 += lpfl1->rgwtMin[i];
+                    l2 += lpfl2->rgwtMin[i];
                 }
-                l1 -= l2;
-                if (l1 < 0) {
-                    iRet = -1;
-                    break;
-                }
-                if (l1 > 0) {
-                    iRet = 1;
-                    break;
-                }
+                goto LRetDiff;
+            }
+            if (iSubsort == -1) {
+                iSubsort = 4;
+            }
+            l1 = lpfl1->rgwtMin[iSubsort];
+            l2 = lpfl2->rgwtMin[iSubsort];
+        LRetDiff:
+            l1 -= l2;
+            if (l1 < 0) {
+                iRet = -1;
+            } else if (l1 > 0) {
+                iRet = 1;
+            } else {
                 iRet = 0;
-                break;
-            case colPlanetResources:
-                t_scratch_m7a_3 = CResourcesAtPlanet(lppl2, idPlayer);
-                iRet = CResourcesAtPlanet(lppl1, idPlayer) - t_scratch_m7a_3;
             }
             break;
-        case rptFleets:
-            lpfl1 = rglpfl[*pid1];
-            lpfl2 = rglpfl[*pid2];
-            if ((uint16_t)icolSort > colFleetMass)
-                break;
+        case colFleetMass:
+            l1 = WtFromLpfl(lpfl1);
+            l2 = WtFromLpfl(lpfl2);
+            goto LRetDiff;
+        case colFleetId:
+            l1 = lpfl1->id;
+            l2 = lpfl2->id;
+            goto LRetDiff;
+        }
+        break;
+    case rptBattles:
+        ibtl1 = *pid1;
+        ibtl2 = *pid2;
+        lpbd1 = BtlDataGet(ibtl1);
+        lpbd2 = BtlDataGet(ibtl2);
+        if (!lpbd1 || !lpbd2) {
+            iRet = 0;
+            break;
+        }
+        if ((uint16_t)icolSort > colBattleTheirsLeft)
+            break;
+        switch (icolSort) {
+        case colBattleLocation:
+            if (lpbd1->idPlanet != idPlanetNone) {
+                psz = PszGetPlanetName(lpbd1->idPlanet);
+                strcpy(szT, psz);
+            } else {
+                _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpbd1->pt.x, lpbd1->pt.y);
+            }
+            if (lpbd2->idPlanet != idPlanetNone) {
+                psz = PszGetPlanetName(lpbd2->idPlanet);
+            } else {
+                _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpbd2->pt.x, lpbd2->pt.y);
+                psz = szWork;
+            }
+            iRet = strcmp(szT, psz);
+            break;
+        case colBattleStarbase:
+            l1 = CBattleUnits(lpbd1, grBuOurUnits | grBuIncludeSb);
+            if (l1 == 0) {
+                l1 = (int32_t)(CBattleUnits(lpbd1, grBuTheirUnits | grBuIncludeSb) * 2);
+            }
+            l2 = CBattleUnits(lpbd2, grBuOurUnits | grBuIncludeSb);
+            if (l2 != 0)
+                goto LRetDiff;
+            l2 = (int32_t)(CBattleUnits(lpbd2, grBuTheirUnits | grBuIncludeSb) * 2);
+            goto LRetDiff;
+        case colBattleSides:
+            l1 = (uint32_t)lpbd1->cplr;
+            l2 = (uint32_t)lpbd2->cplr;
+            goto LRetDiff;
+        case colBattleUnarmed:
+            i = 11;
+            goto BtlUnitsCom;
+        case colBattleScout:
+            i = 19;
+            goto BtlUnitsCom;
+        case colBattleWarship:
+            i = 35;
+            goto BtlUnitsCom;
+        case colBattleBomber:
+            i = 67;
+            goto BtlUnitsCom;
+        case colBattleUtility:
+            i = 131;
+            goto BtlUnitsCom;
+        case colBattleUnits:
+            i = 255;
+            goto BtlUnitsCom;
+        case colBattleOurs:
+            i = 253;
+            goto BtlUnitsCom;
+        case colBattleTheirs:
+            i = 254;
+        BtlUnitsCom:
+            l1 = CBattleUnits(lpbd1, i);
+            l2 = CBattleUnits(lpbd2, i);
+            goto LRetDiff;
+        case colBattleOurDead:
+        case colBattleTheirDead:
+            l1 = CBattleKills(lpbd1, icolSort == colBattleOurDead);
+            l2 = CBattleKills(lpbd2, icolSort == colBattleOurDead);
+            goto LRetDiff;
+        case colBattleOursLeft:
+            i = 253;
+        LUnitsLeft:
+            l1 = CBattleUnits(lpbd1, i);
+            l2 = CBattleUnits(lpbd2, i);
+            l1 -= CBattleKills(lpbd1, icolSort == colBattleOursLeft);
+            l2 -= CBattleKills(lpbd2, icolSort == colBattleOursLeft);
+            goto LRetDiff;
+        case colBattleTheirsLeft:
+            i = 254;
+            goto LUnitsLeft;
+        }
+        break;
+
+    case rptEnemyFleets:
+        lpfl1 = rglpfl[*pid1];
+        lpfl2 = rglpfl[*pid2];
+        if ((uint16_t)icolSort <= colEnemyFleetUtility) {
             switch (icolSort) {
-            case colFleetName:
+            case colEnemyFleetName:
                 psz = PszGetFleetName(lpfl1->id);
                 strcpy(szT, psz);
                 psz = PszGetFleetName(lpfl2->id);
                 iRet = strcmp(szT, psz);
                 break;
-            case colFleetLocation:
-                if (lpfl1->idPlanet != -1) {
+            case colEnemyFleetLocation:
+                if (lpfl1->idPlanet != idPlanetDeepSpace) {
                     psz = PszGetPlanetName(lpfl1->idPlanet);
                     strcpy(szT, psz);
                 } else {
                     _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
                 }
-                if (lpfl2->idPlanet != -1) {
+                if (lpfl2->idPlanet != idPlanetDeepSpace) {
                     psz = PszGetPlanetName(lpfl2->idPlanet);
                 } else {
                     _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
@@ -2171,38 +2363,13 @@ int ICompReport(uint16_t *pid1, uint16_t *pid2) {
                 }
                 iRet = strcmp(szT, psz);
                 break;
-            case colFleetBattlePlan:
-                iRet = lpfl1->iplan - lpfl2->iplan;
-                break;
-            case colFleetDestination:
-                psz = PszGetDestName(lpfl1, NULL);
-                strcpy(szT, psz);
-                psz = PszGetDestName(lpfl2, NULL);
-                iRet = strcmp(szT, psz);
-                if (iRet < 0) {
-                    iRet = -1;
-                    break;
-                }
-                if (iRet <= 0)
-                    break;
-                iRet = 1;
-                break;
-            case colFleetEta:
-                PszGetETA(NULL, lpfl1, &i1);
-                PszGetETA(NULL, lpfl2, &i2);
-                iRet = i1 - i2;
-                break;
-            case colFleetCloak:
-                l1 = PctCloakFromLpfl(lpfl1);
-                l2 = PctCloakFromLpfl(lpfl2);
-                goto LRetDiff;
-            case colFleetComposition:
+            case colEnemyFleetComposition:
                 l1 = IshdefPrimaryFromLpfl(lpfl1, &i1);
                 l2 = IshdefPrimaryFromLpfl(lpfl2, &i2);
                 if (l1 == l2) {
                     iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
                 } else {
-                    iRet = strcmp(rgshdef[l1].hul.szClass, rgshdef[l2].hul.szClass);
+                    iRet = fstrcmp(rglpshdef[lpfl1->iPlayer][l1].hul.szClass, rglpshdef[lpfl2->iPlayer][l2].hul.szClass);
                     if (iRet == 0) {
                         iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
                     }
@@ -2214,247 +2381,42 @@ int ICompReport(uint16_t *pid1, uint16_t *pid2) {
                     break;
                 iRet = i1 - i2;
                 break;
-            case colFleetTask:
-                psz = PszGetTaskName(lpfl1, &i1);
-                strcpy(szT, psz);
-                psz = PszGetTaskName(lpfl2, &i2);
-                iRet = strcmp(szT, psz);
-                if (iRet < 0) {
-                    iRet = -1;
-                    break;
-                }
-                if (iRet > 0) {
-                    iRet = 1;
-                    break;
-                }
-                if (i1 > i2) {
-                    iRet = 1;
-                    break;
-                }
-                if (i1 >= i2)
-                    break;
-                iRet = -1;
-                break;
-            case colFleetFuel:
-                iSubsort = -1;
-            case colFleetCargo:
-                if (iSubsort == 4) {
-                    l2 = 0;
-                    l1 = 0;
-                    for (i = 0; i <= 3; i++) {
-                        l1 += lpfl1->rgwtMin[i];
-                        l2 += lpfl2->rgwtMin[i];
-                    }
-                    goto LRetDiff;
-                }
-                if (iSubsort == -1) {
-                    iSubsort = 4;
-                }
-                l1 = lpfl1->rgwtMin[iSubsort];
-                l2 = lpfl2->rgwtMin[iSubsort];
+            case colEnemyFleetMass:
+                l1 = lpfl1->wtFleet;
+                l2 = lpfl2->wtFleet;
                 goto LRetDiff;
-            case colFleetMass:
-                l1 = WtFromLpfl(lpfl1);
-                l2 = WtFromLpfl(lpfl2);
+            case colEnemyFleetId:
+                l1 = lpfl1->ifl;
+                l2 = lpfl2->ifl;
                 goto LRetDiff;
-            case colFleetId:
-                l1 = lpfl1->id;
-                l2 = lpfl2->id;
-                goto LRetDiff;
-            }
-            break;
-        case rptBattles:
-            ibtl1 = *pid1;
-            ibtl2 = *pid2;
-            lpbd1 = BtlDataGet(ibtl1);
-            lpbd2 = BtlDataGet(ibtl2);
-            if (lpbd1 == 0 || lpbd2 == 0) {
-                iRet = 0;
-                break;
-            }
-            if ((uint16_t)icolSort > colBattleTheirsLeft)
-                break;
-            switch (icolSort) {
-            case colBattleLocation:
-                if (lpbd1->idPlanet != 0xffff) {
-                    psz = PszGetPlanetName(lpbd1->idPlanet);
-                    strcpy(szT, psz);
-                } else {
-                    _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpbd1->pt.x, lpbd1->pt.y);
+            case colEnemyFleetShips:
+                l2 = 0;
+                l1 = 0;
+                for (i = 0; i < 16; i++) {
+                    l1 += lpfl1->rgcsh[i];
+                    l2 += lpfl2->rgcsh[i];
                 }
-                if (lpbd2->idPlanet != 0xffff) {
-                    psz = PszGetPlanetName(lpbd2->idPlanet);
-                } else {
-                    _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpbd2->pt.x, lpbd2->pt.y);
-                    psz = szWork;
-                }
-                iRet = strcmp(szT, psz);
-                break;
-            case colBattleStarbase:
-                l1 = CBattleUnits(lpbd1, grBuOurUnits | grBuIncludeSb);
-                if (l1 == 0) {
-                    l1 = (int32_t)(CBattleUnits(lpbd1, grBuTheirUnits | grBuIncludeSb) * 2);
-                }
-                l2 = CBattleUnits(lpbd2, grBuOurUnits | grBuIncludeSb);
-                if (l2 != 0)
-                    goto LRetDiff;
-                l2 = (int32_t)(CBattleUnits(lpbd2, grBuTheirUnits | grBuIncludeSb) * 2);
                 goto LRetDiff;
-            case colBattleSides:
-                l1 = (uint32_t)lpbd1->cplr;
-                l2 = (uint32_t)lpbd2->cplr;
-                goto LRetDiff;
-            case colBattleUnarmed:
-                i = 11;
-                goto BtlUnitsCom;
-            case colBattleScout:
-                i = 19;
-                goto BtlUnitsCom;
-            case colBattleWarship:
-                i = 35;
-                goto BtlUnitsCom;
-            case colBattleBomber:
-                i = 67;
-                goto BtlUnitsCom;
-            case colBattleUtility:
-                i = 131;
-                goto BtlUnitsCom;
-            case colBattleUnits:
-                i = 255;
-                goto BtlUnitsCom;
-            case colBattleOurs:
-                i = 253;
-                goto BtlUnitsCom;
-            case colBattleTheirs:
-                i = 254;
-                goto BtlUnitsCom;
-            case colBattleOurDead:
-            case colBattleTheirDead:
-                l1 = CBattleKills(lpbd1, icolSort == colBattleOurDead);
-                l2 = CBattleKills(lpbd2, icolSort == colBattleOurDead);
-                goto LRetDiff;
-            case colBattleOursLeft:
-                i = 253;
-                goto LUnitsLeft;
-            case colBattleTheirsLeft:
-                i = 254;
-                goto LUnitsLeft;
-            }
-            break;
-        LUnitsLeft:
-            l1 = CBattleUnits(lpbd1, i);
-            l2 = CBattleUnits(lpbd2, i);
-            l1 -= CBattleKills(lpbd1, icolSort == colBattleOursLeft);
-            l2 -= CBattleKills(lpbd2, icolSort == colBattleOursLeft);
-            goto LRetDiff;
-        BtlUnitsCom:
-            l1 = CBattleUnits(lpbd1, i);
-            l2 = CBattleUnits(lpbd2, i);
-            goto LRetDiff;
-        case rptEnemyFleets:
-            lpfl1 = rglpfl[*pid1];
-            lpfl2 = rglpfl[*pid2];
-            if ((uint16_t)icolSort <= colEnemyFleetUtility) {
-                switch (icolSort) {
-                case colEnemyFleetName:
-                    psz = PszGetFleetName(lpfl1->id);
-                    strcpy(szT, psz);
-                    psz = PszGetFleetName(lpfl2->id);
-                    iRet = strcmp(szT, psz);
-                    break;
-                case colEnemyFleetLocation:
-                    if (lpfl1->idPlanet != -1) {
-                        psz = PszGetPlanetName(lpfl1->idPlanet);
-                        strcpy(szT, psz);
-                    } else {
-                        _wsprintf(szT, PszGetCompressedString(idsSpaceDD), lpfl1->pt.x, lpfl1->pt.y);
-                    }
-                    if (lpfl2->idPlanet != -1) {
-                        psz = PszGetPlanetName(lpfl2->idPlanet);
-                    } else {
-                        _wsprintf(szWork, PszGetCompressedString(idsSpaceDD), lpfl2->pt.x, lpfl2->pt.y);
-                        psz = szWork;
-                    }
-                    iRet = strcmp(szT, psz);
-                    break;
-                case colEnemyFleetComposition:
-                    l1 = IshdefPrimaryFromLpfl(lpfl1, &i1);
-                    l2 = IshdefPrimaryFromLpfl(lpfl2, &i2);
-                    if (l1 == l2) {
-                        iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
-                    } else {
-                        iRet = fstrcmp(rglpshdef[lpfl1->iPlayer][l1].hul.szClass, rglpshdef[lpfl2->iPlayer][l2].hul.szClass);
-                        if (iRet == 0) {
-                            iRet = lpfl1->rgcsh[l1] - lpfl2->rgcsh[l2];
-                        }
-                        if (iRet == 0) {
-                            iRet = LOWORD(l1) - LOWORD(l2);
+            case colEnemyFleetUnarmed:
+                l2 = 0;
+                l1 = 0;
+                for (i = 0; i < 16; i++) {
+                    if (lpfl1->rgcsh[i] != 0) {
+                        j = LphuldefFromId(rglpshdef[lpfl1->iPlayer][i].hul.ihuldef)->imdCategory;
+                        if ((int16_t)j <= hullCatFreighter || (int16_t)j >= hullCatMiner) {
+                            l1 += lpfl1->rgcsh[i];
                         }
                     }
-                    if (iRet != 0)
-                        break;
-                    iRet = i1 - i2;
-                    break;
-                case colEnemyFleetMass:
-                    l1 = lpfl1->wtFleet;
-                    l2 = lpfl2->wtFleet;
-                    goto LRetDiff;
-                case colEnemyFleetId:
-                    l1 = lpfl1->ifl;
-                    l2 = lpfl2->ifl;
-                    goto LRetDiff;
-                case colEnemyFleetShips:
-                    l2 = 0;
-                    l1 = 0;
-                    for (i = 0; i < 16; i++) {
-                        l1 += lpfl1->rgcsh[i];
-                        l2 += lpfl2->rgcsh[i];
-                    }
-                    goto LRetDiff;
-                case colEnemyFleetUnarmed:
-                    l2 = 0;
-                    l1 = 0;
-                    for (i = 0; i < 16; i++) {
-                        if (lpfl1->rgcsh[i] != 0) {
-                            j = LphuldefFromId(rglpshdef[lpfl1->iPlayer][i].hul.ihuldef)->imdCategory;
-                            if ((int16_t)j <= hullCatFreighter || (int16_t)j >= hullCatMiner) {
-                                l1 += lpfl1->rgcsh[i];
-                            }
-                        }
-                        if (lpfl2->rgcsh[i] != 0) {
-                            j = LphuldefFromId(rglpshdef[lpfl2->iPlayer][i].hul.ihuldef)->imdCategory;
-                            if ((int16_t)j <= hullCatFreighter || (int16_t)j >= hullCatMiner) {
-                                l2 += lpfl2->rgcsh[i];
-                            }
+                    if (lpfl2->rgcsh[i] != 0) {
+                        j = LphuldefFromId(rglpshdef[lpfl2->iPlayer][i].hul.ihuldef)->imdCategory;
+                        if ((int16_t)j <= hullCatFreighter || (int16_t)j >= hullCatMiner) {
+                            l2 += lpfl2->rgcsh[i];
                         }
                     }
-                    goto LRetDiff;
-                case colEnemyFleetScout:
-                    j = hullCatScout;
-                    goto LEFleetCount;
-                case colEnemyFleetWarship:
-                    j = hullCatWarship;
-                    goto LEFleetCount;
-                case colEnemyFleetBomber:
-                    j = hullCatBomber;
-                    goto LEFleetCount;
-                case colEnemyFleetUtility:
-                    j = hullCatUtility;
-                    goto LEFleetCount;
-                case colEnemyFleetWarp:
-                    if (lpfl1->fdirValid != 0) {
-                        l1 = lpfl1->iwarpFlt;
-                    } else {
-                        l1 = -1;
-                    }
-                    if (lpfl2->fdirValid != 0) {
-                        l2 = lpfl2->iwarpFlt;
-                        goto LRetDiff;
-                    }
-                    l2 = -1;
-                    goto LRetDiff;
                 }
-                break;
+                goto LRetDiff;
+            case colEnemyFleetScout:
+                j = hullCatScout;
             LEFleetCount:
                 l2 = 0;
                 l1 = 0;
@@ -2467,28 +2429,40 @@ int ICompReport(uint16_t *pid1, uint16_t *pid2) {
                     }
                 }
                 goto LRetDiff;
+            case colEnemyFleetWarship:
+                j = hullCatWarship;
+                goto LEFleetCount;
+            case colEnemyFleetBomber:
+                j = hullCatBomber;
+                goto LEFleetCount;
+            case colEnemyFleetUtility:
+                j = hullCatUtility;
+                goto LEFleetCount;
+            case colEnemyFleetWarp:
+                if (lpfl1->fdirValid) {
+                    l1 = lpfl1->iwarpFlt;
+                } else {
+                    l1 = -1;
+                }
+                if (lpfl2->fdirValid) {
+                    l2 = lpfl2->iwarpFlt;
+                    goto LRetDiff;
+                }
+                l2 = -1;
+                goto LRetDiff;
             }
-        }
-        goto L_746b;
-    LRetDiff:
-        l1 -= l2;
-        if (l1 < 0) {
-            iRet = -1;
-        } else if (l1 > 0) {
-            iRet = 1;
-        } else {
-            iRet = 0;
-        }
-    L_746b:
-        if (fAscending == 0) {
-            iRet = -iRet;
-        }
-        if (iRet != 0 || fTier2 != 0 || ((icolSort == vicolSortPrev && iSubsort == viSubsortPrev) || vicolSortPrev < 0))
             break;
+        }
+    }
+    if (!fAscending) {
+        iRet = -iRet;
+    }
+    if (iRet == 0 && !fTier2 && (icolSort != vicolSortPrev || iSubsort != viSubsortPrev) && vicolSortPrev >= 0) {
         icolSort = vicolSortPrev;
         iSubsort = viSubsortPrev;
         fAscending = vfAscendingPrev;
         fTier2 = TRUE;
+        goto TryTier2;
     }
     return iRet;
 }
@@ -2521,35 +2495,23 @@ void ReportColumnPopup(POINT16 pt, int16_t icol, int16_t fRightBtn) {
         cch = CchGetString(i == 0 ? idsSort : idsReverseSort, rgsz[cItems]);
         strcpy(&rgsz[cItems][cch], szColTitle);
         cItems++;
-        if (vprptCur->irpt == rptPlanets) {
-            switch (icol) {
-            default:
-                goto L_759a;
-            case colPlanetMinConc:
-            case colPlanetMinerals:
-            case colPlanetMiningRate:
-                goto L_75b0;
-            }
-            continue;
-        }
-    L_759a:
-        if (vprptCur->irpt != rptFleets || icol != colFleetCargo)
-            continue;
-    L_75b0:
-        strcpy(rgsz[cItems], rgsz[cItems - 1]);
-        rgsz[cItems - 1][0] = 0;
-        cItems++;
-        for (j = 0; j < (vprptCur->irpt == rptFleets) + 3; j++) {
-            strcpy(rgsz[cItems], rgszMinerals[j]);
+        if ((vprptCur->irpt == rptPlanets && (icol == colPlanetMinConc || icol == colPlanetMinerals || icol == colPlanetMiningRate)) ||
+            (vprptCur->irpt == rptFleets && icol == colFleetCargo)) {
+            strcpy(rgsz[cItems], rgsz[cItems - 1]);
+            rgsz[cItems - 1][0] = 0;
             cItems++;
+            for (j = 0; j < (vprptCur->irpt == rptFleets) + 3; j++) {
+                strcpy(rgsz[cItems], rgszMinerals[j]);
+                cItems++;
+            }
+            rgsz[cItems][0] = -1;
+            rgsz[cItems][1] = 0;
+            cItems++;
+            strcpy(rgsz[cItems], PszGetCompressedString(idsWeightedAverage));
+            cItems++;
+            rgsz[cItems++][0] = 0;
+            cSubsort = 5;
         }
-        rgsz[cItems][0] = -1;
-        rgsz[cItems][1] = 0;
-        cItems++;
-        strcpy(rgsz[cItems], PszGetCompressedString(idsWeightedAverage));
-        cItems++;
-        rgsz[cItems++][0] = 0;
-        cSubsort = 5;
     }
     rgsz[cItems][0] = -1;
     rgsz[cItems][1] = 0;
@@ -2572,7 +2534,7 @@ void ReportColumnPopup(POINT16 pt, int16_t icol, int16_t fRightBtn) {
     i = 0;
     ibit = 1;
     while (i < vprptCur->cFields) {
-        if ((ibit & vprptCur->grbitVisible) == 0) {
+        if (!(ibit & vprptCur->grbitVisible)) {
             DxReportColHdr(vprptCur->irpt, i, szColTitle, hdc);
             cch = CchGetString(idsShow, rgsz[cItems]);
             strcpy(&rgsz[cItems][cch], szColTitle);
@@ -2620,7 +2582,7 @@ void ReportColumnPopup(POINT16 pt, int16_t icol, int16_t fRightBtn) {
             fccolChange = 1;
             vprptCur->grbitVisible |= (int16_t)(1 << rgcol[iRet]);
         }
-        if (fccolChange != 0) {
+        if (fccolChange) {
             SetHScrollBar();
         }
         InvalidateRect(hwndReportDlg, NULL, TRUE);
@@ -2637,8 +2599,8 @@ void InvalidateReport(ReportType irpt, int16_t fReload) {
 
     fClearRpt = FALSE;
     fResetRpt = FALSE;
-    if (gd.fGeneratingTurn == 0 && fAi == 0) {
-        if (hwndReportDlg != 0 && irpt == vprptCur->irpt) {
+    if (!gd.fGeneratingTurn && !fAi) {
+        if (hwndReportDlg && irpt == vprptCur->irpt) {
             GetClientRect(hwndReportDlg, &rc);
             if (fReload != 2) {
                 rc.top = dyArial8 + 6;
@@ -2646,14 +2608,14 @@ void InvalidateReport(ReportType irpt, int16_t fReload) {
             }
             InvalidateRect(hwndReportDlg, &rc, fReload == 2);
             gd.fRptSafeDraw = TRUE;
-        } else if (vprptCur == 0) {
+        } else if (!vprptCur) {
             fClearRpt = fReload;
             if (irpt == rptPlanets) {
                 vprptCur = &vrptPlanet;
             } else {
                 vprptCur = &vrptFleet;
             }
-        } else if (fReload != 0 && vprptCur->irpt != irpt) {
+        } else if (fReload && vprptCur->irpt != irpt) {
             lprgidSav = vlprgidRep;
             prptSav = vprptCur;
             fResetRpt = TRUE;
@@ -2664,15 +2626,15 @@ void InvalidateReport(ReportType irpt, int16_t fReload) {
             }
         }
         vprptCur->fCached = FALSE;
-        if (fReload != 0) {
+        if (fReload) {
             SortReportCache(vprptCur->irpt, vprptCur->icolSort);
         }
-        if (fClearRpt != 0) {
+        if (fClearRpt) {
             vprptCur = 0;
-        } else if (fResetRpt != 0) {
+        } else if (fResetRpt) {
             vprptCur = prptSav;
             vlprgidRep = lprgidSav;
-        } else if (fReload != 0 && hwndReportDlg != 0 && irpt == vprptCur->irpt) {
+        } else if (fReload && hwndReportDlg && irpt == vprptCur->irpt) {
             SetScrollRange(vprptCur->hwndVScroll, SB_CTL, 0, vprptCur->cRows - vprptCur->cRowsVis, FALSE);
             InvalidateRect(hwndReportDlg, NULL, TRUE);
         }
@@ -2691,27 +2653,32 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
     int16_t  xCur;
     int16_t  dxOffset;
     SCAN     scan;
-    int16_t  t_call_7e75;
 
     hdc = GetDC(hwndReportDlg);
     switch (irpt) {
     case rptPlanets:
         lppl = lpPlanets + vlprgidPlanet[irow];
-        if (hwndProdDlg != 0) {
+        if (hwndProdDlg) {
             MessageBeep(MB_OK);
             break;
         }
         SelectAdjPlanet(0, lppl->id);
         InvalidateReport(rptPlanets, 0);
-        if ((uint16_t)icol > colPlanetResources)
-            break;
         switch (icol) {
         case colPlanetName:
-            if (lppl->fStarbase == 0 || pt.x <= vprptCur->rgbdx[0] * 2 - 8)
-                break;
-            goto LShowStarbase;
+            if (lppl->fStarbase && pt.x > vprptCur->rgbdx[0] * 2 - 8) {
+            LShowStarbase:
+                GlobalPD.grPopup = grPopupShdef;
+                GlobalPD.lpshdef = rglpshdefSB[idPlayer] + sel.pl.isb;
+                GlobalPD.fHideCounts = FALSE;
+                GlobalPD.fShowDamage = TRUE;
+                GlobalPD.fToken = FALSE;
+                GlobalPD.fSummary = FALSE;
+                Popup(hwndReportDlg, pt.x, pt.y);
+            }
+            break;
         case colPlanetStarbase:
-            if (lppl->fStarbase == 0)
+            if (!lppl->fStarbase)
                 break;
             goto LShowStarbase;
         case colPlanetPopulation:
@@ -2730,10 +2697,8 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
         case colPlanetResources:
             GlobalPD.grPopup = grPopupResources;
             GlobalPD.idPlanet = sel.pl.id;
-            t_call_7e75 = CResourcesAtPlanet(&sel.pl, idPlayer);
-            GlobalPD.iPlanVal = t_call_7e75;
-            GlobalPD.iPlanetVar = t_call_7e75;
-            if (sel.pl.fNoResearch == 0) {
+            GlobalPD.iPlanetVar = GlobalPD.iPlanVal = CResourcesAtPlanet(&sel.pl, idPlayer);
+            if (!sel.pl.fNoResearch) {
                 GlobalPD.iPlanVal -= MulDiv(GlobalPD.iPlanetVar, rgplr[idPlayer].pctResearch, 100);
             }
             Popup(hwndReportDlg, pt.x, pt.y);
@@ -2745,7 +2710,7 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
             i = 0;
             ibit = 1;
             while (i < icol) {
-                if ((ibit & vprptCur->grbitVisible) != 0 && (i == 0 || i >= vprptCur->cFieldFirst)) {
+                if ((ibit & vprptCur->grbitVisible) && (i == 0 || i >= vprptCur->cFieldFirst)) {
                     xCur += vprptCur->rgbdx[i] * 2;
                 }
                 i++;
@@ -2765,7 +2730,7 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
             Popup(hwndReportDlg, pt.x, pt.y);
             break;
         case colPlanetProduction:
-            if (hwndProdDlg != 0)
+            if (hwndProdDlg)
                 break;
             ChangeProduction(FALSE);
             break;
@@ -2774,7 +2739,7 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
             GlobalPD.grPopup = grPopupPlanetIndustry;
             GlobalPD.idPlan = sel.pl.id;
             GlobalPD.fFactory = icol == colPlanetFactories;
-            if (GlobalPD.fFactory != 0) {
+            if (GlobalPD.fFactory) {
                 GlobalPD.cMax = CMaxFactories(&sel.pl, idPlayer);
                 GlobalPD.cCur = sel.pl.cFactories;
                 GlobalPD.cOperate = CMaxOperableFactories(&sel.pl, idPlayer, FALSE);
@@ -2785,15 +2750,6 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
             }
             Popup(hwndReportDlg, pt.x, pt.y);
         }
-        break;
-    LShowStarbase:
-        GlobalPD.grPopup = grPopupShdef;
-        GlobalPD.lpshdef = rglpshdefSB[idPlayer] + sel.pl.isb;
-        GlobalPD.fHideCounts = FALSE;
-        GlobalPD.fShowDamage = TRUE;
-        GlobalPD.fToken = FALSE;
-        GlobalPD.fSummary = FALSE;
-        Popup(hwndReportDlg, pt.x, pt.y);
         break;
     case rptFleets:
         lpfl = rglpfl[vlprgidFleet[irow]];
@@ -2808,7 +2764,7 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
         case colFleetCargo:
             if (mdXferDlg != mdXferNone)
                 break;
-            if (sel.fl.idPlanet != -1) {
+            if (sel.fl.idPlanet != idPlanetDeepSpace) {
                 TransferStuff(sel.fl.id, grobjFleet, sel.fl.idPlanet, grobjPlanet, mdXferCargo);
                 break;
             }
@@ -2817,7 +2773,7 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
         case colFleetDestination:
         case colFleetEta:
         case colFleetTask:
-            if (FDestIsWP0(lpfl) != 0)
+            if (FDestIsWP0(lpfl))
                 break;
             SendMessage(hwndShipLB, LB_SETCURSEL, 1, 0);
             SetScanWp(1);
@@ -2832,18 +2788,21 @@ void ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow)
         break;
     case rptBattles:
         lpbd = BtlDataGet(vlprgidMisc[irow]);
-        if (lpbd == 0)
+        if (!lpbd)
             break;
-        if (lpbd->pt.x != sel.scan.pt.x || lpbd->pt.y != sel.scan.pt.y) {
-            scan.pt = lpbd->pt;
-            scan.grobj = grobjPlanet | grobjFleet | grobjOther | grobjThing | mdExact;
-            ChangeScanSel(&scan, 0);
-            CtrPointScan(scan.pt, TRUE);
-            InvalidateReport(rptPlanets, 0);
-            if (lpbd->pt.x == sel.scan.pt.x && lpbd->pt.y == sel.scan.pt.y)
-                break;
-        }
-        if (hwndVCRDlg != 0)
+        if (lpbd->pt.x == sel.scan.pt.x && lpbd->pt.y == sel.scan.pt.y)
+            goto LDisplayVCRAnyway;
+
+        scan.pt = lpbd->pt;
+        scan.grobj = grobjPlanet | grobjFleet | grobjOther | grobjThing | mdExact;
+        ChangeScanSel(&scan, 0);
+        CtrPointScan(scan.pt, TRUE);
+        InvalidateReport(rptPlanets, 0);
+        if (lpbd->pt.x == sel.scan.pt.x && lpbd->pt.y == sel.scan.pt.y)
+            break;
+
+    LDisplayVCRAnyway:
+        if (hwndVCRDlg)
             break;
         BattleVCR(lpbd->id);
         break;
@@ -2892,18 +2851,20 @@ void DumpUniverse() {
     fSilentSav = fFileErrSilent;
     fSuccess = TRUE;
     fOpen = FALSE;
-    if (game.lid == 0 || idPlayer == -1) {
+    if (game.lid == 0 || idPlayer == iplrNone) {
         fSuccess = FALSE;
+        goto DisplayStatus;
     } else {
         penvMemSav = penvMem;
         penvMem = &env;
         if (setjmp(env) != 0) {
-            if (fOpen != 0) {
+            if (fOpen) {
                 StreamClose();
             }
             fFileErrSilent = fSilentSav;
             fSuccess = FALSE;
             penvMem = penvMemSav;
+            goto DisplayStatus;
         } else {
             fFileErrSilent = TRUE;
             _wsprintf(szWork, "%s.map", szBase);
@@ -2917,9 +2878,10 @@ void DumpUniverse() {
             StreamClose();
         }
     }
-    ids = fSuccess == 0 ? idsUnableWriteUniverseDefinitionSMapOperation : idsUniverseDefinitionHasSuccessfullyWrittenSMap;
+DisplayStatus:
+    ids = !fSuccess ? idsUnableWriteUniverseDefinitionSMapOperation : idsUniverseDefinitionHasSuccessfullyWrittenSMap;
     _wsprintf(szWork, PszGetCompressedString(ids), szBase);
-    if (fSuccess != 0) {
+    if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
         AlertSz(szWork, MB_ICONHAND);
@@ -2952,21 +2914,23 @@ void DumpPlanets() {
     fSilentSav = fFileErrSilent;
     fSuccess = TRUE;
     fOpen = FALSE;
-    if (game.lid == 0 || idPlayer == -1) {
+    if (game.lid == 0 || idPlayer == iplrNone) {
         fSuccess = FALSE;
+        goto DisplayStatus;
     } else {
         penvMemSav = penvMem;
         penvMem = &env;
         if (setjmp(env) != 0) {
-            if (fOpen != 0) {
+            if (fOpen) {
                 StreamClose();
             }
             fFileErrSilent = fSilentSav;
             fSuccess = FALSE;
             penvMem = penvMemSav;
+            goto DisplayStatus;
         } else {
             fFileErrSilent = TRUE;
-            if (gd.fPerPlayerDumps != 0) {
+            if (gd.fPerPlayerDumps) {
                 _wsprintf(szFile, "%s.p%d", szBase, idPlayer + 1);
             } else {
                 _wsprintf(szFile, "%s.pla", szBase);
@@ -2992,13 +2956,13 @@ void DumpPlanets() {
                 strcpy(szForm, PszGetCompressedPlanet(rgidPlan[lppl->id]));
                 RgToStream(szForm, strlen(szForm));
                 szForm[0] = '\t';
-                if (lppl->iPlayer == -1) {
+                if (lppl->iPlayer == iplrNone) {
                     RgToStream(szForm, 1);
                 } else {
                     strcpy(&szForm[1], PszPlayerName(lppl->iPlayer, TRUE, FALSE, FALSE, 0, NULL));
                     RgToStream(szForm, strlen(szForm));
                 }
-                if (lppl->iPlayer == -1 || lppl->fStarbase == 0) {
+                if (lppl->iPlayer == iplrNone || !lppl->fStarbase) {
                     cch = 1;
                 } else {
                     fstrcpy(&szForm[1], rglpshdefSB[lppl->iPlayer][lppl->isb].hul.szClass);
@@ -3010,7 +2974,7 @@ void DumpPlanets() {
                 szForm[1] = 0;
                 if (lppl->det == detAll) {
                     strcpy(&szForm[1], PszFromLong((uint32_t)(lppl->rgwtMin[3] * 100), NULL));
-                } else if (lppl->iPlayer != -1 && lppl->det >= detSome) {
+                } else if (lppl->iPlayer != iplrNone && lppl->det >= detSome) {
                     l = (uint32_t)(lppl->uPopGuess * 400);
                     strcpy(&szForm[1], PszFromLong(l, NULL));
                 }
@@ -3037,7 +3001,7 @@ void DumpPlanets() {
                     szForm[2] = '\t';
                     szForm[1] = '\t';
                     szForm[3] = 0;
-                    if (gd.fPerPlayerDumps != 0 && lppl->uDefGuess != 0) {
+                    if (gd.fPerPlayerDumps && lppl->uDefGuess != 0) {
                         cch = _wsprintf(&szForm[3], "%d%%", lppl->uDefGuess * 6 + 3);
                         szForm[cch + 3] = 0;
                     }
@@ -3071,7 +3035,7 @@ void DumpPlanets() {
                     szForm[1] = 0;
                 }
                 RgToStream(szForm, strlen(szForm));
-                if (gd.fPerPlayerDumps != 0) {
+                if (gd.fPerPlayerDumps) {
                     if (lppl->det >= detSome) {
                         for (i = 0; i < 3; i++) {
                             strcpy(&szForm[1], PszCalcEnvVar(i, lppl->rgEnvVar[i]));
@@ -3113,7 +3077,7 @@ void DumpPlanets() {
                             strcpy(&szForm[1], PszGetPlanetName(lppl->idRoute - 1));
                         }
                         RgToStream(szForm, strlen(szForm));
-                        if (lppl->fStarbase != 0) {
+                        if (lppl->fStarbase) {
                             i = IStargateFromLppl(lppl);
                             if (i != -1) {
                                 part.hs.grhst = hstSpecialSB;
@@ -3130,7 +3094,7 @@ void DumpPlanets() {
                         if (i == -1) {
                             RgToStream("\t0\t0", 4);
                         }
-                        if (lppl->fStarbase != 0) {
+                        if (lppl->fStarbase) {
                             i = lppl->pctDp;
                         } else {
                             i = 0;
@@ -3144,9 +3108,10 @@ void DumpPlanets() {
             StreamClose();
         }
     }
-    ids = fSuccess == 0 ? idsUnableWritePlanetInformationSOperationTerminated : idsKnownPlanetInformationHasSuccessfullyWrittenS;
+DisplayStatus:
+    ids = !fSuccess ? idsUnableWritePlanetInformationSOperationTerminated : idsKnownPlanetInformationHasSuccessfullyWrittenS;
     _wsprintf(szWork, PszGetCompressedString(ids), szFile);
-    if (fSuccess != 0) {
+    if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
         AlertSz(szWork, MB_ICONHAND);
@@ -3178,21 +3143,23 @@ void DumpFleets() {
     fSuccess = TRUE;
     fOpen = FALSE;
     iplr = idPlayer;
-    if (game.lid == 0 || idPlayer == -1) {
+    if (game.lid == 0 || idPlayer == iplrNone) {
         fSuccess = FALSE;
+        goto DisplayStatus;
     } else {
         penvMemSav = penvMem;
         penvMem = &env;
         if (setjmp(env) != 0) {
-            if (fOpen != 0) {
+            if (fOpen) {
                 StreamClose();
             }
             fFileErrSilent = fSilentSav;
             fSuccess = FALSE;
             penvMem = penvMemSav;
+            goto DisplayStatus;
         } else {
             fFileErrSilent = TRUE;
-            if (gd.fPerPlayerDumps != 0) {
+            if (gd.fPerPlayerDumps) {
                 _wsprintf(szFile, "%s.f%d", szBase, idPlayer + 1);
             } else {
                 _wsprintf(szFile, "%s.fle", szBase);
@@ -3215,9 +3182,9 @@ void DumpFleets() {
             iplr = idPlayer;
             for (ifl = 0; ifl < cFleet; ifl++) {
                 lpfl = rglpfl[ifl];
-                if (rglpfl[ifl] == 0)
+                if (!rglpfl[ifl])
                     break;
-                idPlayer = -1;
+                idPlayer = iplrNone;
                 psz = PszGetFleetName(lpfl->id);
                 idPlayer = iplr;
                 RgToStream(psz, strlen(psz));
@@ -3226,7 +3193,7 @@ void DumpFleets() {
                 RgToStream(szForm, strlen(szForm));
                 strcpy(&szForm[1], PszFromInt(lpfl->pt.y, NULL));
                 RgToStream(szForm, strlen(szForm));
-                if (lpfl->idPlanet == -1) {
+                if (lpfl->idPlanet == idPlanetDeepSpace) {
                     cch = 1;
                 } else {
                     psz = PszGetPlanetName(lpfl->idPlanet);
@@ -3236,7 +3203,7 @@ void DumpFleets() {
                 RgToStream(szForm, cch);
                 if (lpfl->det == detAll) {
                     strcpy(&szForm[1], PszGetDestName(lpfl, NULL));
-                } else if (gd.fPerPlayerDumps != 0 && lpfl->det < detAll && lpfl->fdirValid != 0) {
+                } else if (gd.fPerPlayerDumps && lpfl->det < detAll && lpfl->fdirValid) {
                     strcpy(&szForm[1], PszFromInt(lpfl->dirFltX, NULL));
                     strcat(szForm, ".");
                     strcat(szForm, PszFromInt(lpfl->dirFltY, NULL));
@@ -3260,7 +3227,7 @@ void DumpFleets() {
                     strcpy(&szForm[1], PszFromLong(lpfl->rgwtMin[i], NULL));
                     RgToStream(szForm, strlen(szForm));
                 }
-                if (gd.fPerPlayerDumps != 0) {
+                if (gd.fPerPlayerDumps) {
                     strcpy(&szForm[1], PszFromInt(lpfl->iPlayer + 1, NULL));
                     RgToStream(szForm, strlen(szForm));
                     if (lpfl->cord > 1) {
@@ -3272,7 +3239,7 @@ void DumpFleets() {
                     RgToStream(szForm, strlen(szForm));
                     if (lpfl->cord >= 2) {
                         i = lpfl->lpplord->rgord[1].iWarp;
-                    } else if (lpfl->det < detAll && lpfl->fdirValid != 0) {
+                    } else if (lpfl->det < detAll && lpfl->fdirValid) {
                         i = lpfl->iwarpFlt;
                     } else {
                         i = 0;
@@ -3301,7 +3268,7 @@ void DumpFleets() {
                     RgToStream(szForm, strlen(szForm));
                     strcpy(&szForm[1], PszFromLong(CMineSweepFromLpfl(lpfl), NULL));
                     RgToStream(szForm, strlen(szForm));
-                    strcpy(&szForm[1], PszFromLong(CLayMinesFromLpfl(lpfl, 0xffff, -1), NULL));
+                    strcpy(&szForm[1], PszFromLong(CLayMinesFromLpfl(lpfl, mineAll, ishdefAll), NULL));
                     RgToStream(szForm, strlen(szForm));
                     strcpy(&szForm[1], PszFromLong(PctTerraFromLpfl(lpfl), NULL));
                     RgToStream(szForm, strlen(szForm));
@@ -3332,9 +3299,10 @@ void DumpFleets() {
             StreamClose();
         }
     }
-    ids = fSuccess == 0 ? idsUnableWriteFleetInformationSOperationTerminated : idsKnownFleetInformationHasSuccessfullyWrittenS;
+DisplayStatus:
+    ids = !fSuccess ? idsUnableWriteFleetInformationSOperationTerminated : idsKnownFleetInformationHasSuccessfullyWrittenS;
     _wsprintf(szWork, PszGetCompressedString(ids), szFile);
-    if (fSuccess != 0) {
+    if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
         AlertSz(szWork, MB_ICONHAND);
@@ -3349,60 +3317,60 @@ INT_PTR CALLBACK PrintMapDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
     RECT    rc;
     HWND    hwndEdit;
 
-    if (msg == WM_ERASEBKGND) {
+    switch (IS_WM_CTLCOLOR(msg) ? WM_CTLCOLOR : msg) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        for (i = 0; i < 2; i++) {
+            hwndEdit = GetDlgItem(hwnd, i + 268);
+            SendMessage(hwndEdit, EM_LIMITTEXT, 1, 0);
+            SendMessage(hwndEdit, WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
+            szWork[0] = vrgcPrintMapPage[i] + '0';
+            szWork[1] = 0;
+            SetWindowText(hwndEdit, szWork);
+        }
+        StickyDlgPos(hwnd, &ptStickyPrintMapDlg, TRUE);
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    }
-    if (IS_WM_CTLCOLOR(msg) == 0) {
-        if (msg == WM_INITDIALOG) {
-            for (i = 0; i < 2; i++) {
-                hwndEdit = GetDlgItem(hwnd, i + 268);
-                SendMessage(hwndEdit, EM_LIMITTEXT, 1, 0);
-                SendMessage(hwndEdit, WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
-                szWork[0] = vrgcPrintMapPage[i] + '0';
-                szWork[1] = 0;
-                SetWindowText(hwndEdit, szWork);
+    case WM_CTLCOLOR:
+        if (msg == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                for (i = 0; i < 2; i++) {
+                    hwndEdit = GetDlgItem(hwnd, i + 268);
+                    GetWindowText(hwndEdit, szWork, 10);
+                    if (szWork[0] == 0 || szWork[1] != 0 || szWork[0] <= '0' || szWork[0] > '9') {
+                        AlertSz(PszFormatIds(idsMustSpecifyNumberBetween19, NULL), MB_ICONHAND);
+                        SetFocus(hwndEdit);
+                        break;
+                    }
+                    vrgcPrintMapPage[i] = szWork[0] - '0';
+                }
             }
-            StickyDlgPos(hwnd, &ptStickyPrintMapDlg, TRUE);
+            StickyDlgPos(hwnd, &ptStickyPrintMapDlg, FALSE);
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
             return 1;
-        }
-        if (msg == WM_COMMAND) {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-            case IDOK:
-            case IDCANCEL:
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                    for (i = 0; i < 2; i++) {
-                        hwndEdit = GetDlgItem(hwnd, i + 268);
-                        GetWindowText(hwndEdit, szWork, 10);
-                        if (szWork[0] == 0 || szWork[1] != 0 || szWork[0] <= '0' || szWork[0] > '9') {
-                            AlertSz(PszFormatIds(idsMustSpecifyNumberBetween19, NULL), MB_ICONHAND);
-                            SetFocus(hwndEdit);
-                            break;
-                        }
-                        vrgcPrintMapPage[i] = szWork[0] - '0';
-                    }
-                }
-                StickyDlgPos(hwnd, &ptStickyPrintMapDlg, FALSE);
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                return 1;
-            case IDC_HELP:
-                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhPrintingAMapOfTheUniverse);
-                return 1;
-            case IDC_PRINT_MAP_PAGES_X:
-            case IDC_PRINT_MAP_PAGES_Y:
-                if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400) {
-                    GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 10);
-                    if (szWork[0] != 0 && (szWork[0] <= '0' || szWork[0] > '9')) {
-                        MessageBeep(MB_OK);
-                        SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), &szWork[1]);
-                    }
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhPrintingAMapOfTheUniverse);
+            return 1;
+        case IDC_PRINT_MAP_PAGES_X:
+        case IDC_PRINT_MAP_PAGES_Y:
+            if (GET_WM_COMMAND_CMD(wParam, lParam) == 0x400) {
+                GetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), szWork, 10);
+                if (szWork[0] != 0 && (szWork[0] <= '0' || szWork[0] > '9')) {
+                    MessageBeep(MB_OK);
+                    SetWindowText(GET_WM_COMMAND_HWND(wParam, lParam), &szWork[1]);
                 }
             }
         }
-    } else if (HIWORD(lParam) == 6) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
     }
     return 0;
 }

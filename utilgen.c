@@ -220,7 +220,7 @@ void Randomize(uint32_t dw) {
     a = LOWORD(dw) & 0x3f;
     b = LOWORD((uint32_t)(dw >> 6)) & 0x3f;
     if (a == b) {
-        b = b + 1 & 0x3f;
+        b = (b + 1) & 0x3f;
     }
     lRandSeed1 = rgPrimes[a];
     lRandSeed2 = rgPrimes[b];
@@ -236,7 +236,7 @@ void Randomize2(uint32_t dw) {
     a ^= 0x35;
     b ^= 0x5c;
     if (a == b) {
-        b = b + 1 & 0x7f;
+        b = (b + 1) & 0x7f;
     }
     lRandSeed1 = rgPrimes[a];
     lRandSeed2 = rgPrimes[b];
@@ -279,38 +279,41 @@ INT_PTR CALLBACK RandomSeedDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     uint32_t dw;
     RECT     rc;
 
-    if (message != WM_ERASEBKGND) {
-        if (IS_WM_CTLCOLOR(message) == 0) {
-            if (message == WM_INITDIALOG) {
-                SetWindowPos(hwnd, NULL, 256, 256, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-                SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x1f, 0);
-                return 1;
-            }
-            if (message == WM_COMMAND && (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL)) {
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                    GetDlgItemText(hwnd, IDC_EDIT1, szValue, 32);
-                    pch = szValue;
-                    dw = 0;
-                    for (; isdigit(*pch) != 0; pch++) {
-                        dw = (uint32_t)(dw * 10) + (int16_t)(*pch - '0');
-                    }
-                    if (dw == 0) {
-                        return 1;
-                    }
-                    Randomize(dw);
-                }
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                return 1;
-            }
-        } else if (HIWORD(lParam) == 6) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SetWindowPos(hwnd, NULL, 256, 256, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x1f, 0);
+        return 1;
+    case WM_ERASEBKGND:
+        GetClientRect(hwnd, &rc);
+        FillRect((HDC)wParam, &rc, hbrButtonFace);
+        return 1;
+    case WM_CTLCOLOR:
+        if (message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
-        return 0;
+        break;
+    case WM_COMMAND:
+        if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK || GET_WM_COMMAND_ID(wParam, lParam) == IDCANCEL) {
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetDlgItemText(hwnd, IDC_EDIT1, szValue, 32);
+                pch = szValue;
+                dw = 0;
+                for (; isdigit(*pch) != 0; pch++) {
+                    dw = (uint32_t)(dw * 10) + (int16_t)(*pch - '0');
+                }
+                if (dw == 0) {
+                    return 1;
+                }
+                Randomize(dw);
+            }
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        }
+        break;
     }
-    GetClientRect(hwnd, &rc);
-    FillRect((HDC)wParam, &rc, hbrButtonFace);
-    return 1;
+    return 0;
 }
 
 void GetFileSeeds(int32_t *pl1, int32_t *pl2) {
@@ -331,7 +334,7 @@ void SetFileXorStream(int32_t lid, int16_t lSalt, int16_t turn, int16_t iPlayer,
 
     a = lSalt & 0x1f;
     b = lSalt >> 5 & 0x1f;
-    if ((lSalt & 0x400) != 0) {
+    if (lSalt & 0x400) {
         a += 32;
     } else {
         b += 32;
@@ -431,7 +434,7 @@ char *PszGetCompressedPlanet(int16_t id) {
     iBuild = 0;
     fCap = TRUE;
     while (iLen-- != 0) {
-        if (fHigh != 0) {
+        if (fHigh) {
             i = *pch >> 4;
         } else {
             i = *pch++ & 0xf;
@@ -440,7 +443,7 @@ char *PszGetCompressedPlanet(int16_t id) {
         iBuild += i;
         if (i != 15) {
             *pszOut = rgPNLookupTable[iBuild];
-            if (fCap != 0 && *pszOut >= 'a' && *pszOut <= 'z') {
+            if (fCap && *pszOut >= 'a' && *pszOut <= 'z') {
                 *pszOut -= ' ';
             }
             if (*pszOut == ' ' || *pszOut == '-') {
@@ -518,9 +521,9 @@ LStreamError:
 int16_t AlertSz(char *sz, int16_t mbType) {
     char szT[256];
 
-    if (ini.fValidate != 0 || (ini.fLogging != 0 && ini.fGen != 0)) {
+    if (ini.fValidate || (ini.fLogging && ini.fGen)) {
         _wsprintf(szT, "Error: %s", sz);
-        OutputSz(ini.fValidate == 0 ? 6 : 7, szT);
+        OutputSz(!ini.fValidate ? 6 : 7, szT);
         return IDYES;
     }
     return MessageBox(GetFocus(), sz, "Stars!", mbType);
@@ -543,7 +546,7 @@ char *PszFromInt(int16_t i, int16_t *pcch) {
     int16_t cch;
 
     cch = _wsprintf(szFormatNumber, PCTD, i);
-    if (pcch != 0) {
+    if (pcch) {
         *pcch = cch;
     }
     return szFormatNumber;
@@ -563,31 +566,25 @@ char *PszFromLongK(int32_t l, int16_t *pcch) {
     int16_t fExtraLarge;
     int16_t fLarge;
     char   *psz;
-    int16_t t_240b;
-    int16_t t_2427;
 
     fLarge = l >= 10000;
     fExtraLarge = l >= 1000000;
-    if (fExtraLarge != 0) {
+    if (fExtraLarge) {
         l = (int32_t)((l + 500000) / 0xf4240);
         if (l > 999) {
             l = 999;
         }
-    } else if (fLarge != 0) {
+    } else if (fLarge) {
         l = (int32_t)((l + 500) / 1000);
         if (l > 999) {
             l = 999;
         }
     }
     psz = PszFromInt(LOWORD(l), pcch);
-    if (fExtraLarge != 0) {
-        t_240b = *pcch;
-        (*pcch)++;
-        psz[t_240b] = 'M';
-    } else if (fLarge != 0) {
-        t_2427 = *pcch;
-        (*pcch)++;
-        psz[t_2427] = 'k';
+    if (fExtraLarge) {
+        psz[(*pcch)++] = 'M';
+    } else if (fLarge) {
+        psz[(*pcch)++] = 'k';
     }
     return psz;
 }
@@ -640,7 +637,7 @@ int16_t DxStreamTextOut(HDC hdc, int16_t *px, int16_t y, char *psz, int16_t cLen
         cLen = lstrlen(psz);
     }
     dx = LOWORD(GetTextExtent(hdc, psz, cLen));
-    if (fPrint != 0) {
+    if (fPrint) {
         TextOut(hdc, *px, y, psz, cLen);
     }
     *px += dx;
@@ -661,48 +658,50 @@ void WrapTextOut(HDC hdc, int16_t *px, int16_t *py, char *psz, int16_t cLen, int
     if (cLen == 0) {
         cLen = strlen(psz);
     }
-    if (fNewLine != 0) {
+    if (fNewLine) {
         *py += dyArial8;
         *px = xLeft;
     }
     pchStart = psz;
-    while (1) {
-        pch = pchStart;
-        pchEnd = pchStart + cLen;
-        ChopTrailingSpaces(pch, &pchEnd);
-        dx = LOWORD(GetTextExtent(hdc, pch, pchEnd - pch));
-        fItFit = TRUE;
-        for (; dx > dxRemain && pch < pchEnd && dx > 0; dx = LOWORD(GetTextExtent(hdc, pch, pchEnd - pch))) {
-            fItFit = FALSE;
-            ChopLastWord(pch, &pchEnd);
-        }
-        if (fItFit != 0) {
-            AddBackTrailingSpaces(&pchEnd, pchStart + cLen);
-            dx = LOWORD(GetTextExtent(hdc, pchStart, pchEnd - pchStart));
-        }
-        if (pchStart == pchEnd) {
-            if (*px != xLeft)
-                goto WrapIt;
-            pchEnd = pchStart + cLen;
-            dx = LOWORD(GetTextExtent(hdc, pchStart, pchEnd - pchStart));
-        }
-        if (fPrint != 0) {
-            TextOut(hdc, *px, *py, pchStart, pchEnd - pchStart);
-        }
-        *px += dx;
-        if (pxMax != 0 && *px > *pxMax) {
-            *pxMax = *px;
-        }
-        if (pchEnd == pchStart + cLen)
-            break;
-    WrapIt:
-        AddBackTrailingSpaces(&pchEnd, pchStart + cLen);
-        cLen -= pchEnd - pchStart;
-        pchStart = pchEnd;
-        *py += dyArial8;
-        *px = xLeft;
-        dxRemain = dxWidth;
+Top:
+    pch = pchStart;
+    pchEnd = pchStart + cLen;
+    ChopTrailingSpaces(pch, &pchEnd);
+    dx = LOWORD(GetTextExtent(hdc, pch, pchEnd - pch));
+    fItFit = TRUE;
+    for (; dx > dxRemain && pch < pchEnd && dx > 0; dx = LOWORD(GetTextExtent(hdc, pch, pchEnd - pch))) {
+        fItFit = FALSE;
+        ChopLastWord(pch, &pchEnd);
     }
+    if (fItFit) {
+        AddBackTrailingSpaces(&pchEnd, pchStart + cLen);
+        dx = LOWORD(GetTextExtent(hdc, pchStart, pchEnd - pchStart));
+    }
+    if (pchStart == pchEnd) {
+        if (*px != xLeft)
+            goto WrapIt;
+        pchEnd = pchStart + cLen;
+        dx = LOWORD(GetTextExtent(hdc, pchStart, pchEnd - pchStart));
+    }
+    if (fPrint) {
+        TextOut(hdc, *px, *py, pchStart, pchEnd - pchStart);
+    }
+    *px += dx;
+    if (pxMax && *px > *pxMax) {
+        *pxMax = *px;
+    }
+    if (pchEnd == pchStart + cLen)
+        goto Done;
+WrapIt:
+    AddBackTrailingSpaces(&pchEnd, pchStart + cLen);
+    cLen -= pchEnd - pchStart;
+    pchStart = pchEnd;
+    *py += dyArial8;
+    *px = xLeft;
+    dxRemain = dxWidth;
+
+    goto Top;
+Done:
     return;
 }
 
@@ -794,7 +793,6 @@ void DiaganolTextOut(HDC hdc, RECT *prc, char *psz, int16_t cLen) {
     int32_t  l;
     int16_t  dHtX;
     int16_t  dHtY;
-    uint16_t t_merge_2e6f_0001;
 
     if (cLen == 0) {
         cLen = strlen(psz);
@@ -806,49 +804,52 @@ void DiaganolTextOut(HDC hdc, RECT *prc, char *psz, int16_t cLen) {
         plf->lfWeight = 900;
         strcpy(plf->lfFaceName, rgszArial[1]);
         plf->lfHeight = -(dx <= dy ? dy : dx);
-        while (plf->lfHeight <= -5) {
-            dyEstFont = MulDiv(111, -plf->lfHeight, 100);
-            if (dy < dyEstFont) {
-                plf->lfHeight += 2 <= (int16_t)(dyEstFont - dy) / 2 ? (int16_t)(dyEstFont - dy) / 2 : 2;
-            } else {
-                angle = (double)atan2((double)(int16_t)(dy - dyEstFont), (double)dx);
-                rotate = (double)((long double)angle / 3.141592654 * 1800.0 + 0.5);
-                plf->lfEscapement = LOWORD((int32_t)rotate);
-                hfont = CreateFontIndirect(plf);
-                hfontSav = SelectObject(hdc, hfont);
-                l = GetTextExtent(hdc, psz, cLen);
-                dxText = LOWORD(l);
-                dyText = HIWORD(l);
-                dsin = (double)sin(angle);
-                dcos = (double)cos(angle);
-                dxFlat = LOWORD((int32_t)((long double)dcos * dxText + (long double)dsin * dyText));
-                dyFlat = LOWORD((int32_t)((long double)dsin * dxText + (long double)dcos * dyText));
-                if (dxFlat + 8 <= dx && dyFlat + 8 <= dy) {
-                    xStart = (int16_t)(dx - dxFlat) / 2 + prc->left;
-                    yStart = prc->bottom - (int16_t)(dy - dyFlat) / 2 - LOWORD((int32_t)((long double)dcos * dyText));
-                    TextOut(hdc, xStart, yStart, psz, cLen);
-                    SelectObject(hdc, hfontSav);
-                    DeleteObject(hfont);
-                    break;
-                }
-                SelectObject(hdc, hfontSav);
-                DeleteObject(hfont);
-                if (dxFlat + 8 > dx) {
-                    dHtX = MulDiv(plf->lfHeight, dx, dxFlat + 8);
-                    dHtX = MulDiv(dHtX, 100, 111);
-                } else {
-                    dHtX = -1000;
-                }
-                if (dyFlat + 8 > dy) {
-                    dHtY = MulDiv(plf->lfHeight, dy, dyFlat + 8);
-                    dHtY = MulDiv(dHtY, 100, 111);
-                } else {
-                    dHtY = -1000;
-                }
-                t_merge_2e6f_0001 = 2 > (dHtX <= dHtY ? dHtY : dHtX) - plf->lfHeight ? 2 : (dHtX <= dHtY ? dHtY : dHtX) - plf->lfHeight;
-                plf->lfHeight += t_merge_2e6f_0001 + 1;
-            }
+    TryAgain:
+        if (plf->lfHeight > -5)
+            goto FreeLF;
+
+        dyEstFont = MulDiv(111, -plf->lfHeight, 100);
+        if (dy < dyEstFont) {
+            plf->lfHeight += 2 <= (int16_t)(dyEstFont - dy) / 2 ? (int16_t)(dyEstFont - dy) / 2 : 2;
+            goto TryAgain;
         }
+        angle = (double)atan2((double)(int16_t)(dy - dyEstFont), (double)dx);
+        rotate = (double)((long double)angle / 3.141592654 * 1800.0 + 0.5);
+        plf->lfEscapement = LOWORD((int32_t)rotate);
+        hfont = CreateFontIndirect(plf);
+        hfontSav = SelectObject(hdc, hfont);
+        l = GetTextExtent(hdc, psz, cLen);
+        dxText = LOWORD(l);
+        dyText = HIWORD(l);
+        dsin = (double)sin(angle);
+        dcos = (double)cos(angle);
+        dxFlat = LOWORD((int32_t)((long double)dcos * dxText + (long double)dsin * dyText));
+        dyFlat = LOWORD((int32_t)((long double)dsin * dxText + (long double)dcos * dyText));
+        if (dxFlat + 8 > dx || dyFlat + 8 > dy) {
+            SelectObject(hdc, hfontSav);
+            DeleteObject(hfont);
+            if (dxFlat + 8 > dx) {
+                dHtX = MulDiv(plf->lfHeight, dx, dxFlat + 8);
+                dHtX = MulDiv(dHtX, 100, 111);
+            } else {
+                dHtX = -1000;
+            }
+            if (dyFlat + 8 > dy) {
+                dHtY = MulDiv(plf->lfHeight, dy, dyFlat + 8);
+                dHtY = MulDiv(dHtY, 100, 111);
+            } else {
+                dHtY = -1000;
+            }
+            plf->lfHeight += max(2, max(dHtX, dHtY) - plf->lfHeight) + 1;
+            goto TryAgain;
+        }
+        xStart = (int16_t)(dx - dxFlat) / 2 + prc->left;
+        yStart = prc->bottom - (int16_t)(dy - dyFlat) / 2 - LOWORD((int32_t)((long double)dcos * dyText));
+        TextOut(hdc, xStart, yStart, psz, cLen);
+        SelectObject(hdc, hfontSav);
+        DeleteObject(hfont);
+
+    FreeLF:
         LocalFree(plf);
     }
     return;
@@ -899,7 +900,7 @@ void StickyDlgPos(HWND hwnd, POINT16 *ppt, int16_t fInit) {
     RECT    rc;
 
     GetWindowRect(hwnd, &rc);
-    if (fInit == 0) {
+    if (!fInit) {
         ppt->x = rc.left;
         ppt->y = rc.top;
     } else {
@@ -939,30 +940,33 @@ int32_t LDrawGauge(HDC hdc, RECT *prc, int16_t cSegs, int32_t *rgSize, HBRUSH *r
     rc = *prc;
     FrameRect(hdc, &rc, hbrWindowText);
     ExpandRc(&rc, -1, -1);
-    if (cTot > 0) {
-        fHuge = cTot >= 10000000;
-        if (fHuge != 0) {
-            cTot = (int32_t)(cTot / 1000);
-        }
-        dx = (int16_t)(rc.right - rc.left);
-        for (i = 0; i < cSegs; i++) {
-            if (fHuge == 0) {
-                lSum += rgSize[i];
-            } else {
-                lSum += (int32_t)(rgSize[i] / 1000);
-            }
-            rc.right = prc->left + 1 + LOWORD((int32_t)((int32_t)(dx * lSum) / cTot));
-            if (rc.right > rc.left) {
-                FillRect(hdc, &rc, rghbr[i]);
-            }
-            rc.left = rc.right;
-        }
+    if (cTot <= 0)
+        goto FinRet;
+
+    fHuge = cTot >= 10000000;
+    if (fHuge) {
+        cTot = (int32_t)(cTot / 1000);
     }
+    dx = (int16_t)(rc.right - rc.left);
+    for (i = 0; i < cSegs; i++) {
+        if (!fHuge) {
+            lSum += rgSize[i];
+        } else {
+            lSum += (int32_t)(rgSize[i] / 1000);
+        }
+        rc.right = prc->left + 1 + LOWORD((int32_t)((int32_t)(dx * lSum) / cTot));
+        if (rc.right > rc.left) {
+            FillRect(hdc, &rc, rghbr[i]);
+        }
+        rc.left = rc.right;
+    }
+
+FinRet:
     rc.right = prc->right - 1;
     if (rc.right > rc.left) {
         FillRect(hdc, &rc, hbrButtonFace);
     }
-    if (fHuge != 0) {
+    if (fHuge) {
         lSum = (uint32_t)(lSum * 1000);
     }
     return lSum;
@@ -994,7 +998,7 @@ void _Draw3dFrame(HDC hdc, RECT *prc, int16_t fErase) {
     SelectObject(hdc, hbrButtonShadow);
     PatBlt(hdc, rc.left, rc.bottom, dx + 1, 1, PATCOPY);
     PatBlt(hdc, rc.right, rc.top, 1, dy, PATCOPY);
-    if (fErase != 0 && fErase != -2) {
+    if (fErase && fErase != -2) {
         SelectObject(hdc, hbrButtonFace);
         PatBlt(hdc, rc.left + 1, rc.top + 1, dx - 1, dy - 1, PATCOPY);
     }
@@ -1004,8 +1008,8 @@ void _Draw3dFrame(HDC hdc, RECT *prc, int16_t fErase) {
 
 void InitBtnTrack(BTNT *pbtnt, HWND hwnd, HDC hdc, RECT *prc, int16_t btf, int16_t dTimer, int16_t fInitDown, int16_t fNoEndRedraw, char *szText) {
     pbtnt->hwnd = hwnd;
-    pbtnt->fCreatedDC = hdc == 0;
-    if (hdc == 0) {
+    pbtnt->fCreatedDC = hdc == NULL;
+    if (!hdc) {
         hdc = GetDC(hwnd);
     }
     pbtnt->hdc = hdc;
@@ -1024,37 +1028,35 @@ int16_t FTrackBtn(BTNT *pbtnt) {
     POINT16 pt;
     int16_t fInBtn;
     int32_t ticksNew;
-    int32_t t_scratch_m10;
 
-    if (pbtnt->fFirst != 0) {
+    if (pbtnt->fFirst) {
         SetCapture(pbtnt->hwnd);
         DrawBtn(pbtnt->hdc, &pbtnt->rc, pbtnt->btf, pbtnt->fDown ^ pbtnt->fInitDown, pbtnt->szText);
-        t_scratch_m10 = (int16_t)(3 * pbtnt->dTimer);
-        pbtnt->lTicks = GetCurrentTime() + t_scratch_m10;
+        pbtnt->lTicks = GetCurrentTime() + (int16_t)(3 * pbtnt->dTimer);
         pbtnt->fFirst = FALSE;
         return TRUE;
     }
     pt.x = pbtnt->rc.left;
     pt.y = pbtnt->rc.top;
-    while (FGetMouseMove(&pt) != 0) {
+    while (FGetMouseMove(&pt)) {
         fInBtn = PtInRect(&pbtnt->rc, PointFrom16(pt));
         if (fInBtn != pbtnt->fDown) {
             pbtnt->fDown = fInBtn;
             DrawBtn(pbtnt->hdc, &pbtnt->rc, pbtnt->btf, pbtnt->fDown ^ pbtnt->fInitDown, pbtnt->szText);
         }
         ticksNew = GetCurrentTime();
-        if (ticksNew >= pbtnt->lTicks && pbtnt->fDown != 0) {
+        if (ticksNew >= pbtnt->lTicks && pbtnt->fDown) {
             pbtnt->lTicks = pbtnt->dTimer + ticksNew;
             return TRUE;
         }
     }
-    if (pbtnt->fDown != 0 && pbtnt->fNoEndRedraw == 0) {
+    if (pbtnt->fDown && !pbtnt->fNoEndRedraw) {
         pbtnt->fDown = FALSE;
         DrawBtn(pbtnt->hdc, &pbtnt->rc, pbtnt->btf, pbtnt->fDown ^ pbtnt->fInitDown, pbtnt->szText);
         pbtnt->fDown = TRUE;
     }
     ReleaseCapture();
-    if (pbtnt->fCreatedDC != 0) {
+    if (pbtnt->fCreatedDC) {
         ReleaseDC(pbtnt->hwnd, pbtnt->hdc);
     }
     return FALSE;
@@ -1086,20 +1088,20 @@ void DrawBtn(HDC hdc, RECT *prc, int16_t bt, int16_t fDown, char *szText) {
     fDisabled = bt & 4;
     rc = *prc;
     hbrSav = SelectObject(hdc, hbrWindowFrame);
-    if ((bt & 0x40) == 0) {
+    if (!(bt & 0x40)) {
         FrameRect(hdc, &rc, hbrWindowFrame);
         ExpandRc(&rc, -1, -1);
     }
     dx = rc.right - rc.left - 1;
     dy = rc.bottom - rc.top - 1;
     dxFace = (int16_t)(prc->right - prc->left) - 5;
-    SelectObject(hdc, fDown == 0 ? hbrButtonHilite : hbrButtonShadow);
+    SelectObject(hdc, !fDown ? hbrButtonHilite : hbrButtonShadow);
     PatBlt(hdc, rc.left, rc.top, dx, 1, PATCOPY);
     PatBlt(hdc, rc.left, rc.top, 1, dy, PATCOPY);
-    SelectObject(hdc, fDown == 0 ? hbrButtonShadow : hbrButtonFace);
+    SelectObject(hdc, !fDown ? hbrButtonShadow : hbrButtonFace);
     PatBlt(hdc, rc.left, rc.bottom - 1, dx + 1, 1, PATCOPY);
     PatBlt(hdc, rc.right - 1, rc.top, 1, dy, PATCOPY);
-    if (dx < 14 || dy < 14 || (bt & 0xc0) != 0) {
+    if (dx < 14 || dy < 14 || (bt & 0xc0)) {
         ExpandRc(&rc, -1, -1);
     } else {
         PatBlt(hdc, rc.left + 1, rc.bottom - 2, dx - 1, 1, PATCOPY);
@@ -1108,11 +1110,11 @@ void DrawBtn(HDC hdc, RECT *prc, int16_t bt, int16_t fDown, char *szText) {
     }
     SelectObject(hdc, hbrButtonFace);
     FillRect(hdc, &rc, hbrButtonFace);
-    if ((bt & 8) == 0) {
+    if (!(bt & 8)) {
         fBar = bt & 0x10;
         fNoShaft = bt & 0x20;
         bt &= 3;
-        if (fNoShaft != 0) {
+        if (fNoShaft) {
             cpt = 3;
             memcpy(rgptDraw, rgptTriangle, cpt * 4);
             dx = 8;
@@ -1123,7 +1125,7 @@ void DrawBtn(HDC hdc, RECT *prc, int16_t bt, int16_t fDown, char *szText) {
             dx = 6;
             dy = 6;
         }
-        if (fBar != 0) {
+        if (fBar) {
             for (ipt = 0; ipt < cpt; ipt++) {
                 rgptDraw[ipt].y++;
             }
@@ -1164,46 +1166,44 @@ void DrawBtn(HDC hdc, RECT *prc, int16_t bt, int16_t fDown, char *szText) {
             rgptDraw[ipt].x += prc->left + dxOffset;
             rgptDraw[ipt].y += prc->top + dyOffset;
         }
-        hbrCur = fDisabled == 0 ? hbrButtonText : hbrButtonHilite;
+        hbrCur = !fDisabled ? hbrButtonText : hbrButtonHilite;
         SelectObject(hdc, hbrCur);
-        while (1) {
-            if (bt == 0 || bt == 1) {
-                dy = bt == 0 ? -1 : 1;
-                x = rgptDraw[1].x;
-                dx = rgptDraw[2].x - x + 1;
-                y = rgptDraw[1].y;
-                if (fBar != 0) {
-                    PatBlt(hdc, x, rgptDraw[cpt - 1].y, dx, 1, PATCOPY);
-                }
-                while (dx > 0) {
-                    PatBlt(hdc, x, y, dx, 1, PATCOPY);
-                    x++;
-                    dx -= 2;
-                    y += dy;
-                }
-            } else {
-                dx = bt == 2 ? -1 : 1;
-                y = rgptDraw[2].y;
-                dy = rgptDraw[1].y - y + 1;
-                x = rgptDraw[1].x;
-                if (fBar != 0) {
-                    PatBlt(hdc, rgptDraw[cpt - 1].x, y, 1, dy, PATCOPY);
-                }
-                while (dy > 0) {
-                    PatBlt(hdc, x, y, 1, dy, PATCOPY);
-                    y++;
-                    dy -= 2;
-                    x += dx;
-                }
+    DrawAgain:
+        if (bt == 0 || bt == 1) {
+            dy = bt == 0 ? -1 : 1;
+            x = rgptDraw[1].x;
+            dx = rgptDraw[2].x - x + 1;
+            y = rgptDraw[1].y;
+            if (fBar) {
+                PatBlt(hdc, x, rgptDraw[cpt - 1].y, dx, 1, PATCOPY);
             }
-            if (fNoShaft == 0) {
-                SetRect(&rc, rgptDraw[3].x >= rgptDraw[4].x ? rgptDraw[4].x : rgptDraw[3].x, rgptDraw[3].y >= rgptDraw[4].y ? rgptDraw[4].y : rgptDraw[3].y,
-                        (rgptDraw[3].x <= rgptDraw[4].x ? rgptDraw[4].x : rgptDraw[3].x) + 1,
-                        (rgptDraw[3].y <= rgptDraw[4].y ? rgptDraw[4].y : rgptDraw[3].y) + 1);
-                FillRect(hdc, &rc, hbrCur);
+            while (dx > 0) {
+                PatBlt(hdc, x, y, dx, 1, PATCOPY);
+                x++;
+                dx -= 2;
+                y += dy;
             }
-            if (fDisabled == 0)
-                break;
+        } else {
+            dx = bt == 2 ? -1 : 1;
+            y = rgptDraw[2].y;
+            dy = rgptDraw[1].y - y + 1;
+            x = rgptDraw[1].x;
+            if (fBar) {
+                PatBlt(hdc, rgptDraw[cpt - 1].x, y, 1, dy, PATCOPY);
+            }
+            while (dy > 0) {
+                PatBlt(hdc, x, y, 1, dy, PATCOPY);
+                y++;
+                dy -= 2;
+                x += dx;
+            }
+        }
+        if (!fNoShaft) {
+            SetRect(&rc, rgptDraw[3].x >= rgptDraw[4].x ? rgptDraw[4].x : rgptDraw[3].x, rgptDraw[3].y >= rgptDraw[4].y ? rgptDraw[4].y : rgptDraw[3].y,
+                    (rgptDraw[3].x <= rgptDraw[4].x ? rgptDraw[4].x : rgptDraw[3].x) + 1, (rgptDraw[3].y <= rgptDraw[4].y ? rgptDraw[4].y : rgptDraw[3].y) + 1);
+            FillRect(hdc, &rc, hbrCur);
+        }
+        if (fDisabled) {
             for (ipt = 0; ipt < cpt; ipt++) {
                 rgptDraw[ipt].x--;
                 rgptDraw[ipt].y--;
@@ -1211,19 +1211,20 @@ void DrawBtn(HDC hdc, RECT *prc, int16_t bt, int16_t fDown, char *szText) {
             fDisabled = FALSE;
             hbrCur = hbrButtonShadow;
             SelectObject(hdc, hbrButtonShadow);
+            goto DrawAgain;
         }
     }
     SelectObject(hdc, hbrSav);
-    if (szText != 0) {
+    if (szText) {
         hfontSav = SelectObject(hdc, rghfontArial8[1]);
         bkMode = SetBkMode(hdc, TRANSPARENT);
-        crSav = SetTextColor(hdc, fDisabled == 0 ? crButtonText : crButtonHilite);
+        crSav = SetTextColor(hdc, !fDisabled ? crButtonText : crButtonHilite);
         rc = *prc;
-        if (fDown != 0) {
+        if (fDown) {
             OffsetRc(&rc, 1, 1);
         }
         RcCtrTextOut(hdc, &rc, szText, 0);
-        if (fDisabled != 0) {
+        if (fDisabled) {
             OffsetRc(&rc, -1, -1);
             SetTextColor(hdc, crButtonShadow);
             RcCtrTextOut(hdc, &rc, szText, 0);
@@ -1324,7 +1325,7 @@ HBRUSH HbrGet(COLORREF cr) {
         }
     }
     hbr = CreateSolidBrush(cr);
-    if (hbr == 0) {
+    if (!hbr) {
         return NULL;
     }
     if (iFree == -1) {
@@ -1348,11 +1349,12 @@ void FreeHbr(HBRUSH hbr) {
             if (rghbrCacheUse[i] != 0) {
                 return;
             }
-            break;
+        DeleteBrush:
+            DeleteObject(hbr);
+            return;
         }
     }
-    DeleteObject(hbr);
-    return;
+    goto DeleteBrush;
 }
 
 int16_t FCompressUserString(char *szIn, char *szOut, int16_t *pcOut) {
@@ -1374,7 +1376,7 @@ int16_t FCompressUserString(char *szIn, char *szOut, int16_t *pcOut) {
             cNyb = 3;
         }
         while (cNyb-- != 0) {
-            if (fHalf == 0) {
+            if (!fHalf) {
                 *pchOut = (iNyb & 0xf) * 0x10;
                 fHalf = TRUE;
             } else {
@@ -1388,7 +1390,7 @@ int16_t FCompressUserString(char *szIn, char *szOut, int16_t *pcOut) {
             iNyb >>= 4;
         }
     }
-    if (fHalf != 0) {
+    if (fHalf) {
         *pchOut |= 0xf;
         pchOut++;
     }
@@ -1409,7 +1411,7 @@ int16_t FDecompressUserString(char *szIn, int16_t cIn, char *szOut, int16_t *pcO
     fHalf = FALSE;
     pchOut = szWork;
     while (cIn > 0) {
-        if (fHalf != 0) {
+        if (fHalf) {
             iNyb = *szIn & 0xf;
             cIn--;
             szIn++;
@@ -1420,7 +1422,7 @@ int16_t FDecompressUserString(char *szIn, int16_t cIn, char *szOut, int16_t *pcO
         }
         fHalf = fHalf == 0;
         if (iNyb >= 11) {
-            if (fHalf != 0) {
+            if (fHalf) {
                 iNyb |= (*szIn & 0xf) << 4;
                 cIn--;
                 szIn++;
@@ -1429,7 +1431,7 @@ int16_t FDecompressUserString(char *szIn, int16_t cIn, char *szOut, int16_t *pcO
             }
             fHalf = fHalf == 0;
             if ((iNyb & 0xf) == 0xf) {
-                if (fHalf != 0) {
+                if (fHalf) {
                     iNyb |= (*szIn & 0xf) << 8;
                     cIn--;
                     szIn++;
@@ -1472,7 +1474,7 @@ int16_t NybbleFromCh(uint8_t ch) {
         return (ch - 0x36) << 4 | 0xd;
     }
     pch = strchr(rgchcomp, ch);
-    if (pch != 0) {
+    if (pch) {
         return (pch - rgchcomp + 4) << 4 | 0xe;
     }
     return ch << 4 | 0xf;
@@ -1539,7 +1541,7 @@ HPALETTE HpalFromDib(HGLOBAL hdib) {
     LOGPALETTE       *ppal;
 
     lpb = LockResource(hdib);
-    if (lpb == 0) {
+    if (!lpb) {
         return NULL;
     }
     lpbi = (BITMAPINFOHEADER *)lpb;
@@ -1599,17 +1601,15 @@ uint16_t PaletteSize(void *pv) {
 int16_t DibBlt(HDC hdc, int16_t x0, int16_t y0, int16_t dx, int16_t dy, HGLOBAL hdib, int16_t x1, int16_t y1, int16_t dxSrc, int16_t dySrc, int32_t rop) {
     char             *pBuf;
     BITMAPINFOHEADER *lpbi;
-    BITMAPINFOHEADER *t_scratch_me;
 
-    if (hdib == 0) {
+    if (!hdib) {
         return PatBlt(hdc, x0, y0, dx, dy, rop);
     }
     lpbi = (BITMAPINFOHEADER *)GlobalLock(hdib);
-    if (lpbi == 0) {
+    if (!lpbi) {
         return 0;
     }
-    t_scratch_me = (BITMAPINFOHEADER *)((uint8_t *)lpbi + LOWORD(lpbi->biSize));
-    pBuf = (char *)((uint8_t *)t_scratch_me + PaletteSize(lpbi));
+    pBuf = (char *)lpbi + LOWORD(lpbi->biSize) + PaletteSize(lpbi);
     StretchDIBits(hdc, x0, y0, dx, dy, x1, y1, dxSrc, dySrc, pBuf, (LPBITMAPINFO)lpbi, 0, rop);
     GlobalUnlock(hdib);
     return 1;
@@ -1623,12 +1623,11 @@ HGLOBAL DibFromBitmap(HBITMAP hbm, uint32_t biStyle, uint16_t biBits, HPALETTE h
     BITMAPINFOHEADER  bi;
     HGLOBAL           hdib;
     BITMAPINFOHEADER *lpbi;
-    BITMAPINFOHEADER *t_scratch_m4a;
 
-    if (hbm == 0) {
+    if (!hbm) {
         return NULL;
     }
-    if (hpal == 0) {
+    if (!hpal) {
         hpal = GetStockObject(DEFAULT_PALETTE);
     }
     GetObject(hbm, 14, &bm);
@@ -1651,7 +1650,7 @@ HGLOBAL DibFromBitmap(HBITMAP hbm, uint32_t biStyle, uint16_t biBits, HPALETTE h
     hpal = SelectPalette(hdc, hpal, FALSE);
     RealizePalette(hdc);
     hdib = GlobalAlloc(66, dwLen);
-    if (hdib == 0) {
+    if (!hdib) {
         SelectPalette(hdc, hpal, FALSE);
         ReleaseDC(NULL, hdc);
         return NULL;
@@ -1669,11 +1668,10 @@ HGLOBAL DibFromBitmap(HBITMAP hbm, uint32_t biStyle, uint16_t biBits, HPALETTE h
     }
     dwLen = (uint32_t)PaletteSize(&bi) + bi.biSize + bi.biSizeImage;
     h = GlobalReAlloc(hdib, dwLen, 0);
-    if (h != 0) {
+    if (h) {
         hdib = h;
         lpbi = (BITMAPINFOHEADER *)GlobalLock(hdib);
-        t_scratch_m4a = (BITMAPINFOHEADER *)((uint8_t *)lpbi + LOWORD(lpbi->biSize));
-        if (GetDIBits(hdc, hbm, 0, LOWORD(bi.biHeight), (uint8_t *)t_scratch_m4a + PaletteSize(lpbi), (BITMAPINFO *)lpbi, 0) == 0) {
+        if (GetDIBits(hdc, hbm, 0, LOWORD(bi.biHeight), (uint8_t *)lpbi + LOWORD(lpbi->biSize) + PaletteSize(lpbi), (BITMAPINFO *)lpbi, 0) == 0) {
             GlobalUnlock(hdib);
             hdib = 0;
             SelectPalette(hdc, hpal, FALSE);
@@ -1704,21 +1702,25 @@ HGLOBAL HdibLoadBigResource(BitmapId idb) {
         return NULL;
     }
     hdib = AllocResource(hInst, hrsrc, 0);
-    if (hdib == 0) {
+    if (!hdib) {
         return NULL;
     }
     hfile = AccessResource(hInst, hrsrc);
-    if (hfile != -1) {
-        lpstr = LockResource(hdib);
-        if (lpstr == 0 || ReadBigBlock(hfile, lpstr, SizeofResource(hInst, hrsrc)) == 0) {
-            _lclose(hfile);
-        } else {
-            _lclose(hfile);
-            return hdib;
-        }
+    if (hfile == -1) {
+    FreeAndFail:
+        FreeResource(hdib);
+        return NULL;
     }
-    FreeResource(hdib);
-    return NULL;
+    lpstr = LockResource(hdib);
+    if (!lpstr) {
+    CloseAndFail:
+        _lclose(hfile);
+        goto FreeAndFail;
+    }
+    if (ReadBigBlock(hfile, lpstr, SizeofResource(hInst, hrsrc)) == 0)
+        goto CloseAndFail;
+    _lclose(hfile);
+    return hdib;
 }
 
 int16_t ReadBigBlock(int16_t hFile, char *lpBuffer, uint32_t dwSize) {
@@ -1729,12 +1731,12 @@ int16_t ReadBigBlock(int16_t hFile, char *lpBuffer, uint32_t dwSize) {
     while (dwSize != 0) {
         nBytes = dwSize <= 30000 ? LOWORD(dwSize) : 30000;
         if (_lread(hFile, lpInBuf, nBytes) != nBytes) {
-            return 0;
+            return FALSE;
         }
         dwSize -= nBytes;
         lpInBuf += nBytes;
     }
-    return 1;
+    return TRUE;
 }
 
 int16_t FIntersectCircleLine(POINT16 ptL1, POINT16 ptL2, POINT16 ptC, int32_t r2, int16_t dMax, int16_t *pdStart, int16_t *pdEnd) {
@@ -1840,7 +1842,7 @@ int16_t FCheckPassword() {
     int16_t fRet;
     int32_t lSaltDef;
 
-    if (lSaltCur == 0 || lSaltLast == lSaltCur || fAi != 0) {
+    if (lSaltCur == 0 || lSaltLast == lSaltCur || fAi) {
         return TRUE;
     }
     if (vszDefPass[0] != 0) {
@@ -1849,11 +1851,11 @@ int16_t FCheckPassword() {
             return TRUE;
         }
     }
-    if (ini.fValidate != 0) {
+    if (ini.fValidate) {
         return FALSE;
     }
     lpProc = MakeProcInstance(PasswordDlg, hInst);
-    fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_PASSWORD), hwndTitle == 0 ? hwndFrame : hwndTitle, lpProc);
+    fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_PASSWORD), !hwndTitle ? hwndFrame : hwndTitle, lpProc);
     FreeProcInstance(lpProc);
     return fRet;
 }
@@ -1884,48 +1886,48 @@ INT_PTR CALLBACK PasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     RECT    rc;
     int32_t lSalt;
 
-    if (message == WM_ERASEBKGND) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0xf, 0);
+        SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsEnterPassword));
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) == 0) {
-        if (message == WM_INITDIALOG) {
-            SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0xf, 0);
-            SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsEnterPassword));
+    case WM_CTLCOLOR:
+        if (message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
+        }
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetDlgItemText(hwnd, IDC_EDIT1, szPass, 60);
+                lSalt = LSaltFromSz(szPass);
+                if (lSalt == lSaltCur) {
+                    if (!gd.fHotSeat) {
+                        lSaltLast = lSaltCur;
+                        strcpy(szPassLast, szPass);
+                    }
+                } else {
+                    vcPasswordFailures++;
+                    Delay(vcPasswordFailures < 10 ? 1000 : vcPasswordFailures < 100 ? 5000 : 10000);
+                    AlertSz(PszFormatIds(idsPasswordHaveEnteredIncorrectPleaseTry, NULL), MB_ICONHAND);
+                    SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
+                    SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
+                    break;
+                }
+            }
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, 1089);
             return 1;
         }
-        if (message == WM_COMMAND) {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-            case IDOK:
-            case IDCANCEL:
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                    GetDlgItemText(hwnd, IDC_EDIT1, szPass, 60);
-                    lSalt = LSaltFromSz(szPass);
-                    if (lSalt == lSaltCur) {
-                        if (gd.fHotSeat == 0) {
-                            lSaltLast = lSaltCur;
-                            strcpy(szPassLast, szPass);
-                        }
-                    } else {
-                        vcPasswordFailures++;
-                        Delay(vcPasswordFailures < 10 ? 1000 : vcPasswordFailures < 100 ? 5000 : 10000);
-                        AlertSz(PszFormatIds(idsPasswordHaveEnteredIncorrectPleaseTry, NULL), MB_ICONHAND);
-                        SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
-                        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
-                        break;
-                    }
-                }
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                return 1;
-            case IDC_HELP:
-                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, 1089);
-                return 1;
-            }
-        }
-    } else if (HIWORD(lParam) == 6) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
     }
     return 0;
 }
@@ -1936,60 +1938,60 @@ INT_PTR CALLBACK NewPasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     int32_t lSalt2;
     int32_t lSalt;
 
-    if (message == WM_ERASEBKGND) {
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x10, 0);
+        SendDlgItemMessage(hwnd, IDC_PASSWORD_CONFIRM, EM_LIMITTEXT, 0x10, 0);
+        if (idPlayer == iplrNone) {
+            SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsNotePasswordEffectiveImmediately));
+            SetWindowText(hwnd, PszGetCompressedString(idsChangeHostPassword));
+        } else {
+            SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsNoteNewPasswordWillTakeEffectUntil));
+        }
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    }
-    if (IS_WM_CTLCOLOR(message) == 0) {
-        if (message == WM_INITDIALOG) {
-            SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 0x10, 0);
-            SendDlgItemMessage(hwnd, IDC_PASSWORD_CONFIRM, EM_LIMITTEXT, 0x10, 0);
-            if (idPlayer == -1) {
-                SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsNotePasswordEffectiveImmediately));
-                SetWindowText(hwnd, PszGetCompressedString(idsChangeHostPassword));
-            } else {
-                SetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_STATUS_TEXT), PszGetCompressedString(idsNoteNewPasswordWillTakeEffectUntil));
-            }
-            return 1;
+    case WM_CTLCOLOR:
+        if (message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            SetBkColor((HDC)wParam, crButtonFace);
+            return (INT_PTR)hbrButtonFace;
         }
-        if (message == WM_COMMAND) {
-            switch (GET_WM_COMMAND_ID(wParam, lParam)) {
-            case IDOK:
-            case IDCANCEL:
-                if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
-                    GetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szPass, 18);
-                    lSalt = LSaltFromSz(szPass);
-                    GetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_CONFIRM), szPass, 18);
-                    lSalt2 = LSaltFromSz(szPass);
-                    if (lSalt != lSalt2) {
-                        AlertSz(PszFormatIds(idsPasswordsTypedTwoFieldsSamePleaseReenter, NULL), MB_ICONHAND);
-                        SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
-                        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
-                        break;
-                    }
-                    if (idPlayer != -1) {
-                        WriteMemRt(rtChgPassword, 4, &lSalt);
+        break;
+    case WM_COMMAND:
+        switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+        case IDOK:
+        case IDCANCEL:
+            if (GET_WM_COMMAND_ID(wParam, lParam) == IDOK) {
+                GetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szPass, 18);
+                lSalt = LSaltFromSz(szPass);
+                GetWindowText(GetDlgItem(hwnd, IDC_PASSWORD_CONFIRM), szPass, 18);
+                lSalt2 = LSaltFromSz(szPass);
+                if (lSalt != lSalt2) {
+                    AlertSz(PszFormatIds(idsPasswordsTypedTwoFieldsSamePleaseReenter, NULL), MB_ICONHAND);
+                    SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
+                    SendDlgItemMessage(hwnd, IDC_EDIT1, EM_SETSEL, 0, -1);
+                    break;
+                }
+                if (idPlayer != iplrNone) {
+                    WriteMemRt(rtChgPassword, 4, &lSalt);
+                } else {
+                    lSaltCur = lSalt;
+                    if (FWriteDataFile(szBase, idPlayer, FALSE)) {
+                        lSaltLast = lSalt;
                     } else {
-                        lSaltCur = lSalt;
-                        if (FWriteDataFile(szBase, idPlayer, FALSE) != 0) {
-                            lSaltLast = lSalt;
-                        } else {
-                            AlertSz(PszFormatIds(idsUnableCreateHostFile, NULL), MB_ICONHAND);
-                            lSaltCur = lSaltLast;
-                        }
+                        AlertSz(PszFormatIds(idsUnableCreateHostFile, NULL), MB_ICONHAND);
+                        lSaltCur = lSaltLast;
                     }
                 }
-                EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
-                return 1;
-            case IDC_HELP:
-                WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhChangePassword);
-                return 1;
             }
+            EndDialog(hwnd, GET_WM_COMMAND_ID(wParam, lParam) == IDOK);
+            return 1;
+        case IDC_HELP:
+            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhChangePassword);
+            return 1;
         }
-    } else if (HIWORD(lParam) == 6) {
-        SetBkColor((HDC)wParam, crButtonFace);
-        return (INT_PTR)hbrButtonFace;
     }
     return 0;
 }
@@ -2014,7 +2016,9 @@ uint32_t GetDiskSerialNumber() {
         fn[0] = drive + 'A';
         l = 0;
         uDate = 0;
-        if (GetDriveType(i + 2) == 3 && dos_findfirst(fn, 8, &fi) == 0) {
+        if (GetDriveType(i + 2) != 3)
+            goto NoDrive;
+        if (dos_findfirst(fn, 8, &fi) == 0) {
             for (j = 0; j < 8 && fi.name[j] != 0; j++) {
                 if (i == 0) {
                     l = (int32_t)(l << 4) | (int16_t)(fi.name[j] & 0xf);
@@ -2029,6 +2033,7 @@ uint32_t GetDiskSerialNumber() {
                 uDate = (fi.wr_date & 3) << 6 | (fi.wr_time & 7) << 3 | (fi.wr_time >> 5 & 7);
             }
         } else {
+        NoDrive:
             uDate = 0xc57a;
             l = 1504107685;
         }
@@ -2066,7 +2071,7 @@ uint32_t GetDiskSerialNumber() {
 }
 
 void ShowProgressGauge() {
-    if (hwndProgressGauge == 0) {
+    if (!hwndProgressGauge) {
         CreateDialog(hInst, MAKEINTRESOURCE(IDD_Gauge), hwndFrame, lpfnGaugeDlgProc);
     } else {
         UpdateProgressGauge(0);
@@ -2075,7 +2080,7 @@ void ShowProgressGauge() {
 }
 
 void HideProgressGauge() {
-    if (hwndProgressGauge != 0) {
+    if (hwndProgressGauge) {
         DestroyWindow(hwndProgressGauge);
         hwndProgressGauge = 0;
     }
@@ -2085,7 +2090,7 @@ void HideProgressGauge() {
 void UpdateProgressGauge(ProgressStep pctX10) {
     int16_t iNum;
 
-    if (hwndProgressGauge != 0) {
+    if (hwndProgressGauge) {
         iNum = 0;
         if (pctX10 == progressStep4) {
             pctX10 = vpctProgressGauge + 4;
@@ -2094,7 +2099,7 @@ void UpdateProgressGauge(ProgressStep pctX10) {
         } else if (pctX10 < 0) {
             pctX10 = 0;
         } else if (pctX10 > 1000) {
-            if (gd.fProgressTxt == 0) {
+            if (!gd.fProgressTxt) {
                 return;
             }
             iNum = pctX10;
@@ -2114,36 +2119,34 @@ INT_PTR CALLBACK ProgressGaugeDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
     char       *psz;
     int16_t     dx;
 
-    if (message != WM_PAINT) {
-        if (message != WM_ERASEBKGND) {
-            if (IS_WM_CTLCOLOR(message) == 0) {
-                if (message != WM_INITDIALOG) {
-                    return 0;
-                }
-                vpctProgressGauge = 0;
-                hwndProgressGauge = hwnd;
-                dx = GetSystemMetrics(SM_CXSCREEN);
-                dy = GetSystemMetrics(SM_CYSCREEN);
-                psz = PszGetCompressedString(idsGeneratingDataYearD);
-                _wsprintf(szWork, psz, game.turn + 2401);
-                SetWindowText(GetDlgItem(hwnd, IDC_GAUGE_TEXT), szWork);
-                GetWindowRect(hwnd, &rc);
-                rc.left = (dx - (rc.right - rc.left)) >> 1;
-                rc.top = (dy - (rc.bottom - rc.top)) >> 1;
-                SetWindowPos(hwnd, NULL, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-                return 1;
-            }
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
+    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    case WM_INITDIALOG:
+        vpctProgressGauge = 0;
+        hwndProgressGauge = hwnd;
+        dx = GetSystemMetrics(SM_CXSCREEN);
+        dy = GetSystemMetrics(SM_CYSCREEN);
+        psz = PszGetCompressedString(idsGeneratingDataYearD);
+        _wsprintf(szWork, psz, game.turn + 2401);
+        SetWindowText(GetDlgItem(hwnd, IDC_GAUGE_TEXT), szWork);
+        GetWindowRect(hwnd, &rc);
+        rc.left = (dx - (rc.right - rc.left)) >> 1;
+        rc.top = (dy - (rc.bottom - rc.top)) >> 1;
+        SetWindowPos(hwnd, NULL, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        return 1;
+    case WM_ERASEBKGND:
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
+    case WM_CTLCOLOR:
+        SetBkColor((HDC)wParam, crButtonFace);
+        return (INT_PTR)hbrButtonFace;
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        DrawProgressGauge(hdc, TRUE, 0);
+        EndPaint(hwnd, &ps);
+        return 1;
     }
-    hdc = BeginPaint(hwnd, &ps);
-    DrawProgressGauge(hdc, TRUE, 0);
-    EndPaint(hwnd, &ps);
-    return 1;
+    return 0;
 }
 
 void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
@@ -2157,8 +2160,8 @@ void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
     char    szT[8];
 
     fNumOnly = iNumOnly > 0;
-    if (hwndProgressGauge != 0) {
-        if (hdcOrig == 0) {
+    if (hwndProgressGauge) {
+        if (!hdcOrig) {
             hdc = GetDC(hwndProgressGauge);
         } else {
             hdc = hdcOrig;
@@ -2168,7 +2171,7 @@ void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
         InflateRect(&rc, -8, -8);
         dx = rc.right - rc.left;
         dy = rc.bottom - rc.top;
-        if (fFull != 0) {
+        if (fFull) {
             SelectObject(hdc, hbrButtonShadow);
             PatBlt(hdc, rc.left - 1, rc.top - 1, dx + 2, 1, PATCOPY);
             PatBlt(hdc, rc.left - 1, rc.top - 1, 1, dy + 2, PATCOPY);
@@ -2179,7 +2182,7 @@ void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
         InflateRect(&rc, -2, -2);
         dx -= 4;
         dy -= 4;
-        if (gd.fProgressTxt != 0) {
+        if (gd.fProgressTxt) {
             SetBkColor(hdc, crButtonFace);
             SelectObject(hdc, rghfontArial7[0]);
             if (iNumOnly <= 0) {
@@ -2188,19 +2191,22 @@ void DrawProgressGauge(HDC hdcOrig, int16_t fFull, int16_t iNumOnly) {
             c = _wsprintf(szT, PCTD, iNumOnly);
             RightTextOut(hdc, rc.right - 2, 1, szT, c, 80);
         }
-        if (fNumOnly == 0) {
-            SelectObject(hdc, hbrBlue);
-            for (dx = MulDiv(dx, vpctProgressGauge, 1000); dx > 0; dx -= dy) {
-                if (dx >= dy) {
-                    dx2 = dy - 1;
-                } else {
-                    dx2 = dx;
-                }
-                PatBlt(hdc, rc.left, rc.top, dx2, dy, PATCOPY);
-                rc.left += dy;
+        if (fNumOnly)
+            goto LRelease;
+
+        SelectObject(hdc, hbrBlue);
+        for (dx = MulDiv(dx, vpctProgressGauge, 1000); dx > 0; dx -= dy) {
+            if (dx >= dy) {
+                dx2 = dy - 1;
+            } else {
+                dx2 = dx;
             }
+            PatBlt(hdc, rc.left, rc.top, dx2, dy, PATCOPY);
+            rc.left += dy;
         }
-        if (hdcOrig == 0) {
+
+    LRelease:
+        if (!hdcOrig) {
             ReleaseDC(hwndProgressGauge, hdc);
         }
     }
@@ -2249,13 +2255,13 @@ int16_t CParseNumbers(char *psz, int32_t *pl, int16_t cMax) {
         if (*psz != ' ') {
             fValid = TRUE;
             lNum = (uint32_t)(lNum * 10) + (int16_t)(*psz - '0');
-        } else if (fValid != 0) {
+        } else if (fValid) {
             pl[iRead++] = lNum;
             lNum = 0;
             fValid = FALSE;
         }
     }
-    if (fValid != 0) {
+    if (fValid) {
         pl[iRead++] = lNum;
     }
     return iRead;
@@ -2272,7 +2278,7 @@ HFONT HfontPrinterCreate(HDC hdc, int16_t iSize, int16_t *pdyFont) {
     plf->lfHeight = -MulDiv(iSize, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     strcpy(plf->lfFaceName, rgszArial[1]);
     hfontNew = CreateFontIndirect(plf);
-    if (pdyFont != 0 && hfontNew != 0) {
+    if (pdyFont && hfontNew) {
         hfontSav = SelectObject(hdc, hfontNew);
         GetTextMetrics(hdc, &tm);
         *pdyFont = tm.tmHeight + tm.tmExternalLeading;

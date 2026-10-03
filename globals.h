@@ -316,7 +316,6 @@ extern char           szTitle[11];
 extern char           szTooltip[8];
 extern char           szWork[360];
 extern char           vszDefPass[17];
-extern double         __fac;
 extern int16_t       *lpMsg;
 extern int16_t       *rgXferValidHulls;
 extern int16_t       *vrgiflMerge;

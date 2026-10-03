@@ -299,6 +299,19 @@ baseline before interpreting original-to-native failures.
 
 ## Harness tests
 
+Focused native-port checks link against the actual game objects and run under
+Wine. They cover player-message serialization and both readers, legacy link
+bytes, recipient filtering, maximum text length, static-control color dispatch,
+and the Win16 battle heap rollover boundary:
+
+```sh
+cmake --build --preset mingw-debug
+python3 tests/scaffold/native_ports.py
+```
+
+Use `--build <directory>` to select another ordinary MinGW build. Run the
+tutorial separately from all Wine verification runs.
+
 ```sh
 python3 -B -m unittest discover -s tests/scaffold -p 'test_*.py'
 make test

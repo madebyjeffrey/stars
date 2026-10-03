@@ -104,22 +104,22 @@ int16_t FCreateStuff() {
     hdibPlanets = HdibLoadBigResource(IDDIB_PLANET_ICONS);
     hdibThings = HdibLoadBigResource(IDDIB_THING_ICONS);
     hdibToolbar = HdibLoadBigResource(IDB_TOOLBAR);
-    if (hdibPlanets == 0 || hdibThings == 0 || hdibToolbar == 0) {
+    if (!hdibPlanets || !hdibThings || !hdibToolbar) {
         fFailed = TRUE;
     }
     for (i = 0; i < 5; i++) {
         rghdibShips[i] = HdibLoadBigResource(i + 552);
-        if (rghdibShips[i] == 0) {
+        if (!rghdibShips[i]) {
             fFailed = TRUE;
         }
         rghdibShipsT[i] = HdibLoadBigResource(i + 557);
-        if (rghdibShipsT[i] == 0) {
+        if (!rghdibShipsT[i]) {
             fFailed = TRUE;
         }
     }
     for (i = 0; i < 7; i++) {
         rghdibInventory[i] = HdibLoadBigResource(i + 500);
-        if (rghdibInventory[i] == 0) {
+        if (!rghdibInventory[i]) {
             fFailed = TRUE;
         }
     }
@@ -156,8 +156,8 @@ int16_t FCreateStuff() {
     vlprgidMisc = LpAlloc(0x800, htPerm);
     vlprgidPlanet = LpAlloc(0x800, htPerm);
     vlprgidFleet = LpAlloc(0x800, htPerm);
-    if (fFailed != 0 || hbmpScanner == 0 || hbmpUnknownPlanet == 0 || hbmpBackBld == 0 || hdibRaces == 0 || hdibRacesT == 0 || hdibRacesX == 0 ||
-        hbmpMono == 0 || hbmpScanShip == 0 || hbmpMsg == 0 || hiconHost == 0 || hiconStars == 0 || hiconWait == 0) {
+    if (fFailed || !hbmpScanner || !hbmpUnknownPlanet || !hbmpBackBld || !hdibRaces || !hdibRacesT || !hdibRacesX || !hbmpMono || !hbmpScanShip || !hbmpMsg ||
+        !hiconHost || !hiconStars || !hiconWait) {
         AlertSz(PszFormatIds(idsUnableLoadBitmaps, NULL), MB_ICONHAND);
         return FALSE;
     }
@@ -221,29 +221,29 @@ int16_t InitInstance(int16_t nCmdShow) {
     ini.fWait = FALSE;
     ini.fStartupFile = FALSE;
     ini.grobjSel = 0;
-    ini.idPlayer = -1;
+    ini.idPlayer = iplrNone;
     ReadIniSettings();
     rc = ini.wnFrame.rc;
     hwndFrame = CreateWindow(szFrame, "Stars!", WS_OVERLAPPEDWINDOW, rc.left, rc.top, rc.right, rc.bottom, NULL, NULL, hInst, NULL);
-    if (hwndFrame == 0) {
-        return 0;
+    if (!hwndFrame) {
+        return FALSE;
     }
     hAccel = LoadAccelerators(hInst, MAKEINTRESOURCE(IDA_MAIN));
-    if (hAccel == 0) {
-        return 0;
+    if (!hAccel) {
+        return FALSE;
     }
     hAccelTitle = LoadAccelerators(hInst, MAKEINTRESOURCE(IDA_TITLE));
-    if (hAccelTitle == 0) {
-        return 0;
+    if (!hAccelTitle) {
+        return FALSE;
     }
     if (nCmdShow != 1) {
         sw = nCmdShow;
     } else {
-        sw = ini.wnFrame.fMaximized != 0 || ini.wnFrame.fMinimized != 0 ? 3 : 1;
+        sw = ini.wnFrame.fMaximized != 0 || ini.wnFrame.fMinimized ? 3 : 1;
     }
     ShowWindow(hwndFrame, sw);
     ShowWindow(hwndFrame, SW_HIDE);
-    return 1;
+    return TRUE;
 }
 
 void InitTiles() {
@@ -269,7 +269,7 @@ void InitTiles() {
             rgtile[i].yTop = yTop;
             rgtile[i].fFixCtls = FALSE;
             rgtile[i].fMinDraw = FALSE;
-            if (rgtile[i].fPopped != 0) {
+            if (rgtile[i].fPopped) {
                 yTop += rgtile[i].dyFull + 4;
             } else {
                 yTop += dyArial8 + 7;
@@ -296,52 +296,41 @@ void GetIniWinRc(char *szSection, char *szIniFile, StringId ids, WN *pwn) {
 
     CchGetString(ids, szEntry);
     cch = GetPrivateProfileString(szSection, szEntry, "X", szWork, 20, szIniFile);
-    if (cch == 17) {
-        switch (szWork[0]) {
-        default:
-            goto NoRc;
-        case 'M':
-        case 'R':
-        case 'I':
-            pch = &szWork[1];
-            for (i = 0; i < 4; i++) {
-                rg[i] = 0;
-                fNeg = FALSE;
-                j = 0;
-                while (j < 4) {
-                    if (*pch == '-') {
-                        fNeg = TRUE;
-                    } else {
-                        if (*pch < '0' || *pch > '9')
-                            goto NoRc;
-                        rg[i] = 10 * rg[i] + (*pch - '0');
-                    }
-                    j++;
-                    pch++;
+    if (cch != 17 || (szWork[0] != 'M' && szWork[0] != 'R' && szWork[0] != 'I')) {
+    NoRc:
+        rc.left = -32768;
+        rc.right = -32768;
+        rc.bottom = 0;
+        rc.top = 0;
+        fMaximized = ids == idsMain;
+        fMinimized = FALSE;
+        fInitalized = FALSE;
+    } else {
+        pch = &szWork[1];
+        for (i = 0; i < 4; i++) {
+            rg[i] = 0;
+            fNeg = FALSE;
+            for (j = 0; j < 4; j++, pch++) {
+                if (*pch == '-') {
+                    fNeg = TRUE;
+                    continue;
                 }
-                if (fNeg != 0) {
-                    rg[i] = -rg[i];
-                }
+                if (*pch < '0' || *pch > '9')
+                    goto NoRc;
+                rg[i] = 10 * rg[i] + (*pch - '0');
             }
-            rc.left = rg[0];
-            rc.top = rg[1];
-            rc.right = rg[2];
-            rc.bottom = rg[3];
-            fMaximized = szWork[0] == 'M';
-            fMinimized = szWork[0] == 'I';
-            fInitalized = TRUE;
+            if (fNeg) {
+                rg[i] = -rg[i];
+            }
         }
-        goto L_11ec;
+        rc.left = rg[0];
+        rc.top = rg[1];
+        rc.right = rg[2];
+        rc.bottom = rg[3];
+        fMaximized = szWork[0] == 'M';
+        fMinimized = szWork[0] == 'I';
+        fInitalized = TRUE;
     }
-NoRc:
-    rc.left = -32768;
-    rc.right = -32768;
-    rc.bottom = 0;
-    rc.top = 0;
-    fMaximized = ids == idsMain;
-    fMinimized = FALSE;
-    fInitalized = FALSE;
-L_11ec:
     pwn->rc = rc;
     pwn->fMaximized = fMaximized;
     pwn->fMinimized = fMinimized;
@@ -361,8 +350,6 @@ void ReadIniSettings() {
     char     szSection[16];
     int16_t  cch;
     int16_t  cpq;
-    uint16_t t_scratch_m4a_8;
-    uint16_t t_scratch_m4c;
 
     ini.fGen = FALSE;
     ini.fTry = FALSE;
@@ -531,7 +518,7 @@ void ReadIniSettings() {
     } else {
         ini.fStartupFile = FALSE;
     }
-    if (vrgszMRU == 0) {
+    if (!vrgszMRU) {
         vrgszMRU = LpAlloc(2304, htPerm);
     }
     psz = &szEntry[strlen(szEntry) - 1];
@@ -610,9 +597,7 @@ void ReadIniSettings() {
     strdate(szWork);
     szWork[5] = 0;
     szWork[2] = 0;
-    t_scratch_m4a_8 = atoi(&szWork[6]) * 31 * 12;
-    t_scratch_m4c = atoi(szWork) * 31;
-    uDateCur = atoi(&szWork[3]) + t_scratch_m4c + t_scratch_m4a_8;
+    uDateCur = atoi(&szWork[3]) + atoi(szWork) * 31 + atoi(&szWork[6]) * 31 * 12;
     CchGetString(idsHistoryinfo, szEntry);
     uDateInstalled = GetPrivateProfileInt(szSection, szEntry, -1, szIniFile);
     if (uDateCur < uDateInstalled) {
@@ -721,29 +706,33 @@ void ReadIniTileSettings(char *pszFormat, TILE *rgtile, int16_t ctile) {
 
     iCol = 0;
     iTile = 0;
-    for (; *pszFormat != 0; pszFormat++) {
+    while (*pszFormat != 0) {
         if (*pszFormat == '*') {
             if (iCol < 1) {
                 iCol++;
             }
-        } else if (isalpha(*pszFormat) != 0) {
-            fPopped = isupper(*pszFormat);
-            iBit = fPopped == 0 ? *pszFormat - 'a' : *pszFormat - 'A';
-            if ((int16_t)iBit >= 0) {
-                for (i = iTile; i < ctile && rgtile[i].id != iBit; i++) {
-                }
-                if (i != ctile) {
-                    rgtile[i].iCol = iCol;
-                    rgtile[i].fPopped = fPopped;
-                    if (i != iTile) {
-                        tile = rgtile[i];
-                        rgtile[i] = rgtile[iTile];
-                        rgtile[iTile] = tile;
-                    }
-                    iTile++;
-                }
-            }
+            goto DoNext;
         }
+        if (isalpha(*pszFormat) == 0)
+            goto DoNext;
+        fPopped = isupper(*pszFormat);
+        iBit = !fPopped ? *pszFormat - 'a' : *pszFormat - 'A';
+        if ((int16_t)iBit < 0)
+            goto DoNext;
+        for (i = iTile; i < ctile && rgtile[i].id != iBit; i++) {
+        }
+        if (i == ctile)
+            goto DoNext;
+        rgtile[i].iCol = iCol;
+        rgtile[i].fPopped = fPopped;
+        if (i != iTile) {
+            tile = rgtile[i];
+            rgtile[i] = rgtile[iTile];
+            rgtile[iTile] = tile;
+        }
+        iTile++;
+    DoNext:
+        pszFormat++;
     }
     for (i = iTile; i < ctile; i++) {
         if (rgtile[i].iCol < iCol) {
