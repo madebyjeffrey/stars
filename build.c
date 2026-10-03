@@ -105,7 +105,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     int16_t            cshQueued;
     int16_t            j;
 
-    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    switch (message) {
     case WM_INITDIALOG:
         fHullCopy = FALSE;
         hwndSlotDlg = hwnd;
@@ -159,7 +159,13 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         lpmis = (MEASUREITEMSTRUCT *)lParam;
         lpmis->itemHeight = 66;
         return 1;
-    case WM_CTLCOLOR:
+    case WM_CTLCOLORMSGBOX:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORLISTBOX:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORSCROLLBAR:
+    case WM_CTLCOLORSTATIC:
         for (i = 2064; i <= 2069 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 2069 || (HWND)lParam == GetDlgItem(hwnd, IDC_SHIPLIST)) {

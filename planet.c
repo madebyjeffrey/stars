@@ -16,7 +16,7 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     PLANET            *lppl;
     FLEET             *lpfl;
 
-    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    switch (message) {
     case WM_MDIACTIVATE:
         hwndActive = (lParam == (LPARAM)hwnd) == 0 ? NULL : hwnd;
         return 0;
@@ -67,7 +67,13 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    case WM_CTLCOLOR:
+    case WM_CTLCOLORMSGBOX:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORLISTBOX:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORSCROLLBAR:
+    case WM_CTLCOLORSTATIC:
         if ((HWND)lParam == hwndRepCB) {
             SetBkColor((HDC)wParam, crButtonFace);
             SetTextColor((HDC)wParam, crButtonText);

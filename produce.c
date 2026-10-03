@@ -238,7 +238,7 @@ INT_PTR CALLBACK ProductionDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
     int16_t            fRet;
     HCURSOR            hcs;
 
-    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    switch (message) {
     case WM_INITDIALOG:
         rgidProdBtns[0] = 1070;
         rgidProdBtns[1] = 1071;
@@ -314,9 +314,15 @@ INT_PTR CALLBACK ProductionDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
         lpmis = (MEASUREITEMSTRUCT *)lParam;
         lpmis->itemHeight = dyArial8 + 2;
         return 1;
-    case WM_CTLCOLOR:
+    case WM_CTLCOLORMSGBOX:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORLISTBOX:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORSCROLLBAR:
+    case WM_CTLCOLORSTATIC:
         if ((HWND)lParam == GetDlgItem(hwnd, IDC_PRODUCTION_RESEARCH_LEFTOVERS_ONLY) ||
-            message == WM_CTLCOLORSTATIC /* NATIVE: Win16 CTLCOLOR_STATIC was in HIWORD(lParam). */) {
+            message == WM_CTLCOLORSTATIC) {
             SetBkColor((HDC)wParam, crButtonFace);
             return (INT_PTR)hbrButtonFace;
         }
@@ -1188,7 +1194,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
     FARPROC     lpProc;
     int16_t     cpq;
 
-    switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message) { /* NATIVE: Win32 split WM_CTLCOLOR by control type. */
+    switch (message) {
     case WM_INITDIALOG:
         SetWindowText(hwnd, PszGetCompressedString(idsCustomizeProductionTemplates));
         GetWindowRect(hwnd, &rc);
@@ -1232,7 +1238,13 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         GetClientRect(hwnd, &rc);
         FillRect((HDC)wParam, &rc, hbrButtonFace);
         return 1;
-    case WM_CTLCOLOR:
+    case WM_CTLCOLORMSGBOX:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORLISTBOX:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORSCROLLBAR:
+    case WM_CTLCOLORSTATIC:
         for (i = 1073; i <= 1076 && (HWND)lParam != GetDlgItem(hwnd, i); i++) {
         }
         if (i <= 1076) {

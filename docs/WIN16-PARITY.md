@@ -71,25 +71,6 @@ storage harmlessly. They don't change game behavior and should stay.
   selected rollover arbitrarily, changing battle record order or risking
   overruns. **Revert to:** LOWORD(pointer) only on the original segmented
   heap; keep the relative-offset calculation for native heaps.
-- **Static-control colors** (26 dialog checks across battle.c, create.c,
-  msg.c, produce.c, race.c, report.c, research.c, scan.c, ship2.c, stars.c,
-  tutor.c and utilgen.c, marked `NATIVE`): original WM_CTLCOLOR carried
-  CTLCOLOR_STATIC (6) in HIWORD(lParam). Win32 carries the control HWND in
-  lParam and the control type in the message ID; these sites now compare
-  message/msg with WM_CTLCOLORSTATIC. **Revert to:** the high-word check only
-  when using actual Win16 WM_CTLCOLOR dispatch.
-- **WM_CTLCOLOR dispatch** (38 window and dialog procedures across
-  battle.c, build.c, create.c, mdi.c, mine.c, msg.c, planet.c, produce.c,
-  race.c, report.c, research.c, scan.c, ship2.c, stars.c, tb.c, tutor.c and
-  utilgen.c, marked `NATIVE`): each original procedure dispatched every
-  message, WM_CTLCOLOR included, through one `switch`. Win32 replaced that
-  single message with WM_CTLCOLORMSGBOX through WM_CTLCOLORSTATIC, so the
-  switch expression maps that range back to WM_CTLCOLOR
-  (`switch (IS_WM_CTLCOLOR(message) ? WM_CTLCOLOR : message)`), keeping
-  `case WM_CTLCOLOR:` in its original source position. Every other message
-  dispatches unchanged. **Revert to:** `switch (message)` with Win16
-  WM_CTLCOLOR dispatch.
-
 ## Compiler and runtime behavior matched (keep unless parity is dropped)
 
 These follow the original toolchain rather than a bug, and the game's

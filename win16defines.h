@@ -431,11 +431,7 @@ static inline HFILE AccessResource(HINSTANCE instance, HRSRC resource) {
     return HFILE_ERROR;
 }
 
-// Win32 replaced WM_CTLCOLOR with one message per control type.
-#define IS_WM_CTLCOLOR(msg) ((msg) >= WM_CTLCOLORMSGBOX && (msg) <= WM_CTLCOLORSTATIC)
-
 // Win16 constants that windows.h no longer provides.
-#define WM_CTLCOLOR 0x0019
 #define GWL_WNDPROC (-4)
 
 // Application messages (WM_USER + 0x64...).

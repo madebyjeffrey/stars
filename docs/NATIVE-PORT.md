@@ -6,8 +6,10 @@ Each native-port shim is marked `NATIVE` in the source and described in
 detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 
 - **Shims:** the `NATIVE` changes cover player-message serialization,
-  malformed message records, battle heap capacity, static-control colors,
-  `WM_CTLCOLOR` dispatch, and two original uninitialized reads.
+  malformed message records, battle heap capacity, and two original
+  uninitialized reads. Window procedures handle the Win32
+  `WM_CTLCOLORMSGBOX`…`WM_CTLCOLORSTATIC` messages directly where the
+  original handled Win16 `WM_CTLCOLOR`.
 - **Struct sizes:** `structs.h` layouts and `WriteRt`/`ReadRt` record sizes are
   the file format. 17 structs and `RECT` grow under Win64 (HB, MSGPLR, OBJ,
   PART, PLANET, FLEET, BTN, BTNT, DRAWCIR, RPT, SBAR, SEL, TILE, WN, INI,
