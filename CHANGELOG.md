@@ -50,3 +50,8 @@ produce different results from a 2.6j host for the same turn.
   Superlatanium on a Space Dock) no longer overflows into a huge armor
   value; it gets half its armor like any other (`UpdateShdefCost`).
   **Host results.**
+- Scanning: scanners and stargates with ranges above about 463 ly now see
+  cloaked starbases (such as ISB races') within their reduced range. The
+  range-times-visibility product overflowed 32 bits, so lightly cloaked
+  starbases were often only obscured (`SetVisPFFleets`, `SetVisPFPlanets`,
+  `SetVisPFThings`). **Host results.**

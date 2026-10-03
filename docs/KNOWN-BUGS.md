@@ -177,7 +177,7 @@ not an explicit condition in this arithmetic.
 **2.8:** confirmed by `tests/unit/test_util.c`: an RS Space Dock with 24
 Superlatanium had 51018 dp instead of 18250. `dpT` is now 32-bit.
 
-### ISB Trumps IT Gate Scanning — located overflow path
+### ISB Trumps IT Gate Scanning — fixed in 2.8
 
 `save.c`: `SetVisPFPlanets`; `planet.c`: `StargateRangeFromLppl`;
 `turn.c`: `FGenerateTurn` (starbase `lVisible` calculation).
@@ -187,6 +187,13 @@ and can overflow before division for the reported 600/800ly ranges. ISB
 cloaking makes `lVis2 < 10000`, activating this test. Unlimited-range gates
 take the bypass path. Exact observed ranges still merit a scenario test, but
 the range/visibility arithmetic explains why gate types behave differently.
+
+**2.8:** the same product appears in all four cloaked-starbase checks
+(`SetVisPFFleets`, two in `SetVisPFPlanets`, `SetVisPFThings`), so any
+scanner range above about 463 ly could fail against a cloaked starbase, not
+only gates. `tests/unit/test_save.c` showed a 600 ly penetrating scanner
+100 ly away only obscuring a starbase with `lVisible` 9000 while seeing one
+with 2500. The product is now 64-bit.
 
 ### Starbase Friendly Fire — different here; original defect recorded
 

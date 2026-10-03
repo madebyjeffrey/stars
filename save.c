@@ -1430,7 +1430,7 @@ void SetVisPFFleets(int16_t iPlr) {
                                             goto LMark101;
 
                                         lVis2 = rglpshdefSB[lppl->iPlayer][lppl->isb].lVisible;
-                                        if (lVis2 < 10000 && d2 > (int32_t)(lRadius2 * lVis2) / 10000) {
+                                        if (lVis2 < 10000 && d2 > (int32_t)((int64_t)lRadius2 * lVis2 / 10000)) {
                                             MarkPlanet(lppl, iPlr, detObscure);
                                             continue;
                                         }
@@ -1615,7 +1615,7 @@ void SetVisPFPlanets(int16_t iPlr) {
                         if ((uint32_t)(dx * dx) + (uint32_t)(dy * dy) > lRadius2)
                             continue;
                         lVis2 = rglpshdefSB[lppl2->iPlayer][lppl2->isb].lVisible;
-                        if (lVis2 < 10000 && d2 > (int32_t)(lRadius2 * lVis2) / 10000)
+                        if (lVis2 < 10000 && d2 > (int32_t)((int64_t)lRadius2 * lVis2 / 10000))
                             continue;
 
                     LMarkStargate:
@@ -1653,7 +1653,7 @@ void SetVisPFPlanets(int16_t iPlr) {
                                         goto LMark102;
 
                                     lVis2 = rglpshdefSB[lppl2->iPlayer][lppl2->isb].lVisible;
-                                    if (lVis2 < 10000 && d2 > (int32_t)(lRadius2 * lVis2) / 10000) {
+                                    if (lVis2 < 10000 && d2 > (int32_t)((int64_t)lRadius2 * lVis2 / 10000)) {
                                         MarkPlanet(lppl2, iPlr, detObscure);
                                         continue;
                                     }
@@ -1784,7 +1784,7 @@ void SetVisPFThings(int16_t iPlr) {
                                         goto LMark103;
 
                                     lVis2 = rglpshdefSB[lppl2->iPlayer][lppl2->isb].lVisible;
-                                    if (lVis2 < 10000 && d2 > (int32_t)(lRadius2 * lVis2) / 10000) {
+                                    if (lVis2 < 10000 && d2 > (int32_t)((int64_t)lRadius2 * lVis2 / 10000)) {
                                         MarkPlanet(lppl2, iPlr, detObscure);
                                         continue;
                                     }
