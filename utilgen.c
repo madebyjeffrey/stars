@@ -1757,7 +1757,9 @@ int16_t FIntersectCircleLine(POINT16 ptL1, POINT16 ptL2, POINT16 ptC, int32_t r2
     if (dx != 0) {
         yI = ptL1.y + (int32_t)((int32_t)((xI - ptL1.x) * dy) / dx);
     } else {
-        yI = ptL1.y;
+        /* A vertical route's closest point is level with the field's center.
+           The original used ptL1.y, measuring from the route's start. */
+        yI = ptC.y;
     }
     dxI = xI - ptC.x;
     dyI = yI - ptC.y;

@@ -32,6 +32,14 @@ static void test_FIntersectCircleLine_diagonal(void) {
     CheckCross(Pt(60, 80), Pt(0, 0), Pt(30, 40));
 }
 
+// North/South minefield immunity: a vertical route measured the field from
+// the route's start point instead of its closest point.
+static void test_FIntersectCircleLine_vertical(void) {
+    CheckCross(Pt(0, 0), Pt(0, 100), Pt(0, 50));
+    CheckCross(Pt(0, 100), Pt(0, 0), Pt(0, 50));
+    CheckCross(Pt(5, 0), Pt(5, 100), Pt(5, 50));
+}
+
 static void test_FIntersectCircleLine_miss(void) {
     int16_t dStart;
     int16_t dEnd;
@@ -43,5 +51,6 @@ static void test_FIntersectCircleLine_miss(void) {
 
 TEST_LIST = {{"FIntersectCircleLine horizontal", test_FIntersectCircleLine_horizontal},
              {"FIntersectCircleLine diagonal", test_FIntersectCircleLine_diagonal},
+             {"FIntersectCircleLine vertical", test_FIntersectCircleLine_vertical},
              {"FIntersectCircleLine miss", test_FIntersectCircleLine_miss},
              {NULL, NULL}};

@@ -52,14 +52,12 @@ each test in its own process, so tests start from fresh globals.
 Still to add, with the first turn-test fix: setup helpers that place
 fleets, planets, minefields and orders in the loaded game.
 
-First worked example: the North/South minefield fix (function test).
-
 ### 5.2 Confirmed in code: test, then fix
 
 | Bug | Mechanism | Test | Status |
 | --- | --- | --- | --- |
 | Cybertron starbase defenders | `ai4.c` `DoCyberAiTurn`: after `CheckAiShdefStatus(14, 15, …, &iLatestSBDefender, …)` the recycle clear tests and clears `iLatestDestroyer` again | baseline (oneai5) | open |
-| North/South minefield immunity | `FIntersectCircleLine`: for a vertical route `yI = ptL1.y` instead of `ptC.y` | function | open |
+| North/South minefield immunity | `FIntersectCircleLine`: for a vertical route `yI = ptL1.y` instead of `ptC.y` | function | fixed (`test_utilgen.c`) |
 | Space Dock armor overflow | `UpdateShdefCost`: armor slot strength overflows signed 16-bit `dpT` before the RS halving | function | open |
 | ISB vs IT gate scanning | `SetVisPFPlanets`, `FGenerateTurn`: `lRadius2 * lVis2` overflows 32 bits before `/ 10000` | function | open |
 | Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | turn | open |

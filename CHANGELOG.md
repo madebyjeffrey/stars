@@ -38,3 +38,7 @@ produce different results from a 2.6j host for the same turn.
 - Message text: a quantity formatted without a preceding mineral no longer
   reads a unit string from before the unit table; it gets no unit
   (`PszFormatString`). Display only.
+- Minefields: fleets travelling due north or south now hit minefields along
+  their route. The route/field intersection measured a vertical route from
+  its start point instead of its closest point to the field
+  (`FIntersectCircleLine`). **Host results.**

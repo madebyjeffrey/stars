@@ -83,7 +83,7 @@ planet state rather than using the production total. WP1 loading can therefore
 lower the published resource score after resources were already produced;
 WP0 unloading next year restores population before production.
 
-### North/South Minefield Immunity — located geometry defect
+### North/South Minefield Immunity — fixed in 2.8
 
 `utilgen.c`: `FIntersectCircleLine`; `turn.c`: `FTravelThroughMineFields`.
 The intersection projection solves for `xI`, then derives `yI` by dividing by
@@ -92,6 +92,10 @@ projection collapses to the starting point. This can reject fields crossed
 farther along a north/south route. The source supports a vertical intersection
 bug, but does not justify a universal immunity when the starting point is
 already inside a field. The list reports a JRC4 fix.
+
+**2.8:** confirmed by `tests/unit/test_utilgen.c` (a vertical route through
+a field's center found no intersection) and fixed: a vertical route's
+closest point is level with the field's center (`yI = ptC.y`).
 
 ### East/West Speed Bump Minefield Immunity — candidate
 
