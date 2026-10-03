@@ -476,7 +476,7 @@ void OutputFileString(char *szFile, char *sz) {
     }
     hf = OpenFile(szFile, &of, w);
     if (hf != -1) {
-        lseek(hf, 0, 2);
+        _llseek(hf, 0, 2);
         _lwrite(hf, sz, strlen(sz));
         _lclose(hf);
     }
@@ -504,7 +504,7 @@ void StarsCopyFile(char *szSrc, char *szDst) {
             StreamClose();
             return;
         }
-        for (cb = filelength(hf); cb > 2048; cb -= 2048) {
+        for (cb = (long)GetFileSize((HANDLE)(INT_PTR)hf, NULL); cb > 2048; cb -= 2048) {
             RgFromStream(rgb, 0x800);
             if (_lwrite(hfDst, rgb, 0x800) != 0x800)
                 goto LStreamError;

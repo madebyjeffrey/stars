@@ -1093,7 +1093,7 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
                 ((PLAYER *)rgbCur)->idAi = idAiMaid;
             }
             ((PLAYER *)rgbCur)->lSalt = ~((PLAYER *)rgbCur)->lSalt;
-            lseek(hf, (int16_t)-(hdrCur.cb + 2), 1);
+            _llseek(hf, (int16_t)-(hdrCur.cb + 2), 1);
             SetFileSeeds(lSeedSav1, lSeedSav2);
             WriteRt(rtPlr, hdrCur.cb, rgbCur);
             fChange = dt == dtTurn;
@@ -1102,13 +1102,13 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
         break;
     }
     if (fChange) {
-        lseek(hf, 0, 0);
+        _llseek(hf, 0, 0);
         WriteRt(rtBOF, 16, &rtbof);
     }
     fSuccess = TRUE;
 LBadFile:
     if ((dt & 0x2000) && fSuccess) {
-        lseek(hf, 0, 2);
+        _llseek(hf, 0, 2);
     } else {
         StreamClose();
     }

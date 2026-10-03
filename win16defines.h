@@ -6,9 +6,6 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#define filelength      filelength16
-#define lseek           lseek16
-#define tell            tell16
 #define qsort           qsort16
 
 // SIGNHIWORD is the high word from signed 16-to-32 extension (the x86 CWD
@@ -166,28 +163,6 @@ static inline LRESULT CALLBACK FrameWndProc16(HWND hwnd, UINT msg, WPARAM wParam
     }
     return FrameWndProc(hwnd, msg, wParam, lParam);
 }
-
-/*
- * Win16 file handles
- *
- * Stars opens its files with OpenFile and then measures and seeks them with
- * the C runtime's filelength, lseek and tell. Win16 HFILEs were DOS handles
- * the C runtime accepted; Win32 HFILEs are kernel handles, which the C
- * runtime's descriptor functions reject, so these work on the HFILE.
- */
-
-// filelength16 returns the size of an open HFILE, or -1 on error.
-static inline long filelength16(HFILE hf) {
-    DWORD size = GetFileSize((HANDLE)(INT_PTR)hf, NULL);
-    return size == INVALID_FILE_SIZE ? -1L : (long)size;
-}
-
-// lseek16 moves an HFILE's position, origin being 0 (start), 1 (current) or
-// 2 (end) as in lseek, and returns the new position or -1 on error.
-static inline long lseek16(HFILE hf, long offset, int origin) { return _llseek(hf, offset, origin); }
-
-// tell16 returns an HFILE's position.
-static inline long tell16(HFILE hf) { return _llseek(hf, 0, FILE_CURRENT); }
 
 /*
  * Win16 points

@@ -1324,7 +1324,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     }
     memset(&game, 0, sizeof(GAME));
     StreamOpen(pszFile, mdRead);
-    cb = LOWORD(filelength(hf));
+    cb = LOWORD(GetFileSize((HANDLE)(INT_PTR)hf, NULL));
     if (cb >= 16000) {
         FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
         goto LError;

@@ -179,7 +179,7 @@ int16_t FSetUpBatchProcessing() {
     if (setjmp(env) != 0)
         goto LError;
     StreamOpen(szBase, mdRead);
-    cb = LOWORD(filelength(hf));
+    cb = LOWORD(GetFileSize((HANDLE)(INT_PTR)hf, NULL));
     lpchBatch = LpAlloc(cb, htPerm);
     RgFromStream(lpchBatch, cb);
     lpchBatchMac = lpchBatch + cb;

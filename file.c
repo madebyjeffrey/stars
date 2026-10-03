@@ -730,7 +730,7 @@ LNextTurn:
         AlertSz(PszFormatIds(idsGameFileAppearsCorruptUnableLoadFile, NULL), MB_ICONHAND);
         goto LError;
     }
-    if (filelength(hf) != tell(hf)) {
+    if ((long)GetFileSize((HANDLE)(INT_PTR)hf, NULL) != _llseek(hf, 0, FILE_CURRENT)) {
         ReadRt();
         if (hdrCur.rt == rtBOF) {
             game.turn = ((RTBOF *)rgbCur)->turn;
@@ -1492,7 +1492,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
         }
         if (dt != dtHist) {
             if (fCheckMulti && rtbof.fMulti) {
-                lseek(hf, -4, 2);
+                _llseek(hf, -4, 2);
                 ReadRt();
                 if (hdrCur.rt != rtEOF && hdrCur.cb != 2)
                     goto LBadFile;
@@ -1526,7 +1526,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
         }
     }
     if (fRewind) {
-        lseek(hf, 0, 0);
+        _llseek(hf, 0, 0);
         ReadRt();
     }
     penvMem = penvMemSav;
