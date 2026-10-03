@@ -21,8 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Only scenarios covered by the checked-in comparison baseline.
-        # oneai5, oneai6 and smallai6 are intentionally excluded.
+        # Scenarios covered by the checked-in native baseline
+        # (tests/scaffold/fixtures/regression/native/run.json).
         scenario: [noai, oneai1, oneai2, oneai3, oneai4, smallai4]
     env:
       SCENARIO: ${{ matrix.scenario }}
@@ -64,10 +64,10 @@ jobs:
             --scenario "$SCENARIO" --through 150 --timeout 300
           EOF
 
-      - name: Compare against original checkpoints
+      - name: Compare against native baseline
         run: |
           python3 tests/scaffold/regression.py compare \
-            tests/scaffold/fixtures/regression/original dist/scaffold/regression/native \
+            tests/scaffold/fixtures/regression/native dist/scaffold/regression/native \
             --scenario "$SCENARIO" --through 150 --report dist/scaffold/regression/comparison.json
 
       - name: Show first difference on failure

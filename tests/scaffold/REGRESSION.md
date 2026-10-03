@@ -5,21 +5,29 @@ native game under Wine. It keeps separate saves at creation and turns 1, 10,
 25, 50, 80, 100, and 150, then compares decrypted records with the standalone
 CLI in `tests/savecli/`. No stars-asm binary or checkout is required.
 
-## Scenarios
+## Baselines
 
-GitHub Actions runs `noai`, `oneai1`–`oneai4`, and `smallai4` on pull requests
-and main pushes using `mingw-release` with the fixed seed. It generates native
+There are two sets of checked-in checkpoints in `fixtures/regression/`:
+
+- `original/`: the original Win16 game under DOSBox. This is the record of
+  2.6j behavior. The native build at the `2.6jrc3` tag matches it for `noai`,
+  `oneai1`–`oneai4` and `smallai4`.
+- `native/`: the native build's own checkpoints, the baseline for `main`.
+  Behavior-neutral changes must match it. A change that is meant to alter
+  game behavior regenerates it in the same commit (see
+  [Update the native baseline](#update-the-native-baseline)). Its `run.json`
+  lists the scenarios it covers.
+
+GitHub Actions runs the native baseline's scenarios on pull requests and main
+pushes using `mingw-release` with the fixed seed. It generates native
 checkpoints at turns 0, 1, 10, 25, 50, 80, 100, and 150 and compares them
-against the existing original saves in
-`fixtures/regression/original/`. These fixtures need no starsbox installation.
-They contain save files, checkpoint manifests and the run metadata needed by
-`compare`, with no executables or logs. See the
-[fixture README](fixtures/regression/README.md) for provenance and test registration.
+against `fixtures/regression/native/`. These fixtures need no starsbox
+installation. They contain save files, checkpoint manifests and the run
+metadata needed by `compare`, with no executables or logs. See the
+[fixture README](fixtures/regression/README.md) for provenance and test
+registration.
 
-CI intentionally excludes `oneai5`, `oneai6`, and `smallai6`. Their original
-uninitialized reads cause the [known divergences](#known-divergences), and their
-planned fixes will also differ from the original. The full set remains
-available for manual investigation with the local starsbox checkpoints.
+## Scenarios
 
 The active scenarios are `noai`, `oneai1`–`oneai6`, `smallai4`, and `smallai6`.
 Their definitions live in `tests/scaffold/fixtures/regression/`; the names and
@@ -178,20 +186,21 @@ and diagnostic logs are not treated as game-state files.
 
 ## Compare
 
-To compare a native run against the checked-in CI reference:
+To compare a native run against the checked-in native baseline:
 
 ```sh
 python3 tests/scaffold/regression.py compare \
-  tests/scaffold/fixtures/regression/original dist/scaffold/regression/native \
+  tests/scaffold/fixtures/regression/native dist/scaffold/regression/native \
   --scenario noai --scenario oneai1 --scenario oneai2 --scenario oneai3 \
   --scenario oneai4 --scenario smallai4 \
   --report dist/scaffold/regression/comparison.json
 ```
 
-Use the same six `--scenario` arguments on `regression.py run` to generate
-only those scenarios. The existing `prepare` command stages all definitions;
-explicit scenario selection keeps the three divergent scenarios out of both
-execution and comparison.
+Use the same `--scenario` arguments on `regression.py run` to generate
+only those scenarios. The `prepare` command stages all definitions; explicit
+scenario selection keeps scenarios outside the baseline out of both execution
+and comparison. Compare against `fixtures/regression/original` the same way
+to check a run against the original game.
 
 ```sh
 python3 tests/scaffold/regression.py compare \
@@ -239,6 +248,28 @@ reported difference needs inspection: padding or environment-specific fields
 can differ too. No additional bytes are silently discarded to make tests pass.
 The patch makes simulation randomness reproducible, but it does not establish
 that the reconstructed implementation is correct.
+
+### Update the native baseline
+
+A commit that changes game behavior on purpose regenerates the native
+baseline from a complete release run of every scenario it covers:
+
+```sh
+cmake --preset mingw-release -B dist/baseline-build -DSTARS_TEST_SEED=12345
+cmake --build dist/baseline-build
+python3 tests/scaffold/regression.py prepare --engine native --seed 12345 \
+  --exe dist/baseline-build/bin/stars.exe --work dist/scaffold/baseline
+python3 tests/scaffold/regression.py run --work dist/scaffold/baseline \
+  --scenario noai --scenario oneai1 ...
+python3 tests/scaffold/regression.py compare \
+  tests/scaffold/fixtures/regression/native dist/scaffold/baseline --scenario noai ...
+python3 tests/scaffold/regression.py export --work dist/scaffold/baseline \
+  --scenario noai --scenario oneai1 ... --replace
+```
+
+Run `compare` before `export` and record in the commit message which
+scenarios moved and their first differing turn. A scenario that moves
+without a reason in the change is a regression, not a baseline update.
 
 ### Test turn generation independently of universe creation
 

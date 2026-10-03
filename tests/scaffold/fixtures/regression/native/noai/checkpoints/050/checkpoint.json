@@ -1,0 +1,11 @@
+{
+  "turn": 50,
+  "year": 2450,
+  "exit_code": 1,
+  "files": {
+    "game.m1": "a8013707f3216ef4139a26931b9f881191367b7898fc2fefa6e3ef3303e59b2a",
+    "game.xy": "0ff1f7ca4a0ff306c9714cdf9f351866e605af76f4a443ea15075f879fa2dc61",
+    "game.hst": "f02eab72a1bec4ebe94a7b32fd51f365c82d2ba6e78799f85b1610a041630209",
+    "game.h1": "209dfd944bcd8c41432e77d64fde2d916c75a3ffd33d34856c4f8584fcc31be7"
+  }
+}

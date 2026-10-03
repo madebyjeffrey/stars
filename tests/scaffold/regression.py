@@ -258,6 +258,39 @@ def compare(args):
     return summarize(results, args.report)
 
 
+def export(args):
+    """export copies a completed run's checkpoints into a baseline fixture directory."""
+    work = args.work.resolve()
+    dest = args.dest.resolve()
+    manifest = json.loads((work / "run.json").read_text())
+    if dest.exists() and any(dest.iterdir()) and not args.replace:
+        raise ValueError(f"baseline already exists: {dest}; pass --replace to regenerate it")
+    names = args.scenario or SCENARIOS
+    for name in names:
+        snapshots = work / name / "checkpoints"
+        missing = [t for t in CHECKPOINTS if not (snapshots / f"{t:03}" / "checkpoint.json").is_file()]
+        if missing:
+            raise ValueError(f"{name}: missing checkpoints {missing}; run through 150 first")
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True)
+    keep = {key: manifest[key] for key in ("engine", "seed", "exe_sha256", "fixtures", "race_sha256")}
+    keep["scenarios"] = list(names)
+    (dest / "run.json").write_text(json.dumps(keep, indent=2) + "\n")
+    for name in names:
+        for turn in CHECKPOINTS:
+            source = work / name / "checkpoints" / f"{turn:03}"
+            saved = json.loads((source / "checkpoint.json").read_text())
+            checked_files(source, saved["files"], "checkpoint file")
+            target = dest / name / "checkpoints" / f"{turn:03}"
+            target.mkdir(parents=True)
+            copy_files(source, target, saved["files"])
+            saved.pop("command", None)
+            saved.pop("source_checkpoint", None)
+            (target / "checkpoint.json").write_text(json.dumps(saved, indent=2) + "\n")
+    print(f"Exported {len(names)} scenarios to {dest}")
+
+
 def summarize(results, report):
     """summarize prints result counts and reports whether any comparison failed."""
     failures = sum(not r.get("match", False) and "skipped" not in r for r in results)
@@ -454,6 +487,11 @@ def main():
     diff.add_argument("--through", type=int, choices=CHECKPOINTS, default=150)
     diff.add_argument("--cli", type=Path, default=ROOT / "dist/stars-save")
     diff.add_argument("--report", type=Path, default=ROOT / "tests/scaffold/fixtures/regression/regression-comparison.json")
+    save = sub.add_parser("export", help="store a completed run as a checked-in baseline fixture")
+    save.add_argument("--work", type=Path, required=True, help="completed run to export")
+    save.add_argument("--dest", type=Path, default=ROOT / "tests/scaffold/fixtures/regression/native")
+    save.add_argument("--scenario", choices=SCENARIOS, action="append")
+    save.add_argument("--replace", action="store_true", help="replace an existing baseline")
     feed = sub.add_parser("crossfeed", help="generate turns from another run's saves with this run's engine")
     feed.add_argument("--work", type=Path, required=True, help="prepared run whose engine and executable generate")
     feed.add_argument("--scenario", choices=SCENARIOS, required=True, help="scenario directory to hold the output")
@@ -482,7 +520,7 @@ def main():
     if args.action in ("crossfeed", "bisect") and args.turns < 1:
         parser.error("--turns must be at least 1")
     try:
-        return {"prepare": prepare, "run": run, "compare": compare, "crossfeed": crossfeed,
+        return {"prepare": prepare, "run": run, "compare": compare, "export": export, "crossfeed": crossfeed,
                 "bisect": bisect, "trace": trace}[args.action](args) or 0
     except (ValueError, OSError, subprocess.SubprocessError, struct.error) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)

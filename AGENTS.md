@@ -2,89 +2,89 @@
 
 ## Goal
 
-These sources are a reconstruction of the original Stars! 2.6jrc3 C source, made
-from the debug-rich Win16 `stars.exe`. The decompiler is frozen, so all work
-now happens by hand in the `.c`/`.h` files. The aim is source that is as close
-as possible to what the original developers wrote. It is not a modernized
-rewrite.
+These sources began as a reconstruction of the original Stars! 2.6jrc3 C
+source, made from the debug-rich Win16 `stars.exe`. The faithful
+reconstruction is finished: it is tagged `2.6jrc3` and kept on the `2.6j`
+branch, which still follows the reconstruction rules in its own `AGENTS.md`
+(`git show 2.6j:AGENTS.md`).
+
+`main` is the 2.8 line. It fixes the original's bugs and turns the Win16
+shims into native Win32 code, while staying a game that plays like 2.6j and
+reads and writes its files.
 
 When goals conflict, apply them in this order:
 
-1. **Behavior:** the original game's behavior, proven by the regression and
-   tutorial harnesses.
-2. **Fidelity:** original names, types, statement order, control flow and
-   file/function layout, as recorded in the debug info and assembly.
-3. **Readability:** only where it doesn't cost 1 or 2.
+1. **Compatibility:** save, turn, history and race files stay readable and
+   writable by Stars! 2.6j/2.7. On-disk formats, record sizes and the file
+   format version (`RTBOF` `verMajor`/`verMinor`) do not change.
+2. **Behavior:** game behavior changes only on purpose. Each intentional
+   change is its own commit, moves the native regression baseline in that
+   commit, and is recorded in `CHANGELOG.md`.
+3. **Readability:** clear native C. Prefer the existing structure and idiom;
+   change it when that makes the code clearer or removes Win16 baggage.
 
-## Fidelity rules
+## Code rules
 
-- Names that come from the debug symbols (functions, params, locals, globals,
-  struct fields, enums) are original. Never rename them. Give new names only to
-  decompiler artifacts (`t_scratch_*`, `t_merge_*`, `t_call_*`, `IDM_UNKNOWN_*`,
-  `WMX_UNKNOWN_*`, unnamed fields), and use the original Hungarian style:
-  `c` count, `i` index, `f` flag, `lp` far pointer, `rg` array, `h` handle,
-  `psz`/`sz` strings, `id`/`ish`/`ipl` and the like. Check `structs.h` and
-  nearby code for existing prefixes before you invent one.
-- Use the original source line numbers in the asm listings (`; file.c:NNN`)
-  as the guide to structure:
-  - Order statements to match the line order.
-  - Line gaps show where comments, blank lines or multi-line statements were.
-  - Where a loop's test line sits (top or bottom) tells you `for`/`while` from
-    `do`/`while`.
-  - Functions in each file should appear in the order of their original line
-    numbers.
-- When you remove a `goto`, rebuild the structured form the original most
-  likely had (`if/else`, `for`, `while`, `break`, `continue`, early `return`)
-  so that it would compile under MSC to the same block layout. If no such
-  structure fits, keep the `goto` with a meaningful label. Don't just hide it
-  behind flags.
-- Write in the original's C dialect and idiom. Declare locals at the top of a
-  function, and use no C99 constructs. The exceptions are the fixed-width
-  `stdint` types, `//` comments and designated initializers. Add no new
-  helper functions, macros or
-  abstractions, and don't restructure code into "cleaner" designs. Leave a
-  repeated pattern repeated if the original repeated it.
-- Write truth tests bare for flags (`f…`), `F…()` calls, pointers, handles
-  and bit tests: `if (fDone)`, `if (!lpfl)`, `if (grbit & mask)`. Keep
-  explicit `== 0`/`!= 0` for counts, indices, IDs and other quantities, and
-  wherever the 0/1 result is used as a value. Compare pointers and handles
-  with `NULL`, never `0`, when the result is used as a value.
-- Don't fix original bugs in reconstructed code. A bug the original had is part
-  of the source. Keep it, and list it in `docs/KNOWN-BUGS.md` or
-  `docs/ROADMAP.md` if it matters.
-- Don't add explanatory comments to reconstructed code unless the original
-  probably had them. Keep comments for things a reader can't see in the code.
+- Names from the debug symbols (functions, params, locals, globals, struct
+  fields, enums) stay. They tie the code to the reference listings and
+  `docs/KNOWN-BUGS.md`. New names use the same Hungarian style: `c` count,
+  `i` index, `f` flag, `lp` pointer, `rg` array, `h` handle, `psz`/`sz`
+  strings, `id`/`ish`/`ipl` and the like. Check `structs.h` and nearby code
+  for existing prefixes before you invent one.
+- Build as C11 (GNU extensions on). Keep the surrounding style: locals at the
+  top of a function, `//` or `/* */` comments, no reformatting beyond the
+  lines you change. Helpers are fine when they replace a Win16 shim or remove
+  real duplication; keep them small and next to their callers.
+- Truth tests stay bare for flags (`f…`), `F…()` calls, pointers, handles and
+  bit tests; keep explicit `== 0`/`!= 0` for counts, indices and IDs.
+- Comments explain what a reader can't see in the code: why a fix exists,
+  what the original did, a file-format constraint.
+- Don't mix kinds of change in one commit. Behavior-neutral cleanup (shim
+  removal, warnings) must leave the regression baseline unchanged.
 
-## Marking code that is not original
+## Bug fixes
 
-Mark every native-port shim, Win16 parity repair, corruption guard and test
-hook so that it can be told apart from reconstructed original code:
+- Fix one bug per commit. Name the function and the original behavior in the
+  commit message, add a `CHANGELOG.md` entry, and update or remove its entry
+  in `docs/KNOWN-BUGS.md`, `docs/WIN16-PARITY.md` or `docs/ROADMAP.md`.
+- A fix that changes turn generation changes host results. Mixed games
+  (2.8 host with 2.6j players, or the reverse) must still load each other's
+  files; note in `CHANGELOG.md` when a fix changes host results.
+- Regenerate the native baseline in the same commit (see Verification) and
+  state which scenarios moved and from which turn.
 
-- `/* PARITY: ... */`: reproduces Win16 behavior for the regression. It must
-  have an entry in `docs/WIN16-PARITY.md`.
-- `/* NATIVE: ... */`: needed only because the build is Win32 or 64-bit
-  (pointer size, `POINT16`, heap headers, CRT differences).
-- `#ifdef STARS_TEST_*`: test-harness code.
+## Marking code
 
-Any change that emulates, guards against, or stops emulating a Win16 behavior
-must update `docs/WIN16-PARITY.md` in the same change, recording where it
-lives, what the original did, and what a revert should do.
+- `/* NATIVE: ... */` marks code needed only because the build is Win32 or
+  64-bit (pointer size, `POINT16`, heap headers, CRT differences). As shims
+  are replaced with plain Win32 code, the marker and its
+  `docs/WIN16-PARITY.md` or `docs/NATIVE-PORT.md` entry go with them.
+- `/* PARITY: ... */` marks remaining Win16 behavior reproductions. Each has
+  an entry in `docs/WIN16-PARITY.md`; remove both when the fix lands.
+- `#ifdef STARS_TEST_*` marks test-harness code.
 
 ## Things that must not change
 
-- `structs.h` layouts, `WriteRt`/`ReadRt` record sizes and on-disk formats
-  stay at their Win16 sizes. Native pointer or handle sizes must never reach a
-  save file.
+- `structs.h` layouts that reach disk, `WriteRt`/`ReadRt` record sizes and
+  on-disk formats stay at their Win16 sizes. Native pointer or handle sizes
+  must never reach a save file. See `docs/NATIVE-PORT.md`.
 - Element widths of fields, arrays and file records stay as they are. Don't
-  widen `int16_t` to `BOOL`/`int` where storage, addresses (`&f…`) or file I/O
-  depend on the width. See `docs/RECONSTRUCTION.md`, "Storage widths and
+  widen `int16_t` to `BOOL`/`int` where storage, addresses (`&f…`) or file
+  I/O depend on the width. See `docs/RECONSTRUCTION.md`, "Storage widths and
   boolean conventions".
-- Keep the x87 rounding casts, `qsort16`, and the corruption guards and
-  native record boundaries listed in `docs/WIN16-PARITY.md`.
+- `qsort16` and the x87 rounding casts decide tie order and rounding in turn
+  generation. Changing them is a behavior change, not a cleanup.
 - The tutorial observer depends on `InitInstance`, `ScannerWndProc`, the
   globals and struct layouts it reads, and the literal `tutor.c` signatures
   `int16_t FTutorTaskDone() {` and `int16_t FCheck`. Update the observer and
   parser in the same change if any of these move.
+
+## Versioning
+
+- The product version comes from git: release tags are `vMAJOR.MINOR.PATCH`
+  (`v2.8.0`), and builds between tags are numbered from the last tag. CMake
+  generates `version.h`; see `docs/VERSIONING.md`.
+- The file format version written to saves is separate and stays 2.83.
 
 ## Reference material
 
@@ -93,70 +93,42 @@ lives, what the original did, and what a revert should do.
   materials it describes private.
 - `structs.h` defines every struct. Use it to interpret offsets, bitfields and
   `LOWORD`/`HIWORD` splits.
-- `reference/asm/<Func>.asm` gives each function's signature, the frame
-  layout of its params and locals with BP offsets, the original source line
-  numbers (`; file.c:NNN`) and the instructions.
-  `reference/sem/<Func>.sem` shows the same function as semantic effects,
-  which are easier to read.
-  `reference/ir/<Func>.ir.c` is the function as C-like IR before
-  structuring: explicit basic blocks and `goto`s. Its `L_xxxx` labels are the
-  same block addresses as the labels in the `.asm`, which carry the original
-  line numbers. Use the IR to map each block to its source lines and to see
-  what the structurer did when you rebuild loops and conditionals.
-  All three were copied from `../stars-asm/decompiled`. They are gitignored
-  and frozen, so grep them freely. If they're missing, use
-  `stars-asm dasm asm|sem -n <Func>`.
-- Use the JSON indexes first when reconstructing or auditing control flow,
-  then consult the asm/IR for the instructions and ambiguous structure:
-  - `reference/lines/<Func>.json` maps instruction addresses to original
-    source files and lines. Use it to place statements, jump targets and
-    loop tests. `tagged: false` is an inherited line association, not a new
-    explicit source-line marker.
-  - `reference/labels.json` lists labels by function, their source lines and
-    incoming references, including backward jumps. `debug: true` identifies
-    original named labels. Use it to audit missing original labels even in
-    functions with no remaining `goto L_xxxx`.
-  - `reference/switches.json` records dispatch operands, case destinations,
-    shared cases and default paths. A `kind: chain` entry alone does not
-    establish whether the original used a `switch` or an `if/else` chain;
-    check the source-line order and assembly.
-  - `reference/function-lines.json` records each function's original source
-    file, line range and binary location. Use it to check function order and
-    source-line boundaries.
-- Check the assembly before you resolve anything uncertain: fall-through
-  returns, uninitialized reads, conditions that look tautological, signedness,
-  evaluation order of calls, and whether a temp was a real local or a compiler
-  spill.
-- `docs/RECONSTRUCTION.md` records what changed from the decompiled code and
-  the reconstruction's conventions. `docs/NATIVE-PORT.md` covers the native
-  port's state. `docs/ROADMAP.md` lists the work left after the `2.6jrc3`
-  tag. Update them when an item is finished or found.
+- `reference/` (gitignored, frozen) holds the original's asm, semantic and IR
+  listings and JSON indexes for each function. Use them to understand what
+  the original did before changing it, especially for bug fixes. If they're
+  missing, use `stars-asm dasm asm|sem -n <Func>`.
+- `docs/KNOWN-BUGS.md` maps reported original bugs to source.
+  `docs/WIN16-PARITY.md` lists Win16 behavior still reproduced or guarded.
+  `docs/NATIVE-PORT.md` covers the native port. `docs/ROADMAP.md` lists the
+  work left. Update them when an item is finished or found.
 
 ## Verification
 
-Behavior-neutral cleanup must stay behavior-neutral. After each batch of
-edits:
+After each batch of edits:
 
 1. Build with `cmake --preset mingw-debug && cmake --build --preset mingw-debug`.
    Don't introduce new warnings in the files you touched.
-2. Run a quick native regression of one scenario through checkpoint 10 and
-   compare it against `tests/scaffold/starsbox/c_drive/REGTEST`. Commands are
-   in `tests/scaffold/REGRESSION.md`.
-3. Before a batch is considered done, run the full native suite and compare it,
-   then run the tutorial (`make tutorial`). The only accepted differences are
-   the three known divergences in `tests/scaffold/REGRESSION.md`
-   ("Known divergences").
+2. Run the native regression and compare it against the native baseline in
+   `tests/scaffold/fixtures/regression/native/`. Commands are in
+   `tests/scaffold/REGRESSION.md`. A quick check is one scenario through
+   checkpoint 10; a batch is done only after the full suite.
+3. Run the tutorial (`make tutorial`).
 
-Never regenerate the original DOSBox checkpoints (this takes hours) unless the
-fixtures change. Report regression results as they are: if a scenario
-diverges, show the first diff.
+Behavior-neutral changes must match the baseline exactly (unused-storage
+warnings excepted). A behavior change regenerates the baseline with
+`regression.py export --replace` in the same commit. Report regression
+results as they are: if a scenario diverges unexpectedly, show the first diff.
 
-Keep commits small and focused on one kind of change, for example "fold
-`t_scratch` temps in `turn2.c`". This lets a regression be bisected to a single
-commit. Don't commit on the user's behalf.
+The original DOSBox checkpoints in `fixtures/regression/original/` stay as
+the record of 2.6j behavior. Never regenerate them (this takes hours) unless
+the fixtures change.
+
+Keep commits small and focused on one kind of change so that a regression
+can be bisected to a single commit.
 
 ## After changes
 
-Review the diff against these rules. In particular, check for renamed original
-symbols, unmarked non-original code, statement reordering that breaks
-original-line order or call order, and missing `WIN16-PARITY.md` updates.
+Review the diff against these rules. In particular, check for renamed
+debug-symbol names, file-format or record-size changes, behavior changes
+without a baseline update and `CHANGELOG.md` entry, and stale entries in
+`docs/WIN16-PARITY.md`, `docs/NATIVE-PORT.md` and `docs/ROADMAP.md`.

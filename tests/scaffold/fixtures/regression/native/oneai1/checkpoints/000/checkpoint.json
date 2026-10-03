@@ -1,0 +1,11 @@
+{
+  "turn": 0,
+  "year": 2400,
+  "exit_code": 0,
+  "files": {
+    "game.m1": "649e3eb762c7113b49b8eea23b1c5850af7c946f3cc056deb89d6a181aec5109",
+    "game.xy": "b6bc3b933e74aafa08b16f046cfeb531a0d2025e6726e2cfc32abd0bb5dc4d52",
+    "game.hst": "84531e4fec35087e962410eec6a5b0af5bea598a01549d9a8ce4ea540b5df00c",
+    "game.m2": "55db3ff177438157dbc7b7d91214da20572610baf46665775ff6e3b415b6e869"
+  }
+}

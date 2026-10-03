@@ -1,10 +1,20 @@
-# After 2.6jrc3
+# Roadmap to 2.8
 
-The `2.6jrc3` tag is the faithful reconstruction, original bugs included. Bug
-fixing starts after it. Each fix changes behavior, so the regression baseline
-moves with it. Keep each fix in its own commit, remove it from this list when
-it lands, and, for Win16 behavior, update [WIN16-PARITY.md](WIN16-PARITY.md)
-in the same change.
+The `2.6jrc3` tag is the faithful reconstruction, original bugs included, and
+the `2.6j` branch keeps it. `main` is the 2.8 line. Work proceeds in this
+order:
+
+1. Native regression baseline and 2.8 repository rules (done).
+2. Product versioning from git tags and build numbers.
+3. The parity reverts below, one commit each.
+4. Replacing the `win16defines.h` shims with native Win32 code, one group at
+   a time, behavior-neutral.
+5. Original bug fixes from [KNOWN-BUGS.md](KNOWN-BUGS.md), and 2.7 features.
+
+Each fix changes behavior, so the native baseline moves with it
+(`tests/scaffold/REGRESSION.md`, "Update the native baseline"). Keep each fix
+in its own commit, remove it from this list when it lands, and, for Win16
+behavior, update [WIN16-PARITY.md](WIN16-PARITY.md) in the same change.
 
 - **Regression divergences** (see
   [REGRESSION.md](../tests/scaffold/REGRESSION.md#known-divergences)): fix the

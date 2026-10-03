@@ -1,0 +1,13 @@
+{
+  "turn": 100,
+  "year": 2500,
+  "exit_code": 1,
+  "files": {
+    "game.h2": "ec8fb403dceaca4a85906d4495e9ec0d455d1746321ac78401b8f380d5ca9c0e",
+    "game.m1": "8ebcd344f7577d56d5f1a2ca2d2d9cea4c7e86d85bdb9537a62f5eb98fb45e73",
+    "game.xy": "73990126b32e0bcd50c6412b1aec8dd2f5c60544d9f44fe182823e84710c8ea0",
+    "game.hst": "3fa726206fbc4fac370ed0d420e6ffbcf084ab7faf9f5a3648a10821d34b9114",
+    "game.m2": "726dcfb6b92e821991670049680582a05deb889acbfa27af5dbff3e9f121e61b",
+    "game.h1": "bac7a7a729869a20a6cc082bacb16fd58f36578bda3802443722e6180672f0f5"
+  }
+}

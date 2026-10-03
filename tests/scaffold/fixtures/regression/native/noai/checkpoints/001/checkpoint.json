@@ -1,0 +1,11 @@
+{
+  "turn": 1,
+  "year": 2401,
+  "exit_code": 1,
+  "files": {
+    "game.m1": "793d37023812d91be183680028ca4bd823dd58368bc2dc3a4fe9601184e6750a",
+    "game.xy": "0ff1f7ca4a0ff306c9714cdf9f351866e605af76f4a443ea15075f879fa2dc61",
+    "game.hst": "1dd93cfdf0be2fc495bff287a6ee63614dafd48f90efa341e802c70364f1a176",
+    "game.h1": "23c983a6e822e778128845d4169f93c9eb8c763fe968d8c2a93591760f7cb8ec"
+  }
+}

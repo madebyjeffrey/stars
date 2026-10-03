@@ -4,7 +4,15 @@
 
 Stars! 4X game rebuilt from decompiled C sources using a custom [stars-asm](https://github.com/sirgwain/stars-asm/tree/main) win16 disassembler the decompiler.
 
-The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function names, variable names, symbol definitions, and even line numbers. The stars-asm project used that information to rebuild the Stars! source to be as close to the original as possible. That is what is in this repo.
+The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function names, variable names, symbol definitions, and even line numbers. The stars-asm project used that information to rebuild the Stars! source to be as close to the original as possible.
+
+## Branches
+
+- `2.6j` (tag `2.6jrc3`): the faithful reconstruction, original bugs
+  included. It matches the original game turn for turn in the fixed-seed
+  regression.
+- `main`: the 2.8 line. It fixes original bugs and replaces the Win16 shims
+  with native code, while keeping the 2.6j file formats.
 
 ## Documentation
 
@@ -14,7 +22,7 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   what the Win32/Win64 build changes, and the original behavior it reproduces.
 - [Known bugs](docs/KNOWN-BUGS.md): the original release bug list, mapped to
   source.
-- [Roadmap](docs/ROADMAP.md): bug fixing after the `2.6jrc3` tag.
+- [Roadmap](docs/ROADMAP.md): the work planned for 2.8.
 
 ## Build
 
@@ -74,9 +82,9 @@ rejection check under Wine/Xvfb. Diagnostic reports are retained even on failure
 The tutorial uses the same Release preset as the published builds, with the
 read-only test observer enabled. The native regression workflow also builds in
 Release mode on pull requests and main pushes, comparing
-all checkpoints through turn 150 against checked-in original saves. It tests
-`noai`, `oneai1`–`oneai4`, and `smallai4`; `oneai5`, `oneai6`, and `smallai6`
-are excluded because their original bugs and planned fixes diverge.
+all checkpoints through turn 150 against the checked-in native baseline
+(`tests/scaffold/fixtures/regression/native/`). The original game's
+checkpoints are kept alongside it as the record of 2.6j behavior.
 All workflows can also be run manually; the release workflow accepts `main`
 or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
 the tutorial uses read-only permissions. The optional repository variable
