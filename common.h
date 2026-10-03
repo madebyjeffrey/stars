@@ -27,7 +27,12 @@ static inline void RawStore16(void *p, uint16_t v) { memcpy(p, &v, sizeof v); }
 static inline void RawStore32(void *p, uint32_t v) { memcpy(p, &v, sizeof v); }
 
 #include "enums.h"
-#include "win16defines.h"
+#include "native.h"
+
+// Application messages (WM_USER + 0x64...).
+#define WM_STARS_STARTUP  0x0464
+#define WM_STARS_HOST     0x0465
+#define WM_STARS_CONTINUE 0x0466
 
 // Native storage; the analysis model retains the original 18-byte layout.
 typedef jmp_buf ENV;

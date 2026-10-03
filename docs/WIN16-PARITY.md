@@ -76,8 +76,8 @@ storage harmlessly. They don't change game behavior and should stay.
 These follow the original toolchain rather than a bug, and the game's
 results depend on them.
 
-- **qsort tie order:** `qsort` maps to `qsort16`
-  (implemented in `win16defines.h`), rebuilt from the Win16 CRT, so
+- **qsort tie order:** the game sorts with `qsort16`
+  (implemented in `native.c`), rebuilt from the Win16 CRT, so
   elements with equal keys end up in the same order. Native libc qsort
   orders ties differently.
 - **x87 precision:** floating arithmetic keeps the original's extended

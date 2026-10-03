@@ -7,7 +7,7 @@ int16_t InitMDIApp() {
     WNDCLASS wc;
 
     wc.style = 11;
-    wc.lpfnWndProc = FrameWndProc16;
+    wc.lpfnWndProc = FrameWndProcDeferred;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = hInst;

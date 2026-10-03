@@ -424,7 +424,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
         rgptPlan[i].x = Random(dy) + dx;
         rgptPlan[i].y = Random(dy) + dx;
     }
-    qsort(rgptPlan, iMax, sizeof(POINT16), (QSORTCOMPARE)ICompLong);
+    qsort16(rgptPlan, iMax, sizeof(POINT16), (QSORTCOMPARE)ICompLong);
     pptMax = &rgptPlan[iMax];
     for (ppt = rgptPlan; ppt < pptMax; ppt++) {
         if (ppt->y >= 0) {
@@ -490,7 +490,7 @@ int16_t GenerateWorld(int16_t fBatchMode) {
                 }
             }
         }
-        qsort(rgptPlan, cPlanMax, sizeof(POINT16), (QSORTCOMPARE)ICompLong);
+        qsort16(rgptPlan, cPlanMax, sizeof(POINT16), (QSORTCOMPARE)ICompLong);
     }
     memset(grUsed, 0, 128);
     for (i = 0; i < cPlanMax; i++) {

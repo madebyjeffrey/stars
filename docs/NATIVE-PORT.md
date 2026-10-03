@@ -24,7 +24,14 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   converted through `PointFrom16`/`PointTo16`. `ChangeScanSel` and
   `DrawBuildSelComp` pass 32-bit `RECT` fields through `POINT16`/`int16_t`
   locals (marked `NATIVE`). Keep this split when adding Win32 calls.
-- **Toolchain parity (keep):** `qsort16` (`win16defines.h`) reproduces the
+  `POINT16` and its conversions (`GetCursorPos16`, `ScreenToClient16` and the
+  like) are in `native.h`.
+- **Other helpers** (`native.c`): `GetTextExtent` keeps Win16's packed
+  width/height result, which about 140 callers split with `LOWORD`/`HIWORD`;
+  `FrameWndProcDeferred` posts the frame's restore and maximize commands back
+  to the message loop so Wine's macOS driver can't deadlock the
+  load-or-unsubmit `MessageBox`.
+- **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.
 - **Warnings kept** (`-Wall -Wextra -Wno-unused-parameter`, 117):

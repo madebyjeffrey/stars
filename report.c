@@ -1907,7 +1907,7 @@ void SortReportCache(ReportType irpt, int16_t icol) {
             return;
         }
         vprptCur->cRows = cRows;
-        qsort(rgidRep, cRows, sizeof(uint16_t), (QSORTCOMPARE)ICompReport);
+        qsort16(rgidRep, cRows, sizeof(uint16_t), (QSORTCOMPARE)ICompReport);
         memcpy(vlprgidRep, rgidRep, cRows * 2);
         vprptCur->fCached = TRUE;
     }

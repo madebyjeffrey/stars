@@ -1,24 +1,7 @@
-#ifndef STARS_DECOMPILED_WIN16DEFINES_H
-#define STARS_DECOMPILED_WIN16DEFINES_H
-
-#include <direct.h>
-#include <io.h>
-#include <limits.h>
-#include <stdlib.h>
-
-#define qsort qsort16
-
-// SIGNHIWORD is the high word from signed 16-to-32 extension (the x86 CWD
-// instruction), not the upper half of an already-wide value.
-#define SIGNHIWORD(value) ((int16_t)(((uint16_t)(value) & 0x8000) ? -1 : 0))
-
-// Win16 APIs whose Win32 equivalents changed signature
-#define GetTextExtent GetTextExtent16
-
-// shims
+#include "common.h"
 
 // qsortSwap16 exchanges complete elements, including native-width pointers.
-static inline void qsortSwap16(unsigned char *a, unsigned char *b, size_t width) {
+static void qsortSwap16(unsigned char *a, unsigned char *b, size_t width) {
     while (width != 0) {
         --width;
         unsigned char value = a[width];
@@ -31,7 +14,7 @@ static inline void qsortSwap16(unsigned char *a, unsigned char *b, size_t width)
 // Reconstructed from 0024:0866-09c6, matching qsort.asm in C700 and MSVC
 // MLIBCEW.LIB. The initial sorted check, first-element pivot, and strict
 // partition boundaries matter: ICompLong compares planet X coordinates only.
-static inline void qsort16(void *base, size_t count, size_t width, int (*compare)(const void *, const void *)) {
+void qsort16(void *base, size_t count, size_t width, int (*compare)(const void *, const void *)) {
     if (count < 2 || width == 0)
         return;
 
@@ -95,7 +78,7 @@ static inline void qsort16(void *base, size_t count, size_t width, int (*compare
     }
 }
 
-static inline DWORD GetTextExtent16(HDC hdc, LPCSTR str, int len) {
+DWORD GetTextExtent(HDC hdc, LPCSTR str, int len) {
     SIZE size;
 
     if (!GetTextExtentPoint32A(hdc, str, len, &size))
@@ -105,7 +88,7 @@ static inline DWORD GetTextExtent16(HDC hdc, LPCSTR str, int len) {
 }
 
 /*
- * Win16 frame restore
+ * Frame restore under Wine
  *
  * FrameWndProc handles SC_RESTORE and SC_MAXIMIZE before DefWindowProc
  * restores the window, and while a submitted turn waits it asks, in a task
@@ -113,18 +96,16 @@ static inline DWORD GetTextExtent16(HDC hdc, LPCSTR str, int len) {
  * those commands from the message loop. Wine's macOS driver sends SC_RESTORE
  * from inside its handler for a Dock un-minimize and takes no more input
  * events until that send returns, so the MessageBox can never be answered.
- * The frame class's procedure posts those commands back to the message loop
- * and restores the window before FrameWndProc sees them, so the box shows
- * over the restored frame and gets input.
+ * FrameWndProcDeferred, the frame class's procedure, posts those commands
+ * back to the message loop and restores the window before FrameWndProc sees
+ * them, so the box shows over the restored frame and gets input.
  */
 
 #define WM_STARS_SYSCOMMAND (WM_APP + 1)
 
-LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-// FrameWndProc16 defers FrameWndProc's restore and maximize commands to the
-// message loop and passes every other message straight through.
-static inline LRESULT CALLBACK FrameWndProc16(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+// FrameWndProcDeferred defers FrameWndProc's restore and maximize commands
+// to the message loop and passes every other message straight through.
+LRESULT CALLBACK FrameWndProcDeferred(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
     case WM_SYSCOMMAND:
         if ((wParam & 0xfff0) == SC_RESTORE || (wParam & 0xfff0) == SC_MAXIMIZE) {
@@ -139,71 +120,3 @@ static inline LRESULT CALLBACK FrameWndProc16(HWND hwnd, UINT msg, WPARAM wParam
     }
     return FrameWndProc(hwnd, msg, wParam, lParam);
 }
-
-/*
- * Win16 points
- *
- * Win16 POINT held 16-bit ints, and Stars writes records holding points to
- * its files. Stars' points are POINT16 to keep that layout; Win32 POINT holds
- * LONGs, so points convert where they pass into or out of the Win32 API.
- */
-
-typedef struct tagPOINT16 {
-    int16_t x;
-    int16_t y;
-} POINT16;
-
-// PointFrom16 widens a Stars point to a Win32 point.
-static inline POINT PointFrom16(POINT16 pt) {
-    POINT out = {pt.x, pt.y};
-    return out;
-}
-
-// PointTo16 narrows a Win32 point to a Stars point.
-static inline POINT16 PointTo16(POINT pt) {
-    POINT16 out = {(int16_t)pt.x, (int16_t)pt.y};
-    return out;
-}
-
-// GetCursorPos16 stores the cursor position in a Stars point.
-static inline BOOL GetCursorPos16(POINT16 *ppt) {
-    POINT pt;
-    BOOL  ret = GetCursorPos(&pt);
-    *ppt = PointTo16(pt);
-    return ret;
-}
-
-// ScreenToClient16 converts a Stars point from screen to client coordinates.
-static inline BOOL ScreenToClient16(HWND hwnd, POINT16 *ppt) {
-    POINT pt = PointFrom16(*ppt);
-    BOOL  ret = ScreenToClient(hwnd, &pt);
-    *ppt = PointTo16(pt);
-    return ret;
-}
-
-// ClientToScreen16 converts a Stars point from client to screen coordinates.
-static inline BOOL ClientToScreen16(HWND hwnd, POINT16 *ppt) {
-    POINT pt = PointFrom16(*ppt);
-    BOOL  ret = ClientToScreen(hwnd, &pt);
-    *ppt = PointTo16(pt);
-    return ret;
-}
-
-// MapWindowPoints16 maps c Stars points from one window's coordinates to
-// another's.
-static inline int MapWindowPoints16(HWND hwndFrom, HWND hwndTo, POINT16 *ppt, UINT c) {
-    int ret = 0;
-    for (UINT i = 0; i < c; i++) {
-        POINT pt = PointFrom16(ppt[i]);
-        ret = MapWindowPoints(hwndFrom, hwndTo, &pt, 1);
-        ppt[i] = PointTo16(pt);
-    }
-    return ret;
-}
-
-// Application messages (WM_USER + 0x64...).
-#define WM_STARS_STARTUP  0x0464
-#define WM_STARS_HOST     0x0465
-#define WM_STARS_CONTINUE 0x0466
-
-#endif
