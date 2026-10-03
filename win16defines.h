@@ -14,7 +14,6 @@
 
 // Win16 APIs whose Win32 equivalents changed signature
 #define GetTextExtent GetTextExtent16
-#define AllocResource AllocResource16
 #undef CreateWindow
 #define CreateWindow CreateWindow16
 
@@ -222,63 +221,6 @@ static inline int MapWindowPoints16(HWND hwndFrom, HWND hwndTo, POINT16 *ppt, UI
     }
     return ret;
 }
-
-/*
- * Win16 drive and resource APIs
- *
- * Win16 GetDriveType took a 0-based drive number; Win32 takes a root path.
- * Win16 AllocResource allocated a moveable block for a resource's data
- * (cb 0 meaning the resource's size) and callers locked it with
- * LockResource. Win32 LockResource returns its handle unchanged, so the block
- * is allocated GMEM_FIXED, whose handle is the data pointer; LockResource,
- * GlobalLock and GlobalUnlock then all behave as they did on Win16.
- */
-
-static inline HGLOBAL AllocResource16(HINSTANCE hinst, HRSRC hrsrc, DWORD cb) { return GlobalAlloc(GMEM_FIXED, cb ? cb : SizeofResource(hinst, hrsrc)); }
-
-// AccessResource opens the module's PE file at the resource's raw data offset
-// for the existing _lread/_lclose callers. The module must be a loaded PE image.
-static inline HFILE AccessResource(HINSTANCE instance, HRSRC resource) {
-    HMODULE module = instance ? instance : GetModuleHandleA(NULL);
-    HGLOBAL loaded = LoadResource(module, resource);
-    if (!loaded)
-        return HFILE_ERROR;
-    const BYTE *data = (const BYTE *)LockResource(loaded);
-    if (!data)
-        return HFILE_ERROR;
-
-    const BYTE                 *base = (const BYTE *)module;
-    const IMAGE_DOS_HEADER     *dos = (const IMAGE_DOS_HEADER *)base;
-    const IMAGE_NT_HEADERS     *nt = (const IMAGE_NT_HEADERS *)(base + dos->e_lfanew);
-    const IMAGE_SECTION_HEADER *section = IMAGE_FIRST_SECTION(nt);
-    ULONG_PTR                   rva = (ULONG_PTR)data - (ULONG_PTR)base;
-    DWORD                       size = SizeofResource(module, resource);
-
-    for (WORD i = 0; i < nt->FileHeader.NumberOfSections; ++i, ++section) {
-        if (rva < section->VirtualAddress)
-            continue;
-        ULONG_PTR offset = rva - section->VirtualAddress;
-        if (offset >= section->SizeOfRawData || size > section->SizeOfRawData - offset)
-            continue;
-
-        char  path[MAX_PATH];
-        DWORD len = GetModuleFileNameA(module, path, sizeof(path));
-        if (len == 0 || len >= sizeof(path))
-            return HFILE_ERROR;
-        HFILE file = _lopen(path, OF_READ | OF_SHARE_DENY_NONE);
-        if (file == HFILE_ERROR)
-            return HFILE_ERROR;
-        if (_llseek(file, (LONG)(section->PointerToRawData + offset), FILE_BEGIN) == HFILE_ERROR) {
-            _lclose(file);
-            return HFILE_ERROR;
-        }
-        return file;
-    }
-    SetLastError(ERROR_RESOURCE_DATA_NOT_FOUND);
-    return HFILE_ERROR;
-}
-
-// Win16 constants that windows.h no longer provides.
 
 // Application messages (WM_USER + 0x64...).
 #define WM_STARS_STARTUP  0x0464

@@ -68,7 +68,6 @@ uint16_t PaletteSize(void *pv);
 int16_t  DibBlt(HDC hdc, int16_t x0, int16_t y0, int16_t dx, int16_t dy, HGLOBAL hdib, int16_t x1, int16_t y1, int16_t dxSrc, int16_t dySrc, int32_t rop);
 HGLOBAL  DibFromBitmap(HBITMAP hbm, uint32_t biStyle, uint16_t biBits, HPALETTE hpal);
 HGLOBAL  HdibLoadBigResource(BitmapId idb);
-int16_t  ReadBigBlock(int16_t hFile, char *lpBuffer, uint32_t dwSize);
 int16_t  FIntersectCircleLine(POINT16 ptL1, POINT16 ptL2, POINT16 ptC, int32_t r2, int16_t dMax, int16_t *pdStart, int16_t *pdEnd);
 void     IntToRoman(int16_t i, char *pszOut);
 int16_t  FCheckPassword();

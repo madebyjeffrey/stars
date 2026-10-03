@@ -1698,51 +1698,32 @@ HGLOBAL DibFromBitmap(HBITMAP hbm, uint32_t biStyle, uint16_t biBits, HPALETTE h
 }
 
 HGLOBAL HdibLoadBigResource(BitmapId idb) {
-    HRSRC   hrsrc;
-    char   *lpstr;
-    int16_t hfile;
-    HGLOBAL hdib;
+    HRSRC    hrsrc;
+    HGLOBAL  hres;
+    char    *lpstr;
+    HGLOBAL  hdib;
+    uint32_t cb;
 
     hrsrc = FindResource(hInst, MAKEINTRESOURCE(idb), MAKEINTRESOURCE(2));
     if (hrsrc == 0) {
         return NULL;
     }
-    hdib = AllocResource(hInst, hrsrc, 0);
+    hres = LoadResource(hInst, hrsrc);
+    if (!hres) {
+        return NULL;
+    }
+    lpstr = LockResource(hres);
+    if (!lpstr) {
+        return NULL;
+    }
+    /* A writable copy: the original read the resource into its own block. */
+    cb = SizeofResource(hInst, hrsrc);
+    hdib = GlobalAlloc(GMEM_FIXED, cb);
     if (!hdib) {
         return NULL;
     }
-    hfile = AccessResource(hInst, hrsrc);
-    if (hfile == -1) {
-    FreeAndFail:
-        FreeResource(hdib);
-        return NULL;
-    }
-    lpstr = LockResource(hdib);
-    if (!lpstr) {
-    CloseAndFail:
-        _lclose(hfile);
-        goto FreeAndFail;
-    }
-    if (ReadBigBlock(hfile, lpstr, SizeofResource(hInst, hrsrc)) == 0)
-        goto CloseAndFail;
-    _lclose(hfile);
+    memcpy((char *)hdib, lpstr, cb);
     return hdib;
-}
-
-int16_t ReadBigBlock(int16_t hFile, char *lpBuffer, uint32_t dwSize) {
-    int16_t nBytes;
-    char   *lpInBuf;
-
-    lpInBuf = lpBuffer;
-    while (dwSize != 0) {
-        nBytes = dwSize <= 30000 ? LOWORD(dwSize) : 30000;
-        if (_lread(hFile, lpInBuf, nBytes) != nBytes) {
-            return FALSE;
-        }
-        dwSize -= nBytes;
-        lpInBuf += nBytes;
-    }
-    return TRUE;
 }
 
 int16_t FIntersectCircleLine(POINT16 ptL1, POINT16 ptL2, POINT16 ptC, int32_t r2, int16_t dMax, int16_t *pdStart, int16_t *pdEnd) {
