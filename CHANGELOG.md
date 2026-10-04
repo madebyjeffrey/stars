@@ -121,3 +121,6 @@ produce different results from a 2.6j host for the same turn.
   the original. The stored goto was compared as unsigned and the fleet's
   goto, which has its high bit set, as signed, so they never matched
   (`FRemovePlayerMessage`, `FFindPlayerMessage`).
+- Healing: ships that gated, fought or hit mines no longer heal by merging
+  into a fleet that didn't; the fleet they join doesn't heal that turn
+  either (`Merge2Fleets`). **Host results.**

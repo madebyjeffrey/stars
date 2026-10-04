@@ -221,7 +221,7 @@ memory beyond the array to be modified. The current `NATIVE` repair uses
 `CplrBattle`, but the supplied precise highest/lowest-player friendly-fire
 scenario has not been reproduced under the repaired code.
 
-### Repair After Gating Loophole — located
+### Repair After Gating Loophole — fixed in 2.8
 
 `ship2.c`: `FStargateJump`; `turn3.c`: `SatisfyOrders` (merge task);
 `ship.c`: `Merge2Fleets`; `turn2.c`: `HealShips`; `turn.c`: `FGenerateTurn`.
@@ -229,6 +229,10 @@ Gating sets the traveling fleet's `fNoHeal`. WP1 merging precedes healing.
 `Merge2Fleets` combines ships and damage into the destination fleet without
 propagating the deleted source fleet's `fNoHeal`. `HealShips` tests the surviving
 fleet's flag, so a stationary destination can repair the newly merged ships.
+
+**2.8:** confirmed by `tests/unit/test_ship.c`: a damaged fleet marked
+`fNoHeal` merged into another healed fully in `HealShips`. `Merge2Fleets`
+now marks the surviving fleet `fNoHeal` when the merged fleet was.
 
 ### Mine Damage Dodge / Mine Damage Allocation — located
 

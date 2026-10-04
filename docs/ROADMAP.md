@@ -61,7 +61,7 @@ and order helpers as fixes need them.
 | North/South minefield immunity | `FIntersectCircleLine`: for a vertical route `yI = ptL1.y` instead of `ptC.y` | function | fixed (`test_utilgen.c`) |
 | Space Dock armor overflow | `UpdateShdefCost`: armor slot strength overflows signed 16-bit `dpT` before the RS halving | function | fixed (`test_util.c`) |
 | ISB vs IT gate scanning | `SetVisPFFleets`, `SetVisPFPlanets`, `SetVisPFThings`: `lRadius2 * lVis2` overflows 32 bits before `/ 10000` | function | fixed (`test_save.c`) |
-| Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | turn | open |
+| Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | function | fixed (`test_ship.c`) |
 | Exploding minefield dodge | `ThingDecay` sets `fBombed` even when the fleet was immune | turn | open |
 | Colonization module check | `SatisfyOrders` colonize task doesn't test `cItem > 0` | turn | fixed (`test_turn3.c`) |
 | 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit | function | open |

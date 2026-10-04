@@ -3538,6 +3538,12 @@ void Merge2Fleets(FLEET *lpflDst, FLEET *lpflDel, int16_t fNoDelete) {
         rgfl[0].rgcsh[i] += rgfl[1].rgcsh[i];
         rgfl[1].rgcsh[i] = 0;
     }
+    /* Ships that gated, fought or hit mines this turn can't heal, so the
+       fleet they join can't either. The original dropped the merged fleet's
+       fNoHeal before HealShips. */
+    if (rgfl[1].fNoHeal) {
+        rgfl[0].fNoHeal = TRUE;
+    }
     FleetTransferCargoBalance(rgfl, &rgfl[1]);
     for (i = 0; i < 2; i++) {
         FLookupFleet(idWriteBack, &rgfl[i]);
