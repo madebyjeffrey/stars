@@ -2161,10 +2161,10 @@ int16_t FRemovePlayerMessage(int16_t iPlr, MessageId iMsg, MsgGoto iObj) {
     cDel = 0;
     lpb = (uint8_t *)lpMsg;
     lpbMax = lpb + imemMsgCur;
-    for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
-        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && (MsgGoto)RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
+    for (; lpb < lpbMax; lpb += sizeof(MSGTURN) + ((MSGTURN *)lpb)->cbParams) {
+        if (((MSGTURN *)lpb)->iPlr == iPlr && ((MSGTURN *)lpb)->msghdr.iMsg == iMsg && ((MSGTURN *)lpb)->msghdr.wGoto == iObj) {
             cDel++;
-            RawStore16((uint8_t *)lpb + 0x1, (RawLoad16((uint8_t *)lpb + 0x1) & 0xfe00) | 0x1ff);
+            ((MSGTURN *)lpb)->msghdr.iMsg = 0x1ff;
         }
     }
     return cDel;
@@ -2176,8 +2176,8 @@ int16_t FFindPlayerMessage(int16_t iPlr, int16_t iMsg, MsgGoto iObj) {
 
     lpb = (uint8_t *)lpMsg;
     lpbMax = lpb + imemMsgCur;
-    for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
-        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && (MsgGoto)RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
+    for (; lpb < lpbMax; lpb += sizeof(MSGTURN) + ((MSGTURN *)lpb)->cbParams) {
+        if (((MSGTURN *)lpb)->iPlr == iPlr && ((MSGTURN *)lpb)->msghdr.iMsg == iMsg && ((MSGTURN *)lpb)->msghdr.wGoto == iObj) {
             return TRUE;
         }
     }
@@ -2193,18 +2193,18 @@ void MarkPlanetsPlayerLost(int16_t iPlayer) {
 
     lpb = (uint8_t *)lpMsg;
     lpbMax = lpb + imemMsgCur;
-    for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
-        if ((*lpb & 0xf) == iPlayer) {
-            switch (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) {
+    for (; lpb < lpbMax; lpb += sizeof(MSGTURN) + ((MSGTURN *)lpb)->cbParams) {
+        if (((MSGTURN *)lpb)->iPlr == iPlayer) {
+            switch (((MSGTURN *)lpb)->msghdr.iMsg) {
             case 0x8f:
-                w = RawLoad16((uint8_t *)lpb + 0x1) >> 9 & 0x7f;
+                w = ((MSGTURN *)lpb)->msghdr.grWord;
                 lpbT = lpb + (((w & 1) == 1) + 6);
                 w = !(w & 2) ? *lpbT : RawLoad16(lpbT);
                 goto LLookupPlanet;
             case 7:
             case 0x23:
             case 0x40:
-                w = RawLoad16((uint8_t *)lpb + 0x3);
+                w = ((MSGTURN *)lpb)->msghdr.wGoto;
             LLookupPlanet:
                 lppl = LpplFromId(w);
                 if (lppl) {
@@ -2239,7 +2239,7 @@ void MarkPlanetsPlayerLost(int16_t iPlayer) {
             case 0x114:
             case 0x115:
             case 0x116:
-                w = RawLoad16((uint8_t *)lpb + 0x3);
+                w = ((MSGTURN *)lpb)->msghdr.wGoto;
             }
             continue;
         }
@@ -2272,14 +2272,14 @@ void WritePlayerMessages(int16_t iPlayer) {
     if (iPlayer != iplrNone) {
         lpb = (uint8_t *)lpMsg;
         lpbMax = lpb + imemMsgCur;
-        for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
+        for (; lpb < lpbMax; lpb += sizeof(MSGTURN) + ((MSGTURN *)lpb)->cbParams) {
             if (cbMsg + 20 >= 1024) {
                 WriteRt(rtMsg, cbMsg, rgb);
                 cbMsg = 0;
             }
-            if ((*lpb & 0xf) == iPlayer && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) != 0x1ff) {
-                memmove(&rgb[cbMsg], lpb + 1, (*lpb >> 4 & 0xf) + 4);
-                cbMsg += (*lpb >> 4 & 0xf) + 4;
+            if (((MSGTURN *)lpb)->iPlr == iPlayer && ((MSGTURN *)lpb)->msghdr.iMsg != 0x1ff) {
+                memmove(&rgb[cbMsg], &((MSGTURN *)lpb)->msghdr, sizeof(MSGHDR) + ((MSGTURN *)lpb)->cbParams);
+                cbMsg += sizeof(MSGHDR) + ((MSGTURN *)lpb)->cbParams;
             }
         }
         if (cbMsg != 0) {
