@@ -58,3 +58,9 @@ produce different results from a 2.6j host for the same turn.
 - Colonizing: a ship needs an installed colonization or orbital
   construction module. A design slot that once held a module but now holds
   none no longer counts (`SatisfyOrders`). **Host results.**
+- Native build: the Battle Plans drop-downs (targets, attack who, tactic)
+  saved 0 (None/Disengage, Nobody) whatever was chosen, and the production
+  dialog's Required Minerals panel ignored the selected item. Both sent the
+  Win16 message numbers for `CB_GETCURSEL`/`LB_GETCURSEL`, which Win32
+  controls ignore (`BattlePlansDlg`, `DrawProductionDlg`). Now as in the
+  original.
