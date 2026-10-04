@@ -10,7 +10,6 @@ INT_PTR CALLBACK RelationsDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 INT_PTR CALLBACK NewPlanNameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK BattlePlansDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 int16_t          FDeleteBattlePlan(int16_t iplan, int16_t fWarn);
-void             SpankTheCheaters();
 int16_t          FFleetHasBombs(FLEET *lpfl);
 int16_t          FHullHasBombs(HUL *lphul);
 int16_t          FFleetHasTeeth(FLEET *lpfl);

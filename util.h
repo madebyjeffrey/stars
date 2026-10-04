@@ -64,8 +64,6 @@ int32_t  CalcPlayerScore(int16_t iPlr, SCORE *pscore);
 void     GetTrueHullCost(int16_t iPlayer, HUL *lphul, uint16_t *rgCost);
 void     DecorateHullName(int16_t iplr, int16_t ish, char *psz);
 void     DrawABunchOfStars(HDC hdc, RECT *prc);
-int32_t  LongFromSerialCh(char ch);
-int16_t  FValidSerialNo(char *psz, int32_t *plSerial);
 int16_t  FMatchTarget(FLEET *lpflTarget, MdTarget mdTarget, int16_t fExact);
 void     ValidateWaypoints();
 int32_t  ChgPopFromPlanet(PLANET *lppl, int16_t fUpdate);

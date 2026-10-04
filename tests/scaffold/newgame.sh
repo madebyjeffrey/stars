@@ -21,8 +21,6 @@ Options:
   --timeout SECS  Seconds before the run is killed (default 60). An error
                   message box blocks until then.
 
-Wine uses the default prefix; Stars.ini there must hold a registered serial,
-since -a does nothing without one.
 EOF
 }
 

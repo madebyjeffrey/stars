@@ -72,7 +72,6 @@ int16_t FGenerateTurn() {
         vrgwtPopScore = LpAlloc(game.cPlanMax * sizeof(int32_t), htMisc);
         vrgiplrPopScore = LpAlloc(game.cPlanMax * sizeof(int16_t), htMisc);
         memset(vrgiplrPopScore, 0xff, game.cPlanMax * sizeof(int16_t));
-        vrgts = LpAlloc(game.cPlayer * sizeof(TURNSERIAL), htMisc);
         UpdateProgressGauge(370);
         cColDrop = 0;
         cXferFull = 0;
@@ -94,7 +93,6 @@ int16_t FGenerateTurn() {
             j = mpiplr2[i];
             wsprintf(szWork, "%s.x%d", szBase, j + 1);
             idPlayer = j;
-            vrgts[j].lSerialNumber = -1;
             if (FLoadLogFile(szWork) && !FRunLogFile()) {
                 AlertSz(PszFormatIds(idsPlayerLogFileAppearsCorruptUnableLoad, NULL), MB_ICONHAND);
                 goto FreeStuffUp;
@@ -102,31 +100,6 @@ int16_t FGenerateTurn() {
             UpdateProgressGauge(MulDiv(60, i + 1, game.cPlayer) + 370);
         }
         idPlayer = iplrNone;
-        for (i = 0; i < game.cPlayer; i++) {
-            if (rgplr[i].fCrippled || rgplr[i].fAi || (gd.fTutorial && i == 0)) {
-                rgplr[i].fCheater = FALSE;
-            } else if (vrgts[i].lSerialNumber != -1 && !FValidSerialLong(vrgts[i].lSerialNumber)) {
-                rgplr[i].fCheater = TRUE;
-            } else if (vrgts[i].lSerialNumber != -1) {
-                rgplr[i].fCheater = FALSE;
-                for (j = 0; j < i; j++) {
-                    if (!rgplr[j].fCrippled && !rgplr[j].fAi && vrgts[i].lSerialNumber == vrgts[j].lSerialNumber &&
-                        memcmp(vrgts[i].rgbConfig, vrgts[j].rgbConfig, 11) != 0) {
-                        rgplr[j].fCheater = TRUE;
-                        rgplr[i].fCheater = TRUE;
-                    }
-                }
-            }
-        }
-        for (i = 0; i < game.cPlayer; i++) {
-            if (rgplr[i].fCheater) {
-                j = IPlrAlsoCheater(i);
-                FSendPlrMsg2(i, (j != iplrNone) + 0x100, gotoSerialNumber, j, 0);
-                if (game.turn > 10 && (game.turn & 7) == (i & 7)) {
-                    FSendPlrMsg2(i, idmFleetCaptainsHaveStagedStrikeDemandFree, gotoSerialNumber, 0, 0);
-                }
-            }
-        }
         for (i = 0; i < game.cPlayer; i++) {
             for (ish = 0; ish < 16; ish++) {
                 if (!rglpshdef[i][ish].fFree && rglpshdef[i][ish].hul.rghs[0].grhst != hstEngine) {
@@ -268,7 +241,6 @@ int16_t FGenerateTurn() {
         AutoTerraform();
         RemoteTerraforming();
         UpdateProgressGauge(850);
-        SpankTheCheaters();
         ValidateWaypoints();
         UpdateGuesses();
         UpdateProgressGauge(852);
@@ -367,8 +339,6 @@ FreeStuffUp:
     vrgwtPopScore = NULL;
     FreeLp(vrgiplrPopScore, htMisc);
     vrgiplrPopScore = NULL;
-    FreeLp(vrgts, htMisc);
-    vrgts = NULL;
     FreeLp(lpcd, htMisc);
     lpcd = NULL;
     FreeLp(lpxf, htMisc);
@@ -884,14 +854,6 @@ void MoveFleets() {
                 lpfl->fDone = TRUE;
                 lpord = lpfl->lpplord->rgord;
                 if (lpord->grTask != grTaskXfer && lpord->grTask != grTaskLayMines && lpfl->cord > 1 && lpord[1].iWarp != 0) {
-                    if (rgplr[lpfl->iPlayer].fCheater) {
-                        if (game.turn > 10 && (game.turn & 7) == (lpfl->iPlayer & 7))
-                            continue;
-                        if (Random(4) == 0) {
-                            FSendPlrMsg2(lpfl->iPlayer, idmHasRefusedMoveDoubtingAuthorityRulePress, gotoSerialNumber, lpfl->id, 0);
-                            continue;
-                        }
-                    }
                     if (cPass == 0 && lpord[1].iWarp > 6 && lpord[1].iWarp != 11 && GetRaceGrbit(&rgplr[lpfl->iPlayer], ibitRaceCheapEngines) != 0 &&
                         Random(10) == 0) {
                         FSendPlrMsg2(lpfl->iPlayer, idmUnableEngageEnginesDueBalkyEquipmentEngineers, lpfl->id | 0x8000, lpfl->id, 0);

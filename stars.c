@@ -218,21 +218,6 @@ LError:
     return fSuccess;
 }
 
-int16_t IPlrAlsoCheater(int16_t iplr) {
-    int16_t i;
-
-    if (!FValidSerialLong(vrgts[iplr].lSerialNumber)) {
-        return iplrNone;
-    }
-    for (i = 0; i < game.cPlayer; i++) {
-        if (i != iplr && rgplr[i].fCheater && vrgts[iplr].lSerialNumber == vrgts[i].lSerialNumber &&
-            memcmp(vrgts[iplr].rgbConfig, vrgts[i].rgbConfig, 11) != 0) {
-            return i;
-        }
-    }
-    return iplrNone;
-}
-
 int16_t FGetSystemColors() {
     HDC         hdc;
     BITMAPINFO *lpbi;
@@ -542,41 +527,6 @@ INT_PTR CALLBACK About(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         case IDCANCEL:
             KillTimer(hwnd, uTimerId);
             uTimerId = 0;
-            EndDialog(hwnd, 1);
-            return 1;
-        case IDC_ABOUT_ORDER_INFO:
-            lpProc = MakeProcInstance(OrderInfoDlg, hInst);
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ORDER_INFO), hwnd, lpProc);
-            FreeProcInstance(lpProc);
-            break;
-        }
-        break;
-    }
-    return 0;
-}
-
-INT_PTR CALLBACK OrderInfoDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    RECT rc;
-
-    switch (message) {
-    case WM_ERASEBKGND:
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    case WM_CTLCOLORMSGBOX:
-    case WM_CTLCOLOREDIT:
-    case WM_CTLCOLORLISTBOX:
-    case WM_CTLCOLORBTN:
-    case WM_CTLCOLORDLG:
-    case WM_CTLCOLORSCROLLBAR:
-    case WM_CTLCOLORSTATIC:
-        if (message == WM_CTLCOLORSTATIC) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        break;
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK) {
             EndDialog(hwnd, 1);
             return 1;
         }

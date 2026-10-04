@@ -1,9 +1,6 @@
 #include "common.h"
 
 char     mpishdefishTutor[6] = {3, 4, 9, 6, 7, 14};
-uint32_t bogi[25] = {0,          2758532406, 2759089752, 2759620184, 2772193450, 2772310925, 2772620565, 2774814161, 2775015431,
-                     2776435914, 2777735210, 2777770221, 2777770865, 2781735025, 2781887514, 2782225790, 2782673087, 2783066231,
-                     2811254769, 2811333876, 2811336841, 2811341117, 2816596978, 2816992636, 4294967295};
 
 int16_t FReadShDef(RTSHDEF *lprt, SHDEF *lpshdef, int16_t iplrLoad) {
     char     szTemp[40];
@@ -1383,50 +1380,6 @@ void DestroyCurGame() {
         rgdxOrderDD[i] = 0;
     }
     return;
-}
-
-int16_t FBogusLong(uint32_t lSerial) {
-    int16_t i;
-
-    lSerial ^= 0xa5a5a5a5;
-    for (i = 0; lSerial > bogi[i]; i++) {
-    }
-    if (lSerial == bogi[i]) {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-int16_t FValidSerialLong(uint32_t lSerial) {
-    uint32_t lNumber;
-    int16_t  i;
-    uint32_t lSeries;
-
-    if (FBogusLong(lSerial)) {
-        return FALSE;
-    }
-    lSeries = lSerial;
-    for (i = 0; i < 4; i++) {
-        lSeries = (uint32_t)(lSeries / 36);
-    }
-    lNumber = lSeries;
-    for (i = 0; i < 4; i++) {
-        lNumber = (uint32_t)(lNumber * 36);
-    }
-    lNumber = lSerial - lNumber;
-    if (lNumber < 100 || lNumber > 0x16e360) {
-        return FALSE;
-    }
-    switch (lSeries) {
-    default:
-        return FALSE;
-    case 18:
-    case 22:
-    case 2:
-    case 4:
-    case 6:
-        return TRUE;
-    }
 }
 
 void FileError(MessageId ids) {

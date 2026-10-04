@@ -1157,13 +1157,6 @@ int16_t FLoadLogFile(char *pszLog) {
     }
     ReadRt();
     cbLog = ((RTLOGHDR *)rgbCur)->cbLog;
-    if (gd.fGeneratingTurn && vrgts) {
-        memset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
-        if (hdrCur.cb == sizeof(RTLOGHDR)) {
-            vrgts[idPlayer].lSerialNumber = ((RTLOGHDR *)rgbCur)->lSerialNumber;
-            memcpy(vrgts[idPlayer].rgbConfig, ((RTLOGHDR *)rgbCur)->rgbConfig, 11);
-        }
-    }
     for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
         ReadRt();
         memmove(lpLog + iCur, &hdrCur, sizeof(HDR));
@@ -1276,8 +1269,8 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
         return FALSE;
     }
     rtlh.cbLog = imemLogCur;
-    rtlh.lSerialNumber = vSerialNumber;
-    memcpy(rtlh.rgbConfig, vrgbEnvCur, 11);
+    /* Preserve the unused 15-byte metadata area in the orders-file header. */
+    memset(rtlh.rgbUnused, 0, sizeof(rtlh.rgbUnused));
     WriteRt(9, 17, &rtlh);
     for (; iCur < imemLogCur; iCur += lprts->cb + 2) {
         lprts = (HDR *)(lpLog + iCur);

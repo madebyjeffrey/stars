@@ -45,9 +45,6 @@ void Produce() {
                 lResCur += (int32_t)(lResCur * (uint32_t)vrgPlanResExtra[lppl->id]) / (int32_t)((uint32_t)vrgPlanResExtra[lppl->id] + lResCur);
             }
             rgResAvail[3] = lResCur;
-            if (rgplr[lppl->iPlayer].fCheater) {
-                rgResAvail[3] = (int32_t)(rgResAvail[3] * 4) / 5;
-            }
             if (rgResAvail[3] != 0) {
                 if (fNoResearch) {
                     lResearchTake = 0;
@@ -2148,7 +2145,7 @@ void UpdateResearchStatus(int16_t fUsePool) {
                 }
             }
         CheckForBreakthrough:
-            if (rgplr[i].rgTech[iT] < 26 && (!rgplr[i].fCrippled || rgplr[i].rgTech[iT] < 10) && (!rgplr[i].fCheater || rgplr[i].rgTech[iT] < 10)) {
+            if (rgplr[i].rgTech[iT] < 26 && (!rgplr[i].fCrippled || rgplr[i].rgTech[iT] < 10)) {
                 l = GetTechLevelCost(iT, rgplr[i].rgTech[iT] + 1, i);
                 if (l <= lSpent && !(rgplr[i].rgTech[iT] >= 26 && (rgplr[i].fCrippled || rgplr[i].rgTech[iT] >= 26))) {
                     iTechNext2 = iTechCur;

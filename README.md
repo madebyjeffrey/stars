@@ -93,8 +93,7 @@ all checkpoints through turn 150 against the checked-in native baseline
 checkpoints are kept alongside it as the record of 2.6j behavior.
 All workflows can also be run manually; the release workflow accepts `main`
 or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
-the tutorial uses read-only permissions. The optional repository variable
-`STARS_TUTORIAL_SERIAL` overrides the tutorial runner's default serial.
+the tutorial uses read-only permissions.
 
 ## Regression save tooling
 

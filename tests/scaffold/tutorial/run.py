@@ -174,8 +174,7 @@ def main():
     generate_catalog(stage)
     if not args.continue_run:
         prefix = Path(tempfile.mkdtemp(prefix="stars-tutorial-", dir="/tmp")).resolve()
-    environment = dict(os.environ, WINEPREFIX=str(prefix), WINEDEBUG="-all", MVK_CONFIG_LOG_LEVEL="0",
-                       STARS_TUTORIAL_SERIAL=os.environ.get("STARS_TUTORIAL_SERIAL") or "CV6JVUAX")
+    environment = dict(os.environ, WINEPREFIX=str(prefix), WINEDEBUG="-all", MVK_CONFIG_LOG_LEVEL="0")
     print(f"Tutorial run: {run}", flush=True)
     print(f"Wine prefix: {prefix}", flush=True)
     with (run / "wine.log").open("w") as log:

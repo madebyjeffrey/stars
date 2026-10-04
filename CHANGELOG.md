@@ -4,6 +4,14 @@ Changes from the original Stars! 2.6jrc3 (tag `2.6jrc3`, branch `2.6j`).
 Entries marked **host results** change turn generation, so a 2.8 host can
 produce different results from a 2.6j host for the same turn.
 
+## 2.8.1
+
+### Changed
+
+- Removed serial number requirement and various cheater checks during turn 
+generation. Still writing empty serial bytes in place of old rgbConfig/lSerial
+in rtlog records for backwards compatibility with tools that load it.
+
 ## 2.8.0 (2026-10-04)
 
 ### Changed

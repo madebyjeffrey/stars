@@ -937,7 +937,6 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     SCAN        scan;
     FARPROC     lpProc;
     int16_t     fRet;
-    int32_t     lSerial;
 
     switch (message) {
     case WM_CREATE:
@@ -1288,22 +1287,6 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                         break;
                     PostMessage(hwndFrame, WM_COMMAND, IDM_REPORT_BATTLE, 0);
                     break;
-                case mdMsgObjSerialNumber:
-                    szWork[200] = 2;
-                    lpProc = MakeProcInstance(MsgDlg, hInst);
-                    fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_SERIAL_NUMBER), !hwndTitle ? hwndFrame : hwndTitle, lpProc);
-                    FreeProcInstance(lpProc);
-                    if (!fRet)
-                        break;
-                    if (FValidSerialNo(szWork, &lSerial)) {
-                        vSerialNumber = lSerial;
-                        memcpy(vrgbMachineConfig, vrgbEnvCur, 11);
-                        break;
-                    }
-                    if (vSerialNumber != 0)
-                        break;
-                    memcpy(vrgbMachineConfig, vrgbEnvCur, 11);
-                    break;
                 case mdMsgObjPart:
                     vpartBrowser.hs.grhst = 1 << (idMsgObj >> 8 & 0xf);
                     vpartBrowser.hs.iItem = idMsgObj & 0xff;
@@ -1415,9 +1398,6 @@ void SetMsgTitle(HWND hwnd) {
                     break;
                 case gotoScore:
                     mdMsgObj = mdMsgObjScore;
-                    break;
-                case gotoSerialNumber:
-                    mdMsgObj = mdMsgObjSerialNumber;
                     break;
                 case gotoThing:
                     mdMsgObj = mdMsgObjThing;
@@ -2074,79 +2054,6 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
     }
     *pch = 0;
     return szMsgBuf;
-}
-
-INT_PTR CALLBACK MsgDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    RECT        rc;
-    POINT16     pt;
-    HDC         hdc;
-    RECT        rcEdit;
-    int16_t     cch;
-    char        szT[256];
-    PAINTSTRUCT ps;
-
-    switch (message) {
-    case WM_INITDIALOG:
-        pt.x = -1;
-        pt.y = -1;
-        szWork[0] = 0;
-        SendDlgItemMessage(hwnd, IDC_EDIT1, EM_LIMITTEXT, 8, 0);
-        SetWindowText(GetDlgItem(hwnd, IDC_EDIT1), szWork);
-        StickyDlgPos(hwnd, &pt, TRUE);
-        return 1;
-    case WM_ERASEBKGND:
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    case WM_CTLCOLORMSGBOX:
-    case WM_CTLCOLOREDIT:
-    case WM_CTLCOLORLISTBOX:
-    case WM_CTLCOLORBTN:
-    case WM_CTLCOLORDLG:
-    case WM_CTLCOLORSCROLLBAR:
-    case WM_CTLCOLORSTATIC:
-        if (message == WM_CTLCOLORSTATIC) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        break;
-    case WM_PAINT:
-        hdc = BeginPaint(hwnd, &ps);
-        GetClientRect(hwnd, &rc);
-        GetWindowRect(GetDlgItem(hwnd, IDC_EDIT1), &rcEdit);
-        ScreenToClient(hwnd, (POINT *)&rcEdit.right);
-        rcEdit.left = 8;
-        rcEdit.right = rc.right - 8;
-        rcEdit.top = rcEdit.bottom + 8;
-        rcEdit.bottom = rcEdit.top + 100;
-        SelectObject(hdc, rghfontArial8[1]);
-        SetBkColor(hdc, crButtonFace);
-        SetTextColor(hdc, 0);
-        cch = CchGetString(szWork[200] + 1226, szT);
-        DrawText(hdc, szT, cch, &rcEdit, DT_WORDBREAK | DT_NOPREFIX);
-        EndPaint(hwnd, &ps);
-        return 1;
-    case WM_COMMAND:
-        switch (LOWORD(wParam)) {
-        case IDOK:
-        case IDCANCEL:
-            if (LOWORD(wParam) == IDOK) {
-                GetDlgItemText(hwnd, IDC_EDIT1, szWork, 9);
-                if (!FValidSerialNo(szWork, NULL)) {
-                    AlertSz(PszFormatIds(idsSerialNumberHaveEnteredValid, NULL), MB_ICONHAND);
-                    SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
-                    break;
-                }
-            }
-            EndDialog(hwnd, LOWORD(wParam) == IDOK);
-            return 1;
-        case IDC_HELP:
-            WinHelp(hwnd, szHelpFile, HELP_CONTEXT, idhCopyProtection);
-            return 1;
-        }
-        break;
-    }
-    return 0;
 }
 
 char *PszFormatMessage(MessageId idm, int16_t *pParams) { return PszFormatString(PszGetCompressedMessage(idm), pParams); }

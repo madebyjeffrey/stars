@@ -2089,68 +2089,6 @@ void DrawABunchOfStars(HDC hdc, RECT *prc) {
     return;
 }
 
-int32_t LongFromSerialCh(char ch) {
-    int32_t l;
-
-    if (ch >= 'A' && ch <= 'Z') {
-        l = (int16_t)(ch - 'A');
-    } else {
-        l = (int16_t)(ch - 22);
-    }
-    if (l >= 32) {
-        return l;
-    }
-    return l ^ 0x15;
-}
-
-int16_t FValidSerialNo(char *psz, int32_t *plSerial) {
-    int32_t lBuild;
-    int16_t i;
-    int32_t lCur;
-    int32_t lSerial;
-    int32_t l;
-
-    lSerial = LongFromSerialCh(*psz);
-    if (lSerial < 32) {
-        lSerial ^= 0x15;
-    }
-    lSerial = (uint32_t)(lSerial * 36) + LongFromSerialCh(psz[1]);
-    lSerial = (uint32_t)(lSerial * 36) + LongFromSerialCh(psz[4]);
-    lSerial = (uint32_t)(lSerial * 36) + LongFromSerialCh(psz[7]);
-    lSerial = (uint32_t)(lSerial * 36) + LongFromSerialCh(psz[3]);
-    if (plSerial) {
-        *plSerial = lSerial;
-    }
-    PushRandom(11, 17);
-    lCur = lSerial;
-    Randomize2(lCur);
-    lCur = (int32_t)(lCur >> 0xe);
-    lBuild = 0;
-    for (i = 0; i < 3; i++) {
-        for (l = (uint32_t)(LOWORD(lCur) & 0xf); l >= 0; l--) {
-            Random(256);
-        }
-        lBuild = (int32_t)(lBuild * 256) + Random(256);
-        lCur = (int32_t)(lCur >> 4);
-    }
-    PopRandom();
-    l = LongFromSerialCh(psz[2]);
-    if (l != (int32_t)(lBuild % 36)) {
-        return FALSE;
-    }
-    lBuild = (int32_t)(lBuild / 36);
-    l = LongFromSerialCh(psz[5]);
-    if (l != (int32_t)(lBuild % 36)) {
-        return FALSE;
-    }
-    lBuild = (int32_t)(lBuild / 36);
-    l = LongFromSerialCh(psz[6]);
-    if (l != (int32_t)(lBuild % 36)) {
-        return FALSE;
-    }
-    return TRUE;
-}
-
 int16_t FMatchTarget(FLEET *lpflTarget, MdTarget mdTarget, int16_t fExact) {
     int16_t imd;
     int16_t ish;
@@ -2364,9 +2302,6 @@ int32_t ChgPopFromPlanet(PLANET *lppl, int16_t fUpdate) {
     }
     lMaxPop = CalcPlanetMaxPop(lppl->id, lppl->iPlayer);
     pctGrow100 = (int16_t)(PctTrueMaxGrowth(lppl->iPlayer) * pctDesire);
-    if (gd.fGeneratingTurn && rgplr[lppl->iPlayer].fCheater) {
-        pctGrow100 = (int32_t)(pctGrow100 >> 1);
-    }
     if (lPopOld > (int32_t)(lMaxPop / 4)) {
         pctFull = (int32_t)((int32_t)(lPopOld * 1000) / lMaxPop);
         if (lPopOld >= lMaxPop) {

@@ -15,8 +15,6 @@ jobs:
   tutorial:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    env:
-      STARS_TUTORIAL_SERIAL: ${{ vars.STARS_TUTORIAL_SERIAL }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v5

@@ -151,7 +151,6 @@ int16_t FCreateStuff() {
     lpfnBrowserDlgProc = MakeProcInstance(BrowserDlg, hInst);
     lpfnReportDlgProc = MakeProcInstance(ReportDlg, hInst);
     lpfnGaugeDlgProc = MakeProcInstance(ProgressGaugeDlg, hInst);
-    GetDiskSerialNumber();
     lpb2k = LpAlloc(0x800, htPerm);
     vlprgidMisc = LpAlloc(0x800, htPerm);
     vlprgidPlanet = LpAlloc(0x800, htPerm);
@@ -421,13 +420,6 @@ void ReadIniSettings() {
     CchGetString(idsToolbar, szEntry);
     i = GetPrivateProfileInt(szSection, szEntry, 1, szIniFile);
     gd.fToolbar = i != 0;
-    CchGetString(idsGlobalsettings, szEntry);
-    cch = GetPrivateProfileString(szSection, szEntry, " ", szWork, 40, szIniFile);
-    if (cch != 28) {
-        vSerialNumber = 0;
-    } else {
-        FSerialAndEnvFromSz(&vSerialNumber, vrgbMachineConfig, szWork);
-    }
     CchGetString(idsPlanettiles, szEntry);
     cch = GetPrivateProfileString(szSection, szEntry, "X", szWork, 20, szIniFile);
     ReadIniTileSettings(szWork, rgtilePlanet, 6);

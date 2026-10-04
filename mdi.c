@@ -1,6 +1,5 @@
 #include "common.h"
 
-uint8_t vrgbShuffleSerial[21] = {11, 4, 5, 16, 17, 12, 19, 15, 10, 1, 14, 13, 3, 18, 2, 20, 9, 7, 0, 8, 6};
 char    rgTOWidth[2][2] = {{-3}, {2, 1}};
 
 int16_t InitMDIApp() {
@@ -173,7 +172,6 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     char         szTemp[80];
     FARPROC      lpProc;
     int16_t      fRet;
-    int32_t      lSerial;
     int16_t      fErrSav;
     int16_t      idCur;
     int16_t      id;
@@ -260,9 +258,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 }
                 goto LExit;
             } else if (ini.fNewGame) {
-                if (vSerialNumber != 0) {
-                    GenNewGameFromFile(szBase);
-                }
+                GenNewGameFromFile(szBase);
                 goto LExit;
             } else {
                 if (ini.fGen) {
@@ -342,25 +338,6 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ini.fStartupFile = FALSE;
         DestroyCurGame();
     LNop:
-        if (vSerialNumber != 0 && memcmp(vrgbMachineConfig, vrgbEnvCur, 11) == 0) {
-            return 0;
-        }
-        szWork[200] = vSerialNumber != 0;
-        lpProc = MakeProcInstance(MsgDlg, hInst);
-        fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_SERIAL_NUMBER), !hwndTitle ? hwndFrame : hwndTitle, lpProc);
-        FreeProcInstance(lpProc);
-        if (!fRet) {
-            vSerialNumber = 0;
-            memcpy(vrgbMachineConfig, vrgbEnvCur, 11);
-            PostQuitMessage(vretExitValue);
-        } else if (FValidSerialNo(szWork, &lSerial)) {
-            vSerialNumber = lSerial;
-            memcpy(vrgbMachineConfig, vrgbEnvCur, 11);
-        } else if (vSerialNumber == 0) {
-            memcpy(vrgbMachineConfig, vrgbEnvCur, 11);
-            PostQuitMessage(vretExitValue);
-        }
-        WriteIniSettings();
         return 0;
     case WM_ENTERIDLE:
         if (gd.fTutorial && tutor.fChange) {
@@ -942,155 +919,6 @@ void RestoreSelection() {
         ini.grobjSel = 0;
     }
     return;
-}
-
-void FormatSerialAndEnv(int32_t lSerial, uint8_t *pbEnv, char *pszOut) {
-    uint8_t rgbRaw[21];
-    int16_t j;
-    uint8_t bXor;
-    int16_t i;
-    int16_t cBits;
-    int16_t iRaw;
-    int16_t iPass;
-    int32_t lTank;
-    uint8_t rgbRaw2[21];
-    uint8_t b64;
-
-    iPass = 0;
-    PushRandom(11, 17);
-    Randomize(lSerial);
-    RawStore32(rgbRaw, lSerial);
-    memcpy(&rgbRaw[4], pbEnv, 11);
-    iRaw = 15;
-    for (i = 0; i < 11; i++) {
-        for (j = pbEnv[i]; j > 0; j--) {
-            Random(16);
-        }
-        if (iPass == 0) {
-            rgbRaw[iRaw] = Random(16);
-        } else {
-            rgbRaw[iRaw++] |= Random(16) << 4;
-        }
-        iPass = (iPass + 1) & 1;
-    }
-    bXor = 0;
-    for (i = 0; i < 15; i++) {
-        bXor ^= rgbRaw[i];
-    }
-    rgbRaw[iRaw++] |= bXor << 4;
-    PopRandom();
-    for (i = 0; i < 21; i++) {
-        rgbRaw2[i] = rgbRaw[vrgbShuffleSerial[i]];
-    }
-    iRaw = 0;
-    cBits = 0;
-    lTank = 0;
-    for (i = 0; i < 28; i++) {
-        if (cBits < 6) {
-            lTank |= (int16_t)(rgbRaw2[iRaw++] << cBits);
-            cBits += 8;
-        }
-        b64 = lTank & 0x3f;
-        lTank = (int32_t)(lTank >> 6);
-        cBits -= 6;
-        if (b64 < 26) {
-            *pszOut = b64 + 'A';
-        } else if (b64 < 52) {
-            *pszOut = b64 + 'G';
-        } else if (b64 < 62) {
-            *pszOut = b64 - 4;
-        } else if (b64 == 62) {
-            *pszOut = '-';
-        } else {
-            *pszOut = '*';
-        }
-        pszOut++;
-    }
-    *pszOut = 0;
-    return;
-}
-
-int16_t FSerialAndEnvFromSz(int32_t *plSerial, uint8_t *pbEnv, char *pszIn) {
-    uint8_t rgbRaw[21];
-    int16_t fSuccess;
-    int16_t j;
-    uint8_t bXor;
-    int16_t i;
-    int16_t cBits;
-    int16_t iRaw;
-    int16_t iPass;
-    int32_t lSerial;
-    int32_t lTank;
-    uint8_t rgbRaw2[21];
-    uint8_t b64;
-
-    iPass = 0;
-    *plSerial = 0;
-    memset(pbEnv, 0, 11);
-    iRaw = 0;
-    cBits = 0;
-    lTank = 0;
-    for (i = 0; i < 21; i++) {
-        while (cBits < 8) {
-            if (*pszIn >= 'A' && *pszIn <= 'Z') {
-                b64 = *pszIn - 'A';
-            } else if (*pszIn >= 'a' && *pszIn <= 'z') {
-                b64 = *pszIn - 'G';
-            } else if (*pszIn >= '0' && *pszIn <= '9') {
-                b64 = *pszIn + 4;
-            } else if (*pszIn == '-') {
-                b64 = 62;
-            } else {
-                b64 = 63;
-            }
-            lTank |= (int16_t)(b64 << cBits);
-            cBits += 6;
-            pszIn++;
-        }
-        rgbRaw2[iRaw++] = lTank;
-        cBits -= 8;
-        lTank = (int32_t)(lTank >> 8);
-    }
-    for (i = 0; i < 21; i++) {
-        rgbRaw[vrgbShuffleSerial[i]] = rgbRaw2[i];
-    }
-    lSerial = RawLoad32(rgbRaw);
-    if (!FValidSerialLong(lSerial)) {
-        return FALSE;
-    }
-    fSuccess = TRUE;
-    PushRandom(11, 17);
-    Randomize(lSerial);
-    iRaw = 15;
-    for (i = 0; i < 11; i++) {
-        for (j = rgbRaw[i + 4]; j > 0; j--) {
-            Random(16);
-        }
-        if (iPass == 0) {
-            if ((rgbRaw[iRaw] & 0xf) != (Random(16) & 0xff)) {
-                fSuccess = FALSE;
-            }
-        } else {
-            if (rgbRaw[iRaw] >> 4 != (Random(16) & 0xff)) {
-                fSuccess = FALSE;
-            }
-            iRaw++;
-        }
-        iPass = (iPass + 1) & 1;
-    }
-    bXor = 0;
-    for (i = 0; i < 15; i++) {
-        bXor ^= rgbRaw[i];
-    }
-    if (rgbRaw[iRaw] >> 4 != (bXor & 0xf)) {
-        fSuccess = FALSE;
-    }
-    PopRandom();
-    if (fSuccess) {
-        *plSerial = lSerial;
-        memcpy(pbEnv, &rgbRaw[4], 11);
-    }
-    return fSuccess;
 }
 
 int16_t FFindSomethingAndSelectIt() {
@@ -2040,9 +1868,6 @@ LGotFileName:
         return fRet;
     }
     if (fRet) {
-        if (ini.fStartupFile && vSerialNumber == 0) {
-            fRet = -1;
-        }
         fFileErrSilent = FALSE;
         ini.fStartupFile = FALSE;
         if (fRet == -1) {
@@ -2331,7 +2156,6 @@ void VerifyTurns() {
     lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
     vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
     memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
-    vrgts = LpAlloc(game.cPlayer * sizeof(TURNSERIAL), htMisc);
     cColDrop = 0;
     cXferFull = 0;
     imemMsgCur = 0;
@@ -2379,8 +2203,6 @@ void VerifyTurns() {
     }
     FreeLp(vrgPlanResExtra, htMisc);
     vrgPlanResExtra = NULL;
-    FreeLp(vrgts, htMisc);
-    vrgts = NULL;
     FreeLp(lpcd, htMisc);
     lpcd = NULL;
     FreeLp(lpxf, htMisc);
@@ -2808,9 +2630,6 @@ void WriteIniSettings() {
     szPd[2] = 0;
     CchGetString(idsWindows, szSection);
     CchGetString(idsStarsIni, szIniFile);
-    CchGetString(idsGlobalsettings, szEntry);
-    FormatSerialAndEnv(vSerialNumber, vrgbMachineConfig, szWork);
-    WritePrivateProfileString(szSection, szEntry, szWork, szIniFile);
     CchGetString(idsResolution, szEntry);
     i = 0;
     if (vcScreenColors <= 4) {
