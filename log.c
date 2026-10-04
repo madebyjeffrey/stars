@@ -1150,20 +1150,11 @@ int16_t FLoadLogFile(char *pszLog) {
     for (lpmp = (MSGPLR *)&vlpmsgplrOut; lpmp->lpmsgplrNext; lpmp = lpmp->lpmsgplrNext) {
     }
     while (hdrCur.rt == rtPlrMsg) {
-        /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
-        if (hdrCur.cb < sizeof(RTPLRMSG) || abs(((RTPLRMSG *)rgbCur)->cLen) + sizeof(RTPLRMSG) > hdrCur.cb) {
-            ReadRt();
-            continue;
+        lpmp->lpmsgplrNext = LpmsgplrFromRt();
+        if (lpmp->lpmsgplrNext) {
+            lpmp = lpmp->lpmsgplrNext;
+            vcmsgplrOut++;
         }
-        lpmp->lpmsgplrNext = LpAlloc(offsetof(MSGPLR, rgbMsg) + hdrCur.cb - sizeof(RTPLRMSG), htPlrMsg);
-        lpmp = lpmp->lpmsgplrNext;
-        lpmp->lpmsgplrNext = NULL;
-        lpmp->iPlrFrom = ((RTPLRMSG *)rgbCur)->iPlrFrom;
-        lpmp->iPlrTo = ((RTPLRMSG *)rgbCur)->iPlrTo;
-        lpmp->iInRe = ((RTPLRMSG *)rgbCur)->iInRe;
-        lpmp->cLen = ((RTPLRMSG *)rgbCur)->cLen;
-        memcpy(lpmp->rgbMsg, ((RTPLRMSG *)rgbCur)->rgbMsg, hdrCur.cb - sizeof(RTPLRMSG));
-        vcmsgplrOut++;
         ReadRt();
     }
     if (hdrCur.rt != rtEOF) {
@@ -1241,7 +1232,6 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     RTLOGHDR rtlh;
     MSGPLR  *lpmp;
     int16_t  cb;
-    uint8_t  rgb[1024]; /* NATIVE: Win16 player-message record buffer. */
 
     iCur = 0;
     if (iPlayer == idPlayer && !rgplr[iPlayer].fAi && hdrPrev.rt != rtLogPlayerZpq1) {
@@ -1273,13 +1263,7 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     iCur = vcmsgplrOut;
     lpmp = vlpmsgplrOut;
     while (iCur-- != 0) {
-        ((RTPLRMSG *)rgb)->lpmsgplrNext = 0;
-        ((RTPLRMSG *)rgb)->iPlrFrom = lpmp->iPlrFrom;
-        ((RTPLRMSG *)rgb)->iPlrTo = lpmp->iPlrTo;
-        ((RTPLRMSG *)rgb)->iInRe = lpmp->iInRe;
-        ((RTPLRMSG *)rgb)->cLen = lpmp->cLen;
-        memcpy(((RTPLRMSG *)rgb)->rgbMsg, lpmp->rgbMsg, abs(lpmp->cLen));
-        WriteRt(rtPlrMsg, sizeof(RTPLRMSG) + abs(lpmp->cLen), rgb);
+        WriteRtPlrMsg(lpmp);
         lpmp = lpmp->lpmsgplrNext;
     }
     WriteRt(rtEOF, 0, NULL);

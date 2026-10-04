@@ -36,6 +36,8 @@ void             MarkPlayersThatSentMsgs(int16_t iPlayer);
 void             WritePlayerMessages(int16_t iPlayer);
 void             ResetMessages();
 void             ReadPlayerMessages();
+void             WriteRtPlrMsg(MSGPLR *lpmp);
+MSGPLR          *LpmsgplrFromRt();
 int16_t          FFinishPlrMsgEntry(int16_t dInc);
 char            *PszGetCompressedMessage(MessageId idm);
 void             SetFilteringGroups(MessageId idm, int16_t fSet);

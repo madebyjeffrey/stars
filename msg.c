@@ -2287,13 +2287,7 @@ void WritePlayerMessages(int16_t iPlayer) {
         }
         for (lpmp = vlpmsgplrOut; lpmp; lpmp = lpmp->lpmsgplrNext) {
             if ((lpmp->iPlrTo == 0 && lpmp->iPlrFrom != iPlayer) || lpmp->iPlrTo - 1 == iPlayer) {
-                ((RTPLRMSG *)rgb)->lpmsgplrNext = 0;
-                ((RTPLRMSG *)rgb)->iPlrFrom = lpmp->iPlrFrom;
-                ((RTPLRMSG *)rgb)->iPlrTo = lpmp->iPlrTo;
-                ((RTPLRMSG *)rgb)->iInRe = lpmp->iInRe;
-                ((RTPLRMSG *)rgb)->cLen = lpmp->cLen;
-                memcpy(((RTPLRMSG *)rgb)->rgbMsg, lpmp->rgbMsg, abs(lpmp->cLen));
-                WriteRt(rtPlrMsg, sizeof(RTPLRMSG) + abs(lpmp->cLen), rgb);
+                WriteRtPlrMsg(lpmp);
             }
         }
     }
@@ -2312,6 +2306,37 @@ void ResetMessages() {
     vcmsgplrIn = 0;
     vcmsgplrOut = 0;
     return;
+}
+
+void WriteRtPlrMsg(MSGPLR *lpmp) {
+    uint8_t rgb[1024];
+
+    ((RTPLRMSG *)rgb)->lpmsgplrNext = 0;
+    ((RTPLRMSG *)rgb)->iPlrFrom = lpmp->iPlrFrom;
+    ((RTPLRMSG *)rgb)->iPlrTo = lpmp->iPlrTo;
+    ((RTPLRMSG *)rgb)->iInRe = lpmp->iInRe;
+    ((RTPLRMSG *)rgb)->cLen = lpmp->cLen;
+    memcpy(((RTPLRMSG *)rgb)->rgbMsg, lpmp->rgbMsg, abs(lpmp->cLen));
+    WriteRt(rtPlrMsg, sizeof(RTPLRMSG) + abs(lpmp->cLen), rgb);
+    return;
+}
+
+// Returns the rtPlrMsg record in rgbCur as a new message, or NULL if the
+// record is too short for its header or text.
+MSGPLR *LpmsgplrFromRt() {
+    MSGPLR *lpmp;
+
+    /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
+    if (hdrCur.cb < sizeof(RTPLRMSG) || abs(((RTPLRMSG *)rgbCur)->cLen) + sizeof(RTPLRMSG) > hdrCur.cb)
+        return NULL;
+    lpmp = LpAlloc(offsetof(MSGPLR, rgbMsg) + hdrCur.cb - sizeof(RTPLRMSG), htPlrMsg);
+    lpmp->lpmsgplrNext = NULL;
+    lpmp->iPlrFrom = ((RTPLRMSG *)rgbCur)->iPlrFrom;
+    lpmp->iPlrTo = ((RTPLRMSG *)rgbCur)->iPlrTo;
+    lpmp->iInRe = ((RTPLRMSG *)rgbCur)->iInRe;
+    lpmp->cLen = ((RTPLRMSG *)rgbCur)->cLen;
+    memcpy(lpmp->rgbMsg, ((RTPLRMSG *)rgbCur)->rgbMsg, hdrCur.cb - sizeof(RTPLRMSG));
+    return lpmp;
 }
 
 void ReadPlayerMessages() {
@@ -2363,20 +2388,11 @@ void ReadPlayerMessages() {
     while (hdrCur.rt == rtPlrMsg) {
         if (fOOM)
             goto LOutOfMem;
-        /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
-        if (hdrCur.cb < sizeof(RTPLRMSG) || abs(((RTPLRMSG *)rgbCur)->cLen) + sizeof(RTPLRMSG) > hdrCur.cb) {
-            ReadRt();
-            continue;
+        lpmp->lpmsgplrNext = LpmsgplrFromRt();
+        if (lpmp->lpmsgplrNext) {
+            lpmp = lpmp->lpmsgplrNext;
+            vcmsgplrIn++;
         }
-        lpmp->lpmsgplrNext = LpAlloc(offsetof(MSGPLR, rgbMsg) + hdrCur.cb - sizeof(RTPLRMSG), htPlrMsg);
-        lpmp = lpmp->lpmsgplrNext;
-        lpmp->lpmsgplrNext = NULL;
-        lpmp->iPlrFrom = ((RTPLRMSG *)rgbCur)->iPlrFrom;
-        lpmp->iPlrTo = ((RTPLRMSG *)rgbCur)->iPlrTo;
-        lpmp->iInRe = ((RTPLRMSG *)rgbCur)->iInRe;
-        lpmp->cLen = ((RTPLRMSG *)rgbCur)->cLen;
-        memcpy(lpmp->rgbMsg, ((RTPLRMSG *)rgbCur)->rgbMsg, hdrCur.cb - sizeof(RTPLRMSG));
-        vcmsgplrIn++;
     LOutOfMem:
         ReadRt();
     }

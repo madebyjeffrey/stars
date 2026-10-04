@@ -52,12 +52,12 @@ storage harmlessly. They don't change game behavior and should stay.
 
 ## Native record and message boundaries (keep)
 
-- **Malformed player-message records** (`log.c` FLoadLogFile and `msg.c`
-  ReadPlayerMessages, marked `NATIVE`): a record shorter than its 12-byte
-  header plus abs(cLen) text bytes is skipped. The original copied `cb` bytes
-  and later wrote abs(cLen)+12 from the heap, over-reading harmlessly; native
-  would compute a negative copy length (cb < 4) or overflow the 1024-byte
-  write buffer. Valid records (text is limited to 968 characters) are
+- **Malformed player-message records** (`msg.c` LpmsgplrFromRt, used by
+  `log.c` FLoadLogFile and `msg.c` ReadPlayerMessages, marked `NATIVE`): a
+  record shorter than its 12-byte header plus abs(cLen) text bytes is
+  skipped. The original copied `cb` bytes and later wrote abs(cLen)+12 from
+  the heap, over-reading harmlessly; native would compute a negative copy
+  length (cb < 4) or overflow the 1024-byte write buffer. Valid records (text is limited to 968 characters) are
   unaffected. **Revert to:** nothing; keep the guard.
 - **Battle heap capacity** (`file.c` FLoadGame and `battle.c` FDoCoolBattle,
   marked `NATIVE`): original LOWORD(pointer) was an offset within a Win16
