@@ -94,7 +94,7 @@ other the serial-unlocked shareware), which can point at causes.
 | Sappers fail to close to range 2 | `DpFromPtokBrcToBrc` move scoring | open |
 | WP0 pop reload ignored | pending drops vs colonize task | open |
 | Crash Stars | base-design indices in battle and minefield damage; TotalHost's warning points at a fleet refuelling at the last player's 10th base design ([TOTALHOST.md](TOTALHOST.md)) | open |
-| Starbase friendly fire | `CplrBattle` attack masks (already changed by the native repair) | open |
+| Starbase friendly fire | `CplrBattle` attack masks (already changed by the native repair) | not reproduced in 2.8 (`test_battle.c`) |
 | VCR shields and point of view | `RegenShield`, `UpdateShdefCost` use of `idPlayer` | open |
 | Stargate mineral transmutation | the 2.70i notes list "Fixed mineral transmutation bug when unloading for stargate jumps"; 26JFIN.txt's copy of that list omits it. Check `FStargateJump`'s cargo unloading | open |
 

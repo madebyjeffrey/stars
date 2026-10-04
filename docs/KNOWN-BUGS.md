@@ -240,7 +240,7 @@ only gates. `tests/unit/test_save.c` showed a 600 ly penetrating scanner
 100 ly away only obscuring a starbase with `lVisible` 9000 while seeing one
 with 2500. The product is now 64-bit.
 
-### Starbase Friendly Fire — different here; original defect recorded
+### Starbase Friendly Fire — fixed in 2.8 by the native repair
 
 `battle.c`: `CplrBattle`; [WIN16-PARITY.md](WIN16-PARITY.md),
 “Starbase attack mask index”.
@@ -250,6 +250,11 @@ memory beyond the array to be modified. The current `NATIVE` repair uses
 `iplrStarbase`. Attack-mask propagation and reciprocal hostility remain in
 `CplrBattle`, but the supplied precise highest/lowest-player friendly-fire
 scenario has not been reproduced under the repaired code.
+
+**2.8:** `tests/unit/test_battle.c` gives a starbase's default plan one
+target player, with a friend of the owner and the target in orbit, for all
+six ways to cast three players in those roles. The starbase attacks only
+its target, and nobody attacks the friend or is attacked by it.
 
 ### Repair After Gating Loophole — fixed in 2.8
 

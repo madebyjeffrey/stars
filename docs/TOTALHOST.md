@@ -33,7 +33,7 @@ against them.
 | Cheap Colonizer | `.x` | empty slot still tagged as a colonization module set to truly empty | fixed (Colonization Module Check) |
 | Space Dock armor overflow | `.x` | more than 21 Superlatanium clamped to 21, armor recomputed | fixed |
 | SS Pop Steal | `.x` | Robber Baron transport order to load colonists from someone else's planet set to no action | fixed |
-| Starbase Friendly Fire | `.x` | default battle plan "attack player N" reset to Neutral/Enemies | native repair in place; needs a test |
+| Starbase Friendly Fire | `.x` | default battle plan "attack player N" reset to Neutral/Enemies | fixed (native repair, tested) |
 | Cheap Starbase | `.x` | edit of a partly built starbase design blanked | fixed |
 | Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | fixed |
 | 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | fixed |
@@ -107,17 +107,18 @@ show how the exploits are carried out.
   cleared. 2.8 refuses the load in `SatisfyOrders` and sends the
   "attempt was unsuccessful" message.
 
-### Starbase Friendly Fire: check with a test
+### Starbase Friendly Fire: fixed by the native repair
 
 Battle plan block 30: if plan 0 (the default plan, which starbases use) has
 `attackWho > 3` (a specific player), TotalHost sets it to 2
 (Neutral/Enemies). This avoids the Win16 bug in `CplrBattle` where the
 starbase's attack-player case indexed `rggrfAttack` with uninitialized
 `iplrCur`. The native build already uses `iplrStarbase` (see
-[WIN16-PARITY.md](WIN16-PARITY.md), "Starbase attack mask index"). A turn
-test with a starbase whose default plan targets one player would confirm
-that 2.8 behaves and close ROADMAP 5.3's row; TotalHost's workaround
-isn't needed if it does.
+[WIN16-PARITY.md](WIN16-PARITY.md), "Starbase attack mask index").
+`tests/unit/test_battle.c` gives a starbase's default plan one target, with
+a friend and the target in orbit, for every order of three players: the
+starbase attacks only its target and nobody fires on the friend.
+TotalHost's workaround isn't needed with 2.8.
 
 ### Cheap Starbase: fixed in 2.8
 
