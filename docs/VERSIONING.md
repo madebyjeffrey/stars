@@ -11,16 +11,17 @@ shown to players. `cmake/version.cmake` generates it from git into
 | Checkout | Version | Shown as | Build |
 | --- | --- | --- | --- |
 | Clean checkout of tag `v2.8.0` | `2.8.0` | `2.8x64` | 0 |
-| Clean checkout of tag `v2.8.1` | `2.8.1` | `2.8x64 (2.8.1)` | 0 |
+| Clean checkout of tag `v2.8.1` | `2.8.1` | `2.8.1x64` | 0 |
 | 12 commits after `v2.8.0` | `2.8.1-dev.12+g1a2b3c4` | `2.8x64 (2.8.1-dev.12+g1a2b3c4)` | 12 |
 | Same, with uncommitted changes | `2.8.1-dev.12+g1a2b3c4.dirty` | `2.8x64 (2.8.1-dev.12+g1a2b3c4.dirty)` | 12 |
 | Before the first `v` tag | `2.8.0-dev.N+g…`, N counted from `2.6jrc3` | `2.8x64 (2.8.0-dev.N+g…)` | N |
 
 The version (`STARS_VERSION_STRING`) is what tags, `FileVersion` and the
 release check use. The name shown (`STARS_VERSION_DISPLAY`) marks this line
-as the 64-bit Win32 build of 2.8, `2.8x64`. It appears in the About box, on
-the splash screen and in report headers (`SzVersion` in `stars.c`), in
-`ProductVersion` and in release titles.
+as a 64-bit Win32 build: `2.8x64` for 2.8.0 and `2.8.1x64` for 2.8.1.
+Development builds append the full version in parentheses. It appears in
+the About box, on the splash screen and in report headers (`SzVersion` in
+`stars.c`), in `ProductVersion` and in release titles.
 
 A development build is numbered toward the next version: the patch after the
 last `vX.Y.Z` tag, or `project(stars VERSION …)` in `CMakeLists.txt` if that

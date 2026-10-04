@@ -10,9 +10,10 @@
 # higher, so a release never needs a version bump commit.
 # Set STARS_VERSION in the environment to override (for source archives).
 #
-# The name shown to players is MAJOR.MINORx64, the 64-bit Win32 build, with
-# the full version after it unless this is the X.Y.0 release:
+# The name shown to players includes the patch for a patch release, omits
+# .0 for an initial release, and appends the full version for development builds:
 #   2.8x64                                  release 2.8.0
+#   2.8.1x64                                release 2.8.1
 #   2.8x64 (2.8.1-dev.12+g1a2b3c4)          development build
 
 cmake_minimum_required(VERSION 3.23)
@@ -95,7 +96,11 @@ else()
 endif()
 
 set(display "${major}.${minor}x64")
-if(NOT text STREQUAL "${major}.${minor}.0")
+if(text STREQUAL "${major}.${minor}.${patch}")
+    if(NOT patch EQUAL 0)
+        set(display "${major}.${minor}.${patch}x64")
+    endif()
+else()
     set(display "${display} (${text})")
 endif()
 
