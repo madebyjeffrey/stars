@@ -145,7 +145,7 @@ against available cargo. A missing validation that reproduces the supplied
 memory-editor exploit has not been identified. The report itself says the
 exploit no longer appears to work in JRC4.
 
-### Cheap Starbase — located queue/design mismatch
+### Cheap Starbase — fixed in 2.8
 
 `build.c`: `FCheckQueuedShip`, `SlotDlg`; `ship.c`: `CshQueued`,
 `RemoveIshdefFromAllQueues`; `log.c`: `FRunLogRecord` (design changes);
@@ -158,6 +158,12 @@ replacement checks existing design counts, not every partial queue investment.
 This supports retaining cheap partial work when the design becomes expensive.
 The delete-and-recreate UltraStation variant depends on builder-close timing
 and remains unconfirmed.
+
+**2.8:** confirmed by `tests/unit/test_log.c`: a starbase design half built
+at a colony kept its 50% when the design was replaced. The host's replay
+of a design change or deletion (`FRunLogRecord`) now clears the progress
+of every queued item of that design on the player's planets, which also
+covers the delete-and-recreate variant.
 
 ### Mineral Upload — fixed in 2.8
 

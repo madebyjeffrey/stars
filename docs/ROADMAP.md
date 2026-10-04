@@ -85,7 +85,7 @@ other the serial-unlocked shareware), which can point at causes.
 | Bug | Starting point (see KNOWN-BUGS.md) | Status |
 | --- | --- | --- |
 | East/West speed bump immunity | `FTravelThroughMineFields`, `FIntersectCircleLine` horizontal case | open |
-| Cheap starbase (UltraStation variant) | `PROD.pct` against edited designs | open |
+| Cheap starbase (UltraStation variant) | `PROD.pct` against edited designs | fixed (`test_log.c`): a design change or deletion clears queued progress |
 | [freepop] hack | `COLDROP` replay in `FRunLogRecord` | open |
 | Random race | `RaceWizardDlg1` template persistence | open |
 | AR starter colonies | starter-base queue entry in `Produce` | open |

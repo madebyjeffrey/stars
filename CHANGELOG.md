@@ -151,3 +151,8 @@ produce different results from a 2.6j host for the same turn.
   wormhole, or which part the trader carries. Each player's file keeps only
   that player's bit of these masks (`FWriteDataFile`). Turn files only; AI
   play is unchanged.
+- Production: changing or deleting a ship or starbase design clears the
+  progress of queued items of that design. The original kept the
+  completion percentage and charged only the rest at the new design's cost,
+  so a mostly built cheap starbase could be finished as an expensive one
+  (`FRunLogRecord`). **Host results.**

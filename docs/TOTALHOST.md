@@ -34,7 +34,7 @@ against them.
 | Space Dock armor overflow | `.x` | more than 21 Superlatanium clamped to 21, armor recomputed | fixed |
 | SS Pop Steal | `.x` | Robber Baron transport order to load colonists from someone else's planet set to no action | fixed |
 | Starbase Friendly Fire | `.x` | default battle plan "attack player N" reset to Neutral/Enemies | native repair in place; needs a test |
-| Cheap Starbase | `.x` | edit of a partly built starbase design blanked | **open** |
+| Cheap Starbase | `.x` | edit of a partly built starbase design blanked | fixed |
 | Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | fixed |
 | 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | fixed |
 | 10th starbase design crash | `.x` | warning only | **open** (Crash Stars) |
@@ -119,7 +119,7 @@ test with a starbase whose default plan targets one player would confirm
 that 2.8 behaves and close ROADMAP 5.3's row; TotalHost's workaround
 isn't needed if it does.
 
-### Cheap Starbase: open
+### Cheap Starbase: fixed in 2.8
 
 How it works, from StarsFix: the `.hst` pass records production queues
 (block 28: `cItem`, `iItem`, `grobj`, `pct`). On the `.x` pass, a design
@@ -130,12 +130,10 @@ naming an edited base design is also warned.
 
 This matches KNOWN-BUGS.md: `PROD.pct` keeps the work done on the old
 design, and the queued-design checks in `ship.c` only guard planets that
-already have a starbase. **For 2.8:** in turn generation, either drop
-the partial progress when a queued base design changes (`FRunLogRecord`'s
-design-change record) or make the client's check
-(`FCheckQueuedShip`/`RemoveIshdefFromAllQueues`) cover planets without a
-starbase. TotalHost's rule (`totalBuilt == 0` and `pct > 0` in a queue) is
-a ready test case.
+already have a starbase. **2.8:** `FRunLogRecord`'s design-change record clears the
+partial progress of every queued item of that design, ship or starbase,
+on all the player's planets. That also covers deleting and recreating a
+design.
 
 ### Mineral Upload: fixed in 2.8
 

@@ -52,4 +52,61 @@ static void test_FRunLogRecord_refunds_undelivered_cargo(void) {
     TEST_CHECK_(lppl->rgwtMin[0] == wtPlanet - wtCargo, "planet has %ld, had %ld", (long)lppl->rgwtMin[0], (long)wtPlanet);
 }
 
-TEST_LIST = {{"FRunLogRecord refunds undelivered cargo", test_FRunLogRecord_refunds_undelivered_cargo}, {NULL, NULL}};
+// Cheap Starbase: a partly built queue item keeps its completion
+// percentage (PROD.pct) and the rest is costed from the current design. A
+// player could build most of a cheap starbase design, then edit the design
+// into an expensive one and finish it for the rest of the cheap one's cost.
+static void test_FRunLogRecord_design_change_clears_progress(void) {
+    char     szDir[MAX_PATH];
+    PLANET  *lppl;
+    SHDEF    shdef;
+    int16_t  isb;
+    int16_t  i;
+    uint8_t  rgb[160];
+    uint8_t *pb;
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("FRunLogRecord_design_change", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, NULL, 0));
+    TEST_ASSERT(FStarsTestLoadHost());
+    // A second starbase design, half built at a colony without a starbase.
+    for (isb = 0; isb < 10 && !rglpshdefSB[0][isb].fFree; isb++) {
+    }
+    TEST_ASSERT(isb < 10);
+    rglpshdefSB[0][isb] = rglpshdefSB[0][0];
+    rglpshdefSB[0][isb].ishdef = 16 + isb;
+    rglpshdefSB[0][isb].cExist = 0;
+    rglpshdefSB[0][isb].cBuilt = 0;
+    rgplr[0].cshdefSB++;
+    for (i = 0; i < cPlanet && (lpPlanets[i].iPlayer != iplrNone || lpPlanets[i].fStarbase); i++) {
+    }
+    TEST_ASSERT(i < cPlanet);
+    lppl = &lpPlanets[i];
+    lppl->iPlayer = 0;
+    lppl->rgwtMin[3] = 1000;
+    lppl->lpplprod = (PLPROD *)LpplAlloc(4, 3, htOrd);
+    lppl->lpplprod->iprodMac = 1;
+    lppl->lpplprod->rgprod[0].cItem = 1;
+    lppl->lpplprod->rgprod[0].iItem = 16 + isb;
+    lppl->lpplprod->rgprod[0].grobj = grobjFleet;
+    lppl->lpplprod->rgprod[0].pct = 50;
+
+    // Player 0's order: replace the design.
+    gd.fGeneratingTurn = TRUE;
+    idPlayer = 0;
+    shdef = rglpshdefSB[0][isb];
+    shdef.det = detAll;
+    memset(rgb, 0, sizeof(rgb));
+    ((RTCHGSHDEF *)rgb)->ishdef = 16 + isb;
+    ((RTCHGSHDEF *)rgb)->iPlr = 0;
+    ((RTCHGSHDEF *)rgb)->mdChg = 1;
+    pb = (uint8_t *)&((RTCHGSHDEF *)rgb)->rtshdef;
+    WriteRtShDef(&shdef, &pb);
+    TEST_ASSERT(FRunLogRecord(rtLogShDef, (int16_t)(pb - rgb), rgb));
+    TEST_ASSERT(lppl->lpplprod != NULL && lppl->lpplprod->iprodMac == 1);
+    TEST_CHECK_(lppl->lpplprod->rgprod[0].pct == 0, "the edited design kept %d%%", lppl->lpplprod->rgprod[0].pct);
+}
+
+TEST_LIST = {{"FRunLogRecord refunds undelivered cargo", test_FRunLogRecord_refunds_undelivered_cargo},
+             {"FRunLogRecord design change clears queued progress", test_FRunLogRecord_design_change_clears_progress},
+             {NULL, NULL}};

@@ -679,6 +679,21 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         if (!lpshdef->fFree && lpshdef->cExist != 0 && ((RTCHGSHDEF *)lpb)->mdChg != 0) {
             return FALSE;
         }
+        /* Work done on queued ships or starbases of the old design doesn't
+           carry over to the new one. The original kept PROD.pct and costed
+           the rest from the new design, so a mostly built cheap starbase
+           could be finished as an expensive one. */
+        lppl = lpPlanets;
+        lpplMac = lpPlanets + cPlanet;
+        for (; lppl < lpplMac; lppl++) {
+            if (lppl->iPlayer == idPlayer && lppl->lpplprod) {
+                for (iPass = 0; iPass < lppl->lpplprod->iprodMac; iPass++) {
+                    if (lppl->lpplprod->rgprod[iPass].grobj == grobjFleet && lppl->lpplprod->rgprod[iPass].iItem == (uint32_t)i) {
+                        lppl->lpplprod->rgprod[iPass].pct = 0;
+                    }
+                }
+            }
+        }
         switch (((RTCHGSHDEF *)lpb)->mdChg) {
         case 0:
             if (lpshdef->fFree)
