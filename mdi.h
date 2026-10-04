@@ -15,7 +15,6 @@ void             RestoreSelection();
 int16_t          FFindSomethingAndSelectIt();
 void             CommandHandler(HWND hwnd, WPARAM wParam);
 void             InitializeMenu(HMENU hmenu);
-void             EnsureAis();
 HMENU            GetASubMenu(HWND hwnd, MainMenu iMenu);
 int16_t          FOpenGame(HWND hwnd, int16_t fRaceOnly);
 int16_t          FWasRaceFile(char *szFile, int16_t fChkPass);
