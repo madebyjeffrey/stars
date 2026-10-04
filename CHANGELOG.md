@@ -146,3 +146,8 @@ produce different results from a 2.6j host for the same turn.
   don't fit in its hold stay with the sender, as the "unable to transfer"
   message says. The original took them from the sender and destroyed them
   (`FRunLogRecord`). **Host results.**
+- Turn files no longer tell a player which other players have seen a
+  minefield, a wormhole or the Mystery Trader, who has travelled through a
+  wormhole, or which part the trader carries. Each player's file keeps only
+  that player's bit of these masks (`FWriteDataFile`). Turn files only; AI
+  play is unchanged.

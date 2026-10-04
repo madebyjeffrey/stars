@@ -126,6 +126,7 @@ int16_t FWriteDataFile(char *pszFileBase, int16_t iPlayer, int16_t fAppend) {
     int16_t  iord;
     SHDEF   *lpshdef;
     THING   *lpthMac;
+    THING    th;
     int16_t  fRet;
     PLANET  *lpplT;
     SCAN     scan;
@@ -424,7 +425,30 @@ LAppend:
             if (iPlayer == iplrNone || (iPlayer == lpth->iplr && lpth->ith != ithMineralPacket && lpth->ith != ithMysteryTrader && lpth->ith != ithWormhole) ||
                 (lpth->ith == ithMinefield && (1 << iPlayer & lpth->thm.grbitPlrNow)) || (lpth->ith == ithMineralPacket && lpth->thp.fInclude) ||
                 (lpth->ith == ithMysteryTrader && lpth->tht.fInclude) || (lpth->ith == ithWormhole && lpth->thw.fInclude)) {
-                WriteRt(rtThing, 18, lpth);
+                if (iPlayer == iplrNone) {
+                    WriteRt(rtThing, 18, lpth);
+                } else {
+                    /* A player's file keeps only that player's bit of each
+                       per-player mask, and not the part the Mystery Trader
+                       carries. The original wrote the whole record, telling
+                       every player who else had seen these things. */
+                    th = *lpth;
+                    switch (th.ith) {
+                    case ithMinefield:
+                        th.thm.grbitPlr &= 1 << iPlayer;
+                        th.thm.grbitPlrNow &= 1 << iPlayer;
+                        break;
+                    case ithWormhole:
+                        th.thw.grbitPlr &= 1 << iPlayer;
+                        th.thw.grbitPlrTrav &= 1 << iPlayer;
+                        break;
+                    case ithMysteryTrader:
+                        th.tht.grbitPlr &= 1 << iPlayer;
+                        th.tht.grbitTrader = grbitTraderNone;
+                        break;
+                    }
+                    WriteRt(rtThing, 18, &th);
+                }
             }
         }
     }

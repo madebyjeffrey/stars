@@ -26,9 +26,9 @@ against them.
 
 | TotalHost item | File | What it rewrites | 2.8 status |
 | --- | --- | --- | --- |
-| Mystery Trader knowledge | `.m` | MT "met" mask cut down to the file's player; MT item cleared | **not fixed**: candidate |
-| Minefield knowledge | `.m` | minefield "seen by" mask cut down to the file's player | **not fixed**: candidate |
-| Wormhole knowledge | `.m` | wormhole "seen by" and "travelled by" masks cut down to the file's player | **not fixed**: candidate |
+| Mystery Trader knowledge | `.m` | MT "met" mask cut down to the file's player; MT item cleared | fixed |
+| Minefield knowledge | `.m` | minefield "seen by" mask cut down to the file's player | fixed |
+| Wormhole knowledge | `.m` | wormhole "seen by" and "travelled by" masks cut down to the file's player | fixed |
 | Other players' race data | `.m` | full-detail player records reset to Humanoid defaults, relations to neutral (CA keeps habitat) | fixed (Claim Adjuster turn files) |
 | Cheap Colonizer | `.x` | empty slot still tagged as a colonization module set to truly empty | fixed (Colonization Module Check) |
 | Space Dock armor overflow | `.x` | more than 21 Superlatanium clamped to 21, armor recomputed | fixed |
@@ -47,7 +47,8 @@ StarsClean's header comment says it removes "privileged" information about
 other players. Each `rtThing` record (type 43 in TotalHost's numbering) is
 written whole by `FWriteDataFile` (`save.c`): `WriteRt(rtThing, 18, lpth)`.
 The per-player bitmasks in it therefore go to every player who can see the
-object, though the client uses only its own bit. 2.8 still writes them.
+object, though the client uses only its own bit. The original wrote them;
+2.8 doesn't (below).
 
 | Object | Field (`structs.h`) | Offset in the record | What it leaks | TotalHost |
 | --- | --- | --- | --- | --- |
@@ -67,14 +68,13 @@ use of `tht.grbitTrader` was found.
 TotalHost doesn't check whether the file player's bit was set: if it was, it
 writes back just that bit; if not, it writes 0.
 
-**For 2.8:** in `FWriteDataFile`, when writing a player's file
-(`iPlayer != iplrNone`), write a copy of the `THING` with each mask ANDed
-with `1 << iPlayer` and `tht.grbitTrader` cleared; the `.hst` keeps
+**2.8:** when `FWriteDataFile` writes a player's file
+(`iPlayer != iplrNone`), it writes a copy of the `THING` with each mask
+ANDed with `1 << iPlayer` and `tht.grbitTrader` cleared; the `.hst` keeps
 everything. That covers what StarsClean does, plus `thm.grbitPlrNow`. The
-record stays 18 bytes. Check the AI
-first: the Claim Adjuster change showed that AIs plan from their own turn
-file, so any AI code that reads another player's bit would see different
-data. If it does, the change is **host results**.
+record stays 18 bytes. The AI reads only its own bits
+(`aiutil.c`'s wormhole search), so the native regression's AI play doesn't
+change; only the turn files' thing records do (`tests/unit/test_save.c`).
 
 ### Other players' race records
 

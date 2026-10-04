@@ -141,8 +141,82 @@ static void test_WriteBOF_writes_version_2_84(void) {
     TEST_CHECK_(!FStarsTestLoadHost(), "a 2.85 host file loaded");
 }
 
+// LpthFind returns the loaded game's thing of type ith whose owner
+// is iplr, or NULL.
+static THING *LpthFind(ThingType ith, int16_t iplr) {
+    int16_t i;
+
+    for (i = 0; i < cThing; i++) {
+        if (lpThings[i].ith == ith && lpThings[i].iplr == iplr)
+            return &lpThings[i];
+    }
+    return NULL;
+}
+
+// Turn-file knowledge leaks: a player's turn file carried whole THING
+// records, so it showed which other players had seen a minefield, the
+// Mystery Trader or a wormhole, who had travelled through the wormhole,
+// and the part the trader carries.
+static void test_FWriteDataFile_masks_other_players_things(void) {
+    char        szDir[MAX_PATH];
+    const char *rgszAi[] = {"#1 4"};
+    PLANET     *lppl;
+    THING      *lpth;
+    POINT16     pt;
+    uint16_t    idWorm1;
+    uint16_t    idWorm2;
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("FWriteDataFile_things", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, rgszAi, 1));
+    TEST_ASSERT(FStarsTestLoadHost());
+    lppl = LpplStarsTestHomeworld(0);
+    TEST_ASSERT(lppl != NULL);
+    pt = rgptPlan[lppl->id];
+    // Everything sits on player 0's homeworld, where its scanner sees it.
+    while ((lpth = LpthFind(ithWormhole, 0)) != NULL)
+        FreeLpth(lpth);
+    lpth = LpthNew(1, ithMinefield);
+    lpth->pt = pt;
+    lpth->thm.cMines = 2500;
+    lpth->thm.iType = mineStandard;
+    lpth->thm.grbitPlr = 1 << 1;
+    lpth->thm.grbitPlrNow = 1 << 1;
+    lpth = LpthNew(0, ithMysteryTrader);
+    lpth->pt = pt;
+    lpth->tht.ptDest = pt;
+    lpth->tht.grbitPlr = 1 << 1;
+    lpth->tht.grbitTrader = grbitTraderBeam;
+    lpth = LpthNew(0, ithWormhole);
+    lpth->pt = pt;
+    lpth->thw.grbitPlr = (1 << 0) | (1 << 1);
+    lpth->thw.grbitPlrTrav = 1 << 1;
+    idWorm1 = lpth->idFull;
+    lpth = LpthNew(0, ithWormhole);
+    lpth->pt.x = pt.x + 200;
+    lpth->pt.y = pt.y;
+    lpth->thw.grbitPlr = 1 << 1;
+    lpth->thw.grbitPlrTrav = 1 << 1;
+    idWorm2 = lpth->idFull;
+    lpth->thw.idPartner = idWorm1;
+    LpthFromId(idWorm1)->thw.idPartner = idWorm2;
+    TEST_ASSERT(FWriteDataFile(szBase, 0, FALSE));
+
+    TEST_ASSERT(FStarsTestLoadPlayer(0));
+    lpth = LpthFind(ithMinefield, 1);
+    TEST_ASSERT_(lpth != NULL, "player 0 doesn't see the minefield");
+    TEST_CHECK_(lpth->thm.grbitPlr == 1 && lpth->thm.grbitPlrNow == 1, "minefield seen by %#x, now %#x", lpth->thm.grbitPlr, lpth->thm.grbitPlrNow);
+    lpth = LpthFind(ithMysteryTrader, 0);
+    TEST_ASSERT_(lpth != NULL, "player 0 doesn't see the trader");
+    TEST_CHECK_(lpth->tht.grbitPlr == 0 && lpth->tht.grbitTrader == 0, "trader met by %#x, carrying %#x", lpth->tht.grbitPlr, lpth->tht.grbitTrader);
+    lpth = LpthFind(ithWormhole, 0);
+    TEST_ASSERT_(lpth != NULL, "player 0 doesn't see the wormhole");
+    TEST_CHECK_(lpth->thw.grbitPlr == 1 && lpth->thw.grbitPlrTrav == 0, "wormhole seen by %#x, travelled by %#x", lpth->thw.grbitPlr, lpth->thw.grbitPlrTrav);
+}
+
 TEST_LIST = {{"FWriteDataFile Claim Adjuster sees only habitat", test_FWriteDataFile_claim_adjuster_sees_only_habitat},
              {"SetVisPFFleets sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase},
              {"SetVisPFFleets long-range scanner sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase_long_range},
              {"WriteBOF writes version 2.84", test_WriteBOF_writes_version_2_84},
+             {"FWriteDataFile masks other players' things", test_FWriteDataFile_masks_other_players_things},
              {NULL, NULL}};
