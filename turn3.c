@@ -318,7 +318,14 @@ void SatisfyOrders(int16_t iPass) {
                                     continue;
                                 }
                                 if (fStealing && (j == 3 || j == 4)) {
+                                    /* A thief can't take colonists or fuel. The original marked
+                                       the item done but loaded it anyway; its unused messages
+                                       report the attempt as unsuccessful. */
+                                    FSendPlrMsg(lpfl->iPlayer,
+                                                j == 3 ? idmAttemptedShanghaiColonistsAttemptUnsuccessful : idmAttemptedStealMgFuelAttemptUnsuccessful,
+                                                lpfl->id | 0x8000, lpfl->id, LOWORD(amount), HIWORD(amount), xWP, idWP, 0, 0);
                                     fDone = TRUE;
+                                    continue;
                                 }
                                 if (amount != 0) {
                                     l = min(amount, amountWP);

@@ -106,7 +106,7 @@ calculation, and there is no obvious blanket horizontal speed-bump exemption.
 The reported east/west-only defect is not yet isolated. The list reports a
 JRC4 fix; do not equate this report with the vertical projection defect above.
 
-### SS Pop Steal — located
+### SS Pop Steal — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders`; `util.c`: `GetFleetScannerRange`;
 `ship.c`: `TransferStuff`, `ChgCargo`.
@@ -116,6 +116,13 @@ and then continues into cargo removal and loading; it does not reject the
 colonist transfer from an enemy planet. This differs from the intended manual
 transfer restrictions. The list reports a JRC4 fix and a caveat about zip orders
 that include population loading.
+
+**2.8:** confirmed by `tests/unit/test_turn3.c`: a freighter with a Robber
+Baron scanner loaded 10 kT of colonists from an enemy homeworld by waypoint
+order. The binary's string table has "attempted to shanghai colonists ...
+The attempt was unsuccessful" and the matching fuel message, but never sends
+them. Loading colonists or fuel while stealing now sends those messages and
+loads nothing; stealing minerals is unchanged.
 
 ### [freepop] Hack — candidate; host validation is present
 

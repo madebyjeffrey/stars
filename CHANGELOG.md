@@ -85,3 +85,7 @@ produce different results from a 2.6j host for the same turn.
   traits, production template and diplomatic relations (`FWriteDataFile`).
   **Host results** for AI Claim Adjusters, which plan from their own turn
   file.
+- Stealing: a waypoint transport order can no longer load colonists or fuel
+  from a planet or fleet it may only rob with a Robber Baron or Pick Pocket
+  scanner; the player gets the "attempt was unsuccessful" message instead.
+  Minerals can still be stolen (`SatisfyOrders`). **Host results.**
