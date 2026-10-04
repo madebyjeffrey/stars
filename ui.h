@@ -15,4 +15,8 @@ void    PromptSaveGame();
 // Progress during turn generation and universe creation.
 void UpdateProgressGauge(ProgressStep pctX10);
 
+// The tutorial.
+void     AdvanceTutor();
+uint8_t *LpbLoadTutorLog();
+
 #endif

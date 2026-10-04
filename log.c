@@ -1072,14 +1072,12 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
 }
 
 int16_t FLoadLogFile(char *pszLog) {
-    HGLOBAL  hres;
     jmp_buf *penvMemSav;
     jmp_buf  env;
     int16_t  fRet;
     int16_t  cbLog;
     int16_t  iCur;
     MSGPLR  *lpmp;
-    HRSRC    hrsrc;
     int16_t  cSkip;
 
     fRet = TRUE;
@@ -1090,8 +1088,6 @@ int16_t FLoadLogFile(char *pszLog) {
     if (setjmp(env) != 0) {
         penvMem = penvMemSav;
         if (vlpMemStream) {
-            GlobalUnlock(hres);
-            FreeResource(hres);
             return FALSE;
         }
         if (hf == -1) {
@@ -1102,20 +1098,13 @@ int16_t FLoadLogFile(char *pszLog) {
     }
     if (game.fTutorial && idPlayer == 0 && gd.fGeneratingTurn) {
         cSkip = game.turn;
-        hrsrc = FindResource(hInst, MAKEINTRESOURCE(10001), MAKEINTRESOURCE(10000));
-        hres = LoadResource(hInst, hrsrc);
-        if (!hres) {
-        BailOut:
+        vlpMemStream = LpbLoadTutorLog();
+        if (!vlpMemStream) {
             penvMem = penvMemSav;
             return FALSE;
         }
-        vlpMemStream = LockResource(hres);
-        if (!vlpMemStream)
-            goto BailOut;
         if (game.turn >= *vlpMemStream) {
             vlpMemStream = NULL;
-            GlobalUnlock(hres);
-            FreeResource(hres);
             goto StrOpen;
         }
         vlpMemStream++;
@@ -1134,8 +1123,6 @@ int16_t FLoadLogFile(char *pszLog) {
     FailSuccess:
         if (vlpMemStream) {
             vlpMemStream = NULL;
-            GlobalUnlock(hres);
-            FreeResource(hres);
         } else {
             StreamClose();
         }
@@ -1180,8 +1167,6 @@ int16_t FLoadLogFile(char *pszLog) {
     imemLogCur = cbLog;
 Done:
     if (vlpMemStream) {
-        GlobalUnlock(hres);
-        FreeResource(hres);
         vlpMemStream = NULL;
     } else {
         StreamClose();

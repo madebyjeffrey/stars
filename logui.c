@@ -67,3 +67,18 @@ int16_t FWriteTutorialMFile(int16_t iTurn) {
     penvMem = penvMemSav;
     return 1;
 }
+
+// LpbLoadTutorLog returns the tutorial's recorded orders for the player,
+// kept in the program's resources, or NULL. FLoadLogFile replays them. The
+// resource stays loaded for the life of the program.
+uint8_t *LpbLoadTutorLog() {
+    HRSRC   hrsrc;
+    HGLOBAL hres;
+
+    hrsrc = FindResource(hInst, MAKEINTRESOURCE(10001), MAKEINTRESOURCE(10000));
+    hres = LoadResource(hInst, hrsrc);
+    if (!hres) {
+        return NULL;
+    }
+    return LockResource(hres);
+}
