@@ -7,6 +7,11 @@
 
 #include "common.h"
 
+// Every test links with --wrap=AlertSz: the game's message boxes are recorded
+// here instead of shown, so nothing waits for a click.
+extern int  cStarsTestAlert;
+extern char szStarsTestAlert[512];
+
 // FStarsTestInit prepares the game state WinMain sets up before it creates
 // windows: the instance, brushes and fonts (FCreateStuff), and a fixed RNG
 // seed.

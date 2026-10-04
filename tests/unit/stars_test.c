@@ -2,6 +2,15 @@
 
 #include <direct.h>
 
+int  cStarsTestAlert;
+char szStarsTestAlert[512];
+
+int16_t __wrap_AlertSz(char *sz, int16_t mbType) {
+    cStarsTestAlert++;
+    snprintf(szStarsTestAlert, sizeof(szStarsTestAlert), "%s", sz);
+    return (mbType & MB_TYPEMASK) == MB_YESNO || (mbType & MB_TYPEMASK) == MB_YESNOCANCEL ? IDYES : IDOK;
+}
+
 int16_t FStarsTestInit(void) {
     hInst = GetModuleHandle(NULL);
     szBase[0] = 0;

@@ -1,11 +1,6 @@
-// CMake links this test with --wrap=AlertSz so dumps don't open message
-// boxes.
-
 #include "acutest.h"
 
 #include "stars_test.h"
-
-int16_t __wrap_AlertSz(char *sz, int16_t mbType) { return IDOK; }
 
 // The planet dump passed the 32-bit mine and factory counts as two 16-bit
 // words each, as the Win16 binary pushed them, so the Factories column
