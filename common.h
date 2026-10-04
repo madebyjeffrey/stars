@@ -89,6 +89,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "tutor2.h"
 #include "util.h"
 #include "utilgen.h"
+#include "utilgenui.h"
 #include "vcr.h"
 
 #endif
