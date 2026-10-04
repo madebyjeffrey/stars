@@ -60,6 +60,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "file.h"
 #include "fileui.h"
 #include "globals.h"
+#include "globalsui.h"
 #include "init.h"
 #include "log.h"
 #include "logui.h"
