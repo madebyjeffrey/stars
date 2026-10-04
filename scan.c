@@ -2769,3 +2769,106 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
     }
     return FALSE;
 }
+
+// ShowScanSel draws (fVis 1) or erases (0, or -1 to leave the main
+// selection's marker) the scanner's selection markers.
+void ShowScanSel(int16_t fVis) {
+    RedrawScanSel(NULL, fVis);
+    return;
+}
+
+// ShowScanSelChange redraws the scanner, orders and mineral views after
+// ChangeScanSel moved the scanner selection from *pscanOld to *pscan.
+void ShowScanSelChange(SCAN *pscanOld, SCAN *pscan, int16_t fChgWp) {
+    int16_t fMineFieldSel;
+    RECT    rcMine;
+    int16_t iRad;
+    HDC     hdc;
+    POINT16 ptTL; /* NATIVE: RECT corners are 32-bit; LogicalToScan takes POINT16 */
+    POINT16 ptBR;
+
+    fMineFieldSel = pscanOld->grobj == grobjThing && lpThings[pscanOld->ith].ith == ithMinefield;
+    if (fMineFieldSel) {
+        iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[pscanOld->ith].thm.cMines) + 1.0));
+        rcMine.left = lpThings[pscanOld->ith].pt.x;
+        rcMine.top = lpThings[pscanOld->ith].pt.y;
+        rcMine.right = rcMine.left + iRad;
+        rcMine.bottom = rcMine.top - iRad;
+        rcMine.left -= iRad;
+        rcMine.top += iRad;
+        /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+        ptTL.x = rcMine.left;
+        ptTL.y = rcMine.top;
+        LogicalToScan(&ptTL);
+        rcMine.left = ptTL.x;
+        rcMine.top = ptTL.y;
+        ptBR.x = rcMine.right;
+        ptBR.y = rcMine.bottom;
+        LogicalToScan(&ptBR);
+        rcMine.right = ptBR.x;
+        rcMine.bottom = ptBR.y;
+        InflateRect(&rcMine, 1, 1);
+    }
+    if (fChgWp) {
+        FillOrdersLB();
+        SetOrdersLbSel(pscan->iwp);
+        UpdateOrdersDDs(0);
+        DrawPlanShip(NULL, 0x122);
+    }
+    RedrawScanSel(NULL, 1);
+    if (fChgWp) {
+        FEnsurePointOnScreen(pscan->pt, TRUE);
+    }
+    DrawScannerSBar(NULL, NULL, NULL, FALSE);
+    InvalidateRect(hwndMine, NULL, TRUE);
+    SetMineralTitleBar(hwndMine);
+    if (fMineFieldSel) {
+        hdc = GetDC(hwndScanner);
+        DrawScanner(hdc, &rcMine);
+        ReleaseDC(hwndScanner, hdc);
+    }
+    fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
+    if (fMineFieldSel) {
+        iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
+        rcMine.left = lpThings[sel.scan.ith].pt.x;
+        rcMine.top = lpThings[sel.scan.ith].pt.y;
+        rcMine.right = rcMine.left + iRad;
+        rcMine.bottom = rcMine.top - iRad;
+        rcMine.left -= iRad;
+        rcMine.top += iRad;
+        /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+        ptTL.x = rcMine.left;
+        ptTL.y = rcMine.top;
+        LogicalToScan(&ptTL);
+        rcMine.left = ptTL.x;
+        rcMine.top = ptTL.y;
+        ptBR.x = rcMine.right;
+        ptBR.y = rcMine.bottom;
+        LogicalToScan(&ptBR);
+        rcMine.right = ptBR.x;
+        rcMine.bottom = ptBR.y;
+        InflateRect(&rcMine, 1, 1);
+    }
+    if (fMineFieldSel) {
+        hdc = GetDC(hwndScanner);
+        DrawScanner(hdc, &rcMine);
+        ReleaseDC(hwndScanner, hdc);
+    }
+    if (sel.pl.id != idplNone) {
+        DrawPlanShip(NULL, 0x4002);
+    }
+    if (gd.fTutorial && idPlayer == 0) {
+        AdvanceTutor();
+    }
+    return;
+}
+
+// ShowSelAt scrolls the scanner to a newly selected object at pt and
+// updates the scanner status bar and the mineral window.
+void ShowSelAt(POINT16 pt) {
+    CtrPointScan(pt, TRUE);
+    DrawScannerSBar(NULL, NULL, NULL, FALSE);
+    InvalidateRect(hwndMine, NULL, TRUE);
+    SetMineralTitleBar(hwndMine);
+    return;
+}

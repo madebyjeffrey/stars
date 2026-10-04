@@ -25,7 +25,6 @@ char            *PszGetTaskName(FLEET *lpfl, int16_t *picr);
 void             SortReportCache(ReportType irpt, int16_t icol);
 int              ICompReport(uint16_t *pid1, uint16_t *pid2);
 void             ReportColumnPopup(POINT16 pt, int16_t icol, int16_t fRightBtn);
-void             InvalidateReport(ReportType irpt, int16_t fReload);
 void             ExecuteReportClick(POINT16 pt, ReportType irpt, int16_t icol, int16_t irow);
 void             DumpUniverse();
 void             DumpPlanets();

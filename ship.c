@@ -97,15 +97,12 @@ void SelectAdjFleet(int16_t dInc, int16_t idFleet) {
             scan.pt = lpflT->pt;
             scan.grobj = grobjFleet | mdExact;
             ChangeScanSel(&scan, 0);
-            RedrawScanSel(NULL, 0);
+            ShowScanSel(0);
             ChangeMainObjSel(grobjFleet, idNew);
-            RedrawScanSel(NULL, 1);
+            ShowScanSel(1);
         }
     FinishUp:
-        CtrPointScan(pt, TRUE);
-        DrawScannerSBar(NULL, NULL, NULL, FALSE);
-        InvalidateRect(hwndMine, NULL, TRUE);
-        SetMineralTitleBar(hwndMine);
+        ShowSelAt(pt);
         if (idOld != idflNone) {
             SetFleetDropDownSel(idOld);
         }
@@ -936,13 +933,13 @@ void DestroyAllIshdef(int16_t ishdef, int16_t iplr) {
             *lpfl = flNew;
             if (sel.grobj == grobjFleet && sel.fl.id == flNew.id) {
                 FLookupFleet(flNew.id, &sel.fl);
-                RedrawScanSel(NULL, 0);
+                ShowScanSel(0);
                 FillShipDD(sel.fl.id);
                 grbit = -31819;
                 FLookupFleet(sel.fl.id, &sel.fl);
                 FillFleetCompLB();
-                DrawPlanShip(NULL, grbit);
-                InvalidateRect(hwndMine, NULL, TRUE);
+                RedrawPlanShip(grbit);
+                InvalidateMine();
             }
         IncrementI:
             i++;
@@ -988,7 +985,7 @@ void RemoveIshdefFromAllQueues(int16_t ishdef, int16_t fSpaceDocks) {
     }
     if (sel.grobj == grobjPlanet && sel.pl.lpplprod) {
         FLookupPlanet(sel.pl.id, &sel.pl);
-        FillPlanetProdLB(hwndPlanetProdLB, sel.pl.lpplprod, NULL);
+        FillSelProdLB();
     }
     return;
 }

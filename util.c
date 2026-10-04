@@ -901,7 +901,7 @@ int16_t FDeleteFleet(int16_t idFleet, GrobjClass grobjSel, int16_t idSel) {
         return FALSE;
     }
     if (idFleet == sel.fl.id) {
-        RedrawScanSel(NULL, 0);
+        ShowScanSel(0);
     }
     lpfl->fDead = TRUE;
     FleetOrdersChangeTarget(lpfl);
@@ -943,8 +943,8 @@ int16_t FDeleteFleet(int16_t idFleet, GrobjClass grobjSel, int16_t idSel) {
             }
         }
     }
-    if (!gd.fGeneratingTurn && hwndMessage) {
-        SetMsgTitle(hwndMessage);
+    if (!gd.fGeneratingTurn) {
+        UpdateMsgTitle();
     }
     return TRUE;
 }
@@ -1495,98 +1495,24 @@ int16_t ScanToPt(int16_t d) {
 }
 
 void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
-    int16_t fMineFieldSel;
-    RECT    rcMine;
     int16_t fChgWp;
-    int16_t iRad;
-    HDC     hdc;
-    POINT16 ptTL; /* NATIVE: RECT corners are 32-bit; LogicalToScan takes POINT16 */
-    POINT16 ptBR;
+    SCAN    scanOld;
 
     if (!fValidScan) {
         FFindNearestObject(pscan->pt, pscan->grobj, pscan);
     }
     if (memcmp(pscan, &sel.scan, sizeof(SCAN)) != 0) {
         fChgWp = pscan->iwp != iwpNone && pscan->iwp != sel.iwpAct;
-        fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel) {
-            iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
-            rcMine.left = lpThings[sel.scan.ith].pt.x;
-            rcMine.top = lpThings[sel.scan.ith].pt.y;
-            rcMine.right = rcMine.left + iRad;
-            rcMine.bottom = rcMine.top - iRad;
-            rcMine.left -= iRad;
-            rcMine.top += iRad;
-            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
-            ptTL.x = rcMine.left;
-            ptTL.y = rcMine.top;
-            LogicalToScan(&ptTL);
-            rcMine.left = ptTL.x;
-            rcMine.top = ptTL.y;
-            ptBR.x = rcMine.right;
-            ptBR.y = rcMine.bottom;
-            LogicalToScan(&ptBR);
-            rcMine.right = ptBR.x;
-            rcMine.bottom = ptBR.y;
-            InflateRect(&rcMine, 1, 1);
-        }
-        RedrawScanSel(NULL, -1);
+        scanOld = sel.scan;
+        ShowScanSel(-1);
         sel.scan = *pscan;
         if ((sel.scan.grobjFull & grobjPlanet) && fValidScan != 2) {
             sel.scan.grobj = grobjPlanet;
         }
         if (fChgWp) {
             sel.iwpAct = pscan->iwp;
-            FillOrdersLB();
-            SetOrdersLbSel(pscan->iwp);
-            UpdateOrdersDDs(0);
-            DrawPlanShip(NULL, 0x122);
         }
-        RedrawScanSel(NULL, 1);
-        if (fChgWp) {
-            FEnsurePointOnScreen(pscan->pt, TRUE);
-        }
-        DrawScannerSBar(NULL, NULL, NULL, FALSE);
-        InvalidateRect(hwndMine, NULL, TRUE);
-        SetMineralTitleBar(hwndMine);
-        if (fMineFieldSel) {
-            hdc = GetDC(hwndScanner);
-            DrawScanner(hdc, &rcMine);
-            ReleaseDC(hwndScanner, hdc);
-        }
-        fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel) {
-            iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
-            rcMine.left = lpThings[sel.scan.ith].pt.x;
-            rcMine.top = lpThings[sel.scan.ith].pt.y;
-            rcMine.right = rcMine.left + iRad;
-            rcMine.bottom = rcMine.top - iRad;
-            rcMine.left -= iRad;
-            rcMine.top += iRad;
-            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
-            ptTL.x = rcMine.left;
-            ptTL.y = rcMine.top;
-            LogicalToScan(&ptTL);
-            rcMine.left = ptTL.x;
-            rcMine.top = ptTL.y;
-            ptBR.x = rcMine.right;
-            ptBR.y = rcMine.bottom;
-            LogicalToScan(&ptBR);
-            rcMine.right = ptBR.x;
-            rcMine.bottom = ptBR.y;
-            InflateRect(&rcMine, 1, 1);
-        }
-        if (fMineFieldSel) {
-            hdc = GetDC(hwndScanner);
-            DrawScanner(hdc, &rcMine);
-            ReleaseDC(hwndScanner, hdc);
-        }
-        if (sel.pl.id != idplNone) {
-            DrawPlanShip(NULL, 0x4002);
-        }
-        if (gd.fTutorial && idPlayer == 0) {
-            AdvanceTutor();
-        }
+        ShowScanSelChange(&scanOld, pscan, fChgWp);
     }
     return;
 }

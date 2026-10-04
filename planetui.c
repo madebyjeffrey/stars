@@ -1821,3 +1821,75 @@ NoMsg:
     }
     return;
 }
+
+// ShowPlanetSel refills the planet tile's production queue when
+// ChangeMainObjSel selects a planet.
+void ShowPlanetSel() {
+    FillPlanetProdLB(NULL, NULL, NULL);
+    SendMessage(hwndPlanetProdLB, LB_SETCURSEL, 0, 0);
+    return;
+}
+
+// ShowFleetSel refills the fleet tiles' lists when ChangeMainObjSel selects
+// a fleet.
+void ShowFleetSel() {
+    FillOrdersLB();
+    FillFleetCompLB();
+    FillBattleDD(sel.fl.iplan + 1);
+    SendMessage(rghwndOrderDD[0], CB_SETCURSEL, sel.fl.lpplord->rgord[0].grTask, 0);
+    return;
+}
+
+// ShowMainObjSel redraws the planet window for the object ChangeMainObjSel
+// selected; fSameType is set when it is the same kind as before.
+void ShowMainObjSel(int16_t fSameType, int16_t idSkip) {
+    int16_t i;
+
+    if (!fSameType) {
+        for (i = 0; i < 13; i++) {
+            ShowWindow(rghwndBtn[i], SW_HIDE);
+        }
+        for (i = 0; i < 3; i++) {
+            ShowWindow(rghwndOrderDD[i], SW_HIDE);
+        }
+        ShowWindow(hwndOrderED, SW_HIDE);
+        ShowWindow(hwndShipDD, SW_HIDE);
+        ShowWindow(hwndBattleDD, SW_HIDE);
+        ShowWindow(hwndShipLB, SW_HIDE);
+        ShowWindow(hwndFleetCompLB, SW_HIDE);
+        ShowWindow(hwndPlanetProdLB, SW_HIDE);
+        ShowWindow(hwndRepCB, SW_HIDE);
+        for (i = 0; i < 19; i++) {
+            rgrcRef[i].bottom = -6;
+            rgrcRef[i].top = -5;
+        }
+    }
+    FillShipDD(idSkip);
+    if (fSameType) {
+        DrawPlanShip(NULL, 0x4fff);
+    } else {
+        InvalidateRect(hwndPlanet, NULL, TRUE);
+        if ((grbitScan & grbitScanAddWaypoints) && sel.grobj == grobjPlanet) {
+            grbitScan &= 0xffef;
+            InvalidateRect(hwndTb, NULL, TRUE);
+        }
+    }
+    SetPlanetTitleBar(hwndPlanet);
+    if (gd.fTutorial) {
+        AdvanceTutor();
+    }
+    return;
+}
+
+// FillSelProdLB refills the planet tile's production queue for the
+// selected planet.
+void FillSelProdLB() {
+    FillPlanetProdLB(NULL, NULL, NULL);
+    return;
+}
+
+// RedrawPlanShip redraws the planet window's tiles in grbit.
+void RedrawPlanShip(TileBits grbit) {
+    DrawPlanShip(NULL, grbit);
+    return;
+}

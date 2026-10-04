@@ -22,7 +22,6 @@ void             DrawCBEntireItem(DRAWITEMSTRUCT *lpdis, int16_t inflate);
 void             DrawProductionItem(HDC hdc, RECT *prc, char *psz, int16_t inflate, int16_t fSelected, int16_t fListbox);
 void             DrawPlanShip(HDC hdc, TileBits grbit);
 void             SetPlanetTitleBar(HWND hwnd);
-void             FillShipDD(int16_t idSkip);
 void             FillPlanetProdLB(HWND hwnd, PLPROD *lpplprod, PLANET *lppl);
 
 #endif

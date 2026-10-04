@@ -23,6 +23,23 @@ void    AddMRUFile(char *pszFileName, char *pszExt);
 void    CloseGameWindows();
 int16_t FFinishPlrMsgEntry(int16_t dInc);
 
+// The selection's views. ChangeMainObjSel, ChangeScanSel and the code
+// that changes the selected objects call these after changing sel.
+void InvalidateReport(ReportType irpt, int16_t fReload);
+void ShowPlanetSel();
+void ShowFleetSel();
+void ShowMainObjSel(int16_t fSameType, int16_t idSkip);
+void ShowScanSel(int16_t fVis);
+void ShowScanSelChange(SCAN *pscanOld, SCAN *pscan, int16_t fChgWp);
+void ShowSelAt(POINT16 pt);
+void FillShipDD(int16_t idSkip);
+void FillFleetCompLB();
+void FillSelProdLB();
+void SetFleetDropDownSel(int16_t id);
+void RedrawPlanShip(TileBits grbit);
+void InvalidateMine();
+void UpdateMsgTitle();
+
 // The tutorial.
 void     AdvanceTutor();
 uint8_t *LpbLoadTutorLog();

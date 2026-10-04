@@ -200,7 +200,7 @@ void KillQueuedMassPackets(PLANET *lppl) {
         }
         if (sel.grobj == grobjPlanet && sel.pl.id == lppl->id) {
             FLookupPlanet(sel.pl.id, &sel.pl);
-            FillPlanetProdLB(hwndPlanetProdLB, sel.pl.lpplprod, NULL);
+            FillSelProdLB();
         }
     }
     return;
@@ -236,7 +236,7 @@ void KillQueuedShips(PLANET *lppl) {
         }
         if (sel.grobj == grobjPlanet && sel.pl.id == lppl->id) {
             FLookupPlanet(sel.pl.id, &sel.pl);
-            FillPlanetProdLB(hwndPlanetProdLB, sel.pl.lpplprod, NULL);
+            FillSelProdLB();
         }
     }
     return;

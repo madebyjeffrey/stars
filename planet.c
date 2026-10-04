@@ -99,8 +99,7 @@ void ChangeMainObjSel(GrobjClass grobjNew, int16_t iObjSel) {
                 sel.grobjFull = grobjPlanet;
             }
             if (!fAi) {
-                FillPlanetProdLB(NULL, NULL, NULL);
-                SendMessage(hwndPlanetProdLB, LB_SETCURSEL, 0, 0);
+                ShowPlanetSel();
             }
         } else {
             InvalidateReport(rptFleets, 0);
@@ -114,11 +113,8 @@ void ChangeMainObjSel(GrobjClass grobjNew, int16_t iObjSel) {
             sel.grobjFull = (sel.pl.id != idplNone) | 2;
             sel.iwpAct = 0;
             if (!fAi) {
-                FillOrdersLB();
-                FillFleetCompLB();
-                FillBattleDD(sel.fl.iplan + 1);
+                ShowFleetSel();
                 idSkip = iObjSel;
-                SendMessage(rghwndOrderDD[0], CB_SETCURSEL, sel.fl.lpplord->rgord[0].grTask, 0);
             }
         }
         sel.grobj = grobjNew;
@@ -126,39 +122,7 @@ void ChangeMainObjSel(GrobjClass grobjNew, int16_t iObjSel) {
         gd.fSetMassMode = FALSE;
         gd.fSetRouteMode = FALSE;
         if (!fAi) {
-            if (!fSameType) {
-                for (i = 0; i < 13; i++) {
-                    ShowWindow(rghwndBtn[i], SW_HIDE);
-                }
-                for (i = 0; i < 3; i++) {
-                    ShowWindow(rghwndOrderDD[i], SW_HIDE);
-                }
-                ShowWindow(hwndOrderED, SW_HIDE);
-                ShowWindow(hwndShipDD, SW_HIDE);
-                ShowWindow(hwndBattleDD, SW_HIDE);
-                ShowWindow(hwndShipLB, SW_HIDE);
-                ShowWindow(hwndFleetCompLB, SW_HIDE);
-                ShowWindow(hwndPlanetProdLB, SW_HIDE);
-                ShowWindow(hwndRepCB, SW_HIDE);
-                for (i = 0; i < 19; i++) {
-                    rgrcRef[i].bottom = -6;
-                    rgrcRef[i].top = -5;
-                }
-            }
-            FillShipDD(idSkip);
-            if (fSameType) {
-                DrawPlanShip(NULL, 0x4fff);
-            } else {
-                InvalidateRect(hwndPlanet, NULL, TRUE);
-                if ((grbitScan & grbitScanAddWaypoints) && sel.grobj == grobjPlanet) {
-                    grbitScan &= 0xffef;
-                    InvalidateRect(hwndTb, NULL, TRUE);
-                }
-            }
-            SetPlanetTitleBar(hwndPlanet);
-            if (gd.fTutorial) {
-                AdvanceTutor();
-            }
+            ShowMainObjSel(fSameType, idSkip);
         }
     }
     return;
@@ -210,14 +174,11 @@ void SelectAdjPlanet(int16_t dInc, int16_t idPlanet) {
         scan.pt = rgptPlan[idPlanet];
         scan.grobj = grobjPlanet | mdExact;
         ChangeScanSel(&scan, 0);
-        RedrawScanSel(NULL, 0);
+        ShowScanSel(0);
         ChangeMainObjSel(grobjPlanet, idPlanet);
-        RedrawScanSel(NULL, 1);
+        ShowScanSel(1);
     FinishUp:
-        CtrPointScan(rgptPlan[idPlanet], TRUE);
-        DrawScannerSBar(NULL, NULL, NULL, FALSE);
-        InvalidateRect(hwndMine, NULL, TRUE);
-        SetMineralTitleBar(hwndMine);
+        ShowSelAt(rgptPlan[idPlanet]);
     }
     return;
 }

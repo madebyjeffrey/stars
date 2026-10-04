@@ -1335,3 +1335,9 @@ void PopupMineralScanChoices(HWND hwnd, int16_t x, int16_t y) {
     }
     return;
 }
+
+// InvalidateMine redraws the mineral window.
+void InvalidateMine() {
+    InvalidateRect(hwndMine, NULL, TRUE);
+    return;
+}

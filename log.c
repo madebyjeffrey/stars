@@ -514,7 +514,7 @@ void DirtyGame(int16_t fDirty) {
     if (fDirty != game.fDirty) {
         game.fDirty = fDirty;
         if (!fAi) {
-            SetMsgTitle(hwndMessage);
+            UpdateMsgTitle();
         }
     }
     return;

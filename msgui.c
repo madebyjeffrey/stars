@@ -712,3 +712,10 @@ void SetMsgTitle(HWND hwnd) {
     }
     return;
 }
+
+// UpdateMsgTitle refreshes the message window's title bar, as when the
+// game becomes dirty.
+void UpdateMsgTitle() {
+    SetMsgTitle(hwndMessage);
+    return;
+}

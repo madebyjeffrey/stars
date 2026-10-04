@@ -157,8 +157,8 @@ void FinishProduction(int16_t fWrite) {
         FLookupPlanet(idWriteBack, &sel.pl);
         FLookupPlanet(sel.pl.id, &sel.pl);
         if (!fAi) {
-            FillPlanetProdLB(NULL, NULL, NULL);
-            DrawPlanShip(NULL, tileProductionOrOrbit);
+            FillSelProdLB();
+            RedrawPlanShip(tileProductionOrOrbit);
         }
     } else {
         sel.pl.fNoResearch = gd.fNoResearchSav;
