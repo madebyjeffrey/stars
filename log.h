@@ -24,7 +24,6 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb);
 int16_t FLoadLogFile(char *pszLog);
 int16_t FCheckLogFile(int16_t iplr, int16_t *pfError);
 int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer);
-int16_t FWriteTutorialMFile(int16_t iTurn);
 int16_t FWriteHistFile(int16_t iPlayer);
 void    EnumLogRts(int16_t (*pfn)(void *, int16_t, int16_t, void *, int16_t), void *lpPass, int16_t iPass);
 

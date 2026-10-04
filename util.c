@@ -211,57 +211,6 @@ int16_t FLookupThing(int16_t idth, THING *pth) {
     return FALSE;
 }
 
-void SelectOursAtObject(POINT16 *ppt) {
-    int16_t id;
-    POINT16 pt;
-    int16_t ish;
-    int16_t i;
-    FLEET  *lpfl;
-    SCAN    scan;
-
-    if (ppt->x == -1) {
-        if (ppt->y & 0x8000) {
-            SelectAdjFleet(0, ppt->y & 0x7fff);
-            return;
-        }
-        pt = rgptPlan[ppt->y];
-    } else {
-        pt = *ppt;
-    }
-    id = idflNone;
-    for (ish = 0; ish < cFleet; ish++) {
-        lpfl = rglpfl[ish];
-        if (!rglpfl[ish])
-            break;
-        if (pt.x == lpfl->pt.x && pt.y == lpfl->pt.y) {
-            if (lpfl->iPlayer == idPlayer) {
-                SelectAdjFleet(0, lpfl->id);
-                return;
-            }
-            if (id == idflNone) {
-                id = lpfl->id;
-            }
-        }
-    }
-    for (i = 0; i < game.cPlanMax; i++) {
-        if (rgptPlan[i].x == pt.x && rgptPlan[i].y == pt.y) {
-            SelectAdjPlanet(0, i);
-            return;
-        }
-    }
-    scan.iwp = iwpNone;
-    if (FFindNearestObject(pt, grobjThing, &scan) && scan.grobj == grobjThing && scan.ith != ithNone && lpThings[scan.ith].ith == ithMineralPacket &&
-        lpThings[scan.ith].thp.iWarp == 0) {
-        ChangeScanSel(&scan, 1);
-        FEnsurePointOnScreen(scan.pt, TRUE);
-        UpdateWindow(hwndScanner);
-        SendMessage(hwndScanner, WM_CHAR, 'v', 0);
-    } else if (id != idflNone) {
-        SelectAdjFleet(0, id);
-    }
-    return;
-}
-
 int32_t LComputePower(SHDEF *lpshdef) {
     int16_t dSpeed;
     int16_t dxRange;
@@ -1213,82 +1162,6 @@ NoObj:
     return szWork;
 }
 
-int16_t CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall) {
-    int16_t  iWarp;
-    double   dbl;
-    ORDER   *lpord;
-    int16_t  i;
-    int16_t  c;
-    int16_t  iSpeed;
-    int16_t  j;
-    int16_t  cYears;
-    StringId ids;
-
-    cYears = 0;
-    lpord = lpfl->lpplord->rgord;
-    i = 0;
-    while (i < iwp) {
-        dbl = DGetDistance(lpord->pt.x, lpord->pt.y, lpord[1].pt.x, lpord[1].pt.y);
-        iWarp = lpord[1].iWarp;
-        if (iWarp < 11) {
-            iSpeed = iWarp * iWarp;
-        } else {
-            j = FCanFleetUseStargates(lpfl, lpord->pt, lpord[1].pt);
-            switch (j) {
-            case -1:
-                iSpeed = -3;
-                break;
-            case 0:
-                iSpeed = 0;
-                break;
-            case 1:
-                iSpeed = 8000;
-                break;
-            default:
-                if (j & 2) {
-                    iSpeed = -1;
-                } else {
-                    iSpeed = -2;
-                }
-            }
-        }
-        if (iSpeed == 0) {
-            if (hdc) {
-                SetTextColor(hdc, 0xff);
-            }
-            c = CchGetString(idsNever, sz);
-            return c;
-        }
-        if (iSpeed < 0) {
-            if (hdc) {
-                SetTextColor(hdc, 32639);
-            }
-            if (iSpeed == -1) {
-                ids = idsDanger;
-            } else if (iSpeed == -2) {
-                ids = idsUnload2;
-            } else {
-                ids = idsUncertain;
-            }
-            c = CchGetString(ids, sz);
-            return c;
-        }
-        if (iSpeed >= (int16_t)LOWORD((int32_t)dbl)) {
-            iSpeed = 1;
-        } else {
-            iSpeed = (int16_t)(LOWORD((int32_t)dbl) + iSpeed - 1) / iSpeed;
-        }
-        cYears += iSpeed;
-        i++;
-        lpord++;
-    }
-    c = wsprintf(sz, PszGetCompressedString(!fSmall ? idsDYear : idsDy), cYears);
-    if (cYears != 1 && !fSmall) {
-        sz[c++] = 's';
-    }
-    return c;
-}
-
 int16_t IshdefPrimaryFromLpfl(FLEET *lpfl, int16_t *pcDiff) {
     int16_t cDiff;
     int16_t ish;
@@ -2107,53 +1980,6 @@ void DecorateHullName(int16_t iplr, int16_t ish, char *psz) {
     return;
 }
 
-void DrawABunchOfStars(HDC hdc, RECT *prc) {
-    int32_t lPixTot;
-    int16_t iMax;
-    int16_t dy;
-    int16_t i;
-    int16_t iClr;
-    int16_t dx;
-    RECT    rcOut;
-    RECT    rc;
-
-    rc = *prc;
-    PushRandom(17, 11);
-    InflateRect(&rc, -3, -3);
-    dx = rc.right - rc.left;
-    dy = rc.bottom - rc.top;
-    lPixTot = (uint32_t)(dx * (int16_t)(rc.bottom - rc.top));
-    for (iClr = 0; iClr < 5; iClr++) {
-        iMax = LOWORD((int32_t)(lPixTot / rgDSDivCnt[iClr]));
-        for (i = 0; i < iMax; i++) {
-            rcOut.left = Random(dx) + rc.left;
-            rcOut.top = Random(dy) + rc.top;
-            rcOut.right = rcOut.left + 1;
-            rcOut.bottom = rcOut.top + 1;
-            SetBkColor(hdc, rgcrDrawStars[iClr]);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-        }
-    }
-    for (iClr = 0; iClr < 4; iClr++) {
-        iMax = LOWORD((int32_t)(lPixTot / rgDSDivCnt2[iClr])) + 1;
-        for (i = 0; i < iMax; i++) {
-            rcOut.left = Random(dx) + rc.left;
-            rcOut.top = Random(dy) + rc.top;
-            rcOut.right = rcOut.left + 3;
-            rcOut.bottom = rcOut.top + 3;
-            SetBkColor(hdc, rgcrDrawStars2b[iClr]);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-            SetBkColor(hdc, rgcrDrawStars2a[iClr]);
-            InflateRect(&rcOut, -1, 0);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-            InflateRect(&rcOut, 1, -1);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-        }
-    }
-    PopRandom();
-    return;
-}
-
 int16_t FMatchTarget(FLEET *lpflTarget, MdTarget mdTarget, int16_t fExact) {
     int16_t imd;
     int16_t ish;
@@ -2589,20 +2415,6 @@ int16_t IshFindSimilarDesign(HUL *lphul, int16_t iPlrDst) {
         lpshdefDest++;
     }
     return ishdefNone;
-}
-
-void DrawPlanetPrintDot(HDC hdc, int16_t x, int16_t y, int16_t iSize) {
-    if (iSize == 0) {
-        PatBlt(hdc, x - 3, y - 1, 7, 3, BLACKNESS);
-        PatBlt(hdc, x - 1, y - 3, 3, 7, BLACKNESS);
-        PatBlt(hdc, x - 2, y - 2, 5, 5, BLACKNESS);
-    } else {
-        PatBlt(hdc, x - 5, y - 2, 11, 5, BLACKNESS);
-        PatBlt(hdc, x - 2, y - 5, 5, 11, BLACKNESS);
-        PatBlt(hdc, x - 4, y - 3, 9, 7, BLACKNESS);
-        PatBlt(hdc, x - 3, y - 4, 7, 9, BLACKNESS);
-    }
-    return;
 }
 
 void ClearFile(int16_t dt) {

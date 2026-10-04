@@ -13,7 +13,6 @@ int16_t          FReadPlanet(int16_t iPlayer, PLANET *lppl, int16_t fHistory, in
 int16_t          FReadFleet(FLEET *lpfl);
 void             UnpackBattlePlan(uint8_t *lpb, BTLPLAN *lpbtlplan, int16_t iplan);
 void             UpdateBattleRecords();
-INT_PTR CALLBACK AskSaveDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void             PromptSaveGame();
 void             DestroyCurGame();
 void             FileError(MessageId ids);
