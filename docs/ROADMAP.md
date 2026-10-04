@@ -11,7 +11,6 @@ order:
    a time, behavior-neutral (done; what the port still needs is in
    `native.h`/`native.c`).
 5. Original bug fixes from [KNOWN-BUGS.md](KNOWN-BUGS.md) (below).
-6. 2.7 features from [27I.txt](27I.txt), later.
 
 ## 5. Bug fixes
 
@@ -75,9 +74,10 @@ and order helpers as fixes need them.
 
 Build the reported setup as a turn test. If it misbehaves, find the cause
 and move the bug to 5.2. If it doesn't, record that in
-[KNOWN-BUGS.md](KNOWN-BUGS.md). The 2.7i release notes in
-[27I.txt](27I.txt) list fixes the original developers made after 2.6j, which
-can point at causes.
+[KNOWN-BUGS.md](KNOWN-BUGS.md). The release notes in
+[26JFIN.txt](26JFIN.txt) list the original developers' fixes through 2.6j
+(2.6 and 2.7 shared code: one was the CD release with battle sounds, the
+other the serial-unlocked shareware), which can point at causes.
 
 | Bug | Starting point (see KNOWN-BUGS.md) | Status |
 | --- | --- | --- |
@@ -92,6 +92,7 @@ can point at causes.
 | Crash Stars | base-design indices in battle and minefield damage | open |
 | Starbase friendly fire | `CplrBattle` attack masks (already changed by the native repair) | open |
 | VCR shields and point of view | `RegenShield`, `UpdateShdefCost` use of `idPlayer` | open |
+| Stargate mineral transmutation | the 2.70i notes list "Fixed mineral transmutation bug when unloading for stargate jumps"; 26JFIN.txt's copy of that list omits it. Check `FStargateJump`'s cargo unloading | open |
 
 Font problems on non-English Windows and the Netscape attachment corruption
 are outside the game code and are not planned.
