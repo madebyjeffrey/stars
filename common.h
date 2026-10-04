@@ -54,6 +54,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "battle.h"
 #include "battleui.h"
 #include "build.h"
+#include "buildui.h"
 #include "create.h"
 #include "createui.h"
 #include "file.h"

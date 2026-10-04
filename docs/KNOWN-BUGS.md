@@ -160,7 +160,7 @@ exploit no longer appears to work in JRC4.
 
 ### Cheap Starbase — fixed in 2.8
 
-`build.c`: `FCheckQueuedShip`, `SlotDlg`; `ship.c`: `CshQueued`,
+`buildui.c`: `FCheckQueuedShip`, `SlotDlg`; `ship.c`: `CshQueued`,
 `RemoveIshdefFromAllQueues`; `log.c`: `FRunLogRecord` (design changes);
 `turn2.c`: `CBuildProdItem`; `produce.c`: `GetProductionCosts`.
 Partial production stores a completion fraction (`PROD.pct`), and the next
@@ -305,7 +305,7 @@ over a fleet crashed the native build (a NULL travel-distance read in
 ### Colonization Module Check — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders` (colonize task); `ship2.c`: `FColonizer`;
-`build.c`: `IDropPart`, `SlotDlg`.
+`buildui.c`: `IDropPart`, `SlotDlg`.
 The host colonization check tests a slot's `grhst` and `iItem` against the two
 colonization modules without checking `cItem > 0`. An empty slot retaining its
 module identity can therefore qualify. `FColonizer` is a separate hull-based
@@ -465,7 +465,7 @@ foreign-design/display path. Combat damage calculations are a separate path.
 
 ### Battle VCR Point of View — candidate, overlaps the shield report
 
-`vcr.c`: `VCRDlg`, `DrawVCR`, `GetVCRStats`; `build.c`: `DrawBuildSelHull`;
+`vcr.c`: `VCRDlg`, `DrawVCR`, `GetVCRStats`; `buildui.c`: `DrawBuildSelHull`;
 `util.c`: `UpdateShdefCost`, `GetFleetScannerRange`;
 `ship2.c`: `PctCloakFromLpfl`; `popup.c`: `DrawPopup`.
 The VCR opens ship-design inspection for its focused token. Several shared
