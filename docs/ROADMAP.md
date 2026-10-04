@@ -1,8 +1,34 @@
-# Roadmap to 2.8
+# Roadmap
 
 The `2.6jrc3` tag is the faithful reconstruction, original bugs included, and
-the `2.6j` branch keeps it. `main` is the 2.8 line. Work proceeds in this
-order:
+the `2.6j` branch keeps it. 2.8 is released (tag `v2.8.0`, branch `2.8` for
+patch releases). `main` is the 2.9 line.
+
+## 2.9
+
+Split the game into separate builds so the host can run on Linux:
+
+- **Core:** turn generation and file I/O, with no Windows UI dependencies.
+- **UI:** the Win32 client on top of the core.
+- **Host:** a command-line build of the core (`-g`, `-a` and the like) for
+  Windows and Linux.
+
+To keep in mind:
+
+- The Linux host must generate the same turns as the Windows build. The
+  native regression baseline is the test: the Linux host's run must match
+  it. Watch the x87 rounding casts (`long double`), `qsort16` tie order and
+  the RNG first.
+- The product name's `x64` (`2.8x64`) is fixed in `cmake/version.cmake`;
+  give each build its own platform label.
+- The file format stays at 2.84 unless a record changes.
+
+The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`
+and cherry-pick to `2.8`.
+
+## 2.8 (released)
+
+Work proceeded in this order:
 
 1. Native regression baseline and 2.8 repository rules (done).
 2. Product versioning from git tags and build numbers (done).

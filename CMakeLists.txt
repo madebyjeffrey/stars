@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 # The version this line is building toward. Tags (vX.Y.Z) and build numbers
 # come from git; see cmake/version.cmake and docs/VERSIONING.md.
-project(stars VERSION 2.8.0 LANGUAGES C RC)
+project(stars VERSION 2.9.0 LANGUAGES C RC)
 
 if(NOT MINGW)
     message(FATAL_ERROR "Configure using the MinGW toolchain: cmake --preset mingw-debug or cmake --preset mingw-release")

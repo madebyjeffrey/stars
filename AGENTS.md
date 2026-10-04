@@ -8,9 +8,12 @@ reconstruction is finished: it is tagged `2.6jrc3` and kept on the `2.6j`
 branch, which still follows the reconstruction rules in its own `AGENTS.md`
 (`git show 2.6j:AGENTS.md`).
 
-`main` is the 2.8 line. It fixes the original's bugs and turns the Win16
-shims into native Win32 code, while staying a game that plays like 2.6j and
-reads and writes its files.
+2.8 is released (tag `v2.8.0`): it fixes the original's bugs and turns the
+Win16 shims into native Win32 code, while staying a game that plays like
+2.6j and reads its files. The `2.8` branch takes bug fixes for 2.8 patch
+releases. `main` is the 2.9 line, which splits the game into core, UI and
+host builds so the host can run on Linux; see `docs/ROADMAP.md`. These
+rules carry over from 2.8.
 
 When goals conflict, apply them in this order:
 

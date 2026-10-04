@@ -31,6 +31,10 @@ version; patch releases need no version commit. `VERSIONINFO` carries
 Source archives without git history build as `X.Y.Z-dev.0+gunknown`; set
 `STARS_VERSION=2.8.0` in the environment to stamp them.
 
+Patch releases of 2.8 are tagged on the `2.8` branch (`v2.8.1`), whose
+builds count toward 2.8.1. `main` has `project()` at 2.9.0, so its builds
+read `2.9.0-dev.N+g…`, counted from `v2.8.0`.
+
 ## Releasing
 
 ```sh

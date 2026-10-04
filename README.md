@@ -11,9 +11,12 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
 - `2.6j` (tag `2.6jrc3`): the faithful reconstruction, original bugs
   included. It matches the original game turn for turn in the fixed-seed
   regression.
-- `main`: the 2.8 line. It fixes original bugs and replaces the Win16 shims
-  with native code. It reads 2.6j files and writes the same formats, marked
-  as version 2.84 so that 2.6j doesn't load them.
+- `2.8` (tag `v2.8.0`): the released 2.8 line, bug fixes only. It fixes
+  original bugs and replaces the Win16 shims with native code. It reads
+  2.6j files and writes the same formats, marked as version 2.84 so that
+  2.6j doesn't load them.
+- `main`: the 2.9 line, splitting the game into core, UI and host builds so
+  the host can run on Linux.
 
 ## Documentation
 
