@@ -1600,8 +1600,8 @@ int16_t FCheckFile(DtFileType dt, int16_t iPlayer, MdMark md) {
         } else {
             do {
                 ReadRt();
-            } while (hdrCur.rt != rtPlr && ((PLAYER *)rgbCur)->iPlayer != iPlayer);
-            fReturn = ((PLAYER *)rgbCur)->fAi;
+            } while (hdrCur.rt != rtEOF && (hdrCur.rt != rtPlr || ((PLAYER *)rgbCur)->iPlayer != iPlayer));
+            fReturn = hdrCur.rt == rtPlr && ((PLAYER *)rgbCur)->fAi;
         }
     }
     if (fOpened) {

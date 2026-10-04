@@ -98,3 +98,7 @@ produce different results from a 2.6j host for the same turn.
   retargets the heaviest matching fleet where it was last seen, as in 2.6j
   RC4. RC3 (the reconstructed release) spread pursuers over fleets nobody
   else was chasing (`ValidateWaypoints`). **Host results.**
+- `FCheckFile`'s AI-player check reads the requested player's record. The
+  original stopped at the first player record, or at any earlier record
+  whose first byte matched the player number, and read its AI bit. No
+  caller uses this check yet, so nothing changes in play.
