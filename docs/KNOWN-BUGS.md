@@ -319,8 +319,8 @@ with its module count set to 0 still colonized. The check now requires
 
 ### Race File Corruption — fixed in 2.8
 
-`race.c`: `RaceWizardDlg1`, `FSaveRace`, `IRaceChecksum`;
-`save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`; `mdi.c` (race load check).
+`raceui.c`: `RaceWizardDlg1`, `FSaveRace`; `race.c`: `IRaceChecksum`,
+`FWasRaceFile` (race load check); `save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`.
 `IRaceChecksum` XORs the whole in-memory name buffers, including bytes
 after the terminator. `RaceWizardDlg1`'s OK path reads the names with
 `GetDlgItemText` without clearing the buffers (its radio-button path does
@@ -337,7 +337,7 @@ checksums a copy with the names zeroed after their terminators, as
 
 ### Random Race — fixed in 2.8
 
-`race.c`: `RaceWizardDlg1`, `RaceCreationWizard`; `create.c`: `GenerateWorld`,
+`raceui.c`: `RaceWizardDlg1`, `RaceCreationWizard`; `create.c`: `GenerateWorld`,
 `InitNewGamePlr`; `save.c`: `WriteRtPlr`.
 The wizard selects predefined race templates, including Random, and stores
 the resulting player data. `GenerateWorld` calls `CreateRandomRace` when

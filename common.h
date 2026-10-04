@@ -69,6 +69,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "produce.h"
 #include "produceui.h"
 #include "race.h"
+#include "raceui.h"
 #include "report.h"
 #include "research.h"
 #include "save.h"
