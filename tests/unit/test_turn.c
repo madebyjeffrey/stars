@@ -127,7 +127,53 @@ static void test_MoveFleets_caught_pursuer_keeps_moving(void) {
     TEST_CHECK_(lpflA->pt.x == lpflB->pt.x && lpflA->pt.y == lpflB->pt.y, "A stopped %d ly from the start", lpflA->pt.x - ptStart.x);
 }
 
+// East/West speed bump immunity (reported for 2.6j): a fleet at warp 9
+// crossing another player's speed bump field should be stopped, whichever
+// way it travels. With a 14% chance per light-year, 80 light-years inside
+// the field all but guarantee a hit.
+static void test_FTravelThroughMineFields_speed_bump_any_direction(void) {
+    char        szDir[MAX_PATH];
+    const char *rgszAi[] = {"#1 4"};
+    static const int16_t rgdxy[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    PLANET     *lppl;
+    FLEET      *lpfl;
+    THING      *lpth;
+    POINT16     pt;
+    int16_t     ish;
+    int16_t     idir;
+    int16_t     dTravel;
+
+    for (idir = 0; idir < 4; idir++) {
+        TEST_CASE_("direction %d,%d", rgdxy[idir][0], rgdxy[idir][1]);
+        TEST_ASSERT(FStarsTestInit());
+        TEST_ASSERT(FStarsTestDir("FTravelThroughMineFields_speed_bump", szDir, sizeof(szDir)));
+        TEST_ASSERT(FStarsTestNewGame(szDir, 12345, rgszAi, 1));
+        TEST_ASSERT(FStarsTestLoadHost());
+        lppl = LpplStarsTestHomeworld(0);
+        TEST_ASSERT(lppl != NULL);
+        for (ish = 0; ish < 16 && rglpshdef[0][ish].fFree; ish++) {
+        }
+        TEST_ASSERT(ish < 16);
+        lpfl = LpflStarsTestAddFleet(0, lppl->id, ish, 1);
+        pt = lpfl->pt;
+        SetFleetDest(lpfl, NULL, 0);
+        lpfl->lpplord->rgord[1].pt.x = pt.x + 81 * rgdxy[idir][0];
+        lpfl->lpplord->rgord[1].pt.y = pt.y + 81 * rgdxy[idir][1];
+        lpth = LpthNew(1, ithMinefield);
+        lpth->pt.x = pt.x + 40 * rgdxy[idir][0];
+        lpth->pt.y = pt.y + 40 * rgdxy[idir][1];
+        lpth->thm.cMines = 10000;
+        lpth->thm.iType = mineSpeedBump;
+        lpth->thm.grbitPlr = 1 << 1;
+
+        dTravel = 81;
+        TEST_CHECK_(!FTravelThroughMineFields(lpfl, &dTravel, NULL), "the fleet crossed the field");
+        TEST_CHECK_(dTravel < 81, "the fleet travelled %d ly", dTravel);
+    }
+}
+
 TEST_LIST = {{"generate one turn", test_generate_one_turn},
              {"generate backs up an unsubmitted turn", test_generate_backs_up_unsubmitted_turn},
              {"MoveFleets caught pursuer keeps moving", test_MoveFleets_caught_pursuer_keeps_moving},
+             {"FTravelThroughMineFields speed bump stops a fleet any direction", test_FTravelThroughMineFields_speed_bump_any_direction},
              {NULL, NULL}};

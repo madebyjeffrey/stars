@@ -113,7 +113,7 @@ already inside a field. The list reports a JRC4 fix.
 a field's center found no intersection) and fixed: a vertical route's
 closest point is level with the field's center (`yI = ptC.y`).
 
-### East/West Speed Bump Minefield Immunity — candidate
+### East/West Speed Bump Minefield Immunity — not reproduced in 2.8
 
 `turn.c`: `FTravelThroughMineFields`; `utilgen.c`: `FIntersectCircleLine`.
 These contain route intersection, per-field-type safe speeds, hit rolls, and
@@ -121,6 +121,11 @@ movement truncation after a hit. The intersection code has a horizontal-route
 calculation, and there is no obvious blanket horizontal speed-bump exemption.
 The reported east/west-only defect is not yet isolated. The list reports a
 JRC4 fix; do not equate this report with the vertical projection defect above.
+
+**2.8:** `tests/unit/test_turn.c` sends a warp 9 fleet 81 ly east, west,
+north and south through another player's speed bump field; it is stopped
+in every direction. Whatever the report saw may have been the vertical
+projection defect, fixed above, or something since changed.
 
 ### SS Pop Steal — fixed in 2.8
 
