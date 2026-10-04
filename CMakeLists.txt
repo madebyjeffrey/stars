@@ -26,8 +26,8 @@ set(STARS_CORE_SOURCES
 
 # The Windows game's user interface.
 set(STARS_UI_SOURCES
-    init.c mdi.c planetui.c popup.c report.c scan.c stars.c tb.c tutor.c
-    tutor2.c vcr.c
+    init.c mdi.c planetui.c popup.c report.c scan.c shipui.c stars.c tb.c
+    tutor.c tutor2.c vcr.c
 )
 
 # Settings every target that compiles game code shares.

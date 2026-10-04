@@ -41,7 +41,7 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   - **Type-limits (14):** enum range checks on unsigned fields.
   - **Tautological compare (1):** `aiutil.c` `IroEnsureAi`
     `(iTechCur & 0xf) == 0x1a` is an original dead branch.
-  - **Function cast (1):** `ship.c` `TransferStuff` casts
+  - **Function cast (1):** `shipui.c` `TransferStuff` casts
     `FEnumCalcJettison`. Both signatures come from the debug info and are
     ABI-compatible.
 - **Original uninitialized reads left as is** (harmless): `ScoreXDlg` and

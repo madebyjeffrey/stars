@@ -130,7 +130,7 @@ projection defect, fixed above, or something since changed.
 ### SS Pop Steal — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders`; `util.c`: `GetFleetScannerRange`;
-`ship.c`: `TransferStuff`, `ChgCargo`.
+`ship.c`: `ChgCargo`; `shipui.c`: `TransferStuff`.
 Waypoint transport obtains theft permission from the scanner and sets
 `fStealing`. In its load path, the colonist/fuel check merely sets `fDone = TRUE`
 and then continues into cargo removal and loading; it does not reject the
@@ -147,7 +147,7 @@ loads nothing; stealing minerals is unchanged.
 
 ### [freepop] Hack — candidate; host validation is present
 
-`ship.c`: `FEnumCalcJettison`, `TransferStuff`, `ChgCargo`;
+`ship.c`: `FEnumCalcJettison`, `ChgCargo`; `shipui.c`: `TransferStuff`;
 `log.c`: `LogMakeValidXfer`, `FRunLogRecord` (cargo-transfer records);
 `turn2.c`: `FQueueColonistDrop`, `DropColonists`.
 Manual population on an uninhabited world is represented through pending drops
@@ -180,7 +180,7 @@ covers the delete-and-recreate variant.
 
 ### Mineral Upload — fixed in 2.8
 
-`ship.c`: `TransferStuff`, `ChgCargo`; `log.c`: `FRunLogRecord`;
+`ship.c`: `ChgCargo`; `shipui.c`: `TransferStuff`; `log.c`: `FRunLogRecord`;
 `turn2.c`: `TransferToOthers`.
 When the host replays a transfer to another player's fleet or planet,
 `FRunLogRecord` removes the cargo from the source in its first pass and
@@ -201,7 +201,7 @@ as the "unable to transfer" message says.
 
 ### Target List Overload — fixed in 2.8
 
-`scan.c`: `ScannerWndProc`; `ship.c`: `ClickInShipOrders`.
+`scan.c`: `ScannerWndProc`; `shipui.c`: `ClickInShipOrders`.
 Both target-popup paths use `rgid[100]` and stop collecting entries at 100.
 Objects beyond the popup limit cannot be chosen through those menus.
 `scan.c`'s `FGetNextObjHere` provides a separate selection traversal, explaining
@@ -429,7 +429,7 @@ rest of its move, and the caught fleet finishes its pursuit.
 
 ### WP0 Pop Reload Ignored — candidate
 
-`ship.c`: `FEnumCalcJettison`, `TransferStuff`, `ClickInShipOrders`;
+`ship.c`: `FEnumCalcJettison`; `shipui.c`: `TransferStuff`, `ClickInShipOrders`;
 `log.c`: `LogMakeValidXfer`, `FRunLogRecord`;
 `turn2.c`: `FQueueColonistDrop`, `DropColonists`;
 `turn3.c`: `SatisfyOrders` (colonize task).

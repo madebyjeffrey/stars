@@ -73,6 +73,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "save.h"
 #include "scan.h"
 #include "ship.h"
+#include "shipui.h"
 #include "ship2.h"
 #include "stars.h"
 #include "strings.h"
