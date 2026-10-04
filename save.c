@@ -111,6 +111,7 @@ void WriteRtShDef(SHDEF *lpshdef, uint8_t **ppbStore) {
 }
 
 int16_t FWriteDataFile(char *pszFileBase, int16_t iPlayer, int16_t fAppend) {
+    PLAYER   plrT;
     int16_t  iMax;
     FLEET   *lpflT;
     int16_t  fNoAutoTrack;
@@ -325,10 +326,23 @@ LAppend:
     WriteBattles(iPlayer);
     for (i = 0; i < game.cPlayer; i++) {
         if (rgplr[i].fInclude || rgplr[i].fDead) {
-            if (GetRaceStat(&rgplr[iPlayer], rsMajorAdv) == raTerra) {
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfff8) | 7;
+            /* A Claim Adjuster's file carries other players' habitat (their
+               planet values in DrawMineSurvey), which only a full-detail
+               record holds. The original raised the live record to full
+               detail, sending tech, research, traits, production template
+               and relations too, and read rgplr[-1] for the host file. Send a
+               full-detail copy with only the habitat filled in. */
+            if (iPlayer != iplrNone && i != iPlayer && !rgplr[i].fDead && GetRaceStat(&rgplr[iPlayer], rsMajorAdv) == raTerra) {
+                plrT = rgplr[i];
+                memset(&plrT.idPlanetHome, 0, (uint8_t *)&plrT.szName - (uint8_t *)&plrT.idPlanetHome);
+                memcpy(plrT.rgEnvVar, rgplr[i].rgEnvVar, sizeof(plrT.rgEnvVar));
+                memcpy(plrT.rgEnvVarMin, rgplr[i].rgEnvVarMin, sizeof(plrT.rgEnvVarMin));
+                memcpy(plrT.rgEnvVarMax, rgplr[i].rgEnvVarMax, sizeof(plrT.rgEnvVarMax));
+                plrT.det = detAll;
+                WriteRtPlr(&plrT, NULL);
+            } else {
+                WriteRtPlr(&rgplr[i], NULL);
             }
-            WriteRtPlr(&rgplr[i], NULL);
         }
     }
     if (iPlayer == iplrNone && lSaltCur != 0) {

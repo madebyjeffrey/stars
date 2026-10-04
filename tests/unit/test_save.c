@@ -60,6 +60,46 @@ static void test_SetVisPFFleets_cloaked_starbase_long_range(void) {
     TEST_CHECK_(det >= detSome, "det %d", det);
 }
 
-TEST_LIST = {{"SetVisPFFleets sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase},
+// Claim Adjuster turn files: other players' records were written at full
+// detail so a CA player gets their habitat, which also sent their tech,
+// research, traits, production template and relations.
+static void test_FWriteDataFile_claim_adjuster_sees_only_habitat(void) {
+    char        szDir[MAX_PATH];
+    const char *rgszAi[] = {"#1 4"};
+    PLANET     *lppl1;
+    PLAYER      plrAi;
+    int16_t     ish;
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("FWriteDataFile_claim_adjuster", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, rgszAi, 1));
+    TEST_ASSERT(FStarsTestLoadHost());
+    SetRaceStat(&rgplr[0], rsMajorAdv, raTerra);
+    lppl1 = LpplStarsTestHomeworld(1);
+    TEST_ASSERT(lppl1 != NULL);
+    for (ish = 0; ish < 16 && rglpshdef[0][ish].fFree; ish++) {
+    }
+    TEST_ASSERT(ish < 16);
+    LpflStarsTestAddFleet(0, lppl1->id, ish, 1);
+    TEST_ASSERT(FStarsTestSaveHost());
+    TEST_ASSERT(FStarsTestGenerate());
+
+    TEST_ASSERT(FStarsTestLoadHost());
+    plrAi = rgplr[1];
+    TEST_ASSERT(plrAi.grbitAttr != 0 || plrAi.rgAttr[0] != 0);
+    TEST_ASSERT(FStarsTestLoadPlayer(0));
+    TEST_ASSERT_(rgplr[1].fInclude, "player 0 doesn't see the AI");
+    TEST_CHECK(memcmp(rgplr[1].rgEnvVar, plrAi.rgEnvVar, 3) == 0);
+    TEST_CHECK(memcmp(rgplr[1].rgEnvVarMin, plrAi.rgEnvVarMin, 3) == 0);
+    TEST_CHECK(memcmp(rgplr[1].rgEnvVarMax, plrAi.rgEnvVarMax, 3) == 0);
+    TEST_CHECK_(rgplr[1].grbitAttr == 0, "traits %#lx", (unsigned long)rgplr[1].grbitAttr);
+    TEST_CHECK(memcmp(rgplr[1].rgAttr, (int8_t[16]){0}, 16) == 0);
+    TEST_CHECK(memcmp(rgplr[1].rgTech, (int8_t[6]){0}, 6) == 0);
+    TEST_CHECK(memcmp(rgplr[1].rgResSpent, (uint32_t[6]){0}, sizeof(plrAi.rgResSpent)) == 0);
+    TEST_CHECK(rgplr[1].pctResearch == 0 && rgplr[1].lResLastYear == 0 && rgplr[1].pctIdealGrowth == 0);
+}
+
+TEST_LIST = {{"FWriteDataFile Claim Adjuster sees only habitat", test_FWriteDataFile_claim_adjuster_sees_only_habitat},
+             {"SetVisPFFleets sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase},
              {"SetVisPFFleets long-range scanner sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase_long_range},
              {NULL, NULL}};

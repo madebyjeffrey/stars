@@ -66,8 +66,9 @@ and order helpers as fixes need them.
 | Colonization module check | `SatisfyOrders` colonize task doesn't test `cItem > 0` | turn | fixed (`test_turn3.c`) |
 | 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit | function | open |
 | "Stuck" pursuit | `MoveFleets` marks the pursued fleet `fDone` though it has its own pursuit | turn | open |
-| SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists from an enemy planet | turn | open |
+| SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists or fuel it may only steal; the binary never uses its "attempted to shanghai colonists" and "attempted to steal fuel" messages (0x124, 0x125) | turn | open |
 | Mineral upload | `TransferToOthers` destroys cargo the destination can't hold instead of leaving salvage | turn | open |
+| Claim Adjuster turn files | `FWriteDataFile` raises every included player's record to full detail for a CA player so it carries their habitat (`DrawMineSurvey` ally planet values), which also sends their tech, research, traits, production template and relations | turn | fixed (`test_save.c`) |
 | Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
 
 ### 5.3 Needs reproduction first

@@ -79,3 +79,9 @@ produce different results from a 2.6j host for the same turn.
 - Turn generation keeps a backup of the turn file of a player who submitted
   no turn, as the original did. The reconstruction had the copy's source
   and destination reversed (`FGenerateTurn`).
+- Claim Adjuster turn files carry only the other players' habitat. To give
+  a CA player their habitat, the original sent every visible player's full
+  record, including tech levels, research spending and target, racial
+  traits, production template and diplomatic relations (`FWriteDataFile`).
+  **Host results** for AI Claim Adjusters, which plan from their own turn
+  file.
