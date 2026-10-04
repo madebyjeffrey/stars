@@ -17,7 +17,6 @@ void             CommandHandler(HWND hwnd, WPARAM wParam);
 void             InitializeMenu(HMENU hmenu);
 HMENU            GetASubMenu(HWND hwnd, MainMenu iMenu);
 int16_t          FOpenGame(HWND hwnd, int16_t fRaceOnly);
-int16_t          FWasRaceFile(char *szFile, int16_t fChkPass);
 void             BringUpHostDlg();
 void             DrawHostDialog2(HWND hwnd, HDC hdcIn);
 void             VerifyTurns();

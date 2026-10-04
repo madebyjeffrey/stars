@@ -1895,6 +1895,76 @@ int16_t FSaveRace(char *szFileSuggest, PLAYER *pplr) {
     return FALSE;
 }
 
+int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
+    int16_t  idsError;
+    int32_t  lSaltSav;
+    PLAYER   plr;
+    jmp_buf *penvMemSav;
+    jmp_buf  env;
+    int16_t  fRet;
+    int16_t  fSav;
+
+    idsError = -1;
+    fRet = 0;
+    fSav = fFileErrSilent;
+    fFileErrSilent = TRUE;
+    penvMemSav = penvMem;
+    penvMem = &env;
+    if (setjmp(env) != 0) {
+    LBadFile:
+        StreamClose();
+        penvMem = penvMemSav;
+        fFileErrSilent = fSav;
+        if (!fFileErrSilent && idsError != -1) {
+            strcpy(szWork, szFile);
+            AlertSz(PszFormatIds(idsError, NULL), MB_ICONHAND);
+        }
+        return fRet;
+    }
+    {
+        StreamOpen(szFile, mdRead);
+        ReadRt();
+        if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
+            idsError = 13;
+            fRet = -1;
+            goto LBadFile;
+        } else {
+            wVersFile = ((RTBOF *)rgbCur)->wVersion;
+            if (((RTBOF *)rgbCur)->dt == 5) {
+                ReadRt();
+                if (hdrCur.rt == rtPlr) {
+                    idsError = 3;
+                    ReadRtPlr(&plr, rgbCur);
+                    ReadRt();
+                    if (hdrCur.rt == rtEOF && RawLoad16(rgbCur) == IRaceChecksum(&plr)) {
+                        lSaltSav = lSaltCur;
+                        lSaltCur = plr.lSalt;
+                        if (fChkPass && !FCheckPassword()) {
+                            lSaltCur = lSaltSav;
+                            fRet = -1;
+                            goto LBadFile;
+                        } else {
+                            lSaltCur = lSaltSav;
+                            if (plr.lSalt != 0) {
+                                strcpy(szRacePass, szPassLast);
+                            } else {
+                                szRacePass[0] = 0;
+                            }
+                            vplr = plr;
+                            strcpy(szRaceFile, szFile);
+                            StreamClose();
+                            fFileErrSilent = fSav;
+                            penvMem = penvMemSav;
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    goto LBadFile;
+}
+
 void SetRCWTitle(HWND hwnd, int16_t iStep) {
     char    szBuf[50];
     int16_t cch;

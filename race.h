@@ -39,5 +39,6 @@ int16_t          FSaveRace(char *szFileSuggest, PLAYER *pplr);
 void             SetRCWTitle(HWND hwnd, int16_t iStep);
 void             CreateRandomRace(PLAYER *pplr);
 int16_t          PctTrueMaxGrowth(int16_t iplr);
+int16_t          FWasRaceFile(char *szFile, int16_t fChkPass);
 
 #endif
