@@ -60,7 +60,7 @@ object, though the client uses only its own bit. The original wrote them;
 | Wormhole | `thw.grbitPlrTrav` | 10 | which players have gone through it | keeps only the file player's bit |
 | Mineral packet | — | — | — | left alone; only written for packets the player can see |
 
-Only the player's own bit seems to be read on the client: `mine.c` tests
+Only the player's own bit seems to be read on the client: `mineui.c` tests
 `1 << idPlayer & tht.grbitPlr` to show the trader's "send a fleet" text,
 and `util.c` tests the fleet owner's bit in `thw.grbitPlr`. No client
 use of `tht.grbitTrader` was found.

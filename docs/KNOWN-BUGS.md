@@ -354,7 +354,7 @@ page and was still replaced at game creation. Custom now clears the bit.
 ### 32k Ship Limit Per Fleet — fixed in 2.8
 
 `structs.h`: `FLEET.rgcsh` (`int16_t[16]`); `ship.c`: `Merge2Fleets`,
-`FleetTransferCargoBalance`; `ship2.c`: `MergeFleetsDlg`;
+`FleetTransferCargoBalance`; `ship2ui.c`: `MergeFleetsDlg`;
 `turn3.c`: `SatisfyOrders` (merge task); `log.c`: `FRunLogRecord` (merge records).
 `Merge2Fleets` adds ship counts directly into signed 16-bit elements without
 a 32767 limit check. Counts crossing that boundary become negative, while many

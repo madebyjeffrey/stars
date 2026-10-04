@@ -10,12 +10,9 @@ extern char    aMSGCmpr[22836];
 extern char    rgMSGLookupTable[72];
 extern int16_t aiMSGChunkOffset[7];
 
-LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void             SetMsgTitle(HWND hwnd);
 int16_t          IMsgNext(int16_t fFilteredOnly);
 int16_t          IMsgPrev(int16_t fFilteredOnly);
-void             DecorateMsgTitleBar(HDC hdc, RECT *prc);
-HtMsgType        HtMsgBox(POINT16 pt);
 int16_t          FSendPlrMsg2(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t p1, int16_t p2);
 int16_t          FSendPlrMsg(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t p1, int16_t p2, int16_t p3, int16_t p4, int16_t p5, int16_t p6, int16_t p7);
 int16_t FSendPrependedPlrMsg(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t p1, int16_t p2, int16_t p3, int16_t p4, int16_t p5, int16_t p6, int16_t p7);
