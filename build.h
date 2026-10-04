@@ -14,9 +14,6 @@ extern StringId     rgidsCat[14];
 int16_t PctJammerFromHul(HUL *lphul);
 SHDEF  *NthValidShdef(int16_t n);
 SHDEF  *NthValidEnemyShdef(int16_t n);
-void    UpdateSlotGlobals();
-int16_t IEmptyBmpFromGrhst(int16_t grhst);
-void    MakeNewName(char *lpsz);
 void    KillQueuedMassPackets(PLANET *lppl);
 void    KillQueuedShips(PLANET *lppl);
 

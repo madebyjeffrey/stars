@@ -18,5 +18,8 @@ void             DrawDlgLBEntireItem(DRAWITEMSTRUCT *lpdis, int16_t inflate);
 void             FillBuildDD(HWND hwndDD, MdBuild md);
 void             FillBuildPartsLB(HWND hwndLB, int16_t grbit);
 LRESULT CALLBACK FakeListProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+void             UpdateSlotGlobals();
+int16_t          IEmptyBmpFromGrhst(int16_t grhst);
+void             MakeNewName(char *lpsz);
 
 #endif
