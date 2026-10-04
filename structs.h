@@ -109,7 +109,6 @@ typedef struct _timer           TIMER;
 typedef struct _tok             TOK;
 typedef struct _btldata         BTLDATA;
 typedef struct _torp            TORP;
-typedef struct _turnserial      TURNSERIAL;
 typedef struct _vers            VERS;
 typedef struct _wn              WN;
 typedef struct _ini             INI;
@@ -934,8 +933,7 @@ struct _rthisthdr {
 
 struct _rtloghdr {
     int16_t cbLog;         /* +0x0000 (2) */
-    int32_t lSerialNumber; /* +0x0002 (4) */
-    uint8_t rgbConfig[11]; /* +0x0006 (11) */
+    uint8_t rgbUnused[15]; /* +0x0002 (15) */
 }; /* size=0x11 */
 
 struct _rtlogthing {
@@ -1452,12 +1450,6 @@ struct _torp {
     int16_t  dHitChance;     /* +0x003A (2) */
 }; /* size=0x3c */
 
-struct _turnserial {
-    int32_t lSerialNumber; /* +0x0000 (4) */
-    uint8_t rgbConfig[11]; /* +0x0004 (11) */
-    uint8_t bPad;          /* +0x000F (1) */
-}; /* size=0x10 */
-
 struct _vers {
     uint16_t verInc : 5, /* +0x0000 (2) @bit0 */
         verMinor : 7,    /* @bit5 */
@@ -1551,34 +1543,34 @@ struct _player {
         };
         uint16_t wMdPlr; /* +0x0006 (2) */
     };
-    int16_t       idPlanetHome;   /* +0x0008 (2) */
-    uint16_t      wScore;         /* +0x000A (2) */
-    int32_t       lSalt;          /* +0x000C (4) */
-    int8_t        rgEnvVar[3];    /* +0x0010 (3) */
-    int8_t        rgEnvVarMin[3]; /* +0x0013 (3) */
-    int8_t        rgEnvVarMax[3]; /* +0x0016 (3) */
-    int8_t        pctIdealGrowth; /* +0x0019 (1) */
-    int8_t        rgTech[6];      /* +0x001A (6) */
-    uint32_t      rgResSpent[6];  /* +0x0020 (24) */
-    int8_t        pctResearch;    /* +0x0038 (1) */
+    int16_t  idPlanetHome;   /* +0x0008 (2) */
+    uint16_t wScore;         /* +0x000A (2) */
+    int32_t  lSalt;          /* +0x000C (4) */
+    int8_t   rgEnvVar[3];    /* +0x0010 (3) */
+    int8_t   rgEnvVarMin[3]; /* +0x0013 (3) */
+    int8_t   rgEnvVarMax[3]; /* +0x0016 (3) */
+    int8_t   pctIdealGrowth; /* +0x0019 (1) */
+    int8_t   rgTech[6];      /* +0x001A (6) */
+    uint32_t rgResSpent[6];  /* +0x0020 (24) */
+    int8_t   pctResearch;    /* +0x0038 (1) */
     union {
         int8_t iTechCur; /* +0x0039 (1) */
         struct {
             // iTechNext is signed, as iTechCur >> 4 was: 6 means the
             // same field, 7 the lowest.
-            uint8_t iTechNow : 4; /* +0x0039 (1) @bit0 */
+            uint8_t iTechNow : 4;  /* +0x0039 (1) @bit0 */
             int8_t  iTechNext : 4; /* @bit4 */
         };
     };
-    int32_t       lResLastYear;   /* +0x003A (4) */
-    int8_t        rgAttr[16];     /* +0x003E (16) */
-    RaceTraitBits grbitAttr;      /* +0x004E (4) */
-    GrbitTrader   grbitTrader;    /* +0x0052 (2) */
+    int32_t       lResLastYear; /* +0x003A (4) */
+    int8_t        rgAttr[16];   /* +0x003E (16) */
+    RaceTraitBits grbitAttr;    /* +0x004E (4) */
+    GrbitTrader   grbitTrader;  /* +0x0052 (2) */
     union {
         struct {
             uint16_t fDead : 1, /* +0x0054 (2) @bit0 */
                 fCrippled : 1,  /* @bit1 */
-                fCheater : 1,   /* @bit2 */
+                fUnused : 1,    /* @bit2 */
                 fLearned : 1,   /* @bit3 */
                 fHacker : 1,    /* @bit4 */
                 unused : 11;    /* @bit5 */

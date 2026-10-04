@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <windows.h>
 
-extern uint8_t vrgbShuffleSerial[21];
 extern char    rgTOWidth[2][2];
 
 int16_t          InitMDIApp();
@@ -13,8 +12,6 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 POINT16          InvertPaneBorder(HDC hdc, PaneSplitter grSel, POINT16 dpt, POINT16 *pdptPrev);
 HCURSOR          HcrsFromFrameWindowPt(POINT16 pt, int16_t *pgrSel);
 void             RestoreSelection();
-void             FormatSerialAndEnv(int32_t lSerial, uint8_t *pbEnv, char *pszOut);
-int16_t          FSerialAndEnvFromSz(int32_t *plSerial, uint8_t *pbEnv, char *pszIn);
 int16_t          FFindSomethingAndSelectIt();
 void             CommandHandler(HWND hwnd, WPARAM wParam);
 void             InitializeMenu(HMENU hmenu);

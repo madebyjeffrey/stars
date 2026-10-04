@@ -1,7 +1,7 @@
 # Game test scaffolding
 
 The scaffolding covers new-game generation, fixed-seed regression comparisons
-against the original game, and the tutorial UI under Wine.
+against the checked-in native baseline, and the tutorial UI under Wine.
 
 - [Regression guide](REGRESSION.md): scenarios `noai`, `oneai1`–`oneai6`,
   `smallai4`, and `smallai6`, with checkpoints at turns 0, 1, 10, 25, 50, 80,
@@ -9,7 +9,7 @@ against the original game, and the tutorial UI under Wine.
 - [Tutorial guide](tutorial/README.md): the full walkthrough and premature
   Generate rejection, driven by AutoHotkey v2.0.28.
 - [Save CLI](../savecli/README.md): the standalone Go/Cobra save comparison and
-  AI update commands. No stars-asm binary or checkout is required.
+  AI update commands.
 
 ## Layout
 
@@ -18,11 +18,9 @@ tests/scaffold/
   newgame.sh                     New-game smoke test runner
   regression.py                  Checkpoint generation, comparison, and tracing
   regression_trace.c             Optional native trace wrappers
-  seed_exe.py                    Fixed-seed patcher for a copy of the original
   fixtures/newgame/tiny/         Single-player game.def and humanoid.r1
   fixtures/regression/           Fixed-seed AI scenario definitions and report
   tutorial/                     AutoHotkey runner, scripts, and observer
-  starsbox/                     Local DOSBox bundle and reference saves (ignored)
 
 tests/savecli/                  Standalone save CLI module
 
@@ -32,10 +30,10 @@ dist/                          Generated builds, tools, and run artifacts (ignor
   scaffold/tutorial/            Retained tutorial results by timestamp
 ```
 
-Keep fixture inputs in `fixtures/`. The Makefile's checkpoint runs default to
-`tests/scaffold/starsbox/c_drive/REGTEST` for the original and
-`tests/scaffold/starsbox/c_drive/native` for native saves. Preserve the reference
-checkpoints: regenerating them takes many hours.
+Keep fixture inputs in `fixtures/`. The Makefile's regression runs in
+`dist/scaffold/regression/native`. The original game's checkpoints in
+`fixtures/regression/original/` are frozen: the DOSBox setup that made them
+is no longer kept (see [REGRESSION.md](REGRESSION.md)).
 
 ## Regression and tutorial commands
 
@@ -43,25 +41,24 @@ Run from the repository root:
 
 ```sh
 make compile
-make checkpoints-compare
+make regression
+make regression-quick
 make tutorial
 make tutorial-reject
 ```
 
-`checkpoints-compare` builds `dist/stars-save` automatically and compares existing
-runs. Differences produce a nonzero exit status, including the known baseline
-divergences recorded in [REGRESSION.md](REGRESSION.md#known-divergences) and the
-regression report.
-
-`make checkpoints-native` builds with a fixed seed and replaces the native run.
-`make checkpoints-starsbox` replaces the original run and can take many hours;
-use it only when intentionally regenerating the reference. Both commands delete
-their configured work directory before staging a fresh run.
+`make regression` builds the fixed-seed release `stars.exe` and
+`dist/stars-save`, deletes and restages `dist/scaffold/regression/native`,
+runs every scenario in the native baseline through turn 150, and compares the
+run with `fixtures/regression/native/`. Any difference exits nonzero; the
+report is `dist/scaffold/regression/comparison.json`. `SCENARIOS="noai
+smallai4"` and `THROUGH=10` limit the run, and `make regression-quick` is
+smallai4 through turn 10. After a full run that moves the baseline on
+purpose, `make regression-export` replaces the baseline with it.
 
 The tutorial targets build with `STARS_TEST_TUTORIAL=ON` and use an isolated Wine
-prefix. They enter the configured serial through the normal dialog when needed.
-See the tutorial guide for `STARS_TUTORIAL_SERIAL`, registration INI files,
-retained results, and runtime requirements.
+prefix.
+See the tutorial guide for retained results, and runtime requirements.
 
 ## New-game smoke test
 
@@ -73,9 +70,7 @@ tests/scaffold/newgame.sh
 ```
 
 There is no `make newgame` target. The script requires Bash, Perl, and Wine on
-`PATH`. It uses Wine's default prefix (or `WINEPREFIX` if set). That prefix's
-`Stars.ini` must contain a registered serial; command-line creation with `-a`
-does not register the game interactively.
+`PATH`. It uses Wine's default prefix (or `WINEPREFIX` if set). 
 
 To select a fixture, executable, timeout, or output directory:
 

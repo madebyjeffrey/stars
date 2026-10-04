@@ -319,20 +319,14 @@ Research(current := "", next := "") {
 
 ; BeginTutorial enters the tutorial through New Game and verifies its first page.
 BeginTutorial() {
-    global GamePid
     deadline := A_TickCount + 20000
     Loop {
-        if !ProcessExist(GamePid)
-            throw Error("Stars exited during registration")
-        for hwnd in WinGetList("Serial Number ahk_class #32770 ahk_pid " GamePid)
-            if DllCall("IsWindowVisible", "ptr", hwnd)
-                RegisterGame(hwnd)
         state := ReadState()
         title := Integer(state["hwnd.title"])
         if title && DllCall("IsWindowVisible", "ptr", title) && DllCall("IsWindowEnabled", "ptr", title)
             break
         if A_TickCount >= deadline
-            throw Error("Timed out waiting for registration and the startup window")
+            throw Error("Timed out waiting for the startup window")
         Sleep 100
     }
     ClickControl(ControlGetHwnd("&New Game...", title))
@@ -387,21 +381,6 @@ RejectGenerate() {
         throw Error("Premature Generate altered tutorial state")
     ReadMessages()
     WaitFor((s) => s["page"] = "2", "tutorial recovery after rejected generation")
-}
-
-; RegisterGame enters the serial configured by the runner.
-RegisterGame(dialog) {
-    LogEvent("registration", "Entering configured serial number")
-    serial := EnvGet("STARS_TUTORIAL_SERIAL")
-    if !RegExMatch(serial, "^[A-Za-z0-9]{8}$")
-        throw Error("Set STARS_TUTORIAL_SERIAL to an existing eight-character Stars! serial")
-    ControlSetText serial, DllCall("GetDlgItem", "ptr", dialog, "int", Controls["IDC_EDIT1"], "ptr")
-    ClickId(dialog, Controls["IDOK"])
-    if !WinWaitClose(dialog, , 5) {
-        ControlSetText "", DllCall("GetDlgItem", "ptr", dialog, "int", Controls["IDC_EDIT1"], "ptr")
-        throw Error("Supplied registration was not accepted")
-    }
-    LogEvent("registration", "Serial number accepted")
 }
 
 ; ReadTo advances real messages to a required zero-based tutorial message index.

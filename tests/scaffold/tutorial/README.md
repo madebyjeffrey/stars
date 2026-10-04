@@ -4,7 +4,7 @@ The suite runs AutoHotkey **v2.0.28** and the rebuilt Stars! executable inside t
 
 ## Run
 
-Install Wine, Python 3, CMake, Ninja and the x86_64 MinGW toolchain used by `mingw-debug`. The runner defaults `STARS_TUTORIAL_SERIAL` to `CV6JVUAX`. Set the environment variable to override it, then:
+Install Wine, Python 3, CMake, Ninja and the x86_64 MinGW toolchain used by `mingw-debug`. 
 
 ```sh
 make tutorial
@@ -16,8 +16,6 @@ make tutorial-reject
 ```sh
 python3 tests/scaffold/tutorial/run.py --ahk /path/to/AutoHotkey64.exe
 ```
-
-Startup waits for the serial dialog or an enabled title window. Registration events are recorded in `events.jsonl` without recording the serial itself. By default the runner reads registration from `tests/scaffold/starsbox/c_drive/WINDOWS/STARS.INI` when present; otherwise it enters the configured serial through the normal dialog.
 
 The runner builds `dist/tutorial-build/bin/stars.exe` with `STARS_TEST_TUTORIAL=ON` using `mingw-debug` by default. To test the optimized Release build, as the GitHub workflow does:
 
@@ -68,6 +66,6 @@ Each run is retained under `dist/scaffold/tutorial/<UTC timestamp>/`:
 - `wine.log` and `metadata.json`: interpreter diagnostics, versions and executable/source hashes.
 - `game/coverage.json`: required instruction inventory.
 
-By default, the runner closes only its own game and Wine server. The explicit debugging option retains a failed game. Prefixes contain registration data, remain in `/tmp` for debugging, and may be removed by the operating system; the GitHub workflow uploads diagnostic files only. It runs the full walkthrough and rejection check on pull requests and supports manual runs. The workflow uses the same default serial; optionally set the repository variable `STARS_TUTORIAL_SERIAL` to override it.
+By default, the runner closes only its own game and Wine server. The explicit debugging option retains a failed game. Prefixes contain registration data, remain in `/tmp` for debugging, and may be removed by the operating system; the GitHub workflow uploads diagnostic files only. It runs the full walkthrough and rejection check on pull requests and supports manual runs. 
 
 A populated instruction dispatcher is a coverage inventory, not proof that every gesture works on every Wine driver. `result.json` is the runtime authority; a full walkthrough is validated only when it reports `passed` with 80 pages at the final year.

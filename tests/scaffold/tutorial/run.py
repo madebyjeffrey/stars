@@ -107,12 +107,9 @@ def stage_ini(source, destination):
     settings.optionxform = str
     if source:
         settings.read(source)
-    registration = settings.get("Windows", "GlobalSettings") if settings.has_option("Windows", "GlobalSettings") else None
     clean = configparser.ConfigParser(interpolation=None)
     clean.optionxform = str
     clean["Windows"] = {"Resolution": "1280x960", "Layout": "1", "Toolbar": "1"}
-    if registration:
-        clean["Windows"]["GlobalSettings"] = registration
     if not clean.has_section("Misc"):
         clean.add_section("Misc")
     clean["Misc"].update({"Sound": "0", "Music": "0"})
@@ -177,19 +174,13 @@ def main():
     generate_catalog(stage)
     if not args.continue_run:
         prefix = Path(tempfile.mkdtemp(prefix="stars-tutorial-", dir="/tmp")).resolve()
-    environment = dict(os.environ, WINEPREFIX=str(prefix), WINEDEBUG="-all", MVK_CONFIG_LOG_LEVEL="0",
-                       STARS_TUTORIAL_SERIAL=os.environ.get("STARS_TUTORIAL_SERIAL") or "CV6JVUAX")
+    environment = dict(os.environ, WINEPREFIX=str(prefix), WINEDEBUG="-all", MVK_CONFIG_LOG_LEVEL="0")
     print(f"Tutorial run: {run}", flush=True)
     print(f"Wine prefix: {prefix}", flush=True)
     with (run / "wine.log").open("w") as log:
         if not args.continue_run:
             subprocess.run(["wineboot", "-u"], env=environment, stdout=log, stderr=log, check=True, timeout=120)
-            ini_source = args.ini
-            if ini_source is None:
-                local_ini = ROOT / "tests/scaffold/starsbox/c_drive/WINDOWS/STARS.INI"
-                if local_ini.is_file():
-                    ini_source = local_ini
-            stage_ini(ini_source, prefix / "drive_c/windows/Stars.ini")
+            stage_ini(args.ini, prefix / "drive_c/windows/Stars.ini")
         # winepath must share the run's prefix, not the user's default prefix.
         def convert(path):
             """convert translates one staged path using the isolated run environment."""

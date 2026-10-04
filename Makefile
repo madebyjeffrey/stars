@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all version-header save-cli compile test-unit scenario run-wine fmt compile-check res resources checkpoints-starsbox checkpoints-native checkpoints-compare tutorial tutorial-reject clean
+.PHONY: help all version-header save-cli compile test-unit scenario run-wine fmt compile-check res resources regression regression-quick regression-export tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -11,11 +11,17 @@ MINGW_CC    ?= x86_64-w64-mingw32-gcc
 MINGW_RC    ?= x86_64-w64-mingw32-windres
 FILES       ?= $(wildcard *.c)
 FORMAT_FILES ?= $(wildcard *.c *.h res/*.h tests/scaffold/*.c tests/scaffold/*.h tests/scaffold/tutorial/*.c tests/scaffold/tutorial/*.h)
-STARSBOX    ?= tests/scaffold/starsbox
 SEED        ?= 12345
-NATIVE_BUILD := $(DIST_DIR)/regression-build
-ORIGINAL_WORK ?= $(STARSBOX)/c_drive/REGTEST
-NATIVE_WORK   ?= $(STARSBOX)/c_drive/native
+# The native regression: a release build, its fixed-seed run, and the
+# checked-in baseline it is compared against (tests/scaffold/REGRESSION.md).
+REGRESSION_BUILD := $(DIST_DIR)/regression-build
+REGRESSION_WORK  ?= $(DIST_DIR)/scaffold/regression/native
+REGRESSION_REPORT := $(DIST_DIR)/scaffold/regression/comparison.json
+BASELINE_DIR     := tests/scaffold/fixtures/regression/native
+# Every scenario in the baseline, unless SCENARIOS names some.
+SCENARIOS ?= $(shell $(PYTHON) -c "import json; print(' '.join(json.load(open('$(BASELINE_DIR)/run.json'))['scenarios']))")
+THROUGH   ?= 150
+REGRESSION_ARGS = $(foreach s,$(SCENARIOS),--scenario $(s)) --through $(THROUGH)
 
 help:
 	@echo "Targets:"
@@ -26,9 +32,10 @@ help:
 	@echo "  fmt                  Format C sources and headers (FORMAT_FILES=ai.c to limit)"
 	@echo "  compile-check        Check C syntax (FILES=ai.c to limit) and resources"
 	@echo "  res / resources      Compile res/stars.rc into $(DIST_DIR)/stars_res.o"
-	@echo "  checkpoints-starsbox Generate fresh original checkpoints (takes a long time)"
-	@echo "  checkpoints-native   Build with a fixed seed and generate fresh native checkpoints"
-	@echo "  checkpoints-compare  Compare original and native checkpoints"
+	@echo "  regression           Run the native regression and compare it with the baseline"
+	@echo "                       (SCENARIOS=\"noai smallai4\" and THROUGH=10 to limit)"
+	@echo "  regression-quick     Run smallai4 through turn 10 and compare"
+	@echo "  regression-export    Replace the baseline with the last full regression run"
 	@echo "  tutorial             Run the complete AutoHotkey v2 tutorial under Wine"
 	@echo "  tutorial-reject      Verify early Generate is rejected"
 	@echo "  clean                Remove $(DIST_DIR)/"
@@ -84,23 +91,25 @@ resources: version-header
 	@mkdir -p "$(DIST_DIR)"
 	cd res && $(MINGW_RC) -I"$(VERSION_DIR)" stars.rc -O coff -o "$(abspath $(DIST_DIR))/stars_res.o"
 
-# Preparing checkpoints requires fresh work directories.
-checkpoints-starsbox: save-cli
-	rm -rf "$(ORIGINAL_WORK)"
-	$(PYTHON) tests/scaffold/regression.py prepare --engine dosbox --seed $(SEED) --exe "$(STARSBOX)/c_drive/STARS/stars.exe" --work "$(ORIGINAL_WORK)"
-	$(PYTHON) tests/scaffold/regression.py run --cli "$(SAVE_CLI)" --work "$(ORIGINAL_WORK)"
+# Builds the release exe as CI does, runs a fresh work directory with
+# stars.exe -s$(SEED) and compares it with the baseline. A difference exits
+# nonzero.
+regression: save-cli
+	$(CMAKE) --preset mingw-release -B "$(REGRESSION_BUILD)"
+	$(CMAKE) --build "$(REGRESSION_BUILD)"
+	rm -rf "$(REGRESSION_WORK)"
+	$(PYTHON) tests/scaffold/regression.py prepare --seed $(SEED) --exe "$(REGRESSION_BUILD)/bin/stars.exe" --work "$(REGRESSION_WORK)"
+	$(PYTHON) tests/scaffold/regression.py run --cli "$(SAVE_CLI)" --work "$(REGRESSION_WORK)" $(REGRESSION_ARGS)
+	$(PYTHON) tests/scaffold/regression.py compare "$(BASELINE_DIR)" "$(REGRESSION_WORK)" $(REGRESSION_ARGS) --report "$(REGRESSION_REPORT)"
 
-checkpoints-native: save-cli
-	$(CMAKE) --preset mingw-debug -B "$(NATIVE_BUILD)" -DSTARS_TEST_SEED=$(SEED)
-	$(CMAKE) --build "$(NATIVE_BUILD)"
-	rm -rf "$(NATIVE_WORK)"
-	$(PYTHON) tests/scaffold/regression.py prepare --engine native --seed $(SEED) --exe "$(NATIVE_BUILD)/bin/stars.exe" --work "$(NATIVE_WORK)"
-	$(PYTHON) tests/scaffold/regression.py run --cli "$(SAVE_CLI)" --work "$(NATIVE_WORK)"
+regression-quick:
+	$(MAKE) regression SCENARIOS=smallai4 THROUGH=10
 
-checkpoints-compare: save-cli
-	$(PYTHON) tests/scaffold/regression.py compare --cli "$(SAVE_CLI)" "$(ORIGINAL_WORK)" "$(NATIVE_WORK)"
+# For a commit that changes behavior on purpose: after a full `make
+# regression`, replace the baseline with that run.
+regression-export:
+	$(PYTHON) tests/scaffold/regression.py export --work "$(REGRESSION_WORK)" $(foreach s,$(SCENARIOS),--scenario $(s)) --replace
 
-# STARS_TUTORIAL_SERIAL optionally overrides the runner's default serial.
 tutorial:
 	$(PYTHON) tests/scaffold/tutorial/run.py --download-ahk $(TUTORIAL_ARGS)
 

@@ -394,17 +394,6 @@ for a range-3 sapper score to flatten before range-2 beams become attractive.
 The exact threshold and tie handling responsible for the reported refusal
 to close have not been demonstrated.
 
-### Copy Protection When Editing an Ally's Turn File — different here
-
-`log.c`: `FLoadLogFile`, `FWriteLogFile`; `utilgen.c`: `GetDiskSerialNumber`;
-`turn.c`: `FGenerateTurn`; `battle.c`: `SpankTheCheaters`.
-Host loading reads the turn's serial number and machine configuration, and
-generation compares player identities/configurations before applying penalties.
-However, `FWriteLogFile` writes both `vSerialNumber` and the current
-`vrgbEnvCur` to `RTLOGHDR` on each save. The supplied explanation that only the
-serial changes on resubmission does not match this writer. A stale-configuration
-path elsewhere has not been established.
-
 ### Font Problems on Non-English Windows — located configuration path
 
 `init.c`: `ReadIniSettings`, `FCreateFonts`; `report.c`: `DrawScoreReport`;

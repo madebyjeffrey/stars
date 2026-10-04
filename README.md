@@ -94,8 +94,7 @@ all checkpoints through turn 150 against the checked-in native baseline
 checkpoints are kept alongside it as the record of 2.6j behavior.
 All workflows can also be run manually; the release workflow accepts `main`
 or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
-the tutorial uses read-only permissions. The optional repository variable
-`STARS_TUTORIAL_SERIAL` overrides the tutorial runner's default serial.
+the tutorial uses read-only permissions.
 
 ## Regression save tooling
 
@@ -103,11 +102,15 @@ The standalone go module in `tests/savecli/` supplies the save
 comparison and AI update commands used by checkpoint testing:
 
 ```sh
-make save-cli
-make checkpoints-compare
+make regression        # every baseline scenario through turn 150
+make regression-quick  # smallai4 through turn 10
+make regression-export # after a full run, replace the baseline
 ```
 
-Checkpoint targets build `dist/stars-save` automatically. They require a local
-starsbox bundle at `tests/scaffold/starsbox`. See
+`make regression` builds the fixed-seed release `stars.exe` and
+`dist/stars-save`, runs a fresh `dist/scaffold/regression/native`, and
+compares it with the checked-in baseline in
+`tests/scaffold/fixtures/regression/native/`; any difference fails.
+`SCENARIOS="noai smallai4"` and `THROUGH=10` limit a run. See
 [the save CLI README](tests/savecli/README.md) and
 [regression instructions](tests/scaffold/REGRESSION.md).

@@ -2,10 +2,12 @@
 #include "version.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    char   *pch;
-    char   *lpT;
-    int16_t i;
-    MSG     msg;
+    char    *pch;
+    char    *lpT;
+    int16_t  i;
+    MSG      msg;
+    uint32_t lSeed;
+    int16_t  fSeed;
 
     hInst = hInstance;
     szBase[0] = 0;
@@ -17,7 +19,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         AlertSz(PszFormatIds(idsUnableInitializeStars, NULL), MB_ICONHAND);
         return 0;
     }
-    Randomize2(GetTickCount());
+    fSeed = FALSE;
+    lSeed = 0;
     if (!FCreateStuff()) {
         return 0;
     }
@@ -123,6 +126,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 case 'c':
                     ini.fCmdLine = szBase[0] != 0;
                     break;
+                case 'S':
+                case 's':
+                    /* -s<seed>: a fixed startup seed instead of the clock, so
+                       regression runs repeat exactly. Not in the original. */
+                    fSeed = TRUE;
+                    lSeed = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        lSeed = 10 * lSeed + (uint32_t)(*lpT - '0');
+                    }
+                    break;
                 case 'P':
                 case 'p':
                     for (lpT++; *lpT == ' '; lpT++) {
@@ -149,6 +163,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             ini.fCmdLine = TRUE;
         }
     }
+    /* The original seeded before FCreateStuff; nothing in between draws a
+       random number, so seeding after the command line is the same. */
+    Randomize2(fSeed ? lSeed : GetTickCount());
     PostMessage(hwndFrame, WM_STARS_STARTUP, 0, 0);
     while (GetMessage(&msg, NULL, 0, 0) != 0) {
         if (hwndTitle) {
@@ -199,21 +216,6 @@ LError:
         szBase[0] = 0;
     }
     return fSuccess;
-}
-
-int16_t IPlrAlsoCheater(int16_t iplr) {
-    int16_t i;
-
-    if (!FValidSerialLong(vrgts[iplr].lSerialNumber)) {
-        return iplrNone;
-    }
-    for (i = 0; i < game.cPlayer; i++) {
-        if (i != iplr && rgplr[i].fCheater && vrgts[iplr].lSerialNumber == vrgts[i].lSerialNumber &&
-            memcmp(vrgts[iplr].rgbConfig, vrgts[i].rgbConfig, 11) != 0) {
-            return i;
-        }
-    }
-    return iplrNone;
 }
 
 int16_t FGetSystemColors() {
@@ -525,41 +527,6 @@ INT_PTR CALLBACK About(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         case IDCANCEL:
             KillTimer(hwnd, uTimerId);
             uTimerId = 0;
-            EndDialog(hwnd, 1);
-            return 1;
-        case IDC_ABOUT_ORDER_INFO:
-            lpProc = MakeProcInstance(OrderInfoDlg, hInst);
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ORDER_INFO), hwnd, lpProc);
-            FreeProcInstance(lpProc);
-            break;
-        }
-        break;
-    }
-    return 0;
-}
-
-INT_PTR CALLBACK OrderInfoDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    RECT rc;
-
-    switch (message) {
-    case WM_ERASEBKGND:
-        GetClientRect(hwnd, &rc);
-        FillRect((HDC)wParam, &rc, hbrButtonFace);
-        return 1;
-    case WM_CTLCOLORMSGBOX:
-    case WM_CTLCOLOREDIT:
-    case WM_CTLCOLORLISTBOX:
-    case WM_CTLCOLORBTN:
-    case WM_CTLCOLORDLG:
-    case WM_CTLCOLORSCROLLBAR:
-    case WM_CTLCOLORSTATIC:
-        if (message == WM_CTLCOLORSTATIC) {
-            SetBkColor((HDC)wParam, crButtonFace);
-            return (INT_PTR)hbrButtonFace;
-        }
-        break;
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK) {
             EndDialog(hwnd, 1);
             return 1;
         }

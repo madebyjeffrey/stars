@@ -3,7 +3,7 @@ name: Stars native regression
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, '2.8']
   workflow_dispatch:
 
 permissions:
@@ -44,9 +44,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wine64 wine gcc-mingw-w64-x86-64 cmake ninja-build xvfb xauth
 
-      - name: Build fixed-seed stars.exe and save CLI
+      - name: Build stars.exe and save CLI
         run: |
-          cmake --preset mingw-release -B dist/regression-build -DSTARS_TEST_SEED=12345
+          cmake --preset mingw-release -B dist/regression-build
           cmake --build dist/regression-build --parallel 2
           make save-cli
 
@@ -58,7 +58,7 @@ jobs:
           xvfb-run -a -s '-screen 0 1600x1200x24' bash -e -o pipefail <<'EOF'
           wineboot -u > dist/scaffold/regression/wineboot.log 2>&1
           cp tests/scaffold/fixtures/regression/Stars.ini "$WINEPREFIX/drive_c/windows/Stars.ini"
-          python3 tests/scaffold/regression.py prepare --engine native --seed 12345 \
+          python3 tests/scaffold/regression.py prepare --seed 12345 \
             --exe dist/regression-build/bin/stars.exe --work dist/scaffold/regression/native
           python3 tests/scaffold/regression.py run --work dist/scaffold/regression/native \
             --scenario "$SCENARIO" --through 150 --timeout 300

@@ -5,7 +5,6 @@
 #include <windows.h>
 
 extern char     mpishdefishTutor[6];
-extern uint32_t bogi[25];
 
 int16_t          FReadShDef(RTSHDEF *lprt, SHDEF *lpshdef, int16_t iplrLoad);
 void             ReadRtPlr(PLAYER *pplr, uint8_t *pbIn);
@@ -17,8 +16,6 @@ void             UpdateBattleRecords();
 INT_PTR CALLBACK AskSaveDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void             PromptSaveGame();
 void             DestroyCurGame();
-int16_t          FBogusLong(uint32_t lSerial);
-int16_t          FValidSerialLong(uint32_t lSerial);
 void             FileError(MessageId ids);
 void             GetFileStatus(int16_t dt, int16_t iPlayer);
 int16_t          FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md);

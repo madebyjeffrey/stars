@@ -74,7 +74,6 @@ int16_t  FCheckPassword();
 int32_t  LSaltFromSz(char *psz);
 INT_PTR CALLBACK PasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK NewPasswordDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-uint32_t         GetDiskSerialNumber();
 void             ShowProgressGauge();
 void             HideProgressGauge();
 void             UpdateProgressGauge(ProgressStep pctX10);
