@@ -195,7 +195,33 @@ static void TestBattleRollover(void) {
     vrgtok = NULL;
 }
 
+// A fleet's goto has its high bit set, so it is negative as a MsgGoto. The
+// stored word was compared unsigned, so fleet messages never matched.
+static void TestFleetMessageGoto(void) {
+    MSGTURN rgmt[2];
+    MsgGoto iObj;
+
+    iObj = (MsgGoto)(5 | 0x8000);
+    memset(rgmt, 0, sizeof(rgmt));
+    rgmt[0].iPlr = 1;
+    rgmt[0].msghdr.iMsg = idmHasCompletedAssignedOrders;
+    rgmt[0].msghdr.wGoto = iObj;
+    rgmt[1] = rgmt[0];
+    rgmt[1].msghdr.wGoto = 5;
+    lpMsg = (int16_t *)rgmt;
+    imemMsgCur = sizeof(rgmt);
+
+    TEST_CHECK(FFindPlayerMessage(1, idmHasCompletedAssignedOrders, iObj));
+    TEST_CHECK(FRemovePlayerMessage(1, idmHasCompletedAssignedOrders, iObj) == 1);
+    TEST_CHECK(rgmt[0].msghdr.iMsg == 0x1ff);
+    TEST_CHECK(rgmt[1].msghdr.iMsg == idmHasCompletedAssignedOrders);
+    TEST_CHECK(!FFindPlayerMessage(1, idmHasCompletedAssignedOrders, iObj));
+    lpMsg = NULL;
+    imemMsgCur = 0;
+}
+
 TEST_LIST = {{"player messages", TestMessages},
+             {"fleet message goto", TestFleetMessageGoto},
              {"static control color", TestStaticColor},
              {"battle heap rollover", TestBattleRollover},
              {NULL, NULL}};

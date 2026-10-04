@@ -106,3 +106,9 @@ produce different results from a 2.6j host for the same turn.
   The original trusted the record's relation count and name lengths, so a
   count above 16 or a name of 32 or more characters overran the relations
   and names (`ReadRtPlr`). Valid files load as before.
+- Native build: a fleet's "has completed its assigned orders" message is
+  removed again when the fleet is used up colonizing, scrapping or meeting
+  the Mystery Trader, or is replaced when it completes new orders, as in
+  the original. The stored goto was compared as unsigned and the fleet's
+  goto, which has its high bit set, as signed, so they never matched
+  (`FRemovePlayerMessage`, `FFindPlayerMessage`).

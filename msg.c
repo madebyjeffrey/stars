@@ -2162,7 +2162,7 @@ int16_t FRemovePlayerMessage(int16_t iPlr, MessageId iMsg, MsgGoto iObj) {
     lpb = (uint8_t *)lpMsg;
     lpbMax = lpb + imemMsgCur;
     for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
-        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
+        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && (MsgGoto)RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
             cDel++;
             RawStore16((uint8_t *)lpb + 0x1, (RawLoad16((uint8_t *)lpb + 0x1) & 0xfe00) | 0x1ff);
         }
@@ -2177,7 +2177,7 @@ int16_t FFindPlayerMessage(int16_t iPlr, int16_t iMsg, MsgGoto iObj) {
     lpb = (uint8_t *)lpMsg;
     lpbMax = lpb + imemMsgCur;
     for (; lpb < lpbMax; lpb += 5 + (*lpb >> 4 & 0xf)) {
-        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
+        if ((*lpb & 0xf) == iPlr && (RawLoad16((uint8_t *)lpb + 0x1) & 0x1ff) == iMsg && (MsgGoto)RawLoad16((uint8_t *)lpb + 0x3) == iObj) {
             return TRUE;
         }
     }
