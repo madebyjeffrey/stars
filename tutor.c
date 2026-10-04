@@ -2460,7 +2460,7 @@ int16_t FCheckMessages(int16_t imsg, MessageId idm, int16_t fFilter) {
 }
 
 int16_t FCheckResearch(TechFieldType iTech, TechFieldType iTechNext, int16_t pct) {
-    if ((rgplr[0].iTechCur & 0xf) == iTech && rgplr[0].iTechCur >> 4 == iTechNext && rgplr[0].pctResearch == pct) {
+    if (rgplr[0].iTechNow == iTech && rgplr[0].iTechNext == iTechNext && rgplr[0].pctResearch == pct) {
         return TRUE;
     }
     tutor.idh = idhResearchDialog;

@@ -886,8 +886,8 @@ RetryAll:
         if (!rgplr[i].fAi) {
             rgplr[i].pctResearch = 15;
         }
-        rgplr[i].iTechCur &= 0xfff0;
-        rgplr[i].iTechCur = (rgplr[i].iTechCur & 0xff0f) | 0x60;
+        rgplr[i].iTechNow = 0;
+        rgplr[i].iTechNext = 6;
         rgplr[i].lResLastYear = 0;
         rgplr[i].wScore = 0;
         for (j = 0; j < game.cPlayer; j++) {

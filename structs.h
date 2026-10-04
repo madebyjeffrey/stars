@@ -1561,7 +1561,15 @@ struct _player {
     int8_t        rgTech[6];      /* +0x001A (6) */
     uint32_t      rgResSpent[6];  /* +0x0020 (24) */
     int8_t        pctResearch;    /* +0x0038 (1) */
-    int8_t        iTechCur;       /* +0x0039 (1) */
+    union {
+        int8_t iTechCur; /* +0x0039 (1) */
+        struct {
+            // iTechNext is signed, as iTechCur >> 4 was: 6 means the
+            // same field, 7 the lowest.
+            uint8_t iTechNow : 4; /* +0x0039 (1) @bit0 */
+            int8_t  iTechNext : 4; /* @bit4 */
+        };
+    };
     int32_t       lResLastYear;   /* +0x003A (4) */
     int8_t        rgAttr[16];     /* +0x003E (16) */
     RaceTraitBits grbitAttr;      /* +0x004E (4) */

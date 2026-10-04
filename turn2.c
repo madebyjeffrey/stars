@@ -2097,8 +2097,8 @@ void UpdateResearchStatus(int16_t fUsePool) {
     for (i = 0; i < game.cPlayer; i++) {
         fUsePool = fUsePoolOrig;
         fGeneral = GetRaceGrbit(&rgplr[i], ibitRaceGeneralizedResearch);
-        iTechCur = rgplr[i].iTechCur & 0xf;
-        iTechNext = (int16_t)(int8_t)(rgplr[i].iTechCur >> 4);
+        iTechCur = rgplr[i].iTechNow;
+        iTechNext = rgplr[i].iTechNext;
         idPlayer = i;
         if (!rgplr[i].fDead) {
             cPlrAlive++;
@@ -2209,13 +2209,13 @@ void UpdateResearchStatus(int16_t fUsePool) {
                                     iTechNext = jj;
                                 }
                             }
-                            rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xf0) | iTechNext;
+                            rgplr[idPlayer].iTechNow = iTechNext;
                             rgplr[i].rgResSpent[iT] = 0;
                             iTechCur = iTechNext;
                             iTechNext = 7;
                         } else {
-                            rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xf) | 0x60;
-                            rgplr[idPlayer].iTechCur = (rgplr[idPlayer].iTechCur & 0xf0) | iTechNext;
+                            rgplr[idPlayer].iTechNext = 6;
+                            rgplr[idPlayer].iTechNow = iTechNext;
                             rgplr[i].rgResSpent[iT] = 0;
                             iTechCur = iTechNext;
                             iTechNext = 6;
