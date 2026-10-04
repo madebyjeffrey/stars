@@ -3148,6 +3148,118 @@ int16_t IFindIdealWarp(FLEET *lpfl, int16_t fIgnoreScoops) {
     return iWorst;
 }
 
+int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
+    int32_t lFuel;
+    int16_t iWarp;
+    int16_t cTravel;
+    int16_t iwp;
+    int16_t lDist;
+    int16_t cSpeed;
+    int16_t fGoFlatOutAi;
+    int16_t fGoFlatOut;
+    int16_t iWarpAi;
+    int16_t iWarpSav;
+    int16_t j;
+    int16_t i;
+    PLANET *lppl;
+    int16_t iWarpOld;
+    SCAN    scan;
+
+    iWarpSav = lpord->iWarp;
+    iWarp = IFindIdealWarp(NULL, FALSE);
+    if (fAi) {
+        iWarpAi = IFindIdealWarp(NULL, TRUE);
+    }
+    for (iwp = lpfl->cord - 1; iwp >= 0 && lpord != &lpfl->lpplord->rgord[iwp]; iwp--) {
+    }
+    if (iwp <= 0) {
+        return iWarp;
+    }
+    if (lpord->grTask == grTaskColonize || lpord->grTask == grTaskScrap) {
+        fGoFlatOut = TRUE;
+    } else {
+        fGoFlatOut = FALSE;
+        for (i = 0; i < 16; i++) {
+            if (lpfl->rgcsh[i] > 0) {
+                for (j = 0; j < rglpshdef[lpfl->iPlayer][i].hul.chs; j++) {
+                    if (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].grhst == hstSpecialM &&
+                        (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMColonizationModule ||
+                         rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMOrbitalConstructionModule)) {
+                        fGoFlatOut = TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if (!fGoFlatOut && fAi) {
+        fGoFlatOutAi = TRUE;
+        fGoFlatOut = TRUE;
+    } else {
+        fGoFlatOutAi = FALSE;
+    }
+    if (iWarp < 9) {
+        iWarpOld = iWarp;
+        if (FFindNearestObject(lpord->pt, grobjPlanet | mdExact, &scan)) {
+            lppl = LpplFromId(scan.idpl);
+        } else {
+            lppl = NULL;
+        }
+        if (!fGoFlatOut && (!lppl || (lppl->iPlayer != iplrNone && lppl->iPlayer != idPlayer))) {
+            if (iwp > 1 && lpord[-1].iWarp > (uint16_t)iWarp && lpord[-1].iWarp <= 10) {
+                iWarp = lpord[-1].iWarp;
+            }
+            if (LFuelUseToWaypoint(lpfl, iwp, TRUE) >= (int32_t)(LGetFleetStat(lpfl, 1) / 10) || lpfl->rgwtMin[4] < (int32_t)(LGetFleetStat(lpfl, 1) * 7) / 10)
+                goto LOptimizeSpeed;
+            iWarp++;
+            goto LTryLimitedSpeed;
+        } else {
+            if (fGoFlatOutAi && lppl && lppl->iPlayer == idPlayer && rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef != ihuldefOrbitalFort) {
+                fGoFlatOutAi = FALSE;
+            }
+            iWarp = 9;
+        }
+    LTryLimitedSpeed:
+        while (iWarp > iWarpOld) {
+            lpord->iWarp = iWarp;
+            lFuel = LFuelUseToWaypoint(lpfl, iwp, TRUE);
+            if (lFuel > lpfl->rgwtMin[4])
+                goto LDecWarp;
+            if (((lppl && lppl->fStarbase && lppl->iPlayer == idPlayer && LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) ||
+                 lFuel <= (int32_t)(lpfl->rgwtMin[4] / 2) || fGoFlatOut))
+                break;
+        LDecWarp:
+            iWarp--;
+        }
+        lpord->iWarp = iWarpSav;
+    }
+    if (fGoFlatOutAi && iWarp > iWarpAi) {
+        iWarp = iWarpAi;
+    }
+LOptimizeSpeed:
+    if (iWarp > 1 && lpord->grobj != grobjFleet) {
+        lDist = LOWORD((int32_t)DGetDistance(lpord->pt.x, lpord->pt.y, lpord[-1].pt.x, lpord[-1].pt.y));
+        cSpeed = iWarp * iWarp;
+        cTravel = (int16_t)(iWarp * iWarp + lDist - 1) / cSpeed;
+        do {
+            iWarp--;
+            if (iWarp <= 1)
+                break;
+            cSpeed = iWarp * iWarp;
+        } while (cTravel == (int16_t)(lDist + cSpeed - 1) / cSpeed);
+        iWarp++;
+    } else {
+        cTravel = 2;
+    }
+    if (FCanFleetUseStargates(lpfl, lpord[-1].pt, lpord->pt) == 1) {
+        iWarp = 11;
+    }
+    if (iWarp > 11) {
+        iWarp = 9;
+    }
+    return iWarp;
+}
+
 int32_t LFuelUseToWaypoint(FLEET *lpfl, int16_t iwp, int16_t fMaxCargo) {
     int32_t lCur;
     int16_t iWarp;

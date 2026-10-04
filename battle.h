@@ -49,5 +49,6 @@ void SendBattleMessages(FLEET *lpflBtl, int16_t cplr, int16_t idBtl, uint16_t *r
                         uint16_t grfSpectator);
 int16_t FAttackPlayer(FLEET *lpfl, int16_t iplr);
 void    DoBombing();
+int16_t CBattles();
 
 #endif

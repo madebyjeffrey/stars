@@ -1,4 +1,5 @@
 #include "common.h"
+#include "version.h"
 
 uint32_t rgcrDrawStars2b[5] = {8355711, 127, 32512, 8323072};
 uint32_t rgcrDrawStars2a[5] = {12632256, 255, 65280, 16711680};
@@ -1524,6 +1525,70 @@ int16_t FFindNearestObject(POINT16 pt, GrobjClass grobj, SCAN *pscan) {
     return FALSE;
 }
 
+int16_t PtToScan(int16_t d) {
+    if (iScanZoom == zoom100) {
+        return d;
+    }
+    switch (iScanZoom) {
+    case zoom400:
+        d *= 4;
+        break;
+    case zoom200:
+        d *= 2;
+        break;
+    case zoom50:
+        d >>= 1;
+        break;
+    case zoom25:
+        d >>= 2;
+        break;
+    case zoom38:
+        d = ((d << 1) + d) >> 3;
+        break;
+    case zoom75:
+        d = ((d << 1) + d) >> 2;
+        break;
+    case zoom125:
+        d = ((d << 2) + d) >> 2;
+        break;
+    case zoom150:
+        d = ((d << 1) + d) >> 1;
+    }
+    return d;
+}
+
+int16_t ScanToPt(int16_t d) {
+    if (iScanZoom == zoom100) {
+        return d;
+    }
+    switch (iScanZoom) {
+    case zoom400:
+        d >>= 2;
+        break;
+    case zoom200:
+        d >>= 1;
+        break;
+    case zoom50:
+        d *= 2;
+        break;
+    case zoom25:
+        d *= 4;
+        break;
+    case zoom38:
+        d = (int16_t)(d * 8) / 3;
+        break;
+    case zoom75:
+        d = (int16_t)(d * 4) / 3;
+        break;
+    case zoom125:
+        d = (int16_t)(d * 4) / 5;
+        break;
+    case zoom150:
+        d = (int16_t)(d * 2) / 3;
+    }
+    return d;
+}
+
 void UpdateShdefCost(SHDEF *lpshdef) {
     int32_t  dpT;
     uint32_t wt;
@@ -2582,4 +2647,10 @@ void TurnLog(StringId ids) {
         OutputSz(6, szTemp);
     }
     return;
+}
+
+char *SzVersion() {
+    /* The original formatted idsVersionD02dC ("Version %d.%02d%c") with 2, 60, 'j'. */
+    wsprintf(szWork, "Version %s", STARS_VERSION_DISPLAY);
+    return szWork;
 }

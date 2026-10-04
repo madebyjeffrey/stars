@@ -21,7 +21,7 @@ release check use. The name shown (`STARS_VERSION_DISPLAY`) marks this line
 as a 64-bit Win32 build: `2.8x64` for 2.8.0 and `2.8.1x64` for 2.8.1.
 Development builds append the full version in parentheses. It appears in
 the About box, on the splash screen and in report headers (`SzVersion` in
-`stars.c`), in `ProductVersion` and in release titles.
+`util.c`), in `ProductVersion` and in release titles.
 
 A development build is numbered toward the next version: the patch after the
 last `vX.Y.Z` tag, or `project(stars VERSION …)` in `CMakeLists.txt` if that

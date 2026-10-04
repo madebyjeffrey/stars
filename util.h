@@ -76,5 +76,8 @@ void     DrawPlanetPrintDot(HDC hdc, int16_t x, int16_t y, int16_t iSize);
 void     ClearFile(int16_t dt);
 void     OutputSz(int16_t dt, char *sz);
 void     TurnLog(StringId ids);
+int16_t  PtToScan(int16_t d);
+int16_t  ScanToPt(int16_t d);
+char    *SzVersion();
 
 #endif
