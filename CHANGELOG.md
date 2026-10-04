@@ -164,3 +164,6 @@ produce different results from a 2.6j host for the same turn.
   target, list every fleet and object there. The original stopped at 100
   entries, so objects past them couldn't be selected or targeted
   (`ScannerWndProc`, `ClickInShipOrders`, `PopupMenu`). Client only.
+- Race wizard: a race that was Random and is then customized is no longer
+  replaced by a random race when the game is created. Choosing Custom kept
+  the random-race setting (`RaceWizardDlg1`).

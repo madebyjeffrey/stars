@@ -335,7 +335,7 @@ was written over "Longnames" failed `FWasRaceFile`. `IRaceChecksum` now
 checksums a copy with the names zeroed after their terminators, as
 `ReadRtPlr` restores them. Files with a bad checksum still fail to load.
 
-### Random Race — candidate
+### Random Race — fixed in 2.8
 
 `race.c`: `RaceWizardDlg1`, `RaceCreationWizard`; `create.c`: `GenerateWorld`,
 `InitNewGamePlr`; `save.c`: `WriteRtPlr`.
@@ -344,6 +344,12 @@ the resulting player data. `GenerateWorld` calls `CreateRandomRace` when
 `ibitRaceAIPlayer` is set. Template/flag persistence is the relevant path, but
 the reported failure to clear the random setting after deselection has not
 been demonstrated. The supplied report also notes a failed reproduction.
+
+**2.8:** confirmed by `tests/unit/test_race.c`. The Random template is
+only `ibitRaceAIPlayer`. Leaving the wizard's first page copies the chosen
+template into the race, but with Custom chosen it keeps the race being
+edited, so a race that had been Random kept the bit through every later
+page and was still replaced at game creation. Custom now clears the bit.
 
 ### 32k Ship Limit Per Fleet — fixed in 2.8
 

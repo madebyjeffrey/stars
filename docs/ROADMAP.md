@@ -89,7 +89,7 @@ other the serial-unlocked shareware), which can point at causes.
 | East/West speed bump immunity | `FTravelThroughMineFields`, `FIntersectCircleLine` horizontal case | not reproduced (`test_turn.c`) |
 | Cheap starbase (UltraStation variant) | `PROD.pct` against edited designs | fixed (`test_log.c`): a design change or deletion clears queued progress |
 | [freepop] hack | `COLDROP` replay in `FRunLogRecord` | open |
-| Random race | `RaceWizardDlg1` template persistence | open |
+| Random race | `RaceWizardDlg1` template persistence | fixed (`test_race.c`) |
 | AR starter colonies | starter-base queue entry in `Produce` | open |
 | Sappers fail to close to range 2 | `DpFromPtokBrcToBrc` move scoring | open |
 | WP0 pop reload ignored | pending drops vs colonize task | open |

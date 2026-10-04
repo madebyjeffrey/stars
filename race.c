@@ -290,6 +290,11 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 if (j <= 277) {
                     k = j - 271;
                     vplr = vrgplrDef[k];
+                } else {
+                    /* A custom race isn't random. The original kept the
+                       random-race bit of a race that had been Random, and
+                       GenerateWorld replaced the customized race. */
+                    SetRaceGrbit(&vplr, ibitRaceAIPlayer, FALSE);
                 }
                 GetDlgItemText(hwnd, IDC_RACE_NAME, vplr.szName, 32);
                 GetDlgItemText(hwnd, IDC_RACE_PLURAL_NAME, vplr.szNames, 32);

@@ -86,6 +86,30 @@ static void test_ReadRtPlr_bounds_record_lengths(void) {
         TEST_CHECK(buf.rgchGuard[i] == 0x55);
 }
 
+// Random race: the Random template is only the random-race bit, which
+// GenerateWorld replaces with a random race. Choosing Custom on the first
+// wizard page keeps the race being edited, so a race that had been Random
+// kept the bit and was still replaced, however it was customized.
+static void test_RaceWizardDlg1_custom_clears_random(void) {
+    HWND hwnd;
+    HWND hwndCtl;
+
+    TEST_ASSERT(FStarsTestInit());
+    vplr = vrgplrDef[6];
+    TEST_ASSERT(GetRaceGrbit(&vplr, ibitRaceAIPlayer) != 0);
+    strcpy(vplr.szName, "Randomite");
+    strcpy(vplr.szNames, "Randomites");
+    hwnd = CreateDialogParamA(hInst, MAKEINTRESOURCE(IDD_RACE_WIZARD_1), NULL, RaceWizardDlg1, 0);
+    TEST_ASSERT(hwnd != NULL);
+    CheckRadioButton(hwnd, IDC_RACE_HUMANOID, IDC_RACE_CUSTOM, IDC_RACE_CUSTOM);
+    hwndCtl = GetDlgItem(hwnd, IDC_RACE_CUSTOM);
+    SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_RACE_CUSTOM, BN_CLICKED), (LPARAM)hwndCtl);
+    SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_NEXT, BN_CLICKED), (LPARAM)GetDlgItem(hwnd, IDC_NEXT));
+    DestroyWindow(hwnd);
+    TEST_CHECK_(GetRaceGrbit(&vplr, ibitRaceAIPlayer) == 0, "the custom race is still random");
+}
+
 TEST_LIST = {{"IRaceChecksum ignores stale name bytes", test_IRaceChecksum_ignores_stale_name_bytes},
              {"ReadRtPlr bounds record lengths", test_ReadRtPlr_bounds_record_lengths},
+             {"RaceWizardDlg1 Custom clears the random-race bit", test_RaceWizardDlg1_custom_clears_random},
              {NULL, NULL}};
