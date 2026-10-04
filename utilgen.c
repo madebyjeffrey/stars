@@ -887,30 +887,6 @@ int32_t LSaltFromSz(char *psz) {
     return lSalt;
 }
 
-void UpdateProgressGauge(ProgressStep pctX10) {
-    int16_t iNum;
-
-    if (hwndProgressGauge) {
-        iNum = 0;
-        if (pctX10 == progressStep4) {
-            pctX10 = vpctProgressGauge + 4;
-        } else if (pctX10 == progressStep1) {
-            pctX10 = vpctProgressGauge + 1;
-        } else if (pctX10 < 0) {
-            pctX10 = 0;
-        } else if (pctX10 > 1000) {
-            if (!gd.fProgressTxt) {
-                return;
-            }
-            iNum = pctX10;
-            pctX10 = vpctProgressGauge;
-        }
-        vpctProgressGauge = pctX10;
-        DrawProgressGauge(NULL, FALSE, iNum);
-    }
-    return;
-}
-
 int32_t LDistance2(POINT16 pt1, POINT16 pt2) {
     int32_t dy;
     int32_t dx;

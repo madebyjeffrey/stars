@@ -12,4 +12,7 @@ int16_t IdAlertBox(char *sz, int16_t mbType);
 int16_t PromptPassword();
 void    PromptSaveGame();
 
+// Progress during turn generation and universe creation.
+void UpdateProgressGauge(ProgressStep pctX10);
+
 #endif

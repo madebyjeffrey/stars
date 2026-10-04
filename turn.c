@@ -19,7 +19,6 @@ int16_t FGenerateTurn() {
     int16_t  i;
     jmp_buf  env;
     char     szT[256];
-    HCURSOR  hcurSav;
     int16_t  idCur;
     int16_t  fFollow;
     char    *pchBak;
@@ -37,7 +36,6 @@ int16_t FGenerateTurn() {
 
     idCur = idPlayer;
     fSuccess = FALSE;
-    hcurSav = SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32514)));
     DestroyCurGame();
     if (gd.fTutorial) {
         Randomize(1234567890);
@@ -47,7 +45,6 @@ int16_t FGenerateTurn() {
     UpdateProgressGauge(360);
     if (!FLoadGame(szBase, "hst")) {
         fFileErrSilent = fErrSav;
-        SetCursor(hcurSav);
         TurnLog(idsCantFindHostFile);
         return FALSE;
     }
@@ -349,7 +346,6 @@ FreeStuffUp:
     if (fSuccess && ini.fGen) {
         vretExitValue = 1;
     }
-    SetCursor(hcurSav);
     TurnLog(fSuccess + 1380);
     return fSuccess;
 }

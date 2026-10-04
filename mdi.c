@@ -191,6 +191,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     POINT16      ptD;
     POINT16      ptStart;
     POINT16      ptChg;
+    HCURSOR      hcurSav;
 
     switch (msg) {
     case WM_CREATE:
@@ -265,7 +266,9 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 LBatchNext:
                     if ((!ini.fWait && !ini.fTry) || CTurnsOutSafe() == 0) {
                         EnsureAis();
+                        hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
                         FGenerateTurn();
+                        SetCursor(hcurSav);
                         if (ini.fBatch && lpchBatch < lpchBatchMac) {
                         LTryNextBatch:
                             DestroyCurGame();
@@ -995,6 +998,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
     int32_t  x;
     int16_t  idCur;
     HCURSOR  hcurSav;
+    HCURSOR  hcurT;
     uint32_t dwTickCur;
     uint32_t dwTickBase;
     int16_t  mf;
@@ -1350,7 +1354,9 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         RepGen:
             ShowProgressGauge();
             EnsureAis();
+            hcurT = SetCursor(LoadCursor(NULL, IDC_WAIT));
             FGenerateTurn();
+            SetCursor(hcurT);
             switch (LOWORD(wParam)) {
             case IDM_DEBUG_GEN_10_TURNS:
             case IDM_DEBUG_GEN_100_TURNS:
@@ -1889,6 +1895,7 @@ void BringUpHostDlg() {
     POINT16 pt;
     FARPROC lpProc;
     int16_t fRet;
+    HCURSOR hcurSav;
 
     if (!gd.fHostMode) {
         if (!gd.fReadOnly) {
@@ -1919,7 +1926,9 @@ Top:
             ShowProgressGauge();
         }
         EnsureAis();
+        hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
         FGenerateTurn();
+        SetCursor(hcurSav);
         if (iPassCnt != 0) {
             iPassCnt--;
             if (GetAsyncKeyState(VK_SHIFT) >= 0 && GetAsyncKeyState(VK_CONTROL) >= 0)
@@ -2397,6 +2406,7 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
     int16_t cOut;
     int16_t fSav;
     int16_t idCur;
+    HCURSOR hcurSav;
 
     if (!fProcessingTimer) {
         fProcessingTimer = TRUE;
@@ -2449,7 +2459,9 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
                 ShowProgressGauge();
             }
             EnsureAis();
+            hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
             FGenerateTurn();
+            SetCursor(hcurSav);
             HideProgressGauge();
             if (ini.fGen) {
                 PostQuitMessage(vretExitValue);

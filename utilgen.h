@@ -41,7 +41,6 @@ int16_t FIntersectCircleLine(POINT16 ptL1, POINT16 ptL2, POINT16 ptC, int32_t r2
 void    IntToRoman(int16_t i, char *pszOut);
 int16_t FCheckPassword();
 int32_t LSaltFromSz(char *psz);
-void    UpdateProgressGauge(ProgressStep pctX10);
 int32_t LDistance2(POINT16 pt1, POINT16 pt2);
 char   *PszGetLine(char **ppszBeg);
 int16_t CParseNumbers(char *psz, int32_t *pl, int16_t cMax);
