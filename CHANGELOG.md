@@ -68,3 +68,6 @@ produce different results from a 2.6j host for the same turn.
   tested the value behind its optional count pointer instead of the
   pointer, which the dumps pass as NULL; Win16 silently read the start of
   its data segment.
+- Native build: the planet dump's Factories column printed 0 and shifted
+  the factory count into Def %. The mine and factory counts were passed as
+  two 16-bit words each, as the Win16 binary pushed them (`DumpPlanets`).

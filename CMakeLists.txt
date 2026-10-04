@@ -156,4 +156,6 @@ if(STARS_BUILD_TESTS)
     # The native-port test replaces file I/O with in-memory records.
     target_link_options(test_native_ports PRIVATE
         "LINKER:--wrap=WriteRt,--wrap=ReadRt,--wrap=FCreateFile,--wrap=StreamOpen,--wrap=StreamClose,--wrap=DirtyGame")
+    # Report dumps finish with a message box.
+    target_link_options(test_report PRIVATE "LINKER:--wrap=AlertSz")
 endif()

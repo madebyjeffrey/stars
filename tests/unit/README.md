@@ -35,5 +35,6 @@ fixture race to `data/humanoid.r1`.
 A bug fix in [docs/ROADMAP.md](../../docs/ROADMAP.md) step 5 adds a test that
 fails on the code before the fix. Name the test after the behavior it
 checks and put it in the file for the source file that holds the fix.
-`test_native_ports.c` links with `--wrap` for file I/O (see
-`CMakeLists.txt`); give other tests that need wraps the same treatment.
+`test_native_ports.c` links with `--wrap` for file I/O and `test_report.c`
+with `--wrap=AlertSz` (see `CMakeLists.txt`); give other tests that need
+wraps the same treatment.
