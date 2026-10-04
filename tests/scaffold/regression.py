@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage, run, and compare fixed-seed Stars! AI regression scenarios."""
+"""Stage, run, and compare fixed-seed native Stars! AI regression scenarios."""
 
 import argparse
 import hashlib
@@ -13,11 +13,7 @@ import subprocess
 import sys
 import tempfile
 
-sys.dont_write_bytecode = True
-from seed_exe import patch_seed
-
 ROOT = Path(__file__).resolve().parents[2]
-STARSBOX = ROOT / "tests/scaffold/starsbox"
 SCENARIOS = ("noai", "oneai1", "oneai2", "oneai3", "oneai4", "oneai5", "oneai6", "smallai4", "smallai6")
 CHECKPOINTS = (0, 1, 10, 25, 50, 80, 100, 150)
 SAVE_NAME = re.compile(r"game\.(xy|hst|[mhx](?:[1-9]|1[0-6]))$", re.I)
@@ -38,42 +34,27 @@ def prepare(args):
     if not 0 <= args.seed <= 0xFFFFFFFF:
         raise ValueError("seed must fit uint32")
     exe = args.exe.resolve()
-    original = None
-    if args.engine == "dosbox":
-        relative = work.relative_to(STARSBOX / "c_drive")
-        if any(not re.fullmatch(r"[A-Za-z0-9_]{1,8}", part) for part in relative.parts):
-            raise ValueError("DOSBox work path must use 8-character DOS directory names")
-        original = exe.read_bytes()
-        patched = patch_seed(original, args.seed)
-    else:
-        cache = exe.parent.parent / "CMakeCache.txt"
-        if f"STARS_TEST_SEED:STRING={args.seed}\n" not in cache.read_text():
-            raise ValueError(f"build {exe} with -DSTARS_TEST_SEED={args.seed} first")
-        if not exe.is_file():
-            raise ValueError(f"missing executable: {exe}")
+    if not exe.is_file():
+        raise ValueError(f"missing executable: {exe}")
     work.mkdir(parents=True)
-    if original is not None:
-        exe = work / "seeded.exe"
-        exe.write_bytes(patched)
-    manifest = {"engine": args.engine, "seed": args.seed, "exe": str(exe),
+    # Every launch passes -s<seed>, so any build of stars.exe repeats exactly.
+    manifest = {"engine": "native", "seed": args.seed, "exe": str(exe),
                 "exe_sha256": digest(exe), "scenarios": {}, "fixtures": {}}
     manifest["race_sha256"] = digest(ROOT / "tests/scaffold/fixtures/newgame/tiny/humanoid.r1")
-    if original is not None:
-        manifest["original_sha256"] = hashlib.sha256(original).hexdigest()
     for name in SCENARIOS:
         dest = work / name
         dest.mkdir()
         lines = (ROOT / f"tests/scaffold/fixtures/regression/{name}.def").read_text().splitlines()
         lines[1] = lines[1].rsplit(" ", 1)[0] + f" {args.seed}"
         manifest["fixtures"][name] = hashlib.sha256("\n".join(lines).encode("ascii")).hexdigest()
-        game_dir = windows_path(dest, args.engine)
+        game_dir = windows_path(dest)
         lines[4] = game_dir + "\\human.r1"
         lines[-1] = game_dir + "\\game.xy"
         (dest / "game.def").write_bytes(("\r\n".join(lines) + "\r\n").encode("ascii"))
         shutil.copyfile(ROOT / "tests/scaffold/fixtures/newgame/tiny/humanoid.r1", dest / "human.r1")
         manifest["scenarios"][name] = {p.name: digest(p) for p in dest.iterdir()}
     (work / "run.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    print(f"Prepared {args.engine} run: {work}")
+    print(f"Prepared run: {work}")
 
 
 def host_turn(path):
@@ -91,10 +72,8 @@ def checked_files(directory, checksums, label):
             raise ValueError(f"{label} changed: {directory / filename}")
 
 
-def windows_path(path, engine):
-    """windows_path converts a host path to the selected engine's drive mapping."""
-    if engine == "dosbox":
-        return "C:\\" + str(path.relative_to(STARSBOX / "c_drive")).replace("/", "\\")
+def windows_path(path):
+    """windows_path converts a host path to Wine's Z: drive."""
     return "Z:" + str(path).replace("/", "\\")
 
 
@@ -152,16 +131,15 @@ def restore_checkpoint(args, name, directory, snapshots):
     return completed
 
 
-def launch_command(engine, exe, directory, turn, previous):
-    """launch_command builds the creation or incremental generation command."""
-    game_path = windows_path(directory, engine)
+def launch_command(exe, seed, directory, turn, previous):
+    """launch_command builds the creation or incremental generation command.
+
+    -s<seed> replaces the clock as the startup seed, so a launch repeats
+    exactly; the seed resets on every launch.
+    """
+    game_path = windows_path(directory)
     flags = ["-a", game_path + "\\game.def"] if turn == 0 else [f"-g{turn - previous}", game_path + "\\game.hst"]
-    if engine == "dosbox":
-        dos_exe = windows_path(exe, engine)
-        return ([str(STARSBOX / "dosbox.bin"), "-noconsole", "-conf", "stars_dosbox_macos.conf",
-                 "-c", "c:", "-c", f"cd {game_path}", "-c", f"win /n {dos_exe} -x {' '.join(flags)}", "-c", "exit"],
-                STARSBOX)
-    return ["wine", str(exe), *flags], directory
+    return ["wine", str(exe), f"-s{seed}", *flags], directory
 
 
 def capture_checkpoint(directory, snapshots, name, turn, command, exit_code):
@@ -211,13 +189,13 @@ def run(args):
                 continue
             if turn > args.through:
                 break
-            command, cwd = launch_command(manifest["engine"], exe, directory, turn, previous)
+            command, cwd = launch_command(exe, manifest["seed"], directory, turn, previous)
             print(f"{name}: turn {turn}: {' '.join(command)}", flush=True)
             with (directory / f"run-{turn:03}.log").open("w") as log:
                 process = subprocess.run(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
                                          check=False, timeout=args.timeout)
             # FGenerateTurn sets vretExitValue=1 on successful command-line generation.
-            expected_exit = 1 if manifest["engine"] == "native" and turn > 0 else 0
+            expected_exit = 1 if turn > 0 else 0
             if process.returncode != expected_exit:
                 raise ValueError(f"{name}: exit {process.returncode}, expected {expected_exit}; see run-{turn:03}.log")
             if turn == 0:
@@ -367,26 +345,23 @@ def generate(work, manifest, scenario, source, turns, timeout, trace=False):
             raise ValueError(f"output exists from different input, executable, or without a trace: {directory}; remove it to rerun")
         print(f"{scenario}: reusing {directory}", flush=True)
         return directory
-    if trace and manifest["engine"] != "native":
-        raise ValueError("--trace requires a native run built with -DSTARS_TEST_TRACE=ON")
     directory.mkdir(parents=True)
     copy_files(source, directory, inputs)
-    command, cwd = launch_command(manifest["engine"], Path(manifest["exe"]), directory, end, start)
+    command, cwd = launch_command(Path(manifest["exe"]), manifest["seed"], directory, end, start)
     env = dict(os.environ)
     if trace:
-        env["STARS_TRACE"] = windows_path(directory, "native") + "\\trace.log"
+        env["STARS_TRACE"] = windows_path(directory) + "\\trace.log"
     print(f"{scenario}: turn {start} -> {end} from {source}: {' '.join(command)}", flush=True)
     with (directory / "run.log").open("w") as log:
         process = subprocess.run(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,
                                  check=False, timeout=timeout, env=env)
-    expected_exit = 1 if manifest["engine"] == "native" else 0
-    if process.returncode != expected_exit:
-        raise ValueError(f"exit {process.returncode}, expected {expected_exit}; see {directory / 'run.log'}")
+    if process.returncode != 1:
+        raise ValueError(f"exit {process.returncode}, expected 1; see {directory / 'run.log'}")
     if host_turn(directory / "game.hst") != end:
         raise ValueError(f"expected turn {end} in {directory / 'game.hst'}")
     if trace and not (directory / "trace.log").is_file():
         raise ValueError(f"no trace.log written; was {manifest['exe']} built with -DSTARS_TEST_TRACE=ON?")
-    report = {"engine": manifest["engine"], "exe_sha256": manifest["exe_sha256"], "input": str(source),
+    report = {"exe_sha256": manifest["exe_sha256"], "input": str(source),
               "input_files": input_files, "turn": end, "command": command,
               "files": {p.name.lower(): digest(p) for p in directory.iterdir() if SAVE_NAME.fullmatch(p.name)}}
     (directory / "crossfeed.json").write_text(json.dumps(report, indent=2) + "\n")
@@ -395,11 +370,11 @@ def generate(work, manifest, scenario, source, turns, timeout, trace=False):
 
 
 def crossfeed(args):
-    """crossfeed generates turns from another run's saves with this run's engine.
+    """crossfeed generates turns from another run's saves with this run's executable.
 
-    Feeding the original's checkpoint to native tests turn-generation logic on
-    identical input; feeding native's checkpoint to the original tests whether
-    native's differing state changes what the original does next.
+    Feeding another build's checkpoint to this build tests turn-generation
+    logic on identical input, separating a logic difference from inherited
+    state.
     """
     work, manifest = load_work(args.work)
     directory = generate(work, manifest, args.scenario, args.input.resolve(), args.turns, args.timeout, args.trace)
@@ -416,21 +391,21 @@ def crossfeed(args):
 
 
 def bisect(args):
-    """bisect finds the first turn where native diverges from the original.
+    """bisect finds the first turn where two runs' executables diverge.
 
-    Both engines run -gK from the same input. The startup seed resets only at
-    launch, so -gK reproduces the first K turns of a longer launch; a binary
-    search over K needs about log2(turns) launches per engine.
+    Both run -gK from the same input. The startup seed resets only at launch,
+    so -gK reproduces the first K turns of a longer launch; a binary search
+    over K needs about log2(turns) launches per executable.
     """
     cli = args.cli.resolve()
-    original, original_manifest = load_work(args.original)
+    reference, reference_manifest = load_work(args.reference)
     native, native_manifest = load_work(args.native)
     source = args.input.resolve()
     start = host_turn(source / "game.hst")
 
     def diverges(k):
-        """diverges reports whether the engines' outputs differ after k turns."""
-        expect = generate(original, original_manifest, args.scenario, source, k, args.timeout)
+        """diverges reports whether the two outputs differ after k turns."""
+        expect = generate(reference, reference_manifest, args.scenario, source, k, args.timeout)
         actual = generate(native, native_manifest, args.scenario, source, k, args.timeout, args.trace)
         results = compare_saves(cli, [expect, actual], {"scenario": args.scenario, "turn": start + k})
         (actual / "comparison.json").write_text(json.dumps(results, indent=2) + "\n")
@@ -480,7 +455,6 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="action", required=True)
     stage = sub.add_parser("prepare")
-    stage.add_argument("--engine", choices=("native", "dosbox"), required=True)
     stage.add_argument("--work", type=Path, required=True)
     stage.add_argument("--exe", type=Path, required=True)
     stage.add_argument("--seed", type=int, default=12345)
@@ -504,8 +478,8 @@ def main():
     save.add_argument("--dest", type=Path, default=ROOT / "tests/scaffold/fixtures/regression/native")
     save.add_argument("--scenario", choices=SCENARIOS, action="append")
     save.add_argument("--replace", action="store_true", help="replace an existing baseline")
-    feed = sub.add_parser("crossfeed", help="generate turns from another run's saves with this run's engine")
-    feed.add_argument("--work", type=Path, required=True, help="prepared run whose engine and executable generate")
+    feed = sub.add_parser("crossfeed", help="generate turns from another run's saves with this run's executable")
+    feed.add_argument("--work", type=Path, required=True, help="prepared run whose executable generates")
     feed.add_argument("--scenario", choices=SCENARIOS, required=True, help="scenario directory to hold the output")
     feed.add_argument("--input", type=Path, required=True, help="directory of input saves, such as a checkpoint")
     feed.add_argument("--turns", type=int, required=True, help="turns to generate in one launch (-gN)")
@@ -514,11 +488,11 @@ def main():
     feed.add_argument("--cli", type=Path, default=ROOT / "dist/stars-save")
     feed.add_argument("--report", type=Path, help="comparison report (default: comparison.json in the output)")
     feed.add_argument("--trace", action="store_true", help="write trace.log (native built with -DSTARS_TEST_TRACE=ON)")
-    search = sub.add_parser("bisect", help="find the first turn where native diverges from the original")
-    search.add_argument("--original", type=Path, required=True, help="prepared original (reference) run")
-    search.add_argument("--native", type=Path, required=True, help="prepared native run")
+    search = sub.add_parser("bisect", help="find the first turn where two runs' executables diverge")
+    search.add_argument("--reference", type=Path, required=True, help="prepared run of the reference build")
+    search.add_argument("--native", type=Path, required=True, help="prepared run of the build under test")
     search.add_argument("--scenario", choices=SCENARIOS, required=True)
-    search.add_argument("--input", type=Path, required=True, help="directory of saves both engines start from")
+    search.add_argument("--input", type=Path, required=True, help="directory of saves both runs start from")
     search.add_argument("--turns", type=int, required=True, help="the launch span to search (-gN)")
     search.add_argument("--timeout", type=int, default=900, help="seconds per game launch")
     search.add_argument("--cli", type=Path, default=ROOT / "dist/stars-save")

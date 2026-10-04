@@ -2,10 +2,12 @@
 #include "version.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    char   *pch;
-    char   *lpT;
-    int16_t i;
-    MSG     msg;
+    char    *pch;
+    char    *lpT;
+    int16_t  i;
+    MSG      msg;
+    uint32_t lSeed;
+    int16_t  fSeed;
 
     hInst = hInstance;
     szBase[0] = 0;
@@ -17,7 +19,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         AlertSz(PszFormatIds(idsUnableInitializeStars, NULL), MB_ICONHAND);
         return 0;
     }
-    Randomize2(GetTickCount());
+    fSeed = FALSE;
+    lSeed = 0;
     if (!FCreateStuff()) {
         return 0;
     }
@@ -123,6 +126,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 case 'c':
                     ini.fCmdLine = szBase[0] != 0;
                     break;
+                case 'S':
+                case 's':
+                    /* -s<seed>: a fixed startup seed instead of the clock, so
+                       regression runs repeat exactly. Not in the original. */
+                    fSeed = TRUE;
+                    lSeed = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        lSeed = 10 * lSeed + (uint32_t)(*lpT - '0');
+                    }
+                    break;
                 case 'P':
                 case 'p':
                     for (lpT++; *lpT == ' '; lpT++) {
@@ -149,6 +163,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             ini.fCmdLine = TRUE;
         }
     }
+    /* The original seeded before FCreateStuff; nothing in between draws a
+       random number, so seeding after the command line is the same. */
+    Randomize2(fSeed ? lSeed : GetTickCount());
     PostMessage(hwndFrame, WM_STARS_STARTUP, 0, 0);
     while (GetMessage(&msg, NULL, 0, 0) != 0) {
         if (hwndTitle) {

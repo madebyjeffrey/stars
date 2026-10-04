@@ -1,17 +1,19 @@
 # Fixed-seed AI regression runs
 
-This harness runs the original Win16 game in `tests/scaffold/starsbox/` and the reconstructed
-native game under Wine. It keeps separate saves at creation and turns 1, 10,
-25, 50, 80, 100, and 150, then compares decrypted records with the standalone
-CLI in `tests/savecli/`. No stars-asm binary or checkout is required.
+This harness runs the native game under Wine with a fixed seed. It keeps
+separate saves at creation and turns 1, 10, 25, 50, 80, 100, and 150, then
+compares decrypted records with the standalone CLI in `tests/savecli/`.
+`make regression` runs it against the checked-in baseline.
 
 ## Baselines
 
 There are two sets of checked-in checkpoints in `fixtures/regression/`:
 
-- `original/`: the original Win16 game under DOSBox. This is the record of
-  2.6j behavior. The native build at the `2.6jrc3` tag matches it for `noai`,
-  `oneai1`–`oneai4` and `smallai4`.
+- `original/`: the original Win16 game, run under DOSBox with a seed-patched
+  copy of its `stars.exe`. This is the record of 2.6j behavior. The native
+  build at the `2.6jrc3` tag matches it for `noai`, `oneai1`–`oneai4` and
+  `smallai4`. The DOSBox bundle and patcher are no longer kept; these
+  checkpoints are frozen.
 - `native/`: the native build's own checkpoints, the baseline for `main`.
   Behavior-neutral changes must match it. A change that is meant to alter
   game behavior regenerates it in the same commit (see
@@ -21,8 +23,7 @@ There are two sets of checked-in checkpoints in `fixtures/regression/`:
 GitHub Actions runs the native baseline's scenarios on pull requests and main
 pushes using `mingw-release` with the fixed seed. It generates native
 checkpoints at turns 0, 1, 10, 25, 50, 80, 100, and 150 and compares them
-against `fixtures/regression/native/`. These fixtures need no starsbox
-installation. They contain save files, checkpoint manifests and the run
+against `fixtures/regression/native/`. They contain save files, checkpoint manifests and the run
 metadata needed by `compare`, with no executables or logs. See the
 [fixture README](fixtures/regression/README.md) for provenance and test
 registration.
@@ -45,90 +46,49 @@ zero would choose randomly, so neither is used. Victory conditions are disabled,
 player positions use the same setting (1), and all seven game-option flags are
 zero. Random events remain enabled to exercise more simulation behavior.
 
-## Why both executables need a seed patch
+## Fixed seed
 
 The seed on line 2 of a `.def` initializes universe creation through `Randomize`.
-A new turn-generation process normally calls `Randomize2(GetTickCount())` in
-`WinMain`. Therefore a definition seed alone cannot reproduce later turns.
-
-`seed_exe.py` patches a **separate copy** of the original executable:
-
-- Verifies the instruction sequence at NE segment 4, offset `0085`.
-- Replaces `CALLF GetTickCount; PUSH DX; PUSH AX` with `PUSH seed_high;
-  PUSH seed_low; NOP`, preserving the following `Randomize2` call and stack size.
-- Removes the matching import relocation at `0004:0086`. Otherwise Windows
-  would overwrite the immediate operand while loading the executable.
-- Leaves other relocation entries, instructions, and file offsets intact.
-- Refuses to patch an unexpected executable or overwrite an existing output.
-
-The instruction patch requires an 80186 or later, which the bundled DOSBox
-supports. It is specific to the checked-in Stars! 2.7j layout. The `prepare`
-command records executable hashes, the seed, and fixture hashes in `run.json`.
-To use the patcher separately:
-
-```sh
-python3 tests/scaffold/seed_exe.py \
-  tests/scaffold/starsbox/c_drive/STARS/stars.exe \
-  tests/scaffold/starsbox/c_drive/seeded.exe --seed 12345
-```
-
-The native CMake option `STARS_TEST_SEED` replaces that same startup call in a
-build-local `stars-seeded.c`. It leaves `stars.c` intact and reapplies
-on CMake reconfiguration after source changes. Ordinary builds use the clock.
-Both seeds accept decimal uint32 values; the original algorithms use only the
-low 12 bits for `Randomize` and low 14 bits for `Randomize2`.
+A new process normally seeds `Randomize2` from `GetTickCount()` in `WinMain`,
+so a definition seed alone cannot reproduce later turns. `stars.exe -s<seed>`
+seeds it with a decimal uint32 instead; the algorithms use only its low 14
+bits. The runner passes the run's seed on every launch, so any build of
+`stars.exe` repeats exactly and no special build is needed.
 
 ## Build and stage
 
-Run from the repository root. Both environments need a registered Stars! serial.
-Python 3, Go, MinGW, CMake, Ninja, and Wine are needed; the original runner uses
-`tests/scaffold/starsbox/dosbox.bin` and `tests/scaffold/starsbox/stars_dosbox_macos.conf` with its existing
-`C:` mount at `tests/scaffold/starsbox/c_drive/`.
+Run from the repository root. Python 3, Go, MinGW, CMake, Ninja, and Wine
+are needed. `make regression` does all of this; by hand:
 
 ```sh
-cmake --preset mingw-debug -B dist/regression-build -DSTARS_TEST_SEED=12345
-cmake --build dist/regression-build
+cmake --preset mingw-release
+cmake --build --preset mingw-release
 make save-cli
 
-python3 tests/scaffold/regression.py prepare \
-  --engine native --seed 12345 \
-  --exe dist/regression-build/bin/stars.exe \
+python3 tests/scaffold/regression.py prepare --seed 12345 \
+  --exe dist/mingw-release/bin/stars.exe \
   --work dist/scaffold/regression/native
-
-python3 tests/scaffold/regression.py prepare \
-  --engine dosbox --seed 12345 \
-  --exe tests/scaffold/starsbox/c_drive/STARS/stars.exe \
-  --work tests/scaffold/starsbox/c_drive/REGTEST
 ```
 
-Choose **fresh output directories** for each run; staging never overwrites prior
-results. DOSBox directory components must be at most eight letters, digits, or
-underscores. The examples assume a Wine prefix with the usual `Z:` host-filesystem
-mapping. Keep work paths free of spaces because the Stars! parser cannot quote
-them.
-
-Staging writes CRLF definitions and absolute Windows paths for the race and
-output files. Launch commands also use absolute paths: Windows 3.1 can change
-the working directory during startup, so `-a game.def` is unreliable through
-`win /n`. The two staged definitions have different physical paths but identical
-scenario settings and race bytes.
+Choose a **fresh output directory** for each run; staging never overwrites
+prior results. The runner uses Wine's `Z:` host-filesystem mapping. Keep work
+paths free of spaces because the Stars! parser cannot quote them. Staging
+writes CRLF definitions and absolute Windows paths for the race and output
+files, and records the executable's hash, the seed and the fixture hashes in
+`run.json`.
 
 ## Run and capture checkpoints
 
 ```sh
-python3 tests/scaffold/regression.py run --work tests/scaffold/starsbox/c_drive/REGTEST
 python3 tests/scaffold/regression.py run --work dist/scaffold/regression/native
 ```
 
-Run only one DOSBox instance at a time: all original runs share the Windows 3.1
-installation. Its window opens for each launch. The original runner adds `-x`
-to exit Windows after each action and allow DOSBox to return to the shell.
-
-For a quicker check, select one scenario and/or an earlier endpoint:
+For a quicker check, select one scenario and/or an earlier endpoint
+(`make regression-quick`):
 
 ```sh
 python3 tests/scaffold/regression.py run \
-  --work tests/scaffold/starsbox/c_drive/REGTEST --scenario smallai4 --through 10 --timeout 900
+  --work dist/scaffold/regression/native --scenario smallai4 --through 10
 ```
 
 The timeout is per launch (default 900 seconds), not for the entire suite. A
@@ -142,43 +102,42 @@ the first checkpoint that leaves partial saves requires a fresh staged run.
 
 ```sh
 python3 tests/scaffold/regression.py run \
-  --work tests/scaffold/starsbox/c_drive/REGTEST --scenario smallai4 --resume --timeout 900
+  --work dist/scaffold/regression/native --scenario smallai4 --resume
 ```
 
-Each scenario uses **four process launches**, in this exact order:
+Each scenario launches once per checkpoint, in this exact order, each with
+`-s<seed>`:
 
 ```text
 -a   <absolute game.def>   -> checkpoint 000, year 2400
--g10 <absolute game.hst>   -> checkpoint 010, year 2410
--g40 <absolute game.hst>   -> checkpoint 050, year 2450
--g50 <absolute game.hst>   -> checkpoint 100, year 2500
+-g1  <absolute game.hst>   -> checkpoint 001
+-g9  <absolute game.hst>   -> checkpoint 010
+-g15 <absolute game.hst>   -> checkpoint 025
+...                           050, 080, 100, 150
 ```
 
-The counts are incremental: `-g50` immediately after `-g10` would reach turn 60.
+The counts are incremental: `-g15` immediately after `-g9` reaches turn 25.
 Keep launch boundaries identical across builds because the startup seed resets
 on each launch. Do not replace the sequence with a single `-g100` run and expect
 the same results. Logging switches can also change execution paths; the runner
-uses the same simulation options on both sides.
+uses the same simulation options for every run.
 
 Before saving a checkpoint, the runner checks the host file's actual turn. A
 successful process exit without output is a failure. Native command-line turn
-generation returns **1 on success** (`FGenerateTurn` sets `vretExitValue`); native
-creation and the DOSBox wrapper return 0. The runner checks those expected codes
+generation returns **1 on success** (`FGenerateTurn` sets `vretExitValue`);
+creation returns 0. The runner checks those expected codes
 as well as the output files. At turn zero it runs
 `dist/stars-save save update game.m1 --ai maid` and
 `dist/stars-save save update game.hst --ai maid --player 1` before copying the checkpoint.
 Use `--cli` on `regression.py run` if the CLI is elsewhere. Under each scenario:
 
 ```text
-run-000.log                 emulator/Wine output for universe creation
-run-010.log                 output for the first ten turns
-run-050.log
-run-100.log
+run-000.log                 Wine output for universe creation
+run-001.log                 output for the first turn
+run-010.log ... run-150.log
 checkpoints/000/game.*      all .xy, .hst, .mN, .hN, and .xN files present
 checkpoints/000/checkpoint.json
-checkpoints/010/...
-checkpoints/050/...
-checkpoints/100/...
+checkpoints/001/... through checkpoints/150/...
 ```
 
 Checkpoint manifests contain commands, years, and raw SHA-256 hashes. Backups
@@ -191,28 +150,19 @@ To compare a native run against the checked-in native baseline:
 ```sh
 python3 tests/scaffold/regression.py compare \
   tests/scaffold/fixtures/regression/native dist/scaffold/regression/native \
-  --scenario noai --scenario oneai1 --scenario oneai2 --scenario oneai3 \
-  --scenario oneai4 --scenario smallai4 \
   --report dist/scaffold/regression/comparison.json
 ```
 
-Use the same `--scenario` arguments on `regression.py run` to generate
-only those scenarios. The `prepare` command stages all definitions; explicit
-scenario selection keeps scenarios outside the baseline out of both execution
-and comparison. Compare against `fixtures/regression/original` the same way
-to check a run against the original game.
-
-```sh
-python3 tests/scaffold/regression.py compare \
-  tests/scaffold/starsbox/c_drive/REGTEST dist/scaffold/regression/native
-```
+Use the same `--scenario` arguments on `run` and `compare` to limit both.
+Compare against `fixtures/regression/original` the same way to see where a
+run departs from the original game.
 
 The command writes `tests/scaffold/fixtures/regression/regression-comparison.json` and returns nonzero
 for any difference, invalid save, missing file, or missing checkpoint. Use
 `--scenario smallai4 --through 10` when comparing abbreviated runs. For one file:
 
 ```sh
-dist/stars-save save compare original/game.hst native/game.hst
+dist/stars-save save compare baseline/game.hst run/game.hst
 ```
 
 Raw hashes will differ because game IDs and file encryption salts include clock
@@ -246,19 +196,20 @@ checked-in report shift. Run `save compare` on the files to see them.
 This is strict record comparison, not a complete semantic interpretation. A
 reported difference needs inspection: padding or environment-specific fields
 can differ too. No additional bytes are silently discarded to make tests pass.
-The patch makes simulation randomness reproducible, but it does not establish
-that the reconstructed implementation is correct.
+The fixed seed makes simulation randomness reproducible, but it does not
+establish that the implementation is correct.
 
 ### Update the native baseline
 
 A commit that changes game behavior on purpose regenerates the native
-baseline from a complete release run of every scenario it covers:
+baseline from a complete release run of every scenario it covers. `make
+regression` followed by `make regression-export` does this; by hand:
 
 ```sh
-cmake --preset mingw-release -B dist/baseline-build -DSTARS_TEST_SEED=12345
-cmake --build dist/baseline-build
-python3 tests/scaffold/regression.py prepare --engine native --seed 12345 \
-  --exe dist/baseline-build/bin/stars.exe --work dist/scaffold/baseline
+cmake --preset mingw-release
+cmake --build --preset mingw-release
+python3 tests/scaffold/regression.py prepare --seed 12345 \
+  --exe dist/mingw-release/bin/stars.exe --work dist/scaffold/baseline
 python3 tests/scaffold/regression.py run --work dist/scaffold/baseline \
   --scenario noai --scenario oneai1 ...
 python3 tests/scaffold/regression.py compare \
@@ -273,63 +224,55 @@ without a reason in the change is a regression, not a baseline update.
 
 ### Test turn generation independently of universe creation
 
-If native creation is broken, a fresh native scenario can start from the
-original's verified turn-zero files:
+If creation is broken, a fresh scenario can start from another run's
+verified turn-zero files, such as the baseline:
 
 ```sh
 python3 tests/scaffold/regression.py run \
   --work dist/scaffold/regression/native --scenario smallai4 \
-  --baseline tests/scaffold/starsbox/c_drive/REGTEST
+  --baseline tests/scaffold/fixtures/regression/native
 ```
 
 This checks the seed and fixture hashes, copies the reference creation files,
-then runs the same `-g10`, `-g40`, and `-g50` launches. The checkpoint manifest
-marks turn zero as a reference input. Comparisons skip that checkpoint rather
-than count it as successful native creation. Native turns are still compared
-normally. Use `--resume` for a subsequent attempt from a completed checkpoint;
-`--baseline` is only for a fresh scenario.
+then runs the remaining launches. The checkpoint manifest marks turn zero as
+a reference input. Comparisons skip that checkpoint rather than count it as
+successful creation. Use `--resume` for a subsequent attempt from a completed
+checkpoint; `--baseline` is only for a fresh scenario.
 
 ### Separate logic differences from inherited state
 
 `crossfeed` copies saves from any directory and generates `--turns` turns with
-the engine and executable of a prepared `--work` run. It writes them to
+the executable of a prepared `--work` run. It writes them to
 `<work>/<scenario>/xfeed/<from>_<to>/`, and `--expect` compares the result
-against another directory of saves. Two tests classify a native difference:
+against another directory of saves. To tell whether a change's difference
+comes from its turn-generation logic or from state inherited from earlier
+turns, feed the new build the old build's checkpoint:
 
 ```sh
-# A. Logic: native, starting from the original's exact state.
-python3 tests/scaffold/regression.py crossfeed --work tests/scaffold/starsbox/c_drive/native \
-  --scenario oneai6 --input tests/scaffold/starsbox/c_drive/REGTEST/oneai6/checkpoints/025 \
-  --turns 25 --expect tests/scaffold/starsbox/c_drive/REGTEST/oneai6/checkpoints/050
-
-# B. Inertness: the original, starting from native's state.
-python3 tests/scaffold/regression.py crossfeed --work tests/scaffold/starsbox/c_drive/REGTEST \
-  --scenario oneai6 --input tests/scaffold/starsbox/c_drive/native/oneai6/checkpoints/025 \
-  --turns 25 --expect tests/scaffold/starsbox/c_drive/REGTEST/oneai6/checkpoints/050
+python3 tests/scaffold/regression.py crossfeed --work dist/scaffold/regression/native \
+  --scenario oneai6 --input tests/scaffold/fixtures/regression/native/oneai6/checkpoints/025 \
+  --turns 25 --expect tests/scaffold/fixtures/regression/native/oneai6/checkpoints/050
 ```
 
-Test A isolates native turn generation over that span. If test B matches, the
-stored difference has no effect on the original. The startup seed resets on
-every launch. Match an original launch span (`--turns` from a checkpoint) when
-comparing against its checkpoints. To narrow a span, crossfeed the same input
-with both engines using a smaller `--turns`, then compare the two `xfeed`
-outputs with `--expect`. An existing output is reused only when its input files
-and executable match; otherwise remove it to rerun.
+The startup seed resets on every launch, so match a checkpoint's launch span
+(`--turns` from the previous checkpoint) when comparing against it. An
+existing output is reused only when its input files and executable match;
+otherwise remove it to rerun.
 
-`bisect` runs both engines from the same input and binary-searches `-gK` for the
-first divergent turn. A `-gK` launch reproduces the first K turns of a longer
-launch from the same input. Each search needs about log2(turns) launches per engine:
+`bisect` runs two prepared runs' executables (say, builds of two commits)
+from the same input and binary-searches `-gK` for the first divergent turn.
+A `-gK` launch reproduces the first K turns of a longer launch from the same
+input, so a search needs about log2(turns) launches per executable:
 
 ```sh
-python3 tests/scaffold/regression.py bisect --original tests/scaffold/starsbox/c_drive/REGTEST \
-  --native tests/scaffold/starsbox/c_drive/native --scenario oneai6 \
-  --input tests/scaffold/starsbox/c_drive/REGTEST/oneai6/checkpoints/025 --turns 25
+python3 tests/scaffold/regression.py bisect --reference dist/scaffold/old \
+  --native dist/scaffold/regression/native --scenario oneai6 \
+  --input tests/scaffold/fixtures/regression/native/oneai6/checkpoints/025 --turns 25
 ```
 
 Stars! keeps the last generated turn's inputs and AI order logs (`.xN`) in
-`backup/`. Compare them between engines. Matching inputs with differing logs
-place the divergence in that AI's decisions. `.xN` record 1 (`RTLOGHDR`) holds
-the installation serial and environment fingerprint, so it always differs.
+`backup/`. Compare them between builds. Matching inputs with differing logs
+place the divergence in that AI's decisions.
 
 ### Trace native RNG draws
 
@@ -342,20 +285,16 @@ range, result, caller address, and RNG seeds before the draw. Seeds allow replay
 the stream at any offset. `trace` resolves caller addresses to source lines:
 
 ```sh
-cmake --preset mingw-debug -B dist/regression-trace -DSTARS_TEST_SEED=12345 -DSTARS_TEST_TRACE=ON
+cmake --preset mingw-debug -B dist/regression-trace -DSTARS_TEST_TRACE=ON
 cmake --build dist/regression-trace
-python3 tests/scaffold/regression.py prepare --engine native --seed 12345 \
-  --exe dist/regression-trace/bin/stars.exe --work tests/scaffold/starsbox/c_drive/ntrace
+python3 tests/scaffold/regression.py prepare --seed 12345 \
+  --exe dist/regression-trace/bin/stars.exe --work dist/scaffold/trace
 python3 tests/scaffold/regression.py trace <dir>/trace.log \
   --exe dist/regression-trace/bin/stars.exe --turn 32 --player 1
 ```
 
-The original cannot be traced. Compare its AI logs with the native trace,
-then replay the native seeds at nearby offsets to locate an extra or missing draw.
-
-For confidence in the harness, first run the original twice into fresh folders
-and compare those runs. Matching original-to-original checkpoints establishes a
-baseline before interpreting original-to-native failures.
+Trace both builds and compare, then replay the seeds at nearby offsets to
+locate an extra or missing draw.
 
 ## Divergences from the original
 
@@ -378,14 +317,11 @@ color dispatch, and the Win16 battle heap rollover boundary) are unit tests
 now: `tests/unit/test_native_ports.c`, run with `make test-unit`. See
 [tests/unit/README.md](../unit/README.md).
 
-The harness's own Python and Go tests:
+The save CLI's own tests check salt/ID normalization, retention of
+coordinate changes, and rejection of truncated universe files:
 
 ```sh
-python3 -B -m unittest discover -s tests/scaffold -p 'test_*.py'
 cd tests/savecli && go test ./...
 ```
 
-The patch test checks both seed words and that only the intended instructions
-and relocation table change. Go tests check salt/ID normalization, retention of
-coordinate changes, and rejection of truncated universe files. Run the
-tutorial separately from all Wine verification runs.
+Run the tutorial separately from all Wine verification runs.

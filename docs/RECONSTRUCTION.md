@@ -35,7 +35,7 @@ conventions the reconstruction follows. Native-port details are in
 Everything below is behavior-neutral: the regression and the tutorial matched
 the original after each change. The guide throughout was the binary: the
 debug-info names, the original source line numbers in the asm, and the
-labels, switches and IR under `reference/`.
+labels, switches and IR from the stars-asm listings.
 
 **Control flow**
 
@@ -43,7 +43,6 @@ labels, switches and IR under `reference/`.
   `if`/`else`, loop, `switch`, `break`/`continue` or early `return` the line
   data shows. Every original named label from the debug info is restored at
   its recorded line, with a `goto` at each recorded jump source.
-  `tests/scaffold/labaudit.py` checks this.
 - **Block order:** statements follow the original source-line order. The
   decompiler had often inverted conditions (putting the original `else` arm
   first) and moved shared error and exit blocks to the end of a function. Those

@@ -31,8 +31,8 @@ When goals conflict, apply them in this order:
 ## Code rules
 
 - Names from the debug symbols (functions, params, locals, globals, struct
-  fields, enums) stay. They tie the code to the reference listings and
-  `docs/KNOWN-BUGS.md`. New names use the same Hungarian style: `c` count,
+  fields, enums) stay. They tie the code to the original's debug symbols
+  and `docs/KNOWN-BUGS.md`. New names use the same Hungarian style: `c` count,
   `i` index, `f` flag, `lp` pointer, `rg` array, `h` handle, `psz`/`sz`
   strings, `id`/`ish`/`ipl` and the like. Check `structs.h` and nearby code
   for existing prefixes before you invent one.
@@ -99,10 +99,9 @@ When goals conflict, apply them in this order:
   materials it describes private.
 - `structs.h` defines every struct. Use it to interpret offsets, bitfields and
   `LOWORD`/`HIWORD` splits.
-- `reference/` (gitignored, frozen) holds the original's asm, semantic and IR
-  listings and JSON indexes for each function. Use them to understand what
-  the original did before changing it, especially for bug fixes. If they're
-  missing, use `stars-asm dasm asm|sem -n <Func>`.
+- To see what the original did before changing it, especially for a bug
+  fix, list the function from the binary with `stars-asm dasm asm|sem -n
+  <Func>`; the `2.6j` branch keeps the faithful reconstruction.
 - `docs/KNOWN-BUGS.md` maps reported original bugs to source.
   `docs/WIN16-PARITY.md` lists the remaining Win16 guards and boundaries.
   `docs/NATIVE-PORT.md` covers the native port. `docs/ROADMAP.md` lists the
@@ -115,20 +114,21 @@ After each batch of edits:
 1. Build with `cmake --preset mingw-debug && cmake --build --preset mingw-debug`.
    Don't introduce new warnings in the files you touched.
 2. Run the native regression and compare it against the native baseline in
-   `tests/scaffold/fixtures/regression/native/`. Commands are in
-   `tests/scaffold/REGRESSION.md`. A quick check is one scenario through
-   checkpoint 10; a batch is done only after the full suite.
+   `tests/scaffold/fixtures/regression/native/`: `make regression` (details
+   in `tests/scaffold/REGRESSION.md`). A quick check is `make
+   regression-quick`, one scenario through checkpoint 10; a batch is done
+   only after the full suite.
 3. Run the unit tests (`make test-unit`, `tests/unit/README.md`).
 4. Run the tutorial (`make tutorial`).
 
 Behavior-neutral changes must match the baseline exactly (unused-storage
 warnings excepted). A behavior change regenerates the baseline with
-`regression.py export --replace` in the same commit. Report regression
+`make regression-export` in the same commit. Report regression
 results as they are: if a scenario diverges unexpectedly, show the first diff.
 
-The original DOSBox checkpoints in `fixtures/regression/original/` stay as
-the record of 2.6j behavior. Never regenerate them (this takes hours) unless
-the fixtures change.
+The original game's checkpoints in `fixtures/regression/original/` are the
+frozen record of 2.6j behavior. The DOSBox setup that made them is gone, so
+they can't be regenerated; don't change them.
 
 Keep commits small and focused on one kind of change so that a regression
 can be bisected to a single commit.
