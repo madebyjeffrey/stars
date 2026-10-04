@@ -156,3 +156,7 @@ produce different results from a 2.6j host for the same turn.
   completion percentage and charged only the rest at the new design's cost,
   so a mostly built cheap starbase could be finished as an expensive one
   (`FRunLogRecord`). **Host results.**
+- Scores: a planet's population and resources in the published scores are
+  taken as it produced and grew that year. Loading colonists onto ships at
+  waypoint 1, after production, no longer lowers them (`Produce`,
+  `CalcPlayerScore`). Scores only; play is unchanged.

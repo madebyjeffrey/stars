@@ -1914,6 +1914,7 @@ int32_t CalcPlayerScore(int16_t iPlr, SCORE *pscore) {
     int16_t iTech;
     int32_t lPower;
     int16_t rgType[16];
+    PLANET  pl;
 
     memset(&score, 0, sizeof(SCORE));
     lppl = lpPlanets;
@@ -1921,7 +1922,13 @@ int32_t CalcPlayerScore(int16_t iPlr, SCORE *pscore) {
     for (; lppl < lpplMac; lppl++) {
         if (lppl->iPlayer == iPlr) {
             score.cPlanet++;
-            lTemp = (int32_t)((lppl->rgwtMin[3] + 999) / 1000);
+            /* Score a planet the player owned through production at its
+               population then, not after waypoint 1 cargo moves. */
+            pl = *lppl;
+            if (vrgiplrPopScore && vrgiplrPopScore[lppl->id] == iPlr) {
+                pl.rgwtMin[3] = vrgwtPopScore[lppl->id];
+            }
+            lTemp = (int32_t)((pl.rgwtMin[3] + 999) / 1000);
             if (lTemp > 6) {
                 lTemp = 6;
             }
@@ -1929,7 +1936,7 @@ int32_t CalcPlayerScore(int16_t iPlr, SCORE *pscore) {
             if (lppl->fStarbase && LphuldefFromId(rglpshdefSB[iPlr][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) {
                 score.cStarbase++;
             }
-            score.cResources += CResourcesAtPlanet(lppl, iPlr);
+            score.cResources += CResourcesAtPlanet(&pl, iPlr);
         }
     }
     score.lScore += (int32_t)(score.cResources / 30);

@@ -69,6 +69,9 @@ int16_t FGenerateTurn() {
         lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
         vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
         memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
+        vrgwtPopScore = LpAlloc(game.cPlanMax * sizeof(int32_t), htMisc);
+        vrgiplrPopScore = LpAlloc(game.cPlanMax * sizeof(int16_t), htMisc);
+        memset(vrgiplrPopScore, 0xff, game.cPlanMax * sizeof(int16_t));
         vrgts = LpAlloc(game.cPlayer * sizeof(TURNSERIAL), htMisc);
         UpdateProgressGauge(370);
         cColDrop = 0;
@@ -360,6 +363,10 @@ FreeStuffUp:
     UpdateProgressGauge(1000);
     FreeLp(vrgPlanResExtra, htMisc);
     vrgPlanResExtra = NULL;
+    FreeLp(vrgwtPopScore, htMisc);
+    vrgwtPopScore = NULL;
+    FreeLp(vrgiplrPopScore, htMisc);
+    vrgiplrPopScore = NULL;
     FreeLp(vrgts, htMisc);
     vrgts = NULL;
     FreeLp(lpcd, htMisc);

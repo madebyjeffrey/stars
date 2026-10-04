@@ -4,9 +4,9 @@ This maps the user-supplied release bug list to the current reconstructed
 sources. Locations use filenames and original function names, not line numbers.
 The bugs planned for 2.8, and their status, are tracked in
 [ROADMAP.md](ROADMAP.md), step 5. The balance items (chaff, split fleet dodge,
-battle board overload, 0.2% minimum damage, profitable scrapping, false public
-scores, mine damage allocation) are kept here for reference only; 2.8 doesn't
-change them.
+battle board overload, 0.2% minimum damage, profitable scrapping, mine damage
+allocation) are kept here for reference only; 2.8 doesn't change them. False
+public scores, once listed with them, is fixed in 2.8.
 
 **Located** means the relevant mechanism is visible in the source; it does not
 mean the complete player-reported scenario has been reproduced in a test.
@@ -81,7 +81,7 @@ damage on a large token. Shield damage uses a separate calculation, and the
 torpedo kill cap still applies. The supplied report describes this as an
 architectural feature explicitly retained by the original developers.
 
-### False Public Player Scores — located
+### False Public Player Scores — fixed in 2.8
 
 `turn.c`: `FGenerateTurn`, `DoOrders`; `turn3.c`: `SatisfyOrders`;
 `turn2.c`: `Produce`, `UpdatePlayerScores`; `util.c`: `CalcPlayerScore`.
@@ -90,6 +90,14 @@ the later score calculation calls `CResourcesAtPlanet` again on the final
 planet state rather than using the production total. WP1 loading can therefore
 lower the published resource score after resources were already produced;
 WP0 unloading next year restores population before production.
+
+**2.8:** confirmed by `tests/unit/test_turn2.c`: two freighters loading
+50 kT of colonists at a homeworld after production cut the published
+resources from 38 to 33. `Produce` now records each planet's population
+and owner when it finishes, and `CalcPlayerScore` scores a planet with
+the same owner at that population, for both its population points and its
+resources. Planets that changed hands after production are scored as
+before.
 
 ### North/South Minefield Immunity — fixed in 2.8
 

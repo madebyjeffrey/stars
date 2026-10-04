@@ -30,10 +30,11 @@ Fixes apply whenever a 2.8 host generates the turn; there is no rules option.
 File records don't change, so a 2.8 host can take over a 2.6j game; 2.8
 writes file version 2.84, which 2.6j refuses.
 
-The balance items in [KNOWN-BUGS.md](KNOWN-BUGS.md) (chaff, split fleet
-dodge, battle board overload, 0.2% minimum damage, profitable scrapping,
-false public scores, mine damage allocation) are reference only and are not
-planned.
+The balance items in [KNOWN-BUGS.md](KNOWN-BUGS.md) (chaff, battle board
+overload, 0.2% minimum damage, profitable scrapping, mine damage allocation)
+are legitimate strategy and stay as they are. Split fleet dodge keeps the
+jrc4 retargeting (done). False public scores was on this list; it is fixed
+as an exploit.
 
 ### 5.1 Unit test harness (done)
 
@@ -72,6 +73,7 @@ and order helpers as fixes need them.
 | Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
 | Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | fixed (`test_race.c`) |
 | Turn-file knowledge leaks | `FWriteDataFile` writes whole `THING` records, so a player's file carries other players' bits in the Mystery Trader, minefield and wormhole masks and the trader's part (see [TOTALHOST.md](TOTALHOST.md)) | function | fixed (`test_save.c`) |
+| False public scores | `CalcPlayerScore` reads populations after waypoint 1 cargo moves, not as they produced | turn | fixed (`test_turn2.c`) |
 
 ### 5.3 Needs reproduction first
 

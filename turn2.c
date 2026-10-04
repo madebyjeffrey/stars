@@ -176,6 +176,18 @@ void Produce() {
     if (!game.fNoRandom) {
         RandomEvents();
     }
+    /* The score counts each planet as it produced and grew. The original
+       counted it at the end of the turn, so loading colonists at waypoint 1
+       hid a player's resources from the published scores. vrgwtPopScore
+       and vrgiplrPopScore hold each planet's population and owner. */
+    if (vrgwtPopScore) {
+        lppl = lpPlanets;
+        lpplMac = lpPlanets + cPlanet;
+        for (; lppl < lpplMac; lppl++) {
+            vrgwtPopScore[lppl->id] = lppl->rgwtMin[3];
+            vrgiplrPopScore[lppl->id] = lppl->iPlayer;
+        }
+    }
     return;
 }
 
