@@ -43,8 +43,10 @@ jobs:
           cp dist/mingw-release/bin/stars.exe dist/release/
           cp 'res/stars!.hlp' dist/release/
           version=$(sed -n 's/^#define STARS_VERSION_STRING "\(.*\)"$/\1/p' dist/mingw-release/generated/version.h)
-          echo "Built Stars! $version"
+          display=$(sed -n 's/^#define STARS_VERSION_DISPLAY "\(.*\)"$/\1/p' dist/mingw-release/generated/version.h)
+          echo "Built Stars! $display"
           echo "STARS_VERSION=$version" >> "$GITHUB_ENV"
+          echo "STARS_DISPLAY=$display" >> "$GITHUB_ENV"
           if [[ "$GITHUB_REF_TYPE" == tag && "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ \
                 && "v$version" != "$GITHUB_REF_NAME" ]]; then
             echo "::error::tag $GITHUB_REF_NAME built version $version"
@@ -85,7 +87,7 @@ jobs:
                 -f ref=refs/tags/latest -f sha="$commit" --silent
             fi
             cat > dist/release/notes.md <<EOF
-          Stars! $STARS_VERSION: Windows x86-64 optimized Release build, built from main.
+          Stars! $STARS_DISPLAY: Windows x86-64 optimized Release build, built from main.
 
           Download stars.exe and stars!.hlp into the same directory.
 
@@ -117,7 +119,7 @@ jobs:
           else
             title="$tag"
             if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              title="Stars! $STARS_VERSION"
+              title="Stars! $STARS_DISPLAY"
             fi
             gh release create "$tag" --verify-tag --title "$title" --generate-notes \
               dist/release/stars.exe 'dist/release/stars!.hlp'

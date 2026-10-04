@@ -17,9 +17,10 @@ produce different results from a 2.6j host for the same turn.
 
 ### Added
 
-- Product version from git tags and build numbers, shown as
-  `Version 2.8.0` (or `2.8.0-dev.N+gSHA` between releases) in the About box,
-  splash screen and report headers, and stored in a `VERSIONINFO` resource.
+- Product version from git tags and build numbers, stored in a
+  `VERSIONINFO` resource. It is shown as `Version 2.8x64` (or
+  `2.8x64 (2.8.1-dev.N+gSHA)` between releases) in the About box, splash
+  screen and report headers, marking the 64-bit Win32 build.
   The save-file format version is separate (see Changed). See
   [docs/VERSIONING.md](docs/VERSIONING.md).
 

@@ -804,7 +804,7 @@ BEGIN
             VALUE "InternalName", "stars"
             VALUE "OriginalFilename", "stars.exe"
             VALUE "ProductName", "Stars!"
-            VALUE "ProductVersion", STARS_VERSION_STRING
+            VALUE "ProductVersion", STARS_VERSION_DISPLAY
         END
     END
     BLOCK "VarFileInfo"
