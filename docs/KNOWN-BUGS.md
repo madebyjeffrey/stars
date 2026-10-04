@@ -40,6 +40,14 @@ to a removed fleet using a nearby object. The supplied claim that the largest
 mass always becomes the target, and the JRC3/JRC4 changes, are not established
 by this mapping.
 
+**Retargeting across releases:** `ValidateWaypoints` picks a new target when a
+pursued fleet is gone or changed, among fleets of the same owner where it was
+last seen. 2.6j RC3 ("fleets that split up ... will all be chased down", in
+[26JFIN.txt](26JFIN.txt)) first tries only fleets no other pursuer has taken,
+spreading pursuers over the pieces. The jrc4 binary (`0008:497a`) dropped
+that pass again: every pursuer takes the heaviest matching fleet. 2.8
+follows jrc4 (`tests/unit/test_util.c`).
+
 ### Profitable Scrapping — different here
 
 `turn3.c`: `SatisfyOrders` (give and scrap tasks); `util.c`: `UpdateShdefCost`;

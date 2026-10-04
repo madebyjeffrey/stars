@@ -94,3 +94,7 @@ produce different results from a 2.6j host for the same turn.
   longer name in memory, which aren't saved (`IRaceChecksum`). Races saved
   by 2.8 load in 2.6j; race files already saved with a bad checksum still
   have to be recreated.
+- Pursuit: when a pursued fleet splits or disappears, every pursuer
+  retargets the heaviest matching fleet where it was last seen, as in 2.6j
+  RC4. RC3 (the reconstructed release) spread pursuers over fleets nobody
+  else was chasing (`ValidateWaypoints`). **Host results.**

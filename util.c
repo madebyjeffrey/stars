@@ -2271,36 +2271,24 @@ void ValidateWaypoints() {
                             mdTarget = rglpbtlplan[lpfl->iPlayer][lpfl->iplan].mdTarget1;
                             wtMatch = 0;
                             lpflMatch = NULL;
+                            /* As in the jrc4 binary (0008:497a): one pass, taking the
+                               heaviest matching fleet even if another pursuer already
+                               has it. jrc3 first looked only at untargeted fleets. */
                             for (ifl2 = 0; ifl2 < cFleet; ifl2++) {
                                 lpfl2 = rglpfl[ifl2];
                                 if (!rglpfl[ifl2])
                                     break;
-                                if (lpfl2->pt.x == lpord->pt.x && lpfl2->pt.y == lpord->pt.y && iplrHi == (lpfl2->id & 0xfe00) &&
-                                    FMatchTarget(lpfl2, mdTarget, TRUE)) {
-                                    wt = WtFromLpfl(lpfl2);
-                                    if (!lpfl2->fTargeted && (wt > wtMatch || (wt == wtMatch && Random(2) == 0))) {
-                                        wtMatch = wt;
-                                        lpflMatch = lpfl2;
+                                if (lpfl2->pt.x == lpord->pt.x && lpfl2->pt.y == lpord->pt.y && iplrHi == (lpfl2->id & 0xfe00)) {
+                                    if (FMatchTarget(lpfl2, mdTarget, TRUE)) {
+                                        wt = WtFromLpfl(lpfl2);
+                                        if (wt > wtMatch || (wt == wtMatch && Random(2) == 0)) {
+                                            wtMatch = wt;
+                                            lpflMatch = lpfl2;
+                                        }
                                     }
-                                }
-                            }
-                            if (!lpflMatch) {
-                                for (ifl2 = 0; ifl2 < cFleet; ifl2++) {
-                                    lpfl2 = rglpfl[ifl2];
-                                    if (!rglpfl[ifl2])
-                                        break;
-                                    if (lpfl2->pt.x == lpord->pt.x && lpfl2->pt.y == lpord->pt.y && iplrHi == (lpfl2->id & 0xfe00)) {
-                                        if (FMatchTarget(lpfl2, mdTarget, TRUE)) {
-                                            wt = WtFromLpfl(lpfl2);
-                                            if (wt > wtMatch || (wt == wtMatch && Random(2) == 0)) {
-                                                wtMatch = wt;
-                                                lpflMatch = lpfl2;
-                                            }
-                                        }
-                                        cFound++;
-                                        if (Random(cFound) == 0 && (cFound == 1 || !lpfl2->fTargeted || Random(2) != 0)) {
-                                            lpflTarget = lpfl2;
-                                        }
+                                    cFound++;
+                                    if (Random(cFound) == 0 && (cFound == 1 || !lpfl2->fTargeted || Random(2) != 0)) {
+                                        lpflTarget = lpfl2;
                                     }
                                 }
                             }
