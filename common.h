@@ -64,6 +64,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "msg.h"
 #include "parts.h"
 #include "planet.h"
+#include "planetui.h"
 #include "popup.h"
 #include "produce.h"
 #include "race.h"
