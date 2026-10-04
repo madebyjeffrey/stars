@@ -375,8 +375,8 @@ fleets in the client's transfer dialog was not changed.
 ### AR Starter Colonies — candidate
 
 `turn3.c`: `SatisfyOrders` (AR colonization/base setup); `turn2.c`: `Produce`,
-`CBuildProdItem`, `FBuildObject`; `produce.c`: `ChangeProduction`,
-`FinishProduction`, `GetProductionCosts`.
+`CBuildProdItem`, `FBuildObject`; `produce.c`: `FinishProduction`,
+`GetProductionCosts`; `produceui.c`: `ChangeProduction`.
 These create and process the initial base and production queue, and implement
 queue clearing. `Produce` distinguishes an absent queue from a nonempty one
 and calculates research allocation while walking production. A completed
