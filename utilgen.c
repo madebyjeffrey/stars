@@ -483,7 +483,7 @@ int16_t AlertSz(char *sz, int16_t mbType) {
         OutputSz(!ini.fValidate ? 6 : 7, szT);
         return IDYES;
     }
-    return MessageBox(GetFocus(), sz, "Stars!", mbType);
+    return IdAlertBox(sz, mbType);
 }
 
 int16_t CchGetString(StringId ids, char *psz) {
@@ -849,8 +849,6 @@ void IntToRoman(int16_t i, char *pszOut) {
 }
 
 int16_t FCheckPassword() {
-    FARPROC lpProc;
-    int16_t fRet;
     int32_t lSaltDef;
 
     if (lSaltCur == 0 || lSaltLast == lSaltCur || fAi) {
@@ -865,10 +863,7 @@ int16_t FCheckPassword() {
     if (ini.fValidate) {
         return FALSE;
     }
-    lpProc = MakeProcInstance(PasswordDlg, hInst);
-    fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_PASSWORD), !hwndTitle ? hwndFrame : hwndTitle, lpProc);
-    FreeProcInstance(lpProc);
-    return fRet;
+    return PromptPassword();
 }
 
 int32_t LSaltFromSz(char *psz) {

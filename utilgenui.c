@@ -1251,3 +1251,19 @@ HFONT HfontPrinterCreate(HDC hdc, int16_t iSize, int16_t *pdyFont) {
     LocalFree(plf);
     return hfontNew;
 }
+
+// IdAlertBox shows an AlertSz message in a message box and returns the
+// button the player chose.
+int16_t IdAlertBox(char *sz, int16_t mbType) { return MessageBox(GetFocus(), sz, "Stars!", mbType); }
+
+// PromptPassword asks for the password of the file FCheckPassword is
+// checking.
+int16_t PromptPassword() {
+    FARPROC lpProc;
+    int16_t fRet;
+
+    lpProc = MakeProcInstance(PasswordDlg, hInst);
+    fRet = DialogBox(hInst, MAKEINTRESOURCE(IDD_PASSWORD), !hwndTitle ? hwndFrame : hwndTitle, lpProc);
+    FreeProcInstance(lpProc);
+    return fRet;
+}

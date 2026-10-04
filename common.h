@@ -92,6 +92,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "thing.h"
 #include "thingui.h"
 #include "turn.h"
+#include "ui.h"
 #include "turn2.h"
 #include "turn3.h"
 #include "tutor.h"

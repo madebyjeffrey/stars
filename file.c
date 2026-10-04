@@ -1238,21 +1238,6 @@ void UpdateBattleRecords() {
     return;
 }
 
-void PromptSaveGame() {
-    FARPROC lpProc;
-    int16_t fRet;
-
-    lpProc = MakeProcInstance(AskSaveDialog, hInst);
-    fRet = DialogBox(hInst, !game.fSinglePlr ? MAKEINTRESOURCE(IDD_SAVE_TURN1) : MAKEINTRESOURCE(IDD_SAVE_TURN2), hwndFrame, lpProc);
-    FreeProcInstance(lpProc);
-    if (fRet) {
-        gd.fSubmit = fRet == -1;
-        FWriteLogFile(szBase, idPlayer);
-        FWriteHistFile(idPlayer);
-    }
-    return;
-}
-
 void DestroyCurGame() {
     int16_t i;
 
