@@ -1166,8 +1166,18 @@ void MoveFleets() {
                                 } else {
                                     lpfl->idPlanet = idPlanetDeepSpace;
                                 }
-                                if (cPass > 0) {
-                                    lpfl->lpflNext->fDone = TRUE;
+                                /* A pursuer that catches a fleet still on its
+                                   own pursuit keeps following it with the rest
+                                   of its move. The original marked the caught
+                                   fleet done instead, which stopped it short of
+                                   its own target. */
+                                if (cPass > 0 && !lpfl->lpflNext->fDone) {
+                                    lpfl->dMoveUsed += LOWORD(dTravel);
+                                    lpfl->dMoveLeft -= LOWORD(dTravel);
+                                    if (lpfl->dMoveLeft > 0 && !fRanOutOfFuel) {
+                                        fDone = FALSE;
+                                        lpfl->fDone = FALSE;
+                                    }
                                 }
                             } else {
                                 dxRound = (double)(ptEnd.x <= ptBeg.x ? (long double)-0.5 : (long double)0.5);

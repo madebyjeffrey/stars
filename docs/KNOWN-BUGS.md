@@ -376,7 +376,7 @@ files after delivery and can encounter the corruption. The reported mail
 client's text conversion happens outside Stars!; there is no game-source
 function to identify as its cause.
 
-### "Stuck" Bug — located movement-state hazard
+### "Stuck" Bug — fixed in 2.8
 
 `turn.c`: `MoveFleets`.
 Fleet pursuit uses `lpflNext` to reference the target and makes multiple passes
@@ -386,6 +386,11 @@ target done, even if that target has its own unfinished pursuit. This is the
 mechanism by which an earlier-processed secondary pursuer can stop its main
 pursuer. The reported ID ordering and own-race restriction need a scenario
 test before being treated as universal constraints.
+
+**2.8:** confirmed by `tests/unit/test_turn.c`: with A chasing B and B
+chasing C, all starting together, B never left the start. A pursuer that
+catches a fleet still on its own pursuit now keeps following it with the
+rest of its move, and the caught fleet finishes its pursuit.
 
 ### WP0 Pop Reload Ignored — candidate
 

@@ -138,3 +138,7 @@ produce different results from a 2.6j host for the same turn.
   that don't fit stay in their own fleet (`Merge2Fleets`). Merging all
   fleets at a location clamped the count to 32766 and lost the rest; now a
   fleet that doesn't fit is left out (`FFleetMergeAll`). **Host results.**
+- Pursuit: a fleet chasing another no longer stops when a third fleet
+  chasing it catches up. The pursuer marked the caught fleet as done
+  moving; now it keeps following with the rest of its move (`MoveFleets`).
+  **Host results.**

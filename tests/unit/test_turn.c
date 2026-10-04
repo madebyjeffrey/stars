@@ -58,6 +58,76 @@ static void test_generate_backs_up_unsubmitted_turn(void) {
     TEST_CHECK(cbBackup == cbBefore && memcmp(rgbBackup, rgbBefore, cbBefore) == 0);
 }
 
+// SetFleetDest gives a fleet at a planet one waypoint at warp 9: toward
+// another fleet when lpflTarget is set, otherwise to a point dx ly east.
+static void SetFleetDest(FLEET *lpfl, FLEET *lpflTarget, int16_t dx) {
+    ORDER *lpord;
+
+    lpfl->rgwtMin[4] = LGetFleetStat(lpfl, 1);
+    lpfl->cord = 2;
+    lpfl->lpplord->iordMac = 2;
+    lpord = &lpfl->lpplord->rgord[1];
+    memset(lpord, 0, sizeof(ORDER));
+    lpord->iWarp = 9;
+    lpord->fValidTask = TRUE;
+    lpord->grTask = grTaskNone;
+    if (lpflTarget) {
+        lpord->grobj = grobjFleet;
+        lpord->id = lpflTarget->id;
+        lpord->pt = lpflTarget->pt;
+    } else {
+        lpord->grobj = grobjOther;
+        lpord->id = idPlanetDeepSpace;
+        lpord->pt.x = lpfl->pt.x + dx;
+        lpord->pt.y = lpfl->pt.y;
+    }
+}
+
+// "Stuck" pursuit: A chases B, which chases C. When A caught up with B,
+// MoveFleets marked B done although it hadn't finished its own pursuit, so
+// B stopped where A caught it.
+static void test_MoveFleets_caught_pursuer_keeps_moving(void) {
+    char    szDir[MAX_PATH];
+    PLANET *lppl;
+    FLEET  *lpflA;
+    FLEET  *lpflB;
+    FLEET  *lpflC;
+    POINT16 ptStart;
+    int16_t ish;
+    int16_t rgid[3];
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("MoveFleets_stuck", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, NULL, 0));
+    TEST_ASSERT(FStarsTestLoadHost());
+    lppl = LpplStarsTestHomeworld(0);
+    TEST_ASSERT(lppl != NULL);
+    for (ish = 0; ish < 16 && rglpshdef[0][ish].fFree; ish++) {
+    }
+    TEST_ASSERT(ish < 16);
+    // Fleets move in fleet order, so A goes before B and B before C.
+    rgid[0] = LpflStarsTestAddFleet(0, lppl->id, ish, 1)->id;
+    rgid[1] = LpflStarsTestAddFleet(0, lppl->id, ish, 1)->id;
+    rgid[2] = LpflStarsTestAddFleet(0, lppl->id, ish, 1)->id;
+    lpflA = LpflFromId(rgid[0]);
+    lpflB = LpflFromId(rgid[1]);
+    lpflC = LpflFromId(rgid[2]);
+    ptStart = lpflC->pt;
+    SetFleetDest(lpflC, NULL, 200);
+    SetFleetDest(lpflB, lpflC, 0);
+    SetFleetDest(lpflA, lpflB, 0);
+
+    MoveFleets();
+    lpflA = LpflFromId(rgid[0]);
+    lpflB = LpflFromId(rgid[1]);
+    lpflC = LpflFromId(rgid[2]);
+    TEST_ASSERT(lpflA != NULL && lpflB != NULL && lpflC != NULL);
+    TEST_ASSERT_(lpflC->pt.x > ptStart.x + 20, "C moved %d ly", lpflC->pt.x - ptStart.x);
+    TEST_CHECK_(lpflB->pt.x == lpflC->pt.x && lpflB->pt.y == lpflC->pt.y, "B stopped %d ly from the start", lpflB->pt.x - ptStart.x);
+    TEST_CHECK_(lpflA->pt.x == lpflB->pt.x && lpflA->pt.y == lpflB->pt.y, "A stopped %d ly from the start", lpflA->pt.x - ptStart.x);
+}
+
 TEST_LIST = {{"generate one turn", test_generate_one_turn},
              {"generate backs up an unsubmitted turn", test_generate_backs_up_unsubmitted_turn},
+             {"MoveFleets caught pursuer keeps moving", test_MoveFleets_caught_pursuer_keeps_moving},
              {NULL, NULL}};
