@@ -71,7 +71,7 @@ writes back just that bit; if not, it writes 0.
 (`iPlayer != iplrNone`), write a copy of the `THING` with each mask ANDed
 with `1 << iPlayer` and `tht.grbitTrader` cleared; the `.hst` keeps
 everything. That covers what StarsClean does, plus `thm.grbitPlrNow`. The
-record stays 18 bytes, so 2.6j clients read it unchanged. Check the AI
+record stays 18 bytes. Check the AI
 first: the Claim Adjuster change showed that AIs plan from their own turn
 file, so any AI code that reads another player's bit would see different
 data. If it does, the change is **host results**.

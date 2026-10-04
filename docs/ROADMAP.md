@@ -27,7 +27,8 @@ Every fix follows the same steps, in one commit:
    update its row below.
 
 Fixes apply whenever a 2.8 host generates the turn; there is no rules option.
-File formats don't change, so 2.6j and 2.8 still share games.
+File records don't change, so a 2.8 host can take over a 2.6j game; 2.8
+writes file version 2.84, which 2.6j refuses.
 
 The balance items in [KNOWN-BUGS.md](KNOWN-BUGS.md) (chaff, split fleet
 dodge, battle board overload, 0.2% minimum damage, profitable scrapping,

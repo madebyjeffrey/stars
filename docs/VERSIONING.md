@@ -42,7 +42,9 @@ branch) still publish releases named after the tag.
 
 Saves, turn files and race files carry their own version in `RTBOF`
 (`verMajor`/`verMinor`/`verInc`). The original wrote 2.83 (`save.c`) and
-refused files from 2.84 or later (`file.c`, `mdi.c`, `save.c`). It stays 2.83
-so that 2.6j/2.7 players and hosts can share games with 2.8. It is not tied
+refused files from 2.84 or later (`file.c`, `mdi.c`, `save.c`). 2.8 writes
+2.84 and reads 2.49 through 2.84: it picks up games, turns and races from
+2.6j/2.7, while 2.6j/2.7 refuse files written by 2.8 instead of playing on
+with different rules. The records themselves are unchanged. It is not tied
 to the product version; change it only together with a real file-format
 change, and expect older versions to reject the files.

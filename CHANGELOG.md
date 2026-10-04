@@ -6,12 +6,21 @@ produce different results from a 2.6j host for the same turn.
 
 ## 2.8.0 (unreleased)
 
+### Changed
+
+- Files written by 2.8 (games, turns, orders, histories and races) carry
+  file format version 2.84 instead of 2.83, so Stars! 2.6j and 2.7 refuse
+  them. 2.8 still loads 2.6j and 2.7 files, so a 2.8 host can take over a
+  2.6j game. The records are unchanged (`WriteBOF`). Opening a file from a
+  later version now says it is newer; the original called 2.84 files older
+  (`FOpenFile`).
+
 ### Added
 
 - Product version from git tags and build numbers, shown as
   `Version 2.8.0` (or `2.8.0-dev.N+gSHA` between releases) in the About box,
   splash screen and report headers, and stored in a `VERSIONINFO` resource.
-  The save-file format version is unchanged (2.83). See
+  The save-file format version is separate (see Changed). See
   [docs/VERSIONING.md](docs/VERSIONING.md).
 
 ### Fixed
@@ -91,9 +100,8 @@ produce different results from a 2.6j host for the same turn.
   Minerals can still be stolen (`SatisfyOrders`). **Host results.**
 - Race files: shortening a race name no longer saves a race file that Stars!
   rejects as corrupt. The checksum covered leftover characters of the
-  longer name in memory, which aren't saved (`IRaceChecksum`). Races saved
-  by 2.8 load in 2.6j; race files already saved with a bad checksum still
-  have to be recreated.
+  longer name in memory, which aren't saved (`IRaceChecksum`). Race files
+  already saved with a bad checksum still have to be recreated.
 - Pursuit: when a pursued fleet splits or disappears, every pursuer
   retargets the heaviest matching fleet where it was last seen, as in 2.6j
   RC4. RC3 (the reconstructed release) spread pursuers over fleets nobody

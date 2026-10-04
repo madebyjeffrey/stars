@@ -99,7 +99,50 @@ static void test_FWriteDataFile_claim_adjuster_sees_only_habitat(void) {
     TEST_CHECK(rgplr[1].pctResearch == 0 && rgplr[1].lResLastYear == 0 && rgplr[1].pctIdealGrowth == 0);
 }
 
+// File format version: 2.8 writes 2.84, which 2.6j and 2.7 refuse, and still
+// reads their 2.83 files. Later versions are refused.
+static int16_t FSetHostVersion(int16_t verMinor) {
+    char  szFile[MAX_PATH];
+    VERS  vers;
+    FILE *fp;
+
+    snprintf(szFile, sizeof(szFile), "%s.hst", szBase);
+    fp = fopen(szFile, "r+b");
+    if (fp == NULL)
+        return FALSE;
+    // The RTBOF record follows its 2-byte header and isn't encrypted.
+    fseek(fp, 2 + offsetof(RTBOF, wVersion), SEEK_SET);
+    if (fread(&vers, sizeof(vers), 1, fp) != 1) {
+        fclose(fp);
+        return FALSE;
+    }
+    if (verMinor < 0) {
+        fclose(fp);
+        return vers.verMajor == 2 && vers.verMinor == 84 && vers.verInc == 0;
+    }
+    vers.verMinor = verMinor;
+    fseek(fp, 2 + offsetof(RTBOF, wVersion), SEEK_SET);
+    fwrite(&vers, sizeof(vers), 1, fp);
+    fclose(fp);
+    return TRUE;
+}
+
+static void test_WriteBOF_writes_version_2_84(void) {
+    char szDir[MAX_PATH];
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("WriteBOF_version", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, NULL, 0));
+    TEST_CHECK_(FSetHostVersion(-1), "host file isn't 2.84");
+
+    TEST_ASSERT(FSetHostVersion(83));
+    TEST_CHECK_(FStarsTestLoadHost(), "a 2.83 host file didn't load");
+    TEST_ASSERT(FSetHostVersion(85));
+    TEST_CHECK_(!FStarsTestLoadHost(), "a 2.85 host file loaded");
+}
+
 TEST_LIST = {{"FWriteDataFile Claim Adjuster sees only habitat", test_FWriteDataFile_claim_adjuster_sees_only_habitat},
              {"SetVisPFFleets sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase},
              {"SetVisPFFleets long-range scanner sees a cloaked starbase", test_SetVisPFFleets_cloaked_starbase_long_range},
+             {"WriteBOF writes version 2.84", test_WriteBOF_writes_version_2_84},
              {NULL, NULL}};

@@ -1473,9 +1473,10 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
     fFileErrSilent = fSilentSav;
     ids = idsGameFileAppearsCorruptUnableLoadFile;
     ReadRt();
-    if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 84) {
+    if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
         if (hdrCur.rt == rtBOF) {
-            FileError(((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor > 84) ? 714 : 1235);
+            /* The original refused 2.84 but called it older (1235). */
+            FileError(((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 85) ? 714 : 1235);
         } else {
             FileError(idmColonistsDroppedDestroyedSpiritedFighting);
         }

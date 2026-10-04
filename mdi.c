@@ -2139,7 +2139,7 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
     {
         StreamOpen(szFile, mdRead);
         ReadRt();
-        if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 84) {
+        if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
             idsError = 13;
             fRet = -1;
             goto LBadFile;

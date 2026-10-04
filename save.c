@@ -998,7 +998,9 @@ void WriteBOF(int16_t iPlayer, int16_t dt, int16_t fMulti) {
     rtbof.lidGame = game.lid;
     rtbof.wGen = game.wGen;
     rtbof.verInc = 0;
-    rtbof.verMinor = 83;
+    /* The original wrote 2.83. 2.84 marks files written by 2.8; 2.6j and 2.7
+       refuse files from 2.84 or later. */
+    rtbof.verMinor = 84;
     rtbof.verMajor = 2;
     rtbof.turn = game.turn;
     rtbof.fCrippled = FALSE;
@@ -1051,7 +1053,7 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
         FileError(1235);
         goto LBadFile;
     }
-    if (((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 84)) {
+    if (((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 85)) {
         FileError(714);
         goto LBadFile;
     }

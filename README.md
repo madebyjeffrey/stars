@@ -12,7 +12,8 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   included. It matches the original game turn for turn in the fixed-seed
   regression.
 - `main`: the 2.8 line. It fixes original bugs and replaces the Win16 shims
-  with native code, while keeping the 2.6j file formats.
+  with native code. It reads 2.6j files and writes the same formats, marked
+  as version 2.84 so that 2.6j doesn't load them.
 
 ## Documentation
 
