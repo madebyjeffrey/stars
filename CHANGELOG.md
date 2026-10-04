@@ -76,3 +76,6 @@ produce different results from a 2.6j host for the same turn.
   open with exclusive sharing for the rest of the session, and a copy whose
   destination couldn't be created left the error-recovery state pointing at
   a finished call.
+- Turn generation keeps a backup of the turn file of a player who submitted
+  no turn, as the original did. The reconstruction had the copy's source
+  and destination reversed (`FGenerateTurn`).
