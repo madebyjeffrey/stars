@@ -1,9 +1,9 @@
 # Unit tests
 
 Each `test_<name>.c` here is an [acutest](https://github.com/mity/acutest)
-program linked with the game code (the `stars_core` object library) and its
-resources. They build as Windows console programs with the normal MinGW
-build, and CTest runs them through Wine:
+program linked with the game code (the `stars_core` and `stars_ui` object
+libraries) and its resources. They build as Windows console programs with
+the normal MinGW build, and CTest runs them through Wine:
 
 ```sh
 make test-unit                           # build mingw-debug and run them all

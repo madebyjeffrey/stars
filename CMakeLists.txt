@@ -12,19 +12,34 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-file(GLOB STARS_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
+# The game: rules, turn generation, AI and file I/O. A source file belongs
+# here only if the command-line host needs it; Windows dialogs and drawing go
+# in STARS_UI_SOURCES. Some of these files still hold UI functions; the 2.9
+# split moves those out (docs/ROADMAP.md).
+set(STARS_CORE_SOURCES
+    ai.c ai2.c ai3.c ai4.c aiutil.c
+    battle.c build.c create.c file.c globals.c log.c memory.c mine.c msg.c
+    native.c parts.c planet.c produce.c race.c research.c save.c ship.c
+    ship2.c strings.c strings_uncompressed.c thing.c turn.c turn2.c turn3.c
+    util.c utilgen.c
+)
+
+# The Windows game's user interface.
+set(STARS_UI_SOURCES
+    init.c mdi.c popup.c report.c scan.c stars.c tb.c tutor.c tutor2.c vcr.c
 )
 
 # Settings every target that compiles game code shares.
 add_library(stars_options INTERFACE)
 
-# The game code, built once for stars.exe and the unit tests.
-add_library(stars_core OBJECT ${STARS_SOURCES})
+# Each set is built once for stars.exe and the unit tests.
+add_library(stars_core OBJECT ${STARS_CORE_SOURCES})
 target_link_libraries(stars_core PUBLIC stars_options)
+add_library(stars_ui OBJECT ${STARS_UI_SOURCES})
+target_link_libraries(stars_ui PUBLIC stars_options)
 
 add_executable(stars WIN32 res/stars.rc)
-target_link_libraries(stars PRIVATE stars_core)
+target_link_libraries(stars PRIVATE stars_core stars_ui)
 
 # version.h is regenerated on every build so the build number follows HEAD;
 # it is rewritten only when the version changes.
@@ -43,6 +58,7 @@ add_custom_target(stars_version
     VERBATIM
 )
 add_dependencies(stars_core stars_version)
+add_dependencies(stars_ui stars_version)
 
 set_target_properties(stars PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -120,7 +136,7 @@ if(STARS_BUILD_TESTS)
     foreach(STARS_UNIT_TEST ${STARS_UNIT_TESTS})
         get_filename_component(STARS_TEST_NAME "${STARS_UNIT_TEST}" NAME_WE)
         add_executable(${STARS_TEST_NAME} "${STARS_UNIT_TEST}" tests/unit/stars_test.c res/stars.rc)
-        target_link_libraries(${STARS_TEST_NAME} PRIVATE stars_core)
+        target_link_libraries(${STARS_TEST_NAME} PRIVATE stars_core stars_ui)
         # Message boxes would wait for a click; stars_test.c records them.
         target_link_options(${STARS_TEST_NAME} PRIVATE "LINKER:--wrap=AlertSz")
         target_include_directories(${STARS_TEST_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
@@ -135,7 +151,7 @@ if(STARS_BUILD_TESTS)
     endforeach()
     # Games to open by hand (tests/scenarios, make scenario).
     add_executable(stars_scenario tests/scenarios/scenarios.c tests/unit/stars_test.c res/stars.rc)
-    target_link_libraries(stars_scenario PRIVATE stars_core)
+    target_link_libraries(stars_scenario PRIVATE stars_core stars_ui)
     target_link_options(stars_scenario PRIVATE "LINKER:--wrap=AlertSz")
     target_include_directories(stars_scenario PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
     set_target_properties(stars_scenario PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
