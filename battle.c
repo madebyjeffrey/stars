@@ -2961,7 +2961,7 @@ int16_t ITechLearnATech(int16_t iplr, int16_t x, int16_t y, MessageId idm, uint1
                 } else if (piGoto) {
                     *piGoto = iGoto;
                 }
-                rgplr[iplr].wFlags = (rgplr[iplr].wFlags & 0xfff7) | 8;
+                rgplr[iplr].fLearned = TRUE;
                 return -(iTech + 1);
             }
         }
@@ -2982,7 +2982,7 @@ int16_t ITechLearnATech(int16_t iplr, int16_t x, int16_t y, MessageId idm, uint1
             } else if (piGoto) {
                 *piGoto = 0xfffe;
             }
-            rgplr[iplr].wFlags = (rgplr[iplr].wFlags & 0xfff7) | 8;
+            rgplr[iplr].fLearned = TRUE;
             return iTech + 1;
         }
     }

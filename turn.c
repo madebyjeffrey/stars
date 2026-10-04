@@ -58,7 +58,7 @@ int16_t FGenerateTurn() {
         }
         if (i == game.cPlayer) {
             for (i = 0; i < game.cPlayer; i++) {
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (i & 0x1f) * 8;
+                rgplr[i].iPlrBmp = i;
             }
         }
     }
@@ -101,16 +101,16 @@ int16_t FGenerateTurn() {
         idPlayer = iplrNone;
         for (i = 0; i < game.cPlayer; i++) {
             if (rgplr[i].fCrippled || rgplr[i].fAi || (gd.fTutorial && i == 0)) {
-                rgplr[i].wFlags &= 0xfffb;
+                rgplr[i].fCheater = FALSE;
             } else if (vrgts[i].lSerialNumber != -1 && !FValidSerialLong(vrgts[i].lSerialNumber)) {
-                rgplr[i].wFlags = (rgplr[i].wFlags & 0xfffb) | 4;
+                rgplr[i].fCheater = TRUE;
             } else if (vrgts[i].lSerialNumber != -1) {
-                rgplr[i].wFlags &= 0xfffb;
+                rgplr[i].fCheater = FALSE;
                 for (j = 0; j < i; j++) {
                     if (!rgplr[j].fCrippled && !rgplr[j].fAi && vrgts[i].lSerialNumber == vrgts[j].lSerialNumber &&
                         memcmp(vrgts[i].rgbConfig, vrgts[j].rgbConfig, 11) != 0) {
-                        rgplr[j].wFlags = (rgplr[j].wFlags & 0xfffb) | 4;
-                        rgplr[i].wFlags = (rgplr[i].wFlags & 0xfffb) | (1 & 1) * 4;
+                        rgplr[j].fCheater = TRUE;
+                        rgplr[i].fCheater = TRUE;
                     }
                 }
             }
@@ -211,7 +211,7 @@ int16_t FGenerateTurn() {
                         FSendPlrMsg2(j, idmHackedRaceDiscoveredRaceStatisticsHaveAltered, gotoNone, i, 0);
                     }
                 }
-                rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
+                rgplr[i].fHacker = TRUE;
                 if (cAdv < 500) {
                     while (rgplr[i].rgAttr[0] < 25) {
                         rgplr[i].rgAttr[0]++;
@@ -298,7 +298,7 @@ int16_t FGenerateTurn() {
                     rglpshdef[i][j].pctDetect = pctDetect;
                     rglpshdef[i][j].iSteal = iSteal;
                     if (!FCanBuildShdef(rglpshdef[i] + j, i)) {
-                        rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0x7fff) | 0x8000;
+                        rglpshdef[i][j].fGift = TRUE;
                     }
                 }
             }

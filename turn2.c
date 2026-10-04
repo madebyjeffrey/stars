@@ -1578,12 +1578,12 @@ void UpdatePlayerScores() {
     for (i = 0; i < game.cPlayer; i++) {
         rglScore[i] = CalcPlayerScore(i, &score);
         vlprgScoreX[i].score = score;
-        vlprgScoreX[i].wWord = (vlprgScoreX[i].wWord & 0xffe0) | (i & 0x1f);
-        vlprgScoreX[i].wWord = (vlprgScoreX[i].wWord & 0xffdf) | 0x20;
-        vlprgScoreX[i].wWord &= 0xc03f;
+        vlprgScoreX[i].iPlayer = i;
+        vlprgScoreX[i].fValid = TRUE;
+        vlprgScoreX[i].grbitVC = 0;
         lScoreTot += rglScore[i];
         if (score.cPlanet == 0 && score.rgcsh[0] == 0 && score.rgcsh[1] == 0 && score.rgcsh[2] == 0 && !rgplr[i].fDead) {
-            rgplr[i].wFlags = (rgplr[i].wFlags & 0xfffe) | 1;
+            rgplr[i].fDead = TRUE;
             for (j = 0; j < game.cPlayer; j++) {
                 if (j != i) {
                     FSendPrependedPlrMsg(j, idmTracesHaveEliminatedGalaxyMayRestPeace, gotoScore, i | 0x30, 0, 0, 0, 0, 0, 0);
@@ -1684,7 +1684,7 @@ void UpdatePlayerScores() {
                     for (i = game.cPlayer - 1; i >= 0; i--) {
                         wWinners *= 2;
                         if (rgcCond[i] >= j) {
-                            vlprgScoreX[i].wWord = (vlprgScoreX[i].wWord & 0xbfff) | 0x4000;
+                            vlprgScoreX[i].fWinner = TRUE;
                             wWinners |= 1;
                         }
                     }

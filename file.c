@@ -290,7 +290,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
             if (!rglpshdef[i]) {
                 rglpshdef[i] = LpAlloc(16 * sizeof(SHDEF), htShips);
                 for (j = 0; j < 16; j++) {
-                    rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xfdff) | 0x200;
+                    rglpshdef[i][j].fFree = TRUE;
                     rglpshdef[i][j].grbitPlr = 0;
                 }
             }
@@ -315,7 +315,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
             if (!rglpshdefSB[i]) {
                 rglpshdefSB[i] = LpAlloc(10 * sizeof(SHDEF), htShips);
                 for (j = 0; j < 10; j++) {
-                    rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xfdff) | 0x200;
+                    rglpshdefSB[i][j].fFree = TRUE;
                     rglpshdefSB[i][j].grbitPlr = 0;
                 }
             }
@@ -361,7 +361,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
                 }
                 rgsxPlr[iplr][isx] = sx;
                 rgsxPlr[iplr][isx].turn = turnCur;
-                rgsxPlr[iplr][isx].wWord = (rgsxPlr[iplr][isx].wWord & 0x7fff) | 0x8000;
+                rgsxPlr[iplr][isx].fHistory = TRUE;
             }
             ReadRt();
         }
@@ -539,7 +539,7 @@ LNextTurn:
                 rglpshdef[i] = LpAlloc(16 * sizeof(SHDEF), htShips);
             FreeShdef:
                 for (j = 0; j < 16; j++) {
-                    rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xfdff) | 0x200;
+                    rglpshdef[i][j].fFree = TRUE;
                     rglpshdef[i][j].grbitPlr = 0;
                 }
             }
@@ -569,7 +569,7 @@ LNextTurn:
             for (j = 0; j < 16; j++) {
                 if (!rglpshdef[i][j].fFree) {
                     if (i != idPlayer && !gd.fGeneratingTurn && rgplr[i].fDead) {
-                        rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xfdff) | 0x200;
+                        rglpshdef[i][j].fFree = TRUE;
                     } else {
                         rgplr[i].cShDef++;
                     }
@@ -589,7 +589,7 @@ LNextTurn:
             if (!rglpshdefSB[i]) {
                 rglpshdefSB[i] = LpAlloc(10 * sizeof(SHDEF), htShips);
                 for (j = 0; j < 10; j++) {
-                    rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xfdff) | 0x200;
+                    rglpshdefSB[i][j].fFree = TRUE;
                     rglpshdefSB[i][j].grbitPlr = 0;
                 }
             }
@@ -617,7 +617,7 @@ LNextTurn:
             for (j = 0; j < 10; j++) {
                 if (!rglpshdefSB[i][j].fFree) {
                     if (i != idPlayer && !gd.fGeneratingTurn && rgplr[i].fDead) {
-                        rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xfdff) | 0x200;
+                        rglpshdefSB[i][j].fFree = TRUE;
                     } else {
                         rgplr[i].cshdefSB++;
                     }
@@ -659,7 +659,7 @@ LNextTurn:
             }
             rgsxPlr[iplr][isx] = vlprgScoreX[iplr];
             rgsxPlr[iplr][isx].turn = turnCur;
-            rgsxPlr[iplr][isx].wWord = (rgsxPlr[iplr][isx].wWord & 0x7fff) | 0x8000;
+            rgsxPlr[iplr][isx].fHistory = TRUE;
         }
         ReadRt();
     }

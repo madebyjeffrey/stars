@@ -586,7 +586,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                             rgplr[idPlayer].cshdefSB += 15;
                             LogChangeShDef(&shdefBuild);
                         } else {
-                            rgshdef[ishdefBuild].wFlags = (rgshdef[ishdefBuild].wFlags & 0xfdff) | 0x200;
+                            rgshdef[ishdefBuild].fFree = TRUE;
                             rgplr[idPlayer].cShDef--;
                             LogChangeShDef(&rgshdef[ishdefBuild]);
                         }

@@ -2553,9 +2553,9 @@ INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             iRet = msg.wParam - 15000;
         }
         if (iRet != -1 && iSel != iRet) {
-            rgplr[iDiamond].wMdPlr = (rgplr[iDiamond].wMdPlr & 0xfdff) | ((iRet > 0) & 1) * 0x200;
+            rgplr[iDiamond].fAi = iRet > 0;
             if (iRet == 2) {
-                rgplr[iDiamond].wMdPlr = (rgplr[iDiamond].wMdPlr & 0x1fff) | 0xe000;
+                rgplr[iDiamond].idAi = idAiMaid;
             }
             rgplr[iDiamond].lSalt = ~rgplr[iDiamond].lSalt;
             FMarkFile(dtTurn, iDiamond, mdMarkAi, iRet != 0);

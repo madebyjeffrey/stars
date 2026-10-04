@@ -2253,8 +2253,8 @@ void MarkPlayersThatSentMsgs(int16_t iPlayer) {
     if (iPlayer != iplrNone) {
         for (lpmp = vlpmsgplrOut; lpmp; lpmp = lpmp->lpmsgplrNext) {
             if ((lpmp->iPlrTo == 0 && lpmp->iPlrFrom != iPlayer) || (lpmp->iPlrTo - 1 == iPlayer && !rgplr[lpmp->iPlrFrom].fInclude)) {
-                rgplr[lpmp->iPlrFrom].wMdPlr = (rgplr[lpmp->iPlrFrom].wMdPlr & 0xfeff) | 0x100;
-                rgplr[lpmp->iPlrFrom].wMdPlr = (rgplr[lpmp->iPlrFrom].wMdPlr & 0xfff8) | 3;
+                rgplr[lpmp->iPlrFrom].fInclude = TRUE;
+                rgplr[lpmp->iPlrFrom].det = detSome;
             }
         }
     }

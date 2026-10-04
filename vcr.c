@@ -268,7 +268,7 @@ int16_t SetVCRBoard(int16_t iStep) {
             vrgtok[vlpbrVCR->itok].brc = vlpbrVCR->brcDest;
             vbrcVCRFocus = vrgtok[vlpbrVCR->itok].brc;
             viVCRFocus = vlpbrVCR->itok;
-            vrgtok[vlpbrVCR->itok].wFlags = (vrgtok[vlpbrVCR->itok].wFlags & 0xfc1f) | (vlpbrVCR->dzDis & 0x1f) * 0x20;
+            vrgtok[vlpbrVCR->itok].dzDis = vlpbrVCR->dzDis;
             if (vrgtok[vlpbrVCR->itok].dzDis == 4) {
                 vrgtok[vlpbrVCR->itok].mdTactic = mdTacticDisengage;
             }

@@ -394,7 +394,7 @@ int16_t FChangeAiShdef(SHDEF *pshdef, int16_t ishdef) {
             rgplr[idPlayer].cShDef += iDir;
         }
     } else if (!lpshdefBase[ishdefWork].fFree) {
-        lpshdefBase[ishdefWork].wFlags = (lpshdefBase[ishdefWork].wFlags & 0xfdff) | 0x200;
+        lpshdefBase[ishdefWork].fFree = TRUE;
         LogChangeShDef(lpshdefBase + ishdefWork);
     }
     lpshdefBase[ishdefWork] = shdef;

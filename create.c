@@ -701,8 +701,8 @@ RetryAll:
         if (GetRaceGrbit(&rgplr[i], ibitRaceAIPlayer) != 0) {
             CreateRandomRace(&rgplr[i]);
         }
-        rgplr[i].wFlags &= 0xfffe;
-        rgplr[i].wFlags &= 0xfff7;
+        rgplr[i].fDead = FALSE;
+        rgplr[i].fLearned = FALSE;
         rgplr[i].grbitTrader = grbitTraderNone;
         for (j = 0; j < 6; j++) {
             rgplr[i].rgTech[j] = 0;
@@ -901,7 +901,7 @@ RetryAll:
         lpshdef->cExist = 1;
         rglpshdefSB[i] = lpshdef;
         for (j = 1; j < 10; j++) {
-            lpshdef[j].wFlags = (lpshdef[j].wFlags & 0xfdff) | 0x200;
+            lpshdef[j].fFree = TRUE;
         }
         if (GetRaceStat(&rgplr[i], rsMajorAdv) == raMassAccel) {
             lpshdef->hul.rghs[0].iItem = ispecialSBMassDriver5;
@@ -943,7 +943,7 @@ RetryAll:
         lpshdef = LpAlloc(16 * sizeof(SHDEF), htShips);
         memset(lpshdef, 0, 16 * sizeof(SHDEF));
         for (j = 0; j < 16; j++) {
-            lpshdef[j].wFlags = (lpshdef[j].wFlags & 0xfdff) | 0x200;
+            lpshdef[j].fFree = TRUE;
         }
         rglpshdef[i] = lpshdef;
         idHome = rgplr[i].idPlanetHome;
@@ -1281,7 +1281,7 @@ int16_t CreateStartupShip(int16_t iplr, int16_t idPlanet, int16_t ishdef, int16_
     if (fAddShdef) {
         ishMac = (int16_t)(int8_t)rgplr[iplr].cShDef++;
         memmove(rglpshdef[iplr] + ishMac, LpshdefT() + ishdef, sizeof(SHDEF));
-        rglpshdef[iplr][ishMac].wFlags = (rglpshdef[iplr][ishMac].wFlags & 0x83ff) | (ishMac & 0x1f) * 0x400;
+        rglpshdef[iplr][ishMac].ishdef = ishMac;
         ishdef = ishMac;
     }
     rglpshdef[iplr][ishdef].cExist++;
@@ -1436,9 +1436,9 @@ int16_t GenNewGameFromFile(char *pszFile) {
                 idAi--;
             }
             rgplr[i] = *LpplrComp(idAi, lvlAi);
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
+            rgplr[i].fAi = TRUE;
+            rgplr[i].idAi = idAi;
+            rgplr[i].lvlAi = lvlAi;
         } else {
             strcpy(szWork, lpbStart);
             if (!FWasRaceFile(szWork, FALSE)) {
@@ -1573,7 +1573,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     for (i = 0; i < game.cPlayer; i++) {
         if (!rgplr[i].fAi && CAdvantagePoints(&rgplr[i]) < 0) {
             rgplr[i] = vrgplrDef[0];
-            rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
+            rgplr[i].fHacker = TRUE;
         }
         if (rgplr[i].szName[0] == 0) {
             CchGetString(Random(24) + 1390, rgplr[i].szName);
@@ -1631,7 +1631,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
-        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
+        rgplr[i].iPlrBmp = rgplrbmp[i];
     }
     GenerateWorld(TRUE);
     fSuccess = TRUE;
@@ -1837,9 +1837,9 @@ Finish:
             if (vrgplrTypeNew[i] >> 2 > 6) {
                 c = Random(7);
                 rgplr[i] = vrgplrDef[c];
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-                rgplr[i].wMdPlr &= 0xe3ff;
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | 0xe000;
+                rgplr[i].fAi = TRUE;
+                rgplr[i].lvlAi = 0;
+                rgplr[i].idAi = idAiMaid;
                 rgplr[i].lSalt = -1;
             } else {
                 c = vrgplrTypeNew[i] >> 2;
@@ -1861,16 +1861,16 @@ Finish:
                 idAi = Random(6);
             }
             rgplr[i] = *LpplrComp(idAi, lvlAi);
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfdff) | 0x200;
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xe3ff) | (lvlAi & 7) * 0x400;
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0x1fff) | (idAi & 7) * 0x2000;
+            rgplr[i].fAi = TRUE;
+            rgplr[i].lvlAi = lvlAi;
+            rgplr[i].idAi = idAi;
         }
     }
     game.cPlayer = i;
     for (i = 0; i < game.cPlayer; i++) {
         if (!rgplr[i].fAi && CAdvantagePoints(&rgplr[i]) < 0) {
             rgplr[i] = vrgplrDef[0];
-            rgplr[i].wFlags = (rgplr[i].wFlags & 0xffef) | 0x10;
+            rgplr[i].fHacker = TRUE;
         }
         if (rgplr[i].szName[0] == 0) {
             CchGetString(Random(24) + 1390, rgplr[i].szName);
@@ -1930,7 +1930,7 @@ Finish:
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
-        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xff07) | (rgplrbmp[i] & 0x1f) * 8;
+        rgplr[i].iPlrBmp = rgplrbmp[i];
     }
     if (!fFreeingTitle) {
         fFreeingTitle = TRUE;

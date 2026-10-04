@@ -490,8 +490,8 @@ void WriteBattles(int16_t iPlayer) {
             if (lpbtldata->grfPlr & fPlayerCur) {
                 for (i = 0; i < game.cPlayer; i++) {
                     if (i != iPlayer && !rgplr[i].fInclude && (1 << i & lpbtldata->grfPlr)) {
-                        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfeff) | 0x100;
-                        rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfff8) | 3;
+                        rgplr[i].fInclude = TRUE;
+                        rgplr[i].det = detSome;
                     }
                 }
                 for (i = 0; i < lpbtldata->ctok; i++) {
@@ -500,25 +500,21 @@ void WriteBattles(int16_t iPlayer) {
                             iplr = lpbtldata->rgtok[i].iplr;
                             lppl = LpplFromId(lpbtldata->rgtok[i].id);
                             if (!rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 16].fInclude) {
-                                rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 16].wFlags =
-                                    (rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 0x10].wFlags & 0xfeff) | 0x100;
+                                rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 16].fInclude = TRUE;
                                 rgplr[iplr].cshdefSB++;
                             }
-                            rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 16].wFlags =
-                                (rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 0x10].wFlags & 0xff00) | 7;
+                            rglpshdefSB[iplr][lpbtldata->rgtok[i].ishdef - 16].det = detAll;
                         } else {
                             lpfl = LpflFromId(lpbtldata->rgtok[i].id);
                             if (lpfl->iPlayer != iPlayer && !rgplr[lpfl->iPlayer].fInclude) {
-                                rgplr[lpfl->iPlayer].wMdPlr = (rgplr[lpfl->iPlayer].wMdPlr & 0xfeff) | 0x100;
-                                rgplr[lpfl->iPlayer].wMdPlr = (rgplr[lpfl->iPlayer].wMdPlr & 0xfff8) | 3;
+                                rgplr[lpfl->iPlayer].fInclude = TRUE;
+                                rgplr[lpfl->iPlayer].det = detSome;
                             }
                             if (!rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].fInclude) {
-                                rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].wFlags =
-                                    (rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].wFlags & 0xfeff) | 0x100;
+                                rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].fInclude = TRUE;
                                 rgplr[lpfl->iPlayer].cShDef = rgplr[lpfl->iPlayer].cShDef + 1;
                             }
-                            rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].wFlags =
-                                (rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].wFlags & 0xff00) | 7;
+                            rglpshdef[lpfl->iPlayer][lpbtldata->rgtok[i].ishdef].det = detAll;
                             if (!lpfl->fDead) {
                                 if (!lpfl->fInclude) {
                                     rgplr[lpfl->iPlayer].cFleet = rgplr[lpfl->iPlayer].cFleet + 1;
@@ -873,7 +869,7 @@ void MarkFleet(FLEET *lpfl, DetType det) {
         rgplr[lpfl->iPlayer].cFleet = rgplr[lpfl->iPlayer].cFleet + 1;
         for (i = 0; i < 16; i++) {
             if (lpfl->rgcsh[i] != 0) {
-                lpshdef[i].wFlags = (lpshdef[i].wFlags & 0xfeff) | 0x100;
+                lpshdef[i].fInclude = TRUE;
             }
         }
     }
@@ -925,8 +921,8 @@ void MarkPlanet(PLANET *lppl, int16_t iPlr, DetType det) {
         lppl->det = det;
     }
     if (lppl->iPlayer != iplrNone && !rgplr[lppl->iPlayer].fInclude) {
-        rgplr[lppl->iPlayer].wMdPlr = (rgplr[lppl->iPlayer].wMdPlr & 0xfeff) | 0x100;
-        rgplr[lppl->iPlayer].wMdPlr = (rgplr[lppl->iPlayer].wMdPlr & 0xfff8) | 3;
+        rgplr[lppl->iPlayer].fInclude = TRUE;
+        rgplr[lppl->iPlayer].det = detSome;
     }
     if (det != detObscure && lppl->iPlayer != iplrNone && lppl->fStarbase) {
         lpshdef = rglpshdefSB[lppl->iPlayer] + lppl->isb;
@@ -1192,32 +1188,32 @@ void SetVisPFInit(int16_t iPlr) {
     }
     for (i = 0; i < game.cPlayer; i++) {
         if (iPlr == iplrNone || iPlr == i || rgplr[i].fDead) {
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfeff) | 0x100;
-            rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfff8) | 7;
+            rgplr[i].fInclude = TRUE;
+            rgplr[i].det = detAll;
         } else {
-            rgplr[i].wMdPlr &= 0xfeff;
+            rgplr[i].fInclude = FALSE;
         }
         rgplr[i].cFleet = 0;
         rgplr[i].cShDef = 0;
         rgplr[i].cshdefSB = 0;
         for (j = 0; j < 16; j++) {
             if ((iPlr == iplrNone || iPlr == i) && !rglpshdef[i][j].fFree) {
-                rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xfeff) | 0x100;
-                rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xff00) | 7;
+                rglpshdef[i][j].fInclude = TRUE;
+                rglpshdef[i][j].det = detAll;
                 rglpshdef[i][j].cExist = 0;
                 rgplr[i].cShDef++;
             } else {
-                rglpshdef[i][j].wFlags &= 0xfeff;
+                rglpshdef[i][j].fInclude = FALSE;
             }
         }
         for (j = 0; j < 10; j++) {
             if ((iPlr == iplrNone || iPlr == i) && !rglpshdefSB[i][j].fFree) {
-                rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xfeff) | 0x100;
-                rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xff00) | 7;
+                rglpshdefSB[i][j].fInclude = TRUE;
+                rglpshdefSB[i][j].det = detAll;
                 rglpshdefSB[i][j].cExist = 0;
                 rgplr[i].cshdefSB++;
             } else {
-                rglpshdefSB[i][j].wFlags &= 0xfeff;
+                rglpshdefSB[i][j].fInclude = FALSE;
             }
         }
     }
@@ -1276,8 +1272,8 @@ void SetVisPFInit(int16_t iPlr) {
                 lpth->thp.fInclude = TRUE;
                 if (rgplr[lpth->iplr].fInclude)
                     break;
-                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfeff) | 0x100;
-                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfff8) | 3;
+                rgplr[lpth->iplr].fInclude = TRUE;
+                rgplr[lpth->iplr].det = detSome;
                 break;
             }
             lpth->thp.fInclude = FALSE;
@@ -1290,8 +1286,8 @@ void SetVisPFInit(int16_t iPlr) {
             break;
         case ithMinefield:
             if ((lpth->thm.grbitPlrNow & grbitPlr) && !rgplr[lpth->iplr].fInclude) {
-                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfeff) | 0x100;
-                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfff8) | 3;
+                rgplr[lpth->iplr].fInclude = TRUE;
+                rgplr[lpth->iplr].det = detSome;
             }
         }
     }
@@ -1392,8 +1388,8 @@ void SetVisPFFleets(int16_t iPlr) {
                                         lpth->thp.fInclude = TRUE;
                                     LThIncPlr:
                                         if (!rgplr[lpth->iplr].fInclude) {
-                                            rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfeff) | 0x100;
-                                            rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfff8) | 3;
+                                            rgplr[lpth->iplr].fInclude = TRUE;
+                                            rgplr[lpth->iplr].det = detSome;
                                         }
                                     } else if (lpth->ith == ithMysteryTrader) {
                                         lpth->tht.fInclude = TRUE;
@@ -1564,8 +1560,8 @@ void SetVisPFPlanets(int16_t iPlr) {
                                             lpth->thp.fInclude = TRUE;
                                         LThIncPlr2:
                                             if (!rgplr[lpth->iplr].fInclude) {
-                                                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfeff) | 0x100;
-                                                rgplr[lpth->iplr].wMdPlr = (rgplr[lpth->iplr].wMdPlr & 0xfff8) | 3;
+                                                rgplr[lpth->iplr].fInclude = TRUE;
+                                                rgplr[lpth->iplr].det = detSome;
                                             }
                                         } else if (lpth->ith == ithMysteryTrader) {
                                             lpth->tht.fInclude = TRUE;
@@ -1754,8 +1750,8 @@ void SetVisPFThings(int16_t iPlr) {
                                                 lpth2->thp.fInclude = TRUE;
                                             LThIncPlr3:
                                                 if (!rgplr[lpth2->iplr].fInclude) {
-                                                    rgplr[lpth2->iplr].wMdPlr = (rgplr[lpth2->iplr].wMdPlr & 0xfeff) | 0x100;
-                                                    rgplr[lpth2->iplr].wMdPlr = (rgplr[lpth2->iplr].wMdPlr & 0xfff8) | 3;
+                                                    rgplr[lpth2->iplr].fInclude = TRUE;
+                                                    rgplr[lpth2->iplr].det = detSome;
                                                 }
                                             } else if (lpth2->ith == ithMysteryTrader) {
                                                 lpth2->tht.fInclude = TRUE;
@@ -1850,33 +1846,33 @@ void SetVisPFFinish(int16_t iPlr) {
             rgplr[i].cShDef = 0;
             for (j = 0; j < 16; j++) {
                 if (1 << iPlr & rglpshdef[i][j].grbitPlr) {
-                    rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xfeff) | 0x100;
-                    rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xff00) | 7;
+                    rglpshdef[i][j].fInclude = TRUE;
+                    rglpshdef[i][j].det = detAll;
                     goto LFinShdef;
                 } else {
                     if (!rglpshdef[i][j].fInclude)
                         continue;
-                    rglpshdef[i][j].wFlags = (rglpshdef[i][j].wFlags & 0xff00) | (detMajor & 0xff);
+                    rglpshdef[i][j].det = detMajor;
                 }
             LFinShdef:
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfff8) | 3;
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfeff) | 0x100;
+                rgplr[i].det = detSome;
+                rgplr[i].fInclude = TRUE;
                 rgplr[i].cShDef++;
             }
             rgplr[i].cshdefSB = 0;
             for (j = 0; j < 10; j++) {
                 if (1 << iPlr & rglpshdefSB[i][j].grbitPlr) {
-                    rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xfeff) | 0x100;
-                    rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xff00) | 7;
+                    rglpshdefSB[i][j].fInclude = TRUE;
+                    rglpshdefSB[i][j].det = detAll;
                     goto LFinShdefSB;
                 } else {
                     if (!rglpshdefSB[i][j].fInclude)
                         continue;
-                    rglpshdefSB[i][j].wFlags = (rglpshdefSB[i][j].wFlags & 0xff00) | (detMajor & 0xff);
+                    rglpshdefSB[i][j].det = detMajor;
                 }
             LFinShdefSB:
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfeff) | 0x100;
-                rgplr[i].wMdPlr = (rgplr[i].wMdPlr & 0xfff8) | 3;
+                rgplr[i].fInclude = TRUE;
+                rgplr[i].det = detSome;
                 rgplr[i].cshdefSB++;
             }
         }
