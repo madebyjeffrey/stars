@@ -160,3 +160,7 @@ produce different results from a 2.6j host for the same turn.
   taken as it produced and grew that year. Loading colonists onto ships at
   waypoint 1, after production, no longer lowers them (`Produce`,
   `CalcPlayerScore`). Scores only; play is unchanged.
+- Popups: right-clicking a location on the map, and choosing a waypoint's
+  target, list every fleet and object there. The original stopped at 100
+  entries, so objects past them couldn't be selected or targeted
+  (`ScannerWndProc`, `ClickInShipOrders`, `PopupMenu`). Client only.

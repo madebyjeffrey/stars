@@ -458,7 +458,9 @@ int16_t PopupMenu(HWND hwnd, int16_t x, int16_t y, int16_t cString, int32_t *rgi
     if (hmenuSub) {
         DestroyMenu(hmenuSub);
     }
-    if (PeekMessage(&msg, hwndFrame, 273, 273, 2) != 0 && msg.wParam >= 15000 && msg.wParam < 15100) {
+    /* The original accepted only the first 100 items; the target popups now
+       list every object at a location. */
+    if (PeekMessage(&msg, hwndFrame, 273, 273, 2) != 0 && msg.wParam >= 15000 && msg.wParam < 15000 + (WPARAM)cString) {
         iPopMenuSel = msg.wParam - 15000;
     }
     return iPopMenuSel;

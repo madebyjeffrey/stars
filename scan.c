@@ -20,7 +20,8 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     THING      *lpth;
     FLEET      *lpfl;
     int16_t     fSep;
-    int32_t     rgid[100];
+    int32_t    *rgid;
+    int32_t     idSel;
     int16_t     iChecked;
     int16_t     iSel;
     THING      *lpthMac;
@@ -162,6 +163,10 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         if (msg == WM_RBUTTONDOWN) {
             iChecked = -1;
             pt = scan.pt;
+            /* Room for every fleet and thing here, a planet and a separator.
+               The original stopped at 100 entries, so objects past them
+               couldn't be picked (target list overload). */
+            rgid = LpAlloc((cFleet + cThing + 3) * sizeof(int32_t), htMisc);
             if (scan.grobjFull & grobjPlanet) {
                 rgid[0] = scan.idpl;
                 rgid[1] = -1;
@@ -181,8 +186,6 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                         iChecked = c;
                     }
                     rgid[c++] = lpfl->id | 0x80000000;
-                    if (c >= 98)
-                        break;
                 }
             }
             if (c == 2 && (scan.grobjFull & grobjPlanet)) {
@@ -198,28 +201,28 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                         fSep = TRUE;
                     }
                     rgid[c++] = (uint32_t)(uint16_t)lpth->idFull | 0x20000000;
-                    if (c >= 100)
-                        break;
                 }
             }
             LogicalToScan(&pt);
             iSel = PopupMenu(hwnd, pt.x, pt.y, c, rgid, NULL, iChecked, TRUE);
+            idSel = iSel >= 0 ? rgid[iSel] : 0;
+            FreeLp(rgid, htMisc);
             if (iSel < 0)
                 break;
-            if (rgid[iSel] & 0x80000000) {
+            if (idSel & 0x80000000) {
                 scan.grobj = grobjFleet;
-                id = LOWORD(rgid[iSel]);
+                id = LOWORD(idSel);
                 for (i = 0; i < cFleet; i++) {
                     lpfl = rglpfl[i];
                     if (!rglpfl[i] || lpfl->id == id)
                         break;
                 }
                 scan.ifl = i;
-            } else if (rgid[iSel] & 0x20000000) {
+            } else if (idSel & 0x20000000) {
                 scan.grobj = grobjThing;
                 lpth = lpThings;
                 lpthMac = lpThings + cThing;
-                for (; lpth < lpthMac && lpth->idFull != LOWORD(rgid[iSel]); lpth++) {
+                for (; lpth < lpthMac && lpth->idFull != LOWORD(idSel); lpth++) {
                 }
                 scan.ith = (int16_t)((uint8_t *)lpth - (uint8_t *)lpThings) / 18;
             } else {

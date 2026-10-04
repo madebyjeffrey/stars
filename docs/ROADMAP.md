@@ -70,7 +70,7 @@ and order helpers as fixes need them.
 | SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists or fuel it may only steal; the binary never uses its "attempted to shanghai colonists" and "attempted to steal fuel" messages (0x124, 0x125) | turn | fixed (`test_turn3.c`) |
 | Mineral upload | `FRunLogRecord` destroys cargo another player's fleet can't hold after taking it from the source | function | fixed (`test_log.c`) |
 | Claim Adjuster turn files | `FWriteDataFile` raises every included player's record to full detail for a CA player so it carries their habitat (`DrawMineSurvey` ally planet values), which also sends their tech, research, traits, production template and relations | turn | fixed (`test_save.c`) |
-| Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
+| Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | fixed (no unit test) |
 | Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | fixed (`test_race.c`) |
 | Turn-file knowledge leaks | `FWriteDataFile` writes whole `THING` records, so a player's file carries other players' bits in the Mystery Trader, minefield and wormhole masks and the trader's part (see [TOTALHOST.md](TOTALHOST.md)) | function | fixed (`test_save.c`) |
 | False public scores | `CalcPlayerScore` reads populations after waypoint 1 cargo moves, not as they produced | turn | fixed (`test_turn2.c`) |

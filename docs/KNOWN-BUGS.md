@@ -194,13 +194,18 @@ a homeworld to an AI ship with a 10 kT hold left the ship with 10 kT and
 the planet 100 kT poorer. What doesn't fit now goes back to the source,
 as the "unable to transfer" message says.
 
-### Target List Overload — located
+### Target List Overload — fixed in 2.8
 
 `scan.c`: `ScannerWndProc`; `ship.c`: `ClickInShipOrders`.
 Both target-popup paths use `rgid[100]` and stop collecting entries at 100.
 Objects beyond the popup limit cannot be chosen through those menus.
 `scan.c`'s `FGetNextObjHere` provides a separate selection traversal, explaining
 why viewing another fleet need not imply it can be selected as a popup target.
+
+**2.8:** both popups list every fleet and thing at the location, and
+`PopupMenu` accepts a choice past the hundredth item. This is client UI,
+so there is no unit test; check it by right-clicking a location with more
+than 100 fleets.
 
 ### Space Dock Armor Slot Buffer Overflow — fixed in 2.8
 

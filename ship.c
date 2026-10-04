@@ -2389,7 +2389,9 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
     ORDER     *lpord;
     THING     *lpth;
     FLEET     *lpfl;
-    int32_t    rgid[100];
+    int32_t   *rgid;
+    int32_t    idFirst;
+    int32_t    idSel;
     int16_t    iChecked;
     THING     *lpthMac;
     SCAN       scan;
@@ -2489,6 +2491,11 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             iChecked = -1;
             lpord = &sel.fl.lpplord->rgord[sel.iwpAct];
             FFindNearestObject(lpord->pt, grobjPlanet | grobjFleet | grobjOther | grobjThing | mdExact, &scan);
+            /* Room for every fleet and thing here, the planet or deep space
+               and a separator. The original stopped at 100 entries, so
+               objects past them couldn't be targeted (target list
+               overload). */
+            rgid = LpAlloc((cFleet + cThing + 3) * sizeof(int32_t), htMisc);
             if (scan.idpl != idplNone) {
                 rgid[0] = scan.idpl;
             } else {
@@ -2508,8 +2515,6 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
                         iChecked = c;
                     }
                     rgid[c++] = lpfl->id | 0x80000000;
-                    if (c >= 100)
-                        break;
                 }
             }
             if (c == 2) {
@@ -2521,30 +2526,29 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             for (; lpth < lpthMac; lpth++) {
                 if (scan.pt.x == lpth->pt.x && scan.pt.y == lpth->pt.y) {
                     if (!fSep) {
-                        if (c >= 100)
-                            break;
                         rgid[c++] = -1;
                         fSep = TRUE;
                     }
-                    if (c >= 100)
-                        break;
                     rgid[c++] = (uint32_t)(uint16_t)lpth->idFull | 0x20000000;
                 }
             }
             i = PopupMenu(hwndPlanet, pt.x, pt.y, c, rgid, NULL, iChecked, TRUE);
+            idFirst = rgid[0];
+            idSel = i >= 0 ? rgid[i] : 0;
+            FreeLp(rgid, htMisc);
             if (i >= 0) {
-                if (i == 0 && rgid[0] == 268435456) {
+                if (i == 0 && idFirst == 268435456) {
                     lpord->grobj = grobjOther;
                     lpord->id = -1;
-                } else if (rgid[i] & 0x20000000) {
+                } else if (idSel & 0x20000000) {
                     lpord->grobj = grobjThing;
-                    lpord->id = LOWORD(rgid[i]);
-                } else if (rgid[i] & 0x80000000) {
+                    lpord->id = LOWORD(idSel);
+                } else if (idSel & 0x80000000) {
                     lpord->grobj = grobjFleet;
-                    lpord->id = LOWORD(rgid[i]);
+                    lpord->id = LOWORD(idSel);
                 } else {
                     lpord->grobj = grobjPlanet;
-                    lpord->id = LOWORD(rgid[0]);
+                    lpord->id = LOWORD(idFirst);
                 }
                 FLookupFleet(idWriteBack, &sel.fl);
                 FillOrdersLB();
