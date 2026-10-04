@@ -562,7 +562,8 @@ char *PszFromLong(int32_t l, int16_t *pcch) {
     int16_t cch;
 
     cch = wsprintf(szFormatNumber, PCTLD, l);
-    if (*pcch != 0) {
+    /* The original tested *pcch, reading through the report dumps' NULL. */
+    if (pcch) {
         *pcch = cch;
     }
     return szFormatNumber;

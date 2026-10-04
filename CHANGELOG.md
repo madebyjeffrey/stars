@@ -64,3 +64,7 @@ produce different results from a 2.6j host for the same turn.
   Win16 message numbers for `CB_GETCURSEL`/`LB_GETCURSEL`, which Win32
   controls ignore (`BattlePlansDlg`, `DrawProductionDlg`). Now as in the
   original.
+- Native build: the planet and fleet dumps no longer crash. `PszFromLong`
+  tested the value behind its optional count pointer instead of the
+  pointer, which the dumps pass as NULL; Win16 silently read the start of
+  its data segment.

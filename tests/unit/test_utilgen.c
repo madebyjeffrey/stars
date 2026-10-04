@@ -49,7 +49,19 @@ static void test_FIntersectCircleLine_miss(void) {
     TEST_CHECK(!FIntersectCircleLine(Pt(0, 0), Pt(100, 0), Pt(-50, 0), 100, 100, &dStart, &dEnd));
 }
 
-TEST_LIST = {{"FIntersectCircleLine horizontal", test_FIntersectCircleLine_horizontal},
+// PszFromLong tested *pcch instead of pcch, so a NULL count pointer (the
+// report dumps' calls) was dereferenced.
+static void test_PszFromLong(void) {
+    int16_t cch;
+
+    TEST_CHECK(strcmp(PszFromLong(1234567, NULL), "1234567") == 0);
+    cch = -1;
+    TEST_CHECK(strcmp(PszFromLong(-42, &cch), "-42") == 0);
+    TEST_CHECK_(cch == 3, "cch %d", cch);
+}
+
+TEST_LIST = {{"PszFromLong", test_PszFromLong},
+             {"FIntersectCircleLine horizontal", test_FIntersectCircleLine_horizontal},
              {"FIntersectCircleLine diagonal", test_FIntersectCircleLine_diagonal},
              {"FIntersectCircleLine vertical", test_FIntersectCircleLine_vertical},
              {"FIntersectCircleLine miss", test_FIntersectCircleLine_miss},
