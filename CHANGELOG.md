@@ -124,3 +124,7 @@ produce different results from a 2.6j host for the same turn.
 - Healing: ships that gated, fought or hit mines no longer heal by merging
   into a fleet that didn't; the fleet they join doesn't heal that turn
   either (`Merge2Fleets`). **Host results.**
+- Native build: a detonating minefield no longer crashes turn generation
+  when a fleet is inside it. `FTravelThroughMineFields` read the travel
+  distance through the NULL pointer `ThingDecay` passes for a detonation,
+  which Win16 read harmlessly from the start of its data segment.

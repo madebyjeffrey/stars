@@ -1294,7 +1294,10 @@ int16_t FTravelThroughMineFields(FLEET *lpfl, int16_t *pdTravel, THING *lpthHit)
 
     lpthSalvage = NULL;
     cshDead = 0;
-    dTravel = *pdTravel;
+    /* A detonation (lpthHit) passes no travel distance. The original read
+       through the NULL near pointer anyway, from the start of its data
+       segment. */
+    dTravel = lpthHit ? 0 : *pdTravel;
     cishInc = 0;
     iPlayer = lpfl->iPlayer;
     raMajor = GetRaceStat(&rgplr[iPlayer], rsMajorAdv);
