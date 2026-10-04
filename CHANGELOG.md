@@ -12,6 +12,12 @@ produce different results from a 2.6j host for the same turn.
 generation. Still writing empty serial bytes in place of old rgbConfig/lSerial
 in rtlog records for backwards compatibility with tools that load it.
 
+### Fixed
+
+- Patch releases now display `Version 2.8.1x64` instead of
+  `Version 2.8x64 (2.8.1)` (`SzVersion`, `cmake/version.cmake`). Initial
+  releases still omit `.0`, and development builds retain their full version.
+
 ## 2.8.0 (2026-10-04)
 
 ### Changed
