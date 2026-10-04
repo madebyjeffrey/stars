@@ -20,12 +20,12 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   Don't widen `int16_t` to `BOOL`/`int` where storage, addresses or file I/O
   depend on the width.
 - **POINT16:** Stars' `POINT` is `POINT16`. Win32 calls use the native `POINT`,
-  converted through `PointFrom16`/`PointTo16`. `ChangeScanSel` and
+  converted through `PointFrom16`/`PointTo16`. `ShowScanSelChange` and
   `DrawBuildSelComp` pass 32-bit `RECT` fields through `POINT16`/`int16_t`
   locals (marked `NATIVE`). Keep this split when adding Win32 calls.
-  `POINT16` and its conversions (`GetCursorPos16`, `ScreenToClient16` and the
-  like) are in `native.h`.
-- **Other helpers** (`native.c`): `GetTextExtent` keeps Win16's packed
+  `POINT16` is in `native.h`; its conversions (`GetCursorPos16`,
+  `ScreenToClient16` and the like) are in `nativeui.h`.
+- **Other helpers** (`nativeui.c`): `GetTextExtent` keeps Win16's packed
   width/height result, which about 140 callers split with `LOWORD`/`HIWORD`;
   `FrameWndProcDeferred` posts the frame's restore and maximize commands back
   to the message loop so Wine's macOS driver can't deadlock the

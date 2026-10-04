@@ -28,6 +28,7 @@ static inline void RawStore32(void *p, uint32_t v) { memcpy(p, &v, sizeof v); }
 
 #include "enums.h"
 #include "native.h"
+#include "nativeui.h"
 
 // Application messages (WM_USER + 0x64...).
 #define WM_STARS_STARTUP  0x0464

@@ -35,7 +35,7 @@ Work proceeded in this order:
 3. Reverting the Win16 parity emulation, one commit each (done).
 4. Replacing the `win16defines.h` shims with native Win32 code, one group at
    a time, behavior-neutral (done; what the port still needs is in
-   `native.h`/`native.c`).
+   `native.h`/`native.c` and `nativeui.h`/`nativeui.c`).
 5. Original bug fixes from [KNOWN-BUGS.md](KNOWN-BUGS.md) (below).
 
 ## 5. Bug fixes
