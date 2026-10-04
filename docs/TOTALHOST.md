@@ -35,7 +35,7 @@ against them.
 | SS Pop Steal | `.x` | Robber Baron transport order to load colonists from someone else's planet set to no action | fixed |
 | Starbase Friendly Fire | `.x` | default battle plan "attack player N" reset to Neutral/Enemies | native repair in place; needs a test |
 | Cheap Starbase | `.x` | edit of a partly built starbase design blanked | **open** |
-| Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | **open** |
+| Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | fixed |
 | 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | fixed |
 | 10th starbase design crash | `.x` | warning only | **open** (Crash Stars) |
 | Race file corruption | `.r` | checksum rewritten | fixed |
@@ -137,7 +137,7 @@ design-change record) or make the client's check
 starbase. TotalHost's rule (`totalBuilt == 0` and `pct > 0` in a queue) is
 a ready test case.
 
-### Mineral Upload: open
+### Mineral Upload: fixed in 2.8
 
 Manual transfer blocks 1, 2 and 25 (small, medium and large amounts): for
 transfers from the player's planet to another player's fleet, StarsFix sums
@@ -147,10 +147,11 @@ from the designs), it zeroes the cargo mask (byte 5), which cancels that
 order. It uses total capacity, not free space, so a partly loaded fleet can
 still lose minerals.
 
-KNOWN-BUGS.md and ROADMAP 5.2 have the cause: `TransferToOthers` delivers
-through `ChgCargo`, which caps at free hold space and destroys the rest.
-**For 2.8:** leave the excess as salvage, or return it to the planet, at
-`TransferToOthers`. That fixes it without blocking legal transfers.
+The host replays the transfer in `FRunLogRecord`: it takes the cargo from
+the source, then delivers it through `ChgCargo`, which caps at free hold
+space; the rest was destroyed. **2.8:** what doesn't fit goes back to the
+source, which fixes it without blocking legal transfers (see
+KNOWN-BUGS.md).
 
 ### 32k Merge: fixed in 2.8
 

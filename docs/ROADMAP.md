@@ -67,7 +67,7 @@ and order helpers as fixes need them.
 | 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit; `FFleetMergeAll` clamps to 32766 and loses ships | function | fixed (`test_ship.c`) |
 | "Stuck" pursuit | `MoveFleets` marks the pursued fleet `fDone` though it has its own pursuit | function | fixed (`test_turn.c`) |
 | SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists or fuel it may only steal; the binary never uses its "attempted to shanghai colonists" and "attempted to steal fuel" messages (0x124, 0x125) | turn | fixed (`test_turn3.c`) |
-| Mineral upload | `TransferToOthers` destroys cargo the destination can't hold instead of leaving salvage | turn | open |
+| Mineral upload | `FRunLogRecord` destroys cargo another player's fleet can't hold after taking it from the source | function | fixed (`test_log.c`) |
 | Claim Adjuster turn files | `FWriteDataFile` raises every included player's record to full detail for a CA player so it carries their habitat (`DrawMineSurvey` ally planet values), which also sends their tech, research, traits, production template and relations | turn | fixed (`test_save.c`) |
 | Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
 | Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | fixed (`test_race.c`) |

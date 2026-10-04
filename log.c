@@ -815,6 +815,14 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
                             l = ChgCargo(((RTXFER *)lpb)->grobj2, ((RTXFER *)lpb)->id2, i, -cXfer, &rgxf[1].fl);
                             if (l != -cXfer) {
                                 rgcXfer[i] = -l;
+                                /* Cargo the destination can't hold goes back to
+                                   the source, which gave it up in the first pass.
+                                   The original destroyed it, so minerals sent to
+                                   another player's fleet beyond its free hold
+                                   space were lost. */
+                                if (cXfer < 0) {
+                                    ChgCargo(((RTXFER *)lpb)->grobj1, ((RTXFER *)lpb)->id1, i, -cXfer - l, &rgxf[0].fl);
+                                }
                                 if (((RTXFER *)lpb)->grobj2 == grobjThing) {
                                     idm = idmDidntGetAttemptedTransferMineralPacketAnother;
                                     if (l == 0) {

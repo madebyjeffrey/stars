@@ -142,3 +142,7 @@ produce different results from a 2.6j host for the same turn.
   chasing it catches up. The pursuer marked the caught fleet as done
   moving; now it keeps following with the rest of its move (`MoveFleets`).
   **Host results.**
+- Cargo: minerals, fuel or colonists sent to another player's fleet that
+  don't fit in its hold stay with the sender, as the "unable to transfer"
+  message says. The original took them from the sender and destroyed them
+  (`FRunLogRecord`). **Host results.**

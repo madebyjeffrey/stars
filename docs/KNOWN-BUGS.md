@@ -159,15 +159,26 @@ This supports retaining cheap partial work when the design becomes expensive.
 The delete-and-recreate UltraStation variant depends on builder-close timing
 and remains unconfirmed.
 
-### Mineral Upload — located
+### Mineral Upload — fixed in 2.8
 
 `ship.c`: `TransferStuff`, `ChgCargo`; `log.c`: `FRunLogRecord`;
 `turn2.c`: `TransferToOthers`.
-Transfers to other players are deferred after removal from the source.
-`TransferToOthers` attempts delivery through `ChgCargo`, which caps receipt at
-the destination's free hold space. The undelivered remainder is reported lost
-in space and is not refunded. Thus sending minerals to a foreign fleet with no
-cargo capacity can destroy the minerals instead of leaving them as salvage.
+When the host replays a transfer to another player's fleet or planet,
+`FRunLogRecord` removes the cargo from the source in its first pass and
+delivers it in the second (its `StealCargo` path) through `ChgCargo`, which
+caps receipt at the destination's free hold space. The undelivered
+remainder is reported ("unable to transfer") but not refunded, so sending
+minerals to a foreign fleet without room for them destroys them.
+
+The deferred transfer list that `TransferToOthers` delivers (with its "the
+remainder was lost in space" messages) is never filled: `FRunLogRecord`
+only reaches the code that adds to it for a zero quantity, which it skips.
+Transfers to other players are delivered during replay instead.
+
+**2.8:** confirmed by `tests/unit/test_log.c`: 100 kT of ironium sent from
+a homeworld to an AI ship with a 10 kT hold left the ship with 10 kT and
+the planet 100 kT poorer. What doesn't fit now goes back to the source,
+as the "unable to transfer" message says.
 
 ### Target List Overload — located
 
