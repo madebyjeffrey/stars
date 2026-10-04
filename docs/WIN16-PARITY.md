@@ -52,16 +52,6 @@ storage harmlessly. They don't change game behavior and should stay.
 
 ## Native record and message boundaries (keep)
 
-- **Player-message links** (`log.c` FWriteLogFile/FLoadLogFile and `msg.c`
-  WritePlayerMessages/ReadPlayerMessages, marked `NATIVE`): the original
-  wrote the four-byte lpmsgplrNext far pointer followed by four int16_t
-  fields and abs(cLen) text bytes. Readers immediately replaced that link.
-  Native writes four zero bytes and the same payload, then skips the disk
-  link when reading. The old `(uint8_t *)&iPlrFrom - 4` writer exposed native
-  pointer bits; the reader needlessly copied those bytes into its link.
-  Record size remains abs(cLen)+12, and old nonzero links remain readable.
-  **Revert to:** raw MSGPLR serialization only with a genuine four-byte
-  pointer layout; never restore native pointer serialization.
 - **Malformed player-message records** (`log.c` FLoadLogFile and `msg.c`
   ReadPlayerMessages, marked `NATIVE`): a record shorter than its 12-byte
   header plus abs(cLen) text bytes is skipped. The original copied `cb` bytes

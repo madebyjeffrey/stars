@@ -853,7 +853,7 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         break;
     case rtLogFleetSplit:
     case rtLogFleetMerge:
-        if (!FLookupObject(grobjFleet, RawLoad16(lpb), &rgxf[0].fl)) {
+        if (!FLookupObject(grobjFleet, ((RTFLEETIDS *)lpb)->rgid[0], &rgxf[0].fl)) {
             return FALSE;
         }
         if (rt == rtLogFleetSplit) {
@@ -879,13 +879,12 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
                     lpfl = rglpfl[ifl];
                     if (!rglpfl[ifl])
                         break;
-                    if (lpfl->id == RawLoad16(lpb)) {
+                    if (lpfl->id == ((RTFLEETIDS *)lpb)->rgid[i]) {
                         rgifl[vcflMerge++] = lpfl->id;
                         lpfl->fCompChg = TRUE;
                         break;
                     }
                 }
-                lpb += 2;
             }
         }
         if (FFleetMergeAll(&rgxf[0].fl))
@@ -1037,14 +1036,13 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
         }
         break;
     case rtLogResearch:
-        ch = *lpb;
+        ch = ((RTRESEARCH *)lpb)->pctResearch;
         if (ch < 0 || ch > 100)
             goto BombOut;
         rgplr[idPlayer].pctResearch = ch;
-        ch = lpb[1];
-        if ((ch & 0xf) >= 6 || (ch >> 4 & 0xf) > 7)
+        if (((RTRESEARCH *)lpb)->iTechNow >= 6 || ((RTRESEARCH *)lpb)->iTechNext > 7)
             goto BombOut;
-        rgplr[idPlayer].iTechCur = ch;
+        rgplr[idPlayer].iTechCur = ((RTRESEARCH *)lpb)->iTechCur;
         break;
     }
     return TRUE;
@@ -1153,15 +1151,18 @@ int16_t FLoadLogFile(char *pszLog) {
     }
     while (hdrCur.rt == rtPlrMsg) {
         /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
-        if (hdrCur.cb < 12 || abs((int16_t)RawLoad16(&rgbCur[10])) + 12 > hdrCur.cb) {
+        if (hdrCur.cb < sizeof(RTPLRMSG) || abs(((RTPLRMSG *)rgbCur)->cLen) + sizeof(RTPLRMSG) > hdrCur.cb) {
             ReadRt();
             continue;
         }
-        lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
+        lpmp->lpmsgplrNext = LpAlloc(offsetof(MSGPLR, rgbMsg) + hdrCur.cb - sizeof(RTPLRMSG), htPlrMsg);
         lpmp = lpmp->lpmsgplrNext;
-        /* NATIVE: skip the serialized Win16 link pointer. */
-        memcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
         lpmp->lpmsgplrNext = NULL;
+        lpmp->iPlrFrom = ((RTPLRMSG *)rgbCur)->iPlrFrom;
+        lpmp->iPlrTo = ((RTPLRMSG *)rgbCur)->iPlrTo;
+        lpmp->iInRe = ((RTPLRMSG *)rgbCur)->iInRe;
+        lpmp->cLen = ((RTPLRMSG *)rgbCur)->cLen;
+        memcpy(lpmp->rgbMsg, ((RTPLRMSG *)rgbCur)->rgbMsg, hdrCur.cb - sizeof(RTPLRMSG));
         vcmsgplrOut++;
         ReadRt();
     }
@@ -1272,10 +1273,13 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     iCur = vcmsgplrOut;
     lpmp = vlpmsgplrOut;
     while (iCur-- != 0) {
-        /* NATIVE: serialize a zero Win16 link, then the fixed-width payload. */
-        memset(rgb, 0, 4);
-        memcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
-        WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, rgb);
+        ((RTPLRMSG *)rgb)->lpmsgplrNext = 0;
+        ((RTPLRMSG *)rgb)->iPlrFrom = lpmp->iPlrFrom;
+        ((RTPLRMSG *)rgb)->iPlrTo = lpmp->iPlrTo;
+        ((RTPLRMSG *)rgb)->iInRe = lpmp->iInRe;
+        ((RTPLRMSG *)rgb)->cLen = lpmp->cLen;
+        memcpy(((RTPLRMSG *)rgb)->rgbMsg, lpmp->rgbMsg, abs(lpmp->cLen));
+        WriteRt(rtPlrMsg, sizeof(RTPLRMSG) + abs(lpmp->cLen), rgb);
         lpmp = lpmp->lpmsgplrNext;
     }
     WriteRt(rtEOF, 0, NULL);

@@ -69,6 +69,10 @@ typedef struct _rtlogthing      RTLOGTHING;
 typedef struct _rtplanet        RTPLANET;
 typedef struct _rtshdef         RTSHDEF;
 typedef struct _rtchgshdef      RTCHGSHDEF;
+typedef struct _rtfleet         RTFLEET;
+typedef struct _rtfleetids      RTFLEETIDS;
+typedef struct _rtplrmsg        RTPLRMSG;
+typedef struct _rtresearch      RTRESEARCH;
 typedef struct _rtshipint       RTSHIPINT;
 typedef struct _rtshipint2      RTSHIPINT2;
 typedef struct _rtxfer          RTXFER;
@@ -985,6 +989,61 @@ struct _rtchgshdef {
         junk : 3;       /* @bit13 */
     RTSHDEF rtshdef;    /* +0x0002 (17) */
 }; /* size=0x13 */
+
+// rtFleetA/rtFleetB: the first 12 bytes of FLEET, then the ship counts named
+// by grbitCsh (bytes or words, per fByteCsh) and further packed fields.
+struct _rtfleet {
+    union {
+        int16_t id; /* +0x0000 (2) */
+        struct {
+            uint16_t ifl : 9, /* +0x0000 (2) @bit0 */
+                iplr : 4,     /* @bit9 */
+                junk : 3;     /* @bit13 */
+        };
+    };
+    int16_t  iPlayer;     /* +0x0002 (2) */
+    uint16_t det : 8,     /* +0x0004 (2) @bit0 */
+        fInclude : 1,     /* @bit8 */
+        fRepOrders : 1,   /* @bit9 */
+        fDead : 1,        /* @bit10 */
+        fByteCsh : 1,     /* @bit11, FLEET.fDone in memory */
+        fBombed : 1,      /* @bit12 */
+        fHereAllTurn : 1, /* @bit13 */
+        fNoHeal : 1,      /* @bit14 */
+        fMark : 1;        /* @bit15 */
+    int16_t  idPlanet;    /* +0x0006 (2) */
+    POINT16  pt;          /* +0x0008 (4) */
+    uint16_t grbitCsh;    /* +0x000C (2) */
+    uint8_t  rgb[0];      /* +0x000E (0) */
+}; /* size=0xe */
+
+// rtLogFleetSplit holds the fleet split from; rtLogFleetMerge holds the fleet
+// merged into, then the fleets merged into it.
+struct _rtfleetids {
+    int16_t rgid[0]; /* +0x0000 (0) */
+}; /* size=0x0 */
+
+// MSGPLR as written to disk: the Win16 lpmsgplrNext far pointer is written as
+// zero and ignored on read.
+struct _rtplrmsg {
+    uint32_t lpmsgplrNext; /* +0x0000 (4) */
+    int16_t  iPlrFrom;     /* +0x0004 (2) */
+    int16_t  iPlrTo;       /* +0x0006 (2) */
+    int16_t  iInRe;        /* +0x0008 (2) */
+    int16_t  cLen;         /* +0x000A (2) */
+    uint8_t  rgbMsg[0];    /* +0x000C (0) */
+}; /* size=0xc */
+
+struct _rtresearch {
+    int8_t pctResearch; /* +0x0000 (1) */
+    union {
+        int8_t iTechCur; /* +0x0001 (1) */
+        struct {
+            uint8_t iTechNow : 4, /* +0x0001 (1) @bit0 */
+                iTechNext : 4;    /* @bit4 */
+        };
+    };
+}; /* size=0x2 */
 
 struct _rtshipint {
     int16_t id; /* +0x0000 (2) */

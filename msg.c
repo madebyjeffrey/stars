@@ -2287,10 +2287,13 @@ void WritePlayerMessages(int16_t iPlayer) {
         }
         for (lpmp = vlpmsgplrOut; lpmp; lpmp = lpmp->lpmsgplrNext) {
             if ((lpmp->iPlrTo == 0 && lpmp->iPlrFrom != iPlayer) || lpmp->iPlrTo - 1 == iPlayer) {
-                /* NATIVE: serialize a zero Win16 link, then the fixed-width payload. */
-                memset(rgb, 0, 4);
-                memcpy(rgb + 4, &lpmp->iPlrFrom, abs(lpmp->cLen) + 8);
-                WriteRt(rtPlrMsg, abs(lpmp->cLen) + 12, rgb);
+                ((RTPLRMSG *)rgb)->lpmsgplrNext = 0;
+                ((RTPLRMSG *)rgb)->iPlrFrom = lpmp->iPlrFrom;
+                ((RTPLRMSG *)rgb)->iPlrTo = lpmp->iPlrTo;
+                ((RTPLRMSG *)rgb)->iInRe = lpmp->iInRe;
+                ((RTPLRMSG *)rgb)->cLen = lpmp->cLen;
+                memcpy(((RTPLRMSG *)rgb)->rgbMsg, lpmp->rgbMsg, abs(lpmp->cLen));
+                WriteRt(rtPlrMsg, sizeof(RTPLRMSG) + abs(lpmp->cLen), rgb);
             }
         }
     }
@@ -2361,15 +2364,18 @@ void ReadPlayerMessages() {
         if (fOOM)
             goto LOutOfMem;
         /* NATIVE: skip records too short for their header or text; see WIN16-PARITY.md. */
-        if (hdrCur.cb < 12 || abs((int16_t)RawLoad16(&rgbCur[10])) + 12 > hdrCur.cb) {
+        if (hdrCur.cb < sizeof(RTPLRMSG) || abs(((RTPLRMSG *)rgbCur)->cLen) + sizeof(RTPLRMSG) > hdrCur.cb) {
             ReadRt();
             continue;
         }
-        lpmp->lpmsgplrNext = LpAlloc(hdrCur.cb + (sizeof(MSGPLR) - 12), htPlrMsg);
+        lpmp->lpmsgplrNext = LpAlloc(offsetof(MSGPLR, rgbMsg) + hdrCur.cb - sizeof(RTPLRMSG), htPlrMsg);
         lpmp = lpmp->lpmsgplrNext;
-        /* NATIVE: skip the serialized Win16 link pointer. */
-        memcpy(&lpmp->iPlrFrom, rgbCur + 4, hdrCur.cb - 4);
         lpmp->lpmsgplrNext = NULL;
+        lpmp->iPlrFrom = ((RTPLRMSG *)rgbCur)->iPlrFrom;
+        lpmp->iPlrTo = ((RTPLRMSG *)rgbCur)->iPlrTo;
+        lpmp->iInRe = ((RTPLRMSG *)rgbCur)->iInRe;
+        lpmp->cLen = ((RTPLRMSG *)rgbCur)->cLen;
+        memcpy(lpmp->rgbMsg, ((RTPLRMSG *)rgbCur)->rgbMsg, hdrCur.cb - sizeof(RTPLRMSG));
         vcmsgplrIn++;
     LOutOfMem:
         ReadRt();

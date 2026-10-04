@@ -1053,10 +1053,10 @@ int16_t FReadFleet(FLEET *lpfl) {
 
     cish = 0;
     memset(lpfl, 0, sizeof(FLEET));
-    memmove(lpfl, rgbCur, 12);
-    fByte = lpfl->fDone;
-    us = RawLoad16(&rgbCur[12]);
-    pb = &rgbCur[14];
+    memmove(lpfl, rgbCur, offsetof(RTFLEET, grbitCsh));
+    fByte = ((RTFLEET *)rgbCur)->fByteCsh;
+    us = ((RTFLEET *)rgbCur)->grbitCsh;
+    pb = ((RTFLEET *)rgbCur)->rgb;
     if (fByte) {
         i = 0;
         for (; us != 0; us >>= 1) {

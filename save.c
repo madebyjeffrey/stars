@@ -736,7 +736,7 @@ void WriteFleet(FLEET *lpfl) {
     uint16_t  grMask;
     int32_t   wt;
 
-    memmove(rgb, lpfl, 12);
+    memmove(rgb, lpfl, offsetof(RTFLEET, grbitCsh));
     fByte = TRUE;
     grMask = 1;
     us = 0;
@@ -751,9 +751,9 @@ void WriteFleet(FLEET *lpfl) {
         i++;
         grMask *= 2;
     }
-    ((FLEET *)rgb)->fDone = fByte;
-    RawStore16(&rgb[12], us);
-    pb = &rgb[14];
+    ((RTFLEET *)rgb)->fByteCsh = fByte;
+    ((RTFLEET *)rgb)->grbitCsh = us;
+    pb = ((RTFLEET *)rgb)->rgb;
     if (fByte) {
         for (i = 0; i < 16; i++) {
             if (lpfl->rgcsh[i] > 0) {
