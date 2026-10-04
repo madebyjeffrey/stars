@@ -119,7 +119,7 @@ void ReadRtPlr(PLAYER *pplr, uint8_t *pbIn) {
         FDecompressUserString((char *)(pbIn + (iOff + 1)), pbIn[iOff], pplr->szName, &cOut);
         iOff += pbIn[iOff] + 1;
     }
-    if ((wVersFile >> 5 & 0x7f) < 55) {
+    if (((VERS *)&wVersFile)->verMinor < 55) {
         psz = PszPlayerName(0, isupper(pplr->szName[0]), TRUE, FALSE, 0, pplr);
         strcpy(pplr->szNames, psz);
     } else if (pbIn[iOff] == 0) {
@@ -328,7 +328,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
             ReadRt();
         }
         while (hdrCur.rt == rtScore) {
-            iplr = RawLoad16(rgbCur) & 0x1f;
+            iplr = ((SCOREX *)rgbCur)->iPlayer;
             sx = *(SCOREX *)rgbCur;
             if (!rgsxPlr[iplr]) {
                 rgsxPlr[iplr] = LpAlloc(101 * sizeof(SCOREX), htMisc);
@@ -413,7 +413,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
     if (!FOpenFile(dt | grf, iPlayer, 32))
         goto LError;
     if (iPlayer == iplrNone) {
-        gd.fGameOverMan = RawLoad16(&rgbCur[14]) >> 0xb & 1;
+        gd.fGameOverMan = ((RTBOF *)rgbCur)->fGameOverMan;
     }
 LNextTurn:
     cturn++;
@@ -428,7 +428,7 @@ LNextTurn:
             }
             /* NATIVE: Win16 offsets include its 16-byte HB, not native address bits. */
             lphb = LphbFromLpHt(lpbBattleCur, htBattle);
-            if (0xffc8 - (uint32_t)(lpbBattleCur - (uint8_t *)lphb - sizeof(HB) + 16) < (uint32_t)RawLoad16(&rgbCur[6])) {
+            if (0xffc8 - (uint32_t)(lpbBattleCur - (uint8_t *)lphb - sizeof(HB) + 16) < (uint32_t)((BTLDATA *)rgbCur)->cbData) {
                 RawStore16(lpbBattleCur, 0xffff);
                 lpbBattleCur = LpAlloc(0xffc8, htBattle);
             }
@@ -439,7 +439,7 @@ LNextTurn:
     }
     if (lpbBattleCur) {
         RawStore16(lpbBattleCur, 0xffff);
-        if ((wVersFile >> 5 & 0x7f) < 80) {
+        if (((VERS *)&wVersFile)->verMinor < 80) {
             UpdateBattleRecords();
         }
     }
@@ -479,12 +479,12 @@ LNextTurn:
     for (i = 0; i < cPlanet; i++) {
         fHaveHistoryData = FALSE;
         if (cPlanetHist != 0) {
-            while (j < cPlanetHist && (int16_t)(RawLoad16(rgbCur) << 5) >> 5 > lppl->id) {
+            while (j < cPlanetHist && ((RTPLANET *)rgbCur)->id > lppl->id) {
                 j++;
                 lppl++;
             }
             if (j < cPlanetHist) {
-                if ((int16_t)(RawLoad16(rgbCur) << 5) >> 5 == lppl->id) {
+                if (((RTPLANET *)rgbCur)->id == lppl->id) {
                     fHaveHistoryData = TRUE;
                     goto LFoundPlanet;
                 }
@@ -626,7 +626,7 @@ LNextTurn:
         memset(vlprgScoreX, 0, game.cPlayer * sizeof(SCOREX));
     }
     while (hdrCur.rt == rtScore) {
-        iplr = RawLoad16(rgbCur) & 0x1f;
+        iplr = ((SCOREX *)rgbCur)->iPlayer;
         vlprgScoreX[iplr] = *(SCOREX *)rgbCur;
         if (!rgsxPlr[iplr]) {
             rgsxPlr[iplr] = LpAlloc(101 * sizeof(SCOREX), htMisc);
@@ -680,10 +680,10 @@ LNextTurn:
         for (i = 0; i < cThingFile; i++) {
             fHaveHistoryData = FALSE;
             if (fHist) {
-                for (; j < cThing && RawLoad16(rgbCur) > lpth->idFull; lpth++) {
+                for (; j < cThing && ((THING *)rgbCur)->idFull > lpth->idFull; lpth++) {
                     j++;
                 }
-                if (j < cThing && RawLoad16(rgbCur) == lpth->idFull) {
+                if (j < cThing && ((THING *)rgbCur)->idFull == lpth->idFull) {
                     fHaveHistoryData = TRUE;
                     goto LFoundThing;
                 }
@@ -1571,21 +1571,21 @@ int16_t FCheckFile(DtFileType dt, int16_t iPlayer, MdMark md) {
     fOpened = FOpenFile(dt, iPlayer, 32);
     switch (md) {
     case mdMarkInUse:
-        if (!fOpened || (RawLoad16(&rgbCur[14]) >> 9 & 1)) {
+        if (!fOpened || ((RTBOF *)rgbCur)->fInUse) {
             fReturn = TRUE;
             break;
         }
         fReturn = FALSE;
         break;
     case mdMarkDone:
-        if (fOpened && (RawLoad16(&rgbCur[14]) >> 8 & 1)) {
+        if (fOpened && ((RTBOF *)rgbCur)->fDone) {
             fReturn = TRUE;
             break;
         }
         fReturn = FALSE;
         break;
     case mdMarkMulti:
-        if (fOpened && (RawLoad16(&rgbCur[14]) >> 0xa & 1)) {
+        if (fOpened && ((RTBOF *)rgbCur)->fMulti) {
             fReturn = TRUE;
             break;
         }
@@ -1597,8 +1597,8 @@ int16_t FCheckFile(DtFileType dt, int16_t iPlayer, MdMark md) {
         } else {
             do {
                 ReadRt();
-            } while (hdrCur.rt != rtPlr && rgbCur[0] != iPlayer);
-            fReturn = RawLoad16(&rgbCur[6]) >> 9 & 1;
+            } while (hdrCur.rt != rtPlr && ((PLAYER *)rgbCur)->iPlayer != iPlayer);
+            fReturn = ((PLAYER *)rgbCur)->fAi;
         }
     }
     if (fOpened) {

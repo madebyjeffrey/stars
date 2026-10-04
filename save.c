@@ -753,7 +753,7 @@ void WriteFleet(FLEET *lpfl) {
         i++;
         grMask *= 2;
     }
-    RawStore16(&rgb[4], (RawLoad16(&rgb[4]) & 0xf7ff) | (fByte & 1) << 0xb);
+    ((FLEET *)rgb)->fDone = fByte;
     RawStore16(&rgb[12], us);
     pb = &rgb[14];
     if (fByte) {

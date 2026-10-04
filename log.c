@@ -188,7 +188,7 @@ void LogChangeFleet(FLEET *pfl, FLEET *pflNew) {
         goto NextTest;
     } else {
         cbWp = 22;
-        if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogFleetOrderUpdate && RawLoad16(rgbCur) == pflNew->id && RawLoad16(&rgbCur[2]) == iordNew) {
+        if (FGetPrevLogRt(&hdr, rgbCur) && hdr.rt == rtLogFleetOrderUpdate && ((RTWAYPT *)rgbCur)->id == pflNew->id && ((RTWAYPT *)rgbCur)->iWaypt == iordNew) {
             imemLogCur = imemLogPrev;
         }
         rtwp.id = pflNew->id;
@@ -498,7 +498,7 @@ void WriteMemRt(RecordType rt, int16_t cb, void *rg) {
         hdr.rt = rt;
         lpv = lpLog;
         lpv += imemLogCur;
-        RawStore16(lpv, *(uint16_t *)&hdr);
+        *(HDR *)lpv = hdr;
         if (cb > 0) {
             memcpy(lpv + 2, rg, cb);
         }
@@ -1100,8 +1100,8 @@ int16_t FLoadLogFile(char *pszLog) {
         vlpMemStream++;
         while (cSkip-- != 0) {
             do {
-                vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-            } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+                vlpMemStream += 2 + ((HDR *)vlpMemStream)->cb;
+            } while (((HDR *)vlpMemStream)->rt != rtBOF);
         }
     } else {
     StrOpen:
@@ -1109,7 +1109,7 @@ int16_t FLoadLogFile(char *pszLog) {
     }
 
     ReadRt();
-    if (LOWORD(game.lid) != RawLoad16(&rgbCur[4]) || HIWORD(game.lid) != RawLoad16(&rgbCur[6]) || game.turn > RawLoad16(&rgbCur[10])) {
+    if (game.lid != ((RTBOF *)rgbCur)->lidGame || game.turn > ((RTBOF *)rgbCur)->turn) {
     FailSuccess:
         if (vlpMemStream) {
             vlpMemStream = NULL;
@@ -1121,26 +1121,26 @@ int16_t FLoadLogFile(char *pszLog) {
         penvMem = penvMemSav;
         return TRUE;
     }
-    if (RawLoad16(&rgbCur[10]) != game.turn) {
+    if (((RTBOF *)rgbCur)->turn != game.turn) {
         FileError(idmForcesDiedValiantlyTakingManyVerminThem);
         goto FailSuccess;
     }
-    if ((RawLoad16(&rgbCur[14]) >> 0xd & 7) != game.wGen) {
+    if (((RTBOF *)rgbCur)->wGen != game.wGen) {
         FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
         goto FailSuccess;
     }
-    wVersFile = RawLoad16(&rgbCur[8]);
-    gd.fFileCrippled = RawLoad16(&rgbCur[14]) >> 0xc & 1;
+    wVersFile = ((RTBOF *)rgbCur)->wVersion;
+    gd.fFileCrippled = ((RTBOF *)rgbCur)->fCrippled;
     if (gd.fGeneratingTurn) {
-        rgplr[idPlayer].wFlags = (rgplr[idPlayer].wFlags & 0xfffd) | (RawLoad16(&rgbCur[14]) >> 0xc & 1 & 1) * 2;
+        rgplr[idPlayer].fCrippled = ((RTBOF *)rgbCur)->fCrippled;
     }
     ReadRt();
-    cbLog = RawLoad16(rgbCur);
+    cbLog = ((RTLOGHDR *)rgbCur)->cbLog;
     if (gd.fGeneratingTurn && vrgts) {
         memset(vrgts + idPlayer, 0, sizeof(TURNSERIAL));
-        if (hdrCur.cb == 17) {
-            vrgts[idPlayer].lSerialNumber = RawLoad32(&rgbCur[2]);
-            memcpy(vrgts[idPlayer].rgbConfig, &rgbCur[6], 11);
+        if (hdrCur.cb == sizeof(RTLOGHDR)) {
+            vrgts[idPlayer].lSerialNumber = ((RTLOGHDR *)rgbCur)->lSerialNumber;
+            memcpy(vrgts[idPlayer].rgbConfig, ((RTLOGHDR *)rgbCur)->rgbConfig, 11);
         }
     }
     for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
@@ -1212,7 +1212,7 @@ int16_t FCheckLogFile(int16_t iplr, int16_t *pfError) {
         return FALSE;
     }
     ReadRt();
-    cbLog = RawLoad16(rgbCur);
+    cbLog = ((RTLOGHDR *)rgbCur)->cbLog;
     for (iCur = 0; iCur < cbLog; iCur += hdrCur.cb + 2) {
         ReadRt();
     }
@@ -1336,16 +1336,16 @@ int16_t FWriteTutorialMFile(int16_t iTurn) {
     vlpMemStream++;
     while (cSkip-- != 0) {
         do {
-            vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-        } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+            vlpMemStream += 2 + ((HDR *)vlpMemStream)->cb;
+        } while (((HDR *)vlpMemStream)->rt != rtBOF);
     }
     cch = CchGetString(idsTutorial, szT);
     strcpy(&szT[cch], iTurn == 37 ? ".hst" : ".m1");
     StreamOpen(szT, mdCreate);
     do {
-        RgToStream(vlpMemStream, (RawLoad16(vlpMemStream) & 0x3ff) + 2);
-        vlpMemStream += 2 + (RawLoad16(vlpMemStream) & 0x3ff);
-    } while ((RawLoad16(vlpMemStream) >> 0xa & 0x3f) != 8);
+        RgToStream(vlpMemStream, ((HDR *)vlpMemStream)->cb + 2);
+        vlpMemStream += 2 + ((HDR *)vlpMemStream)->cb;
+    } while (((HDR *)vlpMemStream)->rt != rtBOF);
     StreamClose();
     vlpMemStream = NULL;
     GlobalUnlock(hres);
