@@ -36,3 +36,81 @@ void PromptSaveGame() {
     }
     return;
 }
+
+// ShowTitleScreen brings back the title screen when FLoadGame fails.
+void ShowTitleScreen() {
+    POINT16 pt;
+
+    if (!hwndTitle) {
+        pt.x = GetSystemMetrics(SM_CXSCREEN);
+        pt.y = GetSystemMetrics(SM_CYSCREEN);
+        hwndTitle = CreateWindow(szTitle, "Stars!", WS_POPUP | WS_VISIBLE, 0, 0, pt.x, pt.y, hwndFrame, NULL, hInst, NULL);
+        fFreeingTitle = FALSE;
+        ShowWindow(hwndFrame, SW_HIDE);
+    }
+    return;
+}
+
+// AddMRUFile puts a game the player opened at the top of the File menu's
+// recent files and saves the list to stars.ini.
+void AddMRUFile(char *pszFileName, char *pszExt) {
+    int16_t i;
+    char    szT[256];
+    char    szIniFile[16];
+    char    szSection[16];
+    char   *psz;
+    char    szEntry[16];
+
+    if (!vrgszMRU) {
+        return;
+    }
+    strcpy(szT, pszFileName);
+    strcat(szT, ".");
+    strcat(szT, pszExt);
+    if (_stricmp(szT, vrgszMRU) != 0) {
+        for (i = 1; i < 8 && _stricmp(szT, vrgszMRU + 256 * i) != 0; i++) {
+        }
+        for (; i >= 1; i--) {
+            strcpy(vrgszMRU + 256 * i, vrgszMRU + 256 * (i - 1));
+        }
+        strcpy(vrgszMRU, szT);
+        CchGetString(idsStarsIni, szIniFile);
+        CchGetString(idsFiles, szSection);
+        CchGetString(idsFile1, szEntry);
+        psz = &szEntry[strlen(szEntry) - 1];
+        for (i = 0; i < 9; i++) {
+            *psz = i + '1';
+            strcpy(szT, vrgszMRU + 256 * i);
+            WritePrivateProfileString(szSection, szEntry, szT, szIniFile);
+        }
+    }
+    return;
+}
+
+// CloseGameWindows closes the windows that show the game DestroyCurGame
+// is unloading and resets the tile layout.
+void CloseGameWindows() {
+    int16_t i;
+
+    if (hwndBrowser) {
+        DestroyWindow(hwndBrowser);
+    }
+    if (hwndReportDlg) {
+        DestroyWindow(hwndReportDlg);
+    }
+    if (hwndPopup) {
+        DestroyWindow(hwndPopup);
+        hwndPopup = 0;
+    }
+    hwndActive = 0;
+    fOrdersVis = FALSE;
+    dxPlanetProdLB = 0;
+    dxOrderED = 0;
+    dxFleetCompLB = 0;
+    dxShipLB = 0;
+    dxShipDD = 0;
+    for (i = 0; i < 3; i++) {
+        rgdxOrderDD[i] = 0;
+    }
+    return;
+}

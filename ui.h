@@ -15,6 +15,14 @@ void    PromptSaveGame();
 // Progress during turn generation and universe creation.
 void UpdateProgressGauge(ProgressStep pctX10);
 
+// Windows that show the game. The host has none.
+void    CreateChildWindows();
+void    PostOpenGame();
+void    ShowTitleScreen();
+void    AddMRUFile(char *pszFileName, char *pszExt);
+void    CloseGameWindows();
+int16_t FFinishPlrMsgEntry(int16_t dInc);
+
 // The tutorial.
 void     AdvanceTutor();
 uint8_t *LpbLoadTutorLog();

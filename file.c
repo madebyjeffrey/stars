@@ -154,7 +154,6 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
     int16_t  dt;
     int16_t  grf;
     int16_t  x;
-    POINT16  pt;
     int16_t  iplr;
     SCOREX   sx;
     int16_t  isx;
@@ -170,11 +169,6 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
     PROD    *lpprod;
     int16_t  iWarp;
     int16_t  fTwo;
-    char     szT[256];
-    char     szIniFile[16];
-    char     szSection[16];
-    char    *psz;
-    char     szEntry[16];
     HB      *lphb; /* NATIVE: recover the Win16 heap-relative offset. */
 
     grf = 0;
@@ -188,12 +182,8 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
         game.fDirty = FALSE;
         DestroyCurGame();
         StreamClose();
-        if (!ini.fValidate && !ini.fLogging && !hwndTitle) {
-            pt.x = GetSystemMetrics(SM_CXSCREEN);
-            pt.y = GetSystemMetrics(SM_CYSCREEN);
-            hwndTitle = CreateWindow(szTitle, "Stars!", WS_POPUP | WS_VISIBLE, 0, 0, pt.x, pt.y, hwndFrame, NULL, hInst, NULL);
-            fFreeingTitle = FALSE;
-            ShowWindow(hwndFrame, SW_HIDE);
+        if (!ini.fValidate && !ini.fLogging) {
+            ShowTitleScreen();
         }
         return FALSE;
     }
@@ -842,27 +832,8 @@ LNextTurn:
     }
 DoneNow:
     idPlayer = iPlayer;
-    if (idPlayer != iplrNone && !rgplr[idPlayer].fAi && vrgszMRU) {
-        strcpy(szT, pszFileName);
-        strcat(szT, ".");
-        strcat(szT, pszExt);
-        if (_stricmp(szT, vrgszMRU) != 0) {
-            for (i = 1; i < 8 && _stricmp(szT, vrgszMRU + 256 * i) != 0; i++) {
-            }
-            for (; i >= 1; i--) {
-                strcpy(vrgszMRU + 256 * i, vrgszMRU + 256 * (i - 1));
-            }
-            strcpy(vrgszMRU, szT);
-            CchGetString(idsStarsIni, szIniFile);
-            CchGetString(idsFiles, szSection);
-            CchGetString(idsFile1, szEntry);
-            psz = &szEntry[strlen(szEntry) - 1];
-            for (i = 0; i < 9; i++) {
-                *psz = i + '1';
-                strcpy(szT, vrgszMRU + 256 * i);
-                WritePrivateProfileString(szSection, szEntry, szT, szIniFile);
-            }
-        }
+    if (idPlayer != iplrNone && !rgplr[idPlayer].fAi) {
+        AddMRUFile(pszFileName, pszExt);
     }
     return TRUE;
 }
@@ -1308,23 +1279,12 @@ void DestroyCurGame() {
     game.szName[0] = 0;
     gd.fGameOverMan = FALSE;
     gd.fSendMsgMode = FALSE;
-    if (hwndBrowser) {
-        DestroyWindow(hwndBrowser);
-    }
-    if (hwndReportDlg) {
-        DestroyWindow(hwndReportDlg);
-    }
-    if (hwndPopup) {
-        DestroyWindow(hwndPopup);
-        hwndPopup = 0;
-    }
-    hwndActive = 0;
+    CloseGameWindows();
     sel.scan.grobjFull = grobjNone;
     sel.scan.grobj = grobjNone;
     sel.scan.iwp = iwpNone;
     sel.scan.ifl = iflNone;
     sel.scan.idpl = idplNone;
-    fOrdersVis = FALSE;
     sel.grobjFull = grobjNone;
     sel.grobj = grobjNone;
     sel.id = -1;
@@ -1334,14 +1294,6 @@ void DestroyCurGame() {
     sel.fl.id = idflNone;
     sel.fl.lpplord = NULL;
     sel.pl.lpplprod = NULL;
-    dxPlanetProdLB = 0;
-    dxOrderED = 0;
-    dxFleetCompLB = 0;
-    dxShipLB = 0;
-    dxShipDD = 0;
-    for (i = 0; i < 3; i++) {
-        rgdxOrderDD[i] = 0;
-    }
     return;
 }
 

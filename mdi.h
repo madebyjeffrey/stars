@@ -7,7 +7,6 @@
 extern char    rgTOWidth[2][2];
 
 int16_t          InitMDIApp();
-void             CreateChildWindows();
 LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 POINT16          InvertPaneBorder(HDC hdc, PaneSplitter grSel, POINT16 dpt, POINT16 *pdptPrev);
 HCURSOR          HcrsFromFrameWindowPt(POINT16 pt, int16_t *pgrSel);

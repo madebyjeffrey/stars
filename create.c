@@ -1265,7 +1265,7 @@ RetryAll:
         }
         idPlayer = iplrSingle;
         CreateChildWindows();
-        SendMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
+        PostOpenGame();
     } else {
         idPlayer = iplrNone;
         imemLogCur = 0;

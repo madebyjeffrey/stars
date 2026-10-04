@@ -161,6 +161,13 @@ void CreateChildWindows() {
     return;
 }
 
+// PostOpenGame finishes opening a game GenerateWorld just created, as the
+// File menu does after opening one.
+void PostOpenGame() {
+    SendMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
+    return;
+}
+
 LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC          hdc;
     int16_t      i;
