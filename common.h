@@ -64,6 +64,7 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "mdi.h"
 #include "memory.h"
 #include "mine.h"
+#include "mineui.h"
 #include "msg.h"
 #include "parts.h"
 #include "planet.h"
