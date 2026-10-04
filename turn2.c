@@ -1851,8 +1851,10 @@ void ThingDecay() {
                     if (!lpfl->fDead) {
                         dx = (int16_t)(lpfl->pt.x - lpth->pt.x);
                         dy = (int16_t)(lpfl->pt.y - lpth->pt.y);
-                        if (!lpfl->fBombed && (uint32_t)(dx * dx) + (uint32_t)(dy * dy) <= lDecay) {
-                            FTravelThroughMineFields(lpfl, NULL, lpth);
+                        /* The original set fBombed even when the fleet was
+                           immune to this field, sparing it from every other
+                           detonating field. */
+                        if (!lpfl->fBombed && (uint32_t)(dx * dx) + (uint32_t)(dy * dy) <= lDecay && !FTravelThroughMineFields(lpfl, NULL, lpth)) {
                             lpfl->fBombed = TRUE;
                         }
                     }

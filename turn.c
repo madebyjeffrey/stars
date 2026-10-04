@@ -1452,8 +1452,11 @@ LHitSkip1:
                 dmgToApply = 0;
             }
         }
+        /* Every ship is immune to this detonation (the owner's mine layers
+           in its own field). TRUE leaves ThingDecay free to check the fleet
+           against other detonating fields. */
         if (lpthHit && dmgTot == 0) {
-            return FALSE;
+            return TRUE;
         }
         if (cshDead != csh) {
             FleetTransferCargoBalance(&flSrc, &flDead);

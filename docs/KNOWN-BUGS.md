@@ -245,7 +245,7 @@ before shield reduction. Excess damage on a destroyed cheap design is not
 redistributed; a tough first design can instead absorb it. Engine counts and
 shield reduction affect actual results.
 
-### Exploding Minefield Dodge — located
+### Exploding Minefield Dodge — fixed in 2.8
 
 `turn2.c`: `ThingDecay`; `turn.c`: `FTravelThroughMineFields`.
 `ThingDecay` clears fleet `fBombed` once, then processes detonating fields.
@@ -254,6 +254,13 @@ preventing later fields from hitting that fleet. The damage function excludes
 the owner's Mini Mine Layer and Super Mine Layer hulls from its own explosions.
 Consequently an immune encounter can consume the fleet's one explosion check.
 The exact player-number ordering depends on the `lpThings` traversal order.
+
+**2.8:** confirmed by `tests/unit/test_turn2.c`: a mine layer inside its
+owner's detonating field and another player's took no damage. A fleet
+immune to a detonation is no longer marked `fBombed`, so the next
+detonating field still checks it. The same test found that any detonation
+over a fleet crashed the native build (a NULL travel-distance read in
+`FTravelThroughMineFields`), fixed separately.
 
 ### Colonization Module Check — fixed in 2.8
 

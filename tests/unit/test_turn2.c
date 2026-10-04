@@ -61,4 +61,36 @@ static void test_ThingDecay_detonation_damages_fleet(void) {
     TEST_CHECK_(lpfl->fDead || lpfl->rgdv[ish].dp != 0, "the detonating field did no damage");
 }
 
-TEST_LIST = {{"ThingDecay detonation damages a fleet", test_ThingDecay_detonation_damages_fleet}, {NULL, NULL}};
+// Exploding minefield dodge: a fleet is checked against one detonating field
+// a turn. ThingDecay used up that check on a field the fleet is immune to
+// (its owner's own field, for mine layers), so another player's field
+// detonating over it did no damage.
+static void test_ThingDecay_immune_field_keeps_check(void) {
+    char        szDir[MAX_PATH];
+    const char *rgszAi[] = {"#1 4"};
+    FLEET      *lpfl;
+    int16_t     ish;
+    int16_t     idfl;
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("ThingDecay_immune_field", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, rgszAi, 1));
+    TEST_ASSERT(FStarsTestLoadHost());
+    idfl = IdflAddScout(&ish);
+    TEST_ASSERT(idfl >= 0);
+    // A mine layer, immune to its owner's minefields. Player 0's field comes
+    // first in lpThings.
+    rglpshdef[0][ish].hul.ihuldef = ihuldefMiniMineLayer;
+    lpfl = LpflFromId(idfl);
+    AddDetonatingField(0, lpfl->pt);
+    AddDetonatingField(1, lpfl->pt);
+
+    ThingDecay();
+    lpfl = LpflFromId(idfl);
+    TEST_ASSERT(lpfl != NULL);
+    TEST_CHECK_(lpfl->fDead || lpfl->rgdv[ish].dp != 0, "player 1's detonating field did no damage");
+}
+
+TEST_LIST = {{"ThingDecay detonation damages a fleet", test_ThingDecay_detonation_damages_fleet},
+             {"ThingDecay immune field keeps the fleet's check", test_ThingDecay_immune_field_keeps_check},
+             {NULL, NULL}};

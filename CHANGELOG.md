@@ -128,3 +128,8 @@ produce different results from a 2.6j host for the same turn.
   when a fleet is inside it. `FTravelThroughMineFields` read the travel
   distance through the NULL pointer `ThingDecay` passes for a detonation,
   which Win16 read harmlessly from the start of its data segment.
+- Minefields: a fleet immune to a detonating minefield (its owner's mine
+  layers in their own field) can still be hit by another player's
+  detonating field that turn. The immune check used up the fleet's one
+  detonation check (`ThingDecay`, `FTravelThroughMineFields`). **Host
+  results.**
