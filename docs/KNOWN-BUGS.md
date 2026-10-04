@@ -258,7 +258,7 @@ with its module count set to 0 still colonized. The check now requires
 
 ## Coding bugs
 
-### Race File Corruption — located
+### Race File Corruption — fixed in 2.8
 
 `race.c`: `RaceWizardDlg1`, `FSaveRace`, `IRaceChecksum`;
 `save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`; `mdi.c` (race load check).
@@ -270,6 +270,11 @@ that are checksummed but not saved. `ReadRtPlr` zeroes the record on load,
 and the checksum no longer matches. Only a save where the old name was
 longer at the same position is affected. TotalHost rejects these files and
 can rewrite their checksum; see [TOTALHOST.md](TOTALHOST.md).
+
+**2.8:** confirmed by `tests/unit/test_race.c`: a race saved after "Bos"
+was written over "Longnames" failed `FWasRaceFile`. `IRaceChecksum` now
+checksums a copy with the names zeroed after their terminators, as
+`ReadRtPlr` restores them. Files with a bad checksum still fail to load.
 
 ### Random Race — candidate
 

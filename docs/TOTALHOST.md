@@ -38,7 +38,7 @@ against them.
 | Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | **open** |
 | 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | **open** |
 | 10th starbase design crash | `.x` | warning only | **open** (Crash Stars) |
-| Race file corruption | `.r` | checksum rewritten | **open**: cause now located, see below |
+| Race file corruption | `.r` | checksum rewritten | fixed |
 | FreePop | `.x` | none (commented out, untested) | candidate |
 
 ## Turn files (`.m`): knowledge leaks
@@ -215,20 +215,15 @@ after their terminators. Our source shows why that differs from what
 
 So the checksum covers bytes that aren't in the file. This explains the
 "shorter name" reports and why not every short-name save is affected: the
-old name has to have been longer at the same position. A unit test can
-confirm it: fill `szNames` with a long name, write a shorter one over it the
-way `GetDlgItemText` does, save, load, compare checksums.
+old name has to have been longer at the same position.
 
-**For 2.8:** clear the name buffers before `GetDlgItemText` in the OK
-path. Better still, have `FSaveRace` checksum a copy whose names are zeroed
-after the terminator, so no caller can do this again. The file format and
-checksum algorithm are unchanged, so the saved files load in 2.6j. This is
-a race-editor change, not turn generation, so the baseline doesn't move.
-
-Whether 2.8 should *accept* existing bad race files is a separate decision.
+**2.8:** fixed in `IRaceChecksum`, which now checksums a copy with the
+names zeroed after their terminators, so the editor and every other caller
+agree with what `ReadRtPlr` loads (`tests/unit/test_race.c`). The file
+format and checksum algorithm are unchanged, so races saved by 2.8 load in
+2.6j. Files already saved with a bad checksum are still rejected:
 TotalHost's repair just recomputes the checksum, which is also all a
-tamperer would need, so 2.8 should keep rejecting them. It could still name
-the likely cause in the error message.
+tamperer would need.
 
 ## Other TotalHost features (not game fixes)
 

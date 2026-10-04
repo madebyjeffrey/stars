@@ -89,3 +89,8 @@ produce different results from a 2.6j host for the same turn.
   from a planet or fleet it may only rob with a Robber Baron or Pick Pocket
   scanner; the player gets the "attempt was unsuccessful" message instead.
   Minerals can still be stolen (`SatisfyOrders`). **Host results.**
+- Race files: shortening a race name no longer saves a race file that Stars!
+  rejects as corrupt. The checksum covered leftover characters of the
+  longer name in memory, which aren't saved (`IRaceChecksum`). Races saved
+  by 2.8 load in 2.6j; race files already saved with a bad checksum still
+  have to be recreated.

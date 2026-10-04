@@ -1820,8 +1820,20 @@ uint16_t IRaceChecksum(PLAYER *pplr) {
     uint16_t *p;
     int16_t   i;
     int16_t   cs;
+    size_t    cch;
+    PLAYER    plr;
 
-    p = (uint16_t *)pplr;
+    /* Checksum the names as ReadRtPlr restores them, zeroed after the
+       terminator. RaceWizardDlg1 reads the names into buffers that can
+       still hold a longer earlier name; the original checksummed those
+       stale bytes, which aren't saved, so the race file failed its
+       checksum when loaded. */
+    plr = *pplr;
+    cch = strnlen(plr.szName, sizeof(plr.szName));
+    memset(plr.szName + cch, 0, sizeof(plr.szName) - cch);
+    cch = strnlen(plr.szNames, sizeof(plr.szNames));
+    memset(plr.szNames + cch, 0, sizeof(plr.szNames) - cch);
+    p = (uint16_t *)&plr;
     cs = 96;
     ick = 0;
     for (i = 0; i < cs; i++) {

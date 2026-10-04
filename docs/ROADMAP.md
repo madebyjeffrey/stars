@@ -69,7 +69,7 @@ and order helpers as fixes need them.
 | Mineral upload | `TransferToOthers` destroys cargo the destination can't hold instead of leaving salvage | turn | open |
 | Claim Adjuster turn files | `FWriteDataFile` raises every included player's record to full detail for a CA player so it carries their habitat (`DrawMineSurvey` ally planet values), which also sends their tech, research, traits, production template and relations | turn | fixed (`test_save.c`) |
 | Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
-| Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | open |
+| Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | fixed (`test_race.c`) |
 | Turn-file knowledge leaks | `FWriteDataFile` writes whole `THING` records, so a player's file carries other players' bits in the Mystery Trader, minefield and wormhole masks and the trader's part (see [TOTALHOST.md](TOTALHOST.md)) | turn | open |
 
 ### 5.3 Needs reproduction first
