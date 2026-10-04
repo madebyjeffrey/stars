@@ -26,5 +26,11 @@ void             DrawPlanetXferSide(HDC hdc, RECT *prc, PLANET *ppl, MineralType
 HCURSOR          ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRightBtn);
 void             DeleteCurWayPoint(int16_t fBackup);
 LRESULT CALLBACK FakeEditProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+void             SetFleetDropDownSel(int16_t id);
+void             FillFleetCompLB();
+void             FillOrdersLB();
+void             SetOrdersLbSel(int16_t iSel);
+void             UpdateOrdersDDs(int16_t iLevel);
+void             FillBattleDD(int16_t iSel);
 
 #endif

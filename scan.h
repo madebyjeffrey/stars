@@ -27,7 +27,6 @@ int16_t          FNearAWayPoint(POINT16 pt, int16_t fLogical);
 int16_t          FHandleWayPointDrag(POINT16 pt);
 void             DrawScanXorLines(HDC hdc, POINT16 *rgpt, int16_t cpt);
 int16_t          SetScanWp(int16_t iNew);
-void             ChangeScanSel(SCAN *pscan, int16_t fValidScan);
 int16_t          FGetNextObjHere(SCAN *pscan, int16_t fOnlyOurs);
 INT_PTR CALLBACK FindDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int16_t          FSelectSz(char *szName);

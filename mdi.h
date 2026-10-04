@@ -11,7 +11,6 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 POINT16          InvertPaneBorder(HDC hdc, PaneSplitter grSel, POINT16 dpt, POINT16 *pdptPrev);
 HCURSOR          HcrsFromFrameWindowPt(POINT16 pt, int16_t *pgrSel);
 void             RestoreSelection();
-int16_t          FFindSomethingAndSelectIt();
 void             CommandHandler(HWND hwnd, WPARAM wParam);
 void             InitializeMenu(HMENU hmenu);
 HMENU            GetASubMenu(HWND hwnd, MainMenu iMenu);

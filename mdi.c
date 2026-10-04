@@ -931,38 +931,6 @@ void RestoreSelection() {
     return;
 }
 
-int16_t FFindSomethingAndSelectIt() {
-    PLANET *lpplMac;
-    PLANET *lppl;
-    int16_t i;
-    FLEET  *lpfl;
-
-    lppl = LpplFromId(rgplr[idPlayer].idPlanetHome);
-    if (!lppl || lppl->iPlayer != idPlayer) {
-        lppl = lpPlanets;
-        lpplMac = lpPlanets + cPlanet;
-        for (; lppl < lpplMac && lppl->iPlayer != idPlayer; lppl++) {
-        }
-        if (lppl == lpplMac) {
-            lppl = NULL;
-        }
-    }
-    if (lppl) {
-        SelectAdjPlanet(0, lppl->id);
-        return TRUE;
-    }
-    for (i = 0; i < cFleet; i++) {
-        lpfl = rglpfl[i];
-        if (!rglpfl[i])
-            break;
-        if (lpfl->iPlayer == idPlayer) {
-            SelectAdjFleet(0, lpfl->id);
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 void CommandHandler(HWND hwnd, WPARAM wParam) {
     POINT16  pt;
     HMENU    hmenu;

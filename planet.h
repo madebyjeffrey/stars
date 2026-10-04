@@ -4,18 +4,14 @@
 #include <stdint.h>
 #include <windows.h>
 
-void    DrawPlanShip(HDC hdc, TileBits grbit);
 int16_t FGetBestDefensePart(PART *ppart);
 char   *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16_t *etaFirst, int16_t *etaLast);
-void    SetPlanetTitleBar(HWND hwnd);
 void    ChangeMainObjSel(GrobjClass grobjNew, int16_t iObjSel);
-void    FillShipDD(int16_t idSkip);
 void    SelectAdjPlanet(int16_t dInc, int16_t idPlanet);
 int16_t IdFindAdjStarbase(int16_t idPlanet, int16_t fNext);
 int16_t IBestTerraform(PLANET *lppl, int16_t fHelp);
 char   *PszCalcEnvVar(EnvType iEnv, int16_t iVar);
 char   *PszCalcGravity(int16_t iGravity);
-void    FillPlanetProdLB(HWND hwnd, PLPROD *lpplprod, PLANET *lppl);
 int16_t PctPlanetCapacity(PLANET *lppl);
 int16_t PctPlanetOptValue(PLANET *lppl, int16_t iPlr);
 int16_t PctPlanetDesirability(PLANET *lppl, int16_t iPlr);

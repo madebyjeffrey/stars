@@ -1600,3 +1600,224 @@ void DrawProductionItem(HDC hdc, RECT *prc, char *psz, int16_t inflate, int16_t 
     SetBkMode(hdc, bkSav);
     return;
 }
+
+void DrawPlanShip(HDC hdc, TileBits grbit) {
+    HFONT    hfontSav;
+    OBJ      objNull;
+    int16_t  ctile;
+    COLORREF crFore;
+    OBJ      obj;
+    int16_t  fMin;
+    int16_t  i;
+    COLORREF crBack;
+    int16_t  fErase;
+    TILE    *ptile;
+    int16_t  fDC;
+    RECT     rc;
+
+    fDC = FALSE;
+    objNull.pfl = 0;
+    if (sel.id == -1) {
+        for (i = 0; i < 13; i++) {
+            ShowWindow(rghwndBtn[i], SW_HIDE);
+        }
+        for (i = 0; i < 3; i++) {
+            ShowWindow(rghwndOrderDD[i], SW_HIDE);
+        }
+        ShowWindow(hwndOrderED, SW_HIDE);
+        ShowWindow(hwndShipDD, SW_HIDE);
+        ShowWindow(hwndBattleDD, SW_HIDE);
+        ShowWindow(hwndShipLB, SW_HIDE);
+        ShowWindow(hwndFleetCompLB, SW_HIDE);
+        ShowWindow(hwndPlanetProdLB, SW_HIDE);
+        ShowWindow(hwndRepCB, SW_HIDE);
+        for (i = 0; i < 19; i++) {
+            rgrcRef[i].bottom = -6;
+            rgrcRef[i].top = -5;
+        }
+        if (rgplr[idPlayer].fDead && hdc) {
+            GetClientRect(hwndPlanet, &rc);
+            SetBkColor(hdc, crButtonFace);
+            SetTextColor(hdc, crButtonText);
+            i = CchGetString(idsDeceased, szWork);
+            DiaganolTextOut(hdc, &rc, szWork, i);
+        }
+    } else {
+        if (sel.grobj == grobjFleet) {
+            ptile = rgtileShip;
+            ctile = 7;
+            obj.pfl = &sel.fl;
+        } else {
+            ptile = rgtilePlanet;
+            ctile = 6;
+            obj.ppl = &sel.pl;
+        }
+        if (!hdc) {
+            fDC = TRUE;
+            hdc = GetDC(hwndPlanet);
+        }
+        hfontSav = SelectObject(hdc, rghfontArial8[0]);
+        crBack = SetBkColor(hdc, crButtonFace);
+        crFore = SetTextColor(hdc, crButtonText);
+        fErase = (grbit & tileErase) != 0;
+        fMin = (grbit & tileMinimized) != 0;
+        for (i = 0; i < ctile; i++) {
+            if (grbit & ptile[i].grbit) {
+                ptile[i].fErase = fErase;
+                ptile[i].fMinDraw = fMin;
+                ptile[i].pfn(hdc, ptile + i, !ptile[i].fNullPtr ? obj : objNull);
+            }
+        }
+        SetTextColor(hdc, crFore);
+        SetBkColor(hdc, crBack);
+        SelectObject(hdc, hfontSav);
+        if (fDC) {
+            ReleaseDC(hwndPlanet, hdc);
+        }
+    }
+    return;
+}
+
+void SetPlanetTitleBar(HWND hwnd) {
+    char  szTitle[30];
+    char *psz;
+
+    if (sel.grobj == grobjPlanet) {
+        psz = PszGetPlanetName(sel.pl.id);
+        CchGetString(idsPlanet2, szTitle);
+        lstrcat(szTitle, psz);
+        psz = szTitle;
+    } else if (sel.grobj == grobjFleet) {
+        psz = PszGetFleetName(sel.fl.id);
+    } else {
+        psz = PszGetCompressedString(idsPlanetView);
+    }
+    SetWindowText(hwnd, psz);
+    return;
+}
+
+void FillShipDD(int16_t idSkip) {
+    THING  *lpthMac;
+    int16_t i;
+    THING  *lpth;
+    FLEET  *lpfl;
+    POINT16 ptSel;
+
+    SendMessage(hwndShipDD, CB_RESETCONTENT, 0, 0);
+    if (sel.grobj == grobjPlanet) {
+        ptSel = rgptPlan[sel.id];
+    } else {
+        ptSel = sel.fl.pt;
+    }
+    for (i = 0; i < cFleet; i++) {
+        lpfl = rglpfl[i];
+        if (!rglpfl[i])
+            break;
+        if ((idSkip == idflNone && sel.id == lpfl->idPlanet) ||
+            (idSkip != idflNone && lpfl->id != idSkip && lpfl->pt.x == sel.fl.pt.x && lpfl->pt.y == sel.fl.pt.y)) {
+            PszGetFleetName(lpfl->id);
+            memmove(&szWork[1], szWork, 50);
+            szWork[0] = lpfl->iPlayer == idPlayer ? 32 : 120;
+            SendMessage(hwndShipDD, CB_ADDSTRING, 0, (LPARAM)szWork);
+        }
+    }
+    lpth = lpThings;
+    lpthMac = lpThings + cThing;
+    for (; lpth < lpthMac; lpth++) {
+        if (lpth->ith == ithMineralPacket && lpth->pt.x == ptSel.x && lpth->pt.y == ptSel.y) {
+            PszGetThingName(lpth->idFull);
+            memmove(&szWork[1], szWork, 50);
+            szWork[0] = lpth->iplr == idPlayer ? 32 : 120;
+            SendMessage(hwndShipDD, CB_ADDSTRING, 0, (LPARAM)szWork);
+        }
+    }
+    SendMessage(hwndShipDD, CB_SETCURSEL, 0, 0);
+    return;
+}
+
+void FillPlanetProdLB(HWND hwnd, PLPROD *lpplprod, PLANET *lppl) {
+    int16_t fMinimal;
+    int32_t rgwtMin[4];
+    int16_t i;
+    int16_t cItem;
+    char    szTemp[80];
+    int32_t resCost;
+    char   *psz;
+    char    ch;
+    PROD   *lpprod;
+    int16_t etaLast;
+    int16_t etaFirst;
+
+    fMinimal = lppl != NULL;
+    if (!fMinimal) {
+        lppl = &sel.pl;
+        if (!hwnd) {
+            hwnd = hwndPlanetProdLB;
+        }
+        SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
+    }
+    if (!lpplprod) {
+        lpplprod = lppl->lpplprod;
+    }
+    if (!lpplprod || lpplprod->iprodMac == 0) {
+        psz = PszGetCompressedString(idsQueueEmpty);
+    } else {
+        if (!hwndProdDlg)
+            goto NoMsg;
+        psz = PszGetCompressedString(idsTopQueue);
+    }
+    if (!fMinimal) {
+        SendMessage(hwnd, LB_ADDSTRING, 0, (LPARAM)psz);
+    } else if (psz != szWork) {
+        strcpy(szWork, psz);
+    }
+NoMsg:
+    if (lpplprod) {
+        resCost = 0;
+        for (i = 0; i < 4; i++) {
+            rgwtMin[i] = 0;
+        }
+        for (i = 0, lpprod = lpplprod->rgprod; i < lpplprod->iprodMac; i++, lpprod++) {
+            psz = PszNameProdItem(lpprod);
+            EstimateItemProdSched(lppl, lpplprod, i, &etaFirst, &etaLast);
+            if ((etaFirst == 0 && etaLast == 0) || (etaFirst == -1 && etaLast == -1)) {
+                if (fMinimal)
+                    continue;
+                ch = '&';
+            } else if ((etaFirst > 1 && etaFirst < 100) || (etaFirst == 100 && lpprod->grobj == grobjPlanet && lpprod->iItem < mdIdleFactory)) {
+                ch = ' ';
+            } else if (etaFirst == 1 && etaLast == 1) {
+                ch = '*';
+            } else if (etaFirst < 100) {
+                ch = '#';
+            } else {
+                ch = '!';
+            }
+            cItem = lpprod->cItem;
+            wsprintf(szTemp, "%c%5d%s", ch, cItem, psz);
+            if (lpprod->grobj == grobjPlanet) {
+                if (lpprod->iItem < mdIdleFactory) {
+                    szTemp[1] += 2;
+                    if (lpprod->iItem == iobjAlchemy) {
+                        szTemp[5] = '*';
+                    }
+                }
+                switch (lpprod->iItem) {
+                case mdIdleTerraform:
+                case iobjMinTerraform:
+                case iobjMaxTerraform:
+                    szTemp[1]++;
+                }
+            }
+            if (fMinimal) {
+                strcpy(szWork, szTemp);
+                return;
+            }
+            SendMessage(hwnd, LB_ADDSTRING, 0, (LPARAM)szTemp);
+        }
+        if (fMinimal) {
+            CchGetString(idsQueueEmpty, szWork);
+        }
+    }
+    return;
+}

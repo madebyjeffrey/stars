@@ -75,5 +75,7 @@ void     TurnLog(StringId ids);
 int16_t  PtToScan(int16_t d);
 int16_t  ScanToPt(int16_t d);
 char    *SzVersion();
+void     ChangeScanSel(SCAN *pscan, int16_t fValidScan);
+int16_t  FFindSomethingAndSelectIt();
 
 #endif

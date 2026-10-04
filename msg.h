@@ -10,7 +10,6 @@ extern char    aMSGCmpr[22836];
 extern char    rgMSGLookupTable[72];
 extern int16_t aiMSGChunkOffset[7];
 
-void             SetMsgTitle(HWND hwnd);
 int16_t          IMsgNext(int16_t fFilteredOnly);
 int16_t          IMsgPrev(int16_t fFilteredOnly);
 int16_t          FSendPlrMsg2(int16_t iPlr, MessageId iMsg, MsgGoto iObj, int16_t p1, int16_t p2);
