@@ -500,10 +500,8 @@ void StarsCopyFile(char *szSrc, char *szDst) {
     if (setjmp(env) == 0) {
         StreamOpen(szSrc, mdRead);
         hfDst = OpenFile(szDst, &of, 4114);
-        if (hfDst == -1) {
-            StreamClose();
-            return;
-        }
+        if (hfDst == -1)
+            goto LStreamError;
         for (cb = (long)GetFileSize((HANDLE)(INT_PTR)hf, NULL); cb > 2048; cb -= 2048) {
             RgFromStream(rgb, 0x800);
             if (_lwrite(hfDst, rgb, 0x800) != 0x800)
@@ -516,8 +514,10 @@ void StarsCopyFile(char *szSrc, char *szDst) {
     }
 LStreamError:
     StreamClose();
+    /* The original closed hf, leaving the copy open with exclusive sharing,
+       and returned early on a failed OpenFile without restoring penvMem. */
     if (hfDst != -1) {
-        _lclose(hf);
+        _lclose(hfDst);
     }
     penvMem = penvSav;
     fFileErrSilent = fFileErrSav;

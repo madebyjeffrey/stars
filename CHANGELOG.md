@@ -71,3 +71,8 @@ produce different results from a 2.6j host for the same turn.
 - Native build: the planet dump's Factories column printed 0 and shifted
   the factory count into Def %. The mine and factory counts were passed as
   two 16-bit words each, as the Win16 binary pushed them (`DumpPlanets`).
+- File copies (`StarsCopyFile`, used for turn-file backups) close the copy
+  when done. The original closed the wrong handle, leaving each backup
+  open with exclusive sharing for the rest of the session, and a copy whose
+  destination couldn't be created left the error-recovery state pointing at
+  a finished call.
