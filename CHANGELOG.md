@@ -102,3 +102,7 @@ produce different results from a 2.6j host for the same turn.
   original stopped at the first player record, or at any earlier record
   whose first byte matched the player number, and read its AI bit. No
   caller uses this check yet, so nothing changes in play.
+- Loading a corrupt player record no longer writes past the player's data.
+  The original trusted the record's relation count and name lengths, so a
+  count above 16 or a name of 32 or more characters overran the relations
+  and names (`ReadRtPlr`). Valid files load as before.

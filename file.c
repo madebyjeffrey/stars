@@ -108,17 +108,18 @@ void ReadRtPlr(PLAYER *pplr, uint8_t *pbIn) {
     if (pplrRaw->det == detAll) {
         iOff = offsetof(PLAYER, rgmdRelation);
         memmove(pplr, pbIn, iOff);
-        memmove(pplr->rgmdRelation, pbIn + iOff + 1, pbIn[iOff]);
+        // Keep a corrupt count from overrunning rgmdRelation; skip the rest.
+        memmove(pplr->rgmdRelation, pbIn + iOff + 1, min(pbIn[iOff], sizeof(pplr->rgmdRelation)));
         iOff += pbIn[iOff] + 1;
     } else {
         iOff = offsetof(PLAYER, idPlanetHome);
         memmove(pplr, pbIn, iOff);
     }
     if (pbIn[iOff] == 0) {
-        strcpy(pplr->szName, (char *)(pbIn + (iOff + 1)));
-        iOff += strlen(pplr->szName) + 2;
+        strncpy(pplr->szName, (char *)(pbIn + (iOff + 1)), sizeof(pplr->szName) - 1);
+        iOff += strlen((char *)(pbIn + (iOff + 1))) + 2;
     } else {
-        cOut = 32;
+        cOut = sizeof(pplr->szName) - 1;
         FDecompressUserString((char *)(pbIn + (iOff + 1)), pbIn[iOff], pplr->szName, &cOut);
         iOff += pbIn[iOff] + 1;
     }
@@ -126,9 +127,9 @@ void ReadRtPlr(PLAYER *pplr, uint8_t *pbIn) {
         psz = PszPlayerName(0, isupper(pplr->szName[0]), TRUE, FALSE, 0, pplr);
         strcpy(pplr->szNames, psz);
     } else if (pbIn[iOff] == 0) {
-        strcpy(pplr->szNames, (char *)(pbIn + (iOff + 1)));
+        strncpy(pplr->szNames, (char *)(pbIn + (iOff + 1)), sizeof(pplr->szNames) - 1);
     } else {
-        cOut = 32;
+        cOut = sizeof(pplr->szNames) - 1;
         FDecompressUserString((char *)(pbIn + (iOff + 1)), pbIn[iOff], pplr->szNames, &cOut);
     }
     pplr->fLearned = FALSE;
