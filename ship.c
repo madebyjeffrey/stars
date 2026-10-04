@@ -3531,12 +3531,25 @@ int16_t CshQueued(int16_t ishdef, int16_t *pfProgress, int16_t fSpaceDocks) {
 void Merge2Fleets(FLEET *lpflDst, FLEET *lpflDel, int16_t fNoDelete) {
     FLEET   rgfl[2];
     int16_t i;
+    int16_t csh;
+    int16_t fLeft;
 
     rgfl[0] = *lpflDst;
     rgfl[1] = *lpflDel;
+    fLeft = FALSE;
     for (i = 0; i < 16; i++) {
-        rgfl[0].rgcsh[i] += rgfl[1].rgcsh[i];
-        rgfl[1].rgcsh[i] = 0;
+        /* Ship counts are int16_t. The original added without a limit, so a
+           merge past 32767 ships of a design went negative; the ships that
+           don't fit stay in the merged fleet. */
+        csh = 32767 - rgfl[0].rgcsh[i];
+        if (csh > rgfl[1].rgcsh[i]) {
+            csh = rgfl[1].rgcsh[i];
+        }
+        rgfl[0].rgcsh[i] += csh;
+        rgfl[1].rgcsh[i] -= csh;
+        if (rgfl[1].rgcsh[i] != 0) {
+            fLeft = TRUE;
+        }
     }
     /* Ships that gated, fought or hit mines this turn can't heal, so the
        fleet they join can't either. The original dropped the merged fleet's
@@ -3548,7 +3561,9 @@ void Merge2Fleets(FLEET *lpflDst, FLEET *lpflDel, int16_t fNoDelete) {
     for (i = 0; i < 2; i++) {
         FLookupFleet(idWriteBack, &rgfl[i]);
     }
-    if (fNoDelete) {
+    if (fLeft) {
+        InvalidateReport(rptFleets, 2);
+    } else if (fNoDelete) {
         lpflDel->fDead = TRUE;
     } else {
         FDeleteFleet(rgfl[1].id, grobjFleet, rgfl[0].id);

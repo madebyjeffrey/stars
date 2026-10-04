@@ -1096,6 +1096,16 @@ int16_t FFleetMergeAll(FLEET *pfl) {
     for (i = 0; i < vcflMerge; i++) {
         if (vrgiflMerge[i] != iflNone) {
             lpfl = LpflFromId(vrgiflMerge[i]);
+            /* Ship counts are int16_t. The original clamped a count that
+               passed 32767 to 32766 and lost the rest; a fleet that doesn't
+               fit is left out of the merge. */
+            if (lpfl && lpfl->ifl != pfl->ifl) {
+                for (j = 0; j < 16 && (int32_t)pfl->rgcsh[j] + lpfl->rgcsh[j] <= 32767; j++) {
+                }
+                if (j < 16) {
+                    continue;
+                }
+            }
             if (lpfl) {
                 lpshdef = rglpshdef[iplr];
                 j = 0;
@@ -1112,9 +1122,6 @@ int16_t FFleetMergeAll(FLEET *pfl) {
                         }
                         if (lpfl->ifl != pfl->ifl) {
                             pfl->rgcsh[j] += lpfl->rgcsh[j];
-                            if (pfl->rgcsh[j] < 0) {
-                                pfl->rgcsh[j] = 32766;
-                            }
                             lpfl->rgcsh[j] = 0;
                         }
                     }

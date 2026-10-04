@@ -64,7 +64,7 @@ and order helpers as fixes need them.
 | Repair after gating | `Merge2Fleets` drops the merged fleet's `fNoHeal` before `HealShips` | function | fixed (`test_ship.c`) |
 | Exploding minefield dodge | `ThingDecay` sets `fBombed` even when the fleet was immune | function | fixed (`test_turn2.c`) |
 | Colonization module check | `SatisfyOrders` colonize task doesn't test `cItem > 0` | turn | fixed (`test_turn3.c`) |
-| 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit | function | open |
+| 32k ships per fleet | `Merge2Fleets` adds into `int16_t rgcsh` without a limit; `FFleetMergeAll` clamps to 32766 and loses ships | function | fixed (`test_ship.c`) |
 | "Stuck" pursuit | `MoveFleets` marks the pursued fleet `fDone` though it has its own pursuit | turn | open |
 | SS pop steal | `SatisfyOrders` transport load sets `fDone` but still loads colonists or fuel it may only steal; the binary never uses its "attempted to shanghai colonists" and "attempted to steal fuel" messages (0x124, 0x125) | turn | fixed (`test_turn3.c`) |
 | Mineral upload | `TransferToOthers` destroys cargo the destination can't hold instead of leaving salvage | turn | open |

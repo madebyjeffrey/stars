@@ -305,7 +305,7 @@ the resulting player data. `GenerateWorld` calls `CreateRandomRace` when
 the reported failure to clear the random setting after deselection has not
 been demonstrated. The supplied report also notes a failed reproduction.
 
-### 32k Ship Limit Per Fleet — located signed storage; outcomes need tests
+### 32k Ship Limit Per Fleet — fixed in 2.8
 
 `structs.h`: `FLEET.rgcsh` (`int16_t[16]`); `ship.c`: `Merge2Fleets`,
 `FleetTransferCargoBalance`; `ship2.c`: `MergeFleetsDlg`;
@@ -317,6 +317,14 @@ the distinct manual-versus-waypoint recovery/loss outcomes require reproduction.
 Other stated limits are represented by the 512-fleet checks, 16 ship-design
 and 10 base-design slots, and battle token admission described above; the
 complete 512-minefield allocation limit has not been audited here.
+
+**2.8:** confirmed by `tests/unit/test_ship.c`. A waypoint merge of 32000
+and 1000 ships of a design left -32536, and merging all fleets at a
+location (`FFleetMergeAll`, the client's Merge and its log replay) clamped
+the count to 32766 and lost the rest. `Merge2Fleets` now moves only the
+ships that fit and leaves the others in their fleet; `FFleetMergeAll`
+leaves out a fleet whose ships wouldn't fit. Moving ships between two
+fleets in the client's transfer dialog was not changed.
 
 ### AR Starter Colonies — candidate
 

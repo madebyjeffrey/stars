@@ -36,7 +36,7 @@ against them.
 | Starbase Friendly Fire | `.x` | default battle plan "attack player N" reset to Neutral/Enemies | native repair in place; needs a test |
 | Cheap Starbase | `.x` | edit of a partly built starbase design blanked | **open** |
 | Mineral Upload | `.x` | manual transfer to a foreign fleet beyond its cargo capacity cancelled | **open** |
-| 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | **open** |
+| 32k Merge | `.x` | waypoint merge that would pass 32767 of one design set to no task; manual merge only warned | fixed |
 | 10th starbase design crash | `.x` | warning only | **open** (Crash Stars) |
 | Race file corruption | `.r` | checksum rewritten | fixed |
 | FreePop | `.x` | none (commented out, untested) | candidate |
@@ -152,7 +152,7 @@ through `ChgCargo`, which caps at free hold space and destroys the rest.
 **For 2.8:** leave the excess as salvage, or return it to the planet, at
 `TransferToOthers`. That fixes it without blocking legal transfers.
 
-### 32k Merge: open
+### 32k Merge: fixed in 2.8
 
 - Waypoint merge (block 5, task 4, target a fleet): if any design's
   combined count would pass 32767, the task is cleared (low nibble of byte
@@ -163,9 +163,9 @@ through `ChgCargo`, which caps at free hold space and destroys the rest.
 The cause is in ROADMAP 5.2: `Merge2Fleets` adds into `int16_t rgcsh` with
 no limit. TotalHost's split (fix the waypoint path, trust the manual path)
 suggests the client's merge dialog already caps and the host's waypoint
-merge doesn't. **For 2.8:** cap or refuse in `Merge2Fleets` and
-the waypoint merge in `SatisfyOrders`. Check the manual path in
-`MergeFleetsDlg` and `FRunLogRecord` before relying on it.
+merge doesn't. In fact the manual merge (`FFleetMergeAll`) clamped the
+count to 32766 and lost the rest. **2.8:** `Merge2Fleets` moves only the
+ships that fit, and `FFleetMergeAll` leaves out a fleet that wouldn't fit.
 
 ### 10th starbase design: warning only
 

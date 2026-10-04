@@ -133,3 +133,8 @@ produce different results from a 2.6j host for the same turn.
   detonating field that turn. The immune check used up the fleet's one
   detonation check (`ThingDecay`, `FTravelThroughMineFields`). **Host
   results.**
+- Fleets: merging can no longer pass 32767 ships of one design in a
+  fleet. A waypoint or AI merge wrapped the count negative; now the ships
+  that don't fit stay in their own fleet (`Merge2Fleets`). Merging all
+  fleets at a location clamped the count to 32766 and lost the rest; now a
+  fleet that doesn't fit is left out (`FFleetMergeAll`). **Host results.**
