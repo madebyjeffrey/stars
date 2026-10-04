@@ -44,6 +44,11 @@ FLEET *LpflStarsTestAddFleet(int16_t iPlr, int16_t idPlanet, int16_t ishdef, int
 // following FStarsTestGenerate sees the test's changes.
 int16_t FStarsTestSaveHost(void);
 
+// FStarsTestSaveGame writes every player's turn file and then the host
+// file from the loaded game, as turn generation does, so the game can be
+// opened in Stars! as it is.
+int16_t FStarsTestSaveGame(void);
+
 // FStarsTestGenerate generates one turn from szBase's host file and turn
 // files, as the -g command line does.
 int16_t FStarsTestGenerate(void);

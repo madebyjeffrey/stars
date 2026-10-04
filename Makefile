@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all version-header save-cli compile test-unit run-wine fmt compile-check res resources checkpoints-starsbox checkpoints-native checkpoints-compare tutorial tutorial-reject clean
+.PHONY: help all version-header save-cli compile test-unit scenario run-wine fmt compile-check res resources checkpoints-starsbox checkpoints-native checkpoints-compare tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -22,6 +22,7 @@ help:
 	@echo "  save-cli             Build the standalone test save CLI"
 	@echo "  compile              Build stars.exe with the MinGW CMake preset"
 	@echo "  test-unit            Build and run the unit tests in tests/unit under Wine"
+	@echo "  scenario             Build a test game into dist/scenarios/SCENARIO (no SCENARIO: list them)"
 	@echo "  fmt                  Format C sources and headers (FORMAT_FILES=ai.c to limit)"
 	@echo "  compile-check        Check C syntax (FILES=ai.c to limit) and resources"
 	@echo "  res / resources      Compile res/stars.rc into $(DIST_DIR)/stars_res.o"
@@ -44,6 +45,17 @@ compile:
 
 test-unit: compile
 	cd "$(DIST_DIR)/mingw-debug" && ctest --output-on-failure --timeout 300 $(CTEST_ARGS)
+
+# SCENARIO names one of the games in tests/scenarios/scenarios.c.
+SCENARIO_DIR = $(abspath $(DIST_DIR))/scenarios/$(SCENARIO)
+scenario: compile
+ifeq ($(SCENARIO),)
+	cd "$(DIST_DIR)/mingw-debug/tests" && WINEDEBUG=-all wine ./stars_scenario.exe
+else
+	rm -rf "$(SCENARIO_DIR)"
+	mkdir -p "$(SCENARIO_DIR)"
+	cd "$(DIST_DIR)/mingw-debug/tests" && WINEDEBUG=-all wine ./stars_scenario.exe "$(SCENARIO)" "$(SCENARIO_DIR)"
+endif
 
 run-wine:
 	$(CMAKE) --preset mingw-debug

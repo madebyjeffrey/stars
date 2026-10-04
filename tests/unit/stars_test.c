@@ -125,6 +125,17 @@ int16_t FStarsTestSaveHost(void) {
     return FWriteDataFile(szBase, -1, FALSE);
 }
 
+int16_t FStarsTestSaveGame(void) {
+    int16_t i;
+
+    for (i = 0; i < game.cPlayer; i++) {
+        idPlayer = iplrNone;
+        if (!FWriteDataFile(szBase, i, FALSE))
+            return FALSE;
+    }
+    return FStarsTestSaveHost();
+}
+
 int16_t FStarsTestGenerate(void) {
     DestroyCurGame();
     idPlayer = iplrNone;

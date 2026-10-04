@@ -155,6 +155,12 @@ if(STARS_BUILD_TESTS)
             WORKING_DIRECTORY "${STARS_TEST_DIR}"
             ENVIRONMENT "WINEDEBUG=-all")
     endforeach()
+    # Games to open by hand (tests/scenarios, make scenario).
+    add_executable(stars_scenario tests/scenarios/scenarios.c tests/unit/stars_test.c res/stars.rc)
+    target_link_libraries(stars_scenario PRIVATE stars_core)
+    target_link_options(stars_scenario PRIVATE "LINKER:--wrap=AlertSz")
+    target_include_directories(stars_scenario PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
+    set_target_properties(stars_scenario PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
     # The native-port test replaces file I/O with in-memory records.
     target_link_options(test_native_ports PRIVATE
         "LINKER:--wrap=WriteRt,--wrap=ReadRt,--wrap=FCreateFile,--wrap=StreamOpen,--wrap=StreamClose,--wrap=DirtyGame")
