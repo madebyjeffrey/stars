@@ -258,15 +258,18 @@ with its module count set to 0 still colonized. The check now requires
 
 ## Coding bugs
 
-### Race File Corruption — candidate
+### Race File Corruption — located
 
 `race.c`: `RaceWizardDlg1`, `FSaveRace`, `IRaceChecksum`;
-`save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`;
-`utilgen.c`: `FCompressUserString`, `FDecompressUserString`.
-These edit, checksum, serialize and restore the variable-length singular and
-plural race names. `WriteRtPlr` chooses compressed or terminated strings and
-records their resulting lengths. The exact shorter-name corruption mechanism
-has not been isolated; do not assume every short-name save corrupts the file.
+`save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`; `mdi.c` (race load check).
+`IRaceChecksum` XORs the whole in-memory name buffers, including bytes
+after the terminator. `RaceWizardDlg1`'s OK path reads the names with
+`GetDlgItemText` without clearing the buffers (its radio-button path does
+clear them), so a name shorter than the one it replaces leaves stale bytes
+that are checksummed but not saved. `ReadRtPlr` zeroes the record on load,
+and the checksum no longer matches. Only a save where the old name was
+longer at the same position is affected. TotalHost rejects these files and
+can rewrite their checksum; see [TOTALHOST.md](TOTALHOST.md).
 
 ### Random Race — candidate
 

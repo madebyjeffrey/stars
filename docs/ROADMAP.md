@@ -69,6 +69,8 @@ and order helpers as fixes need them.
 | Mineral upload | `TransferToOthers` destroys cargo the destination can't hold instead of leaving salvage | turn | open |
 | Claim Adjuster turn files | `FWriteDataFile` raises every included player's record to full detail for a CA player so it carries their habitat (`DrawMineSurvey` ally planet values), which also sends their tech, research, traits, production template and relations | turn | fixed (`test_save.c`) |
 | Target list overload | `ScannerWndProc`, `ClickInShipOrders` popups stop at 100 entries | UI | open |
+| Race file corruption | `RaceWizardDlg1` reads the names without clearing their buffers, `IRaceChecksum` covers the stale bytes after the terminator, and `ReadRtPlr` zeroes them on load | function | open |
+| Turn-file knowledge leaks | `FWriteDataFile` writes whole `THING` records, so a player's file carries other players' bits in the Mystery Trader, minefield and wormhole masks and the trader's part (see [TOTALHOST.md](TOTALHOST.md)) | turn | open |
 
 ### 5.3 Needs reproduction first
 
@@ -84,12 +86,11 @@ other the serial-unlocked shareware), which can point at causes.
 | East/West speed bump immunity | `FTravelThroughMineFields`, `FIntersectCircleLine` horizontal case | open |
 | Cheap starbase (UltraStation variant) | `PROD.pct` against edited designs | open |
 | [freepop] hack | `COLDROP` replay in `FRunLogRecord` | open |
-| Race file corruption | `WriteRtPlr` name lengths | open |
 | Random race | `RaceWizardDlg1` template persistence | open |
 | AR starter colonies | starter-base queue entry in `Produce` | open |
 | Sappers fail to close to range 2 | `DpFromPtokBrcToBrc` move scoring | open |
 | WP0 pop reload ignored | pending drops vs colonize task | open |
-| Crash Stars | base-design indices in battle and minefield damage | open |
+| Crash Stars | base-design indices in battle and minefield damage; TotalHost's warning points at a fleet refuelling at the last player's 10th base design ([TOTALHOST.md](TOTALHOST.md)) | open |
 | Starbase friendly fire | `CplrBattle` attack masks (already changed by the native repair) | open |
 | VCR shields and point of view | `RegenShield`, `UpdateShdefCost` use of `idPlayer` | open |
 | Stargate mineral transmutation | the 2.70i notes list "Fixed mineral transmutation bug when unloading for stargate jumps"; 26JFIN.txt's copy of that list omits it. Check `FStargateJump`'s cargo unloading | open |
