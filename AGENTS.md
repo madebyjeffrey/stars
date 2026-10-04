@@ -8,9 +8,13 @@ reconstruction is finished: it is tagged `2.6jrc3` and kept on the `2.6j`
 branch, which still follows the reconstruction rules in its own `AGENTS.md`
 (`git show 2.6j:AGENTS.md`).
 
-`main` is the 2.8 line. It fixes the original's bugs and turns the Win16
-shims into native Win32 code, while staying a game that plays like 2.6j and
-reads and writes its files.
+This is the `2.8` branch: the released 2.8 line (tag `v2.8.0`). It fixes
+the original's bugs and turns the Win16 shims into native Win32 code, while
+staying a game that plays like 2.6j and reads its files. The branch takes
+bug fixes for patch releases (`v2.8.1`, ...) only: no restructuring, new
+features or cleanup. New work, starting with the 2.9 split of the core, UI
+and host, happens on `main`. Make a fix on `main` first when it applies
+there too, and bring it here with `git cherry-pick -x`.
 
 When goals conflict, apply them in this order:
 
