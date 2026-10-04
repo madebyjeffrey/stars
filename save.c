@@ -36,12 +36,12 @@ void WriteRtPlr(PLAYER *pplr, uint8_t *pbStore) {
         for (i = 15; i >= 0 && pplr->rgmdRelation[i] == 0; i--) {
         }
         i++;
-        pb = pbStore + 112;
+        pb = pbStore + offsetof(PLAYER, rgmdRelation);
         *pb++ = i;
         memmove(pb, pplr->rgmdRelation, i);
         pb += i;
     } else {
-        pb = pbStore + 8;
+        pb = pbStore + offsetof(PLAYER, idPlanetHome);
     }
     cOut = 31;
     if (pplr->szName[0] != 0 && FCompressUserString(pplr->szName, pb + 1, &cOut)) {
@@ -677,8 +677,7 @@ void WritePlanet(PLANET *lppl, RecordType rt, int16_t fHistory) {
                 *pb++ = lppl->rgwtMin[i];
             } else if (lppl->rgwtMin[i] > 65535) {
                 *pbBase |= bMask;
-                RawStore16(pb, LOWORD(lppl->rgwtMin[i]));
-                RawStore16((uint8_t *)pb + 0x2, HIWORD(lppl->rgwtMin[i]));
+                RawStore32(pb, lppl->rgwtMin[i]);
                 pb += 4;
             } else {
                 *pbBase |= bMask & 0xaa;
@@ -715,8 +714,7 @@ void WritePlanet(PLANET *lppl, RecordType rt, int16_t fHistory) {
         }
         if (lppl->iPlayer != iplrNone) {
             if (lppl->fStarbase) {
-                RawStore16(pb, lppl->isb | lppl->pctDp << 4);
-                RawStore16((uint8_t *)pb + 0x2, lppl->idFling | lppl->iWarpFling << 0xa | lppl->fNoHeal << 0xe | lppl->unused3 << 0xf);
+                RawStore32(pb, lppl->lStarbase);
                 pb += 4;
             }
             if (lppl->idRoute != 0) {
@@ -786,8 +784,7 @@ void WriteFleet(FLEET *lpfl) {
                     pb++;
                 } else if (lpfl->rgwtMin[i] > 65535) {
                     us |= grMask & 0x3ff;
-                    RawStore16(pb, LOWORD(lpfl->rgwtMin[i]));
-                    RawStore16((uint8_t *)pb + 0x2, HIWORD(lpfl->rgwtMin[i]));
+                    RawStore32(pb, lpfl->rgwtMin[i]);
                     pb += 4;
                 } else {
                     us |= grMask & 0x2aa;
@@ -802,9 +799,7 @@ void WriteFleet(FLEET *lpfl) {
     }
     if (lpfl->det < detAll) {
         wt = 0;
-        RawStore16(pb, lpfl->dirFltX | lpfl->dirFltY << 8);
-        RawStore16((uint8_t *)pb + 0x2,
-                   lpfl->iwarpFlt | lpfl->fdirValid << 4 | lpfl->fCompChg << 5 | lpfl->fTargeted << 6 | lpfl->fSkipped << 7 | lpfl->fUnused << 8);
+        RawStore32(pb, lpfl->dirLong);
         pb += 4;
         for (i = 0; i < 16; i++) {
             if (lpfl->rgcsh[i] > 0) {
@@ -814,8 +809,7 @@ void WriteFleet(FLEET *lpfl) {
         for (i = 0; i <= 3; i++) {
             wt += lpfl->rgwtMin[i];
         }
-        RawStore16(pb, LOWORD(wt));
-        RawStore16((uint8_t *)pb + 0x2, HIWORD(wt));
+        RawStore32(pb, wt);
         pb += 4;
         WriteRt(rtFleetB, pb - rgb, rgb);
     } else {

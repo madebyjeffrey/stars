@@ -103,13 +103,16 @@ void ReadRtPlr(PLAYER *pplr, uint8_t *pbIn) {
 
     pplrRaw = (PLAYER *)pbIn;
     memset(pplr, 0, sizeof(PLAYER));
+    // A full record stores a relation count where rgmdRelation begins, then
+    // that many relations; a partial one stops before idPlanetHome.
     if (pplrRaw->det == detAll) {
-        memmove(pplr, pbIn, 112);
-        memmove(pplr->rgmdRelation, pbIn + 113, pbIn[112]);
-        iOff = 112 + pbIn[112] + 1;
+        iOff = offsetof(PLAYER, rgmdRelation);
+        memmove(pplr, pbIn, iOff);
+        memmove(pplr->rgmdRelation, pbIn + iOff + 1, pbIn[iOff]);
+        iOff += pbIn[iOff] + 1;
     } else {
-        memmove(pplr, pbIn, 8);
-        iOff = 8;
+        iOff = offsetof(PLAYER, idPlanetHome);
+        memmove(pplr, pbIn, iOff);
     }
     if (pbIn[iOff] == 0) {
         strcpy(pplr->szName, (char *)(pbIn + (iOff + 1)));
