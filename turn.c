@@ -604,7 +604,9 @@ void ParseCmdLine(char *lpCmdLine, int16_t *pfSeed, uint32_t *plSeed) {
     while (*lpT != 0) {
         for (; *lpT == ' '; lpT++) {
         }
-        if (*lpT == '-' || *lpT == '/') {
+        /* Windows switches may start with '/'; where '/' separates
+           directories, only '-' does. */
+        if (*lpT == '-' || (*lpT == '/' && chDirSep != '/')) {
             for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
                 switch (*lpT) {
                 case 'W':

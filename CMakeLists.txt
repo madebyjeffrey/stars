@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.23)
 # The version this line is building toward. Tags (vX.Y.Z) and build numbers
 # come from git; see cmake/version.cmake and docs/VERSIONING.md.
-project(stars VERSION 2.9.0 LANGUAGES C RC)
+project(stars VERSION 2.9.0 LANGUAGES C)
 
-if(NOT MINGW)
-    message(FATAL_ERROR "Configure using the MinGW toolchain: cmake --preset mingw-debug or cmake --preset mingw-release")
+# The MinGW presets build the Windows game (stars.exe), stars-host.exe and
+# the unit tests. Any other compiler builds only stars-host, the game's host
+# without windows (the host presets).
+if(WIN32)
+    if(NOT MINGW)
+        message(FATAL_ERROR "On Windows, configure using the MinGW toolchain: cmake --preset mingw-debug or cmake --preset mingw-release")
+    endif()
+    enable_language(RC)
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -38,15 +44,13 @@ add_library(stars_options INTERFACE)
 # Each set is built once for stars.exe and the unit tests.
 add_library(stars_core OBJECT ${STARS_CORE_SOURCES})
 target_link_libraries(stars_core PUBLIC stars_options)
-add_library(stars_ui OBJECT ${STARS_UI_SOURCES})
-target_link_libraries(stars_ui PUBLIC stars_options)
-
-add_executable(stars WIN32 res/stars.rc)
-target_link_libraries(stars PRIVATE stars_core stars_ui)
 
 # The command-line host: the game code and host.c, no windows.
 add_executable(stars-host host.c)
 target_link_libraries(stars-host PRIVATE stars_core)
+set_target_properties(stars-host PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 
 # version.h is regenerated on every build so the build number follows HEAD;
 # it is rewritten only when the version changes.
@@ -65,11 +69,6 @@ add_custom_target(stars_version
     VERBATIM
 )
 add_dependencies(stars_core stars_version)
-add_dependencies(stars_ui stars_version)
-
-set_target_properties(stars stars-host PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)
 
 target_include_directories(stars_options INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -83,7 +82,38 @@ target_compile_options(stars_options INTERFACE
     $<$<COMPILE_LANGUAGE:C>:-Wno-pointer-sign>
     $<$<COMPILE_LANGUAGE:C>:-fsigned-char>
 )
-target_link_libraries(stars_options INTERFACE user32 gdi32 comdlg32)
+
+if(NOT WIN32)
+    target_link_libraries(stars_options INTERFACE m)
+    # Turn generation rounds through long double as the original's x87 code
+    # did (docs/NATIVE-PORT.md). Without x87 extended precision (a 64-bit
+    # mantissa), as on Apple silicon or other ARM, some turns differ from
+    # the Windows game's.
+    include(CheckCSourceCompiles)
+    check_c_source_compiles("
+        #include <float.h>
+        #if LDBL_MANT_DIG != 64
+        #error not x87 extended precision
+        #endif
+        int main(void) { return 0; }" STARS_X87_LONG_DOUBLE)
+    if(NOT STARS_X87_LONG_DOUBLE)
+        message(WARNING "long double is not x87 extended precision here, so stars-host's turns can differ "
+                        "from the Windows game's. On Apple silicon, use the macos-host presets (x86_64, run by Rosetta).")
+    endif()
+    # The rest builds the Windows game and its tests.
+    return()
+endif()
+
+add_library(stars_ui OBJECT ${STARS_UI_SOURCES})
+target_link_libraries(stars_ui PUBLIC stars_options)
+target_link_libraries(stars_ui PUBLIC user32 gdi32 comdlg32)
+add_dependencies(stars_ui stars_version)
+
+add_executable(stars WIN32 res/stars.rc)
+target_link_libraries(stars PRIVATE stars_core stars_ui)
+set_target_properties(stars PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 
 # MinGW runtime objects can contain debug data even in a Release build.
 target_link_options(stars PRIVATE

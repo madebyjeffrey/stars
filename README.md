@@ -16,7 +16,7 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   2.6j files and writes the same formats, marked as version 2.84 so that
   2.6j doesn't load them.
 - `main`: the 2.9 line, splitting the game into core, UI and host builds so
-  the host can run on Linux.
+  the host (`stars-host`) runs on Linux and macOS.
 
 ## Documentation
 
@@ -64,7 +64,26 @@ cmake --build --preset mingw-release
 ```
 
 This writes `dist/mingw-release/bin/stars.exe` with optimization enabled and
-debug data stripped. Test hooks are disabled in ordinary builds.
+debug data stripped. Test hooks are disabled in ordinary builds. The MinGW
+presets also build `stars-host.exe`.
+
+### stars-host
+
+`stars-host` is the game's host without its windows: it creates universes
+and generates turns from the same command line as `stars.exe`
+(`-a game.def`, `-g[n] game.hst`, `-b`, `-t`, `-v`, `-s<seed>`). It builds
+with the native compiler on Linux and macOS, with only CMake and Ninja:
+
+```sh
+make host               # or: cmake --preset host-release && cmake --build --preset host-release
+dist/host-release/bin/stars-host -g1 /path/to/game.hst
+```
+
+Turn generation rounds through x87 extended precision, which ARM lacks. On
+Apple silicon, `make host` builds the `macos-host-release` preset, an x86_64
+binary that Rosetta runs (`dist/macos-host-release/bin/stars-host`); it
+generates the same turns as `stars.exe`. A native arm64 build works, but
+its turns can differ, and CMake warns about it.
 
 ## GitHub Actions
 
@@ -105,6 +124,7 @@ comparison and AI update commands used by checkpoint testing:
 make regression        # every baseline scenario through turn 150
 make regression-quick  # smallai4 through turn 10
 make regression-export # after a full run, replace the baseline
+make regression-host   # the same run through stars-host, without Wine
 ```
 
 `make regression` builds the fixed-seed release `stars.exe` and

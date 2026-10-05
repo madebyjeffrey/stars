@@ -43,6 +43,12 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   string table passes `int32_t` to `%ld`; `long` is 64 bits on 64-bit POSIX),
   and rounds with `LMulDiv`, which matches Win32 `MulDiv`. Every format in
   the string table formats the same through both.
+- **Platforms:** the game code (`common.h`) builds without Windows headers;
+  `stars-host` links it alone. Its turns match `stars.exe`'s where
+  `long double` is x87 extended precision: x86-64 Linux and macOS (on
+  Apple silicon, built for x86_64 and run by Rosetta). ARM's `long double`
+  is 64 bits (macOS) or 128 bits (Linux), so the rounding casts round
+  differently; CMake warns about such builds.
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.

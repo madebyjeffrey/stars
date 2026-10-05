@@ -6,6 +6,14 @@ produce different results from a 2.6j host for the same turn.
 
 ## 2.9.0 (unreleased)
 
+### Added
+
+- `stars-host`, the game's host without windows, for Windows, Linux and
+  macOS. It takes `stars.exe`'s host command line (`-a`, `-g`, `-b`, `-t`,
+  `-v`, `-s`, `-p`, `-l`) and generates the same turns where `long double`
+  is x87 extended precision (x86-64; on Apple silicon, an x86_64 build run
+  by Rosetta). Messages go to stderr; it never waits for a player.
+
 ### Fixed
 
 - Creating a universe from a definition file no longer writes the race

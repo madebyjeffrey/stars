@@ -21,6 +21,16 @@ To keep in mind:
   the RNG first.
 - The product name's `x64` (`2.8x64`) is fixed in `cmake/version.cmake`;
   give each build its own platform label.
+
+Progress:
+
+- Done: the game code builds without Windows headers (`common.h`); the
+  Windows interface is in the `*ui.c` files and other UI files (`win.h`),
+  reached from the game code only through `ui.h`. `stars-host` (`host.c`)
+  links the game code alone and matches the native baseline under Wine and
+  on x86-64 macOS (`make regression-host`).
+- Next: run `make regression-host` on x86-64 Linux and in CI; build the unit
+  tests that need no windows natively; per-platform version labels.
 - The file format stays at 2.84 unless a record changes.
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`
