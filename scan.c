@@ -1515,6 +1515,66 @@ void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
     return;
 }
 
+// DrawPathYearTicks draws a tick across the selected fleet's leg from
+// ptFrom to ptTo, logical points, where each year at iWarp ends: a fleet
+// moves iWarp squared light years a year and stops at each waypoint. Ticks
+// closer than 6 pixels are left out. It leaves the pen at ptTo. The path is
+// drawn with R2_XORPEN, so drawing it again erases the ticks too; each tick
+// is two halves that skip the path's own pixel, which XOR would clear.
+static void DrawPathYearTicks(HDC hdc, POINT16 ptFrom, POINT16 ptTo, int16_t iWarp) {
+    POINT16 ptA;
+    POINT16 ptB;
+    POINT16 pt;
+    double  dLeg;
+    double  dScan;
+    double  dxTick;
+    double  dyTick;
+    int16_t dYear;
+    int16_t i;
+    int16_t iSide;
+
+    ptA = ptFrom;
+    LogicalToScan(&ptA);
+    ptB = ptTo;
+    LogicalToScan(&ptB);
+    if (iWarp >= 1 && iWarp <= 10) {
+        dYear = iWarp * iWarp;
+        dLeg = hypot(ptTo.x - ptFrom.x, ptTo.y - ptFrom.y);
+        dScan = hypot(ptB.x - ptA.x, ptB.y - ptA.y);
+        if (dLeg > dYear && dScan * dYear / dLeg >= 6) {
+            // A unit step across the leg on screen.
+            dxTick = -(ptB.y - ptA.y) / dScan;
+            dyTick = (ptB.x - ptA.x) / dScan;
+            for (i = 1; i * dYear < dLeg; i++) {
+                pt.x = (int16_t)floor(ptA.x + (ptB.x - ptA.x) * i * dYear / dLeg + 0.5);
+                pt.y = (int16_t)floor(ptA.y + (ptB.y - ptA.y) * i * dYear / dLeg + 0.5);
+                for (iSide = -1; iSide <= 1; iSide += 2) {
+                    MoveToEx(hdc, pt.x + (int16_t)floor(iSide * dxTick + 0.5), pt.y + (int16_t)floor(iSide * dyTick + 0.5), NULL);
+                    LineTo(hdc, pt.x + (int16_t)floor(iSide * 4 * dxTick + 0.5), pt.y + (int16_t)floor(iSide * 4 * dyTick + 0.5));
+                }
+            }
+        }
+    }
+    MoveToEx(hdc, ptB.x, ptB.y, NULL);
+}
+
+// SetScanPathWarp sets the warp of the selected fleet's waypoint iwp. Its
+// path's year ticks depend on the warp, so a path on screen is erased
+// first and drawn again after.
+void SetScanPathWarp(int16_t iwp, int16_t iWarp) {
+    int16_t fVis;
+
+    fVis = fOrdersVis;
+    if (fVis) {
+        DrawShipScanPath(NULL, FALSE);
+    }
+    sel.fl.lpplord->rgord[iwp].iWarp = iWarp;
+    if (fVis) {
+        DrawShipScanPath(NULL, TRUE);
+    }
+    return;
+}
+
 void DrawShipScanPath(HDC hdc, int16_t fShow) {
     ORDER  *lpord2;
     int16_t rgDup[87];
@@ -1738,6 +1798,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                     if (rgDup[i] == 1) {
                         SelectObject(hdc, hpenShip);
                     }
+                    DrawPathYearTicks(hdc, sel.fl.lpplord->rgord[i - 1].pt, sel.fl.lpplord->rgord[i].pt, sel.fl.lpplord->rgord[i].iWarp);
                 }
                 pt = pt2;
             }

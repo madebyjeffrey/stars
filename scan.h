@@ -12,6 +12,7 @@ int16_t          DrawScanner(HDC hdc, RECT *prc);
 void             DrawScanFleetCount(FLEET *lpfl, int16_t x, int16_t y, HDC hdc, HDC hdcMem);
 int32_t          CShipsScanVis(FLEET *lpfl);
 void             DrawRadarCircle(DRAWCIR *pdc, RECT *prc);
+void             SetScanPathWarp(int16_t iwp, int16_t iWarp);
 void             DrawShipScanPath(HDC hdc, int16_t fShow);
 void             DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw);
 void             DrawLockLight(HDC hdc, RECT *prc, int16_t fFullRedraw);

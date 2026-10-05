@@ -514,7 +514,7 @@ int16_t FHandleKey(HWND hwnd, int16_t iMsg, int16_t iKey, uint32_t dw) {
                     iWarp++;
                 }
                 if (iWarp >= 0 && iWarp <= 11) {
-                    sel.fl.lpplord->rgord[iwp].iWarp = iWarp;
+                    SetScanPathWarp(iwp, iWarp);
                     FLookupFleet(idWriteBack, &sel.fl);
                     DrawPlanShip(NULL, tileFleetOrders | tileFleetComp | tileMinimized);
                 }

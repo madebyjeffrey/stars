@@ -20,6 +20,9 @@ produce different results from a 2.6j host for the same turn.
   arrives as soon. Alt held while dropping a dragged waypoint does the
   same. Players set colonize tasks on scouts to get this speed, at the cost
   of a warning every turn. Turn generation is unchanged.
+- The selected fleet's path in the scanner has a tick where each year of
+  travel ends: a fleet moves its warp squared in light years a year, each
+  leg at its own warp, and stops at every waypoint.
 - Dragging the scanner with the left button pans it. A press still selects
   what is under it, as a click does; the view moves once the mouse moves
   past the system's drag distance. Dragging a waypoint, Shift and Ctrl
