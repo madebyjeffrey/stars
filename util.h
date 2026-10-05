@@ -76,5 +76,6 @@ int16_t  ScanToPt(int16_t d);
 char    *SzVersion();
 void     ChangeScanSel(SCAN *pscan, int16_t fValidScan);
 int16_t  FFindSomethingAndSelectIt();
+int16_t  CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall);
 
 #endif

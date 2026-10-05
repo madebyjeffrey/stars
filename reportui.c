@@ -2651,3 +2651,10 @@ INT_PTR CALLBACK PrintMapDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
     }
     return 0;
 }
+
+// SetHdcTextColor colours the fleet report text PszGetDestName, PszGetETA
+// and CchGetETA return.
+void SetHdcTextColor(HDC hdc, uint32_t cr) {
+    SetTextColor(hdc, cr);
+    return;
+}

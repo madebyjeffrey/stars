@@ -274,3 +274,7 @@ uint8_t   vrgplrTypeNew[16] = {0};
 int16_t   rgOut[16] = {0};
 char     *lpchBatch = 0;
 char     *lpchBatchMac = 0;
+char     *rgszZipOrder[4] = {"QuikLoad", "QuikDrop", "WaitLoad", "Clear"};
+char     *szDblDash = "-- ";
+char      szCRLF[3] = "\r\n";
+ZIPORDER  vrgZip[4] = {0};

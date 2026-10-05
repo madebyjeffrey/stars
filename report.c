@@ -28,7 +28,7 @@ char *PszGetDestName(FLEET *lpfl, HDC hdc) {
         case grTaskLayMines:
         LDelayed:
             if (hdc) {
-                SetTextColor(hdc, 127);
+                SetHdcTextColor(hdc, 127);
             }
             return PszGetCompressedString(idsDelayed);
         default:
@@ -104,7 +104,7 @@ char *PszGetETA(HDC hdc, FLEET *lpfl, int16_t *pcYears) {
         ord = lpfl->lpplord->rgord[1];
         CchGetETA(hdc, lpfl, szWork, 1, TRUE);
         if (hdc && EstFuelUse(lpfl, 0, ord.iWarp, -1, FALSE) > lpfl->rgwtMin[4]) {
-            SetTextColor(hdc, 0xff);
+            SetHdcTextColor(hdc, 0xff);
         }
         if (pcYears) {
             psz = szWork;
@@ -225,9 +225,9 @@ LShowTask:
                 psz = PszGetCompressedString(ids);
                 psz[strlen(psz) - 3] = 0;
                 if (fPercent) {
-                    wsprintf(szWork, "%s %d%%", psz, ord.txp.rgia[icr].cQuan);
+                    CchSprintf(szWork, "%s %d%%", psz, ord.txp.rgia[icr].cQuan);
                 } else {
-                    wsprintf(szWork, icr == 4 ? "%s %dmg" : "%s %dkT", psz, ord.txp.rgia[icr].cQuan);
+                    CchSprintf(szWork, icr == 4 ? "%s %dmg" : "%s %dkT", psz, ord.txp.rgia[icr].cQuan);
                 }
                 return szWork;
             default:
@@ -235,14 +235,14 @@ LShowTask:
             }
         case grTaskLayMines:
             if (ord.tlm.cTime < 5) {
-                wsprintf(szWork, "%s  %dy", PszGetCompressedString(ids), ord.tlm.cTime + 1);
+                CchSprintf(szWork, "%s  %dy", PszGetCompressedString(ids), ord.tlm.cTime + 1);
             } else {
                 CchGetString(ids, szWork);
             }
             return szWork;
         case grTaskPatrol:
             if (ord.tptl.iDist < 11) {
-                wsprintf(szWork, "%s  %dly", PszGetCompressedString(ids), (ord.tptl.iDist + 1) * 50);
+                CchSprintf(szWork, "%s  %dly", PszGetCompressedString(ids), (ord.tptl.iDist + 1) * 50);
             } else {
                 CchGetString(ids, szWork);
             }
@@ -284,12 +284,12 @@ void DumpUniverse() {
             goto DisplayStatus;
         } else {
             fFileErrSilent = TRUE;
-            wsprintf(szWork, "%s.map", szBase);
+            CchSprintf(szWork, "%s.map", szBase);
             StreamOpen(szWork, mdCreate);
             fOpen = TRUE;
             RgToStream("#\tX\tY\tName\r\n", 12);
             for (i = 0; i < game.cPlanMax; i++) {
-                cch = wsprintf(szWork, "%d\t%d\t%d\t%s\r\n", i + 1, rgptPlan[i].x, rgptPlan[i].y, PszGetCompressedPlanet(rgidPlan[i]));
+                cch = CchSprintf(szWork, "%d\t%d\t%d\t%s\r\n", i + 1, rgptPlan[i].x, rgptPlan[i].y, PszGetCompressedPlanet(rgidPlan[i]));
                 RgToStream(szWork, cch);
             }
             StreamClose();
@@ -297,7 +297,7 @@ void DumpUniverse() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWriteUniverseDefinitionSMapOperation : idsUniverseDefinitionHasSuccessfullyWrittenSMap;
-    wsprintf(szWork, PszGetCompressedString(ids), szBase);
+    CchSprintf(szWork, PszGetCompressedString(ids), szBase);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
@@ -348,9 +348,9 @@ void DumpPlanets() {
         } else {
             fFileErrSilent = TRUE;
             if (gd.fPerPlayerDumps) {
-                wsprintf(szFile, "%s.p%d", szBase, idPlayer + 1);
+                CchSprintf(szFile, "%s.p%d", szBase, idPlayer + 1);
             } else {
-                wsprintf(szFile, "%s.pla", szBase);
+                CchSprintf(szFile, "%s.pla", szBase);
             }
             StreamOpen(szFile, mdCreate);
             fOpen = TRUE;
@@ -386,7 +386,7 @@ void DumpPlanets() {
                     cch = strlen(szForm);
                 }
                 RgToStream(szForm, cch);
-                itoa(game.turn - lppl->turn, &szForm[1], 10);
+                CchSprintf(&szForm[1], "%d", game.turn - lppl->turn);
                 RgToStream(szForm, strlen(szForm));
                 szForm[1] = 0;
                 if (lppl->det == detAll) {
@@ -400,7 +400,7 @@ void DumpPlanets() {
                     szForm[1] = 0;
                 } else {
                     i = PctPlanetDesirability(lppl, idPlayer);
-                    wsprintf(&szForm[1], PCTDPCTPCT, i);
+                    CchSprintf(&szForm[1], PCTDPCTPCT, i);
                 }
                 RgToStream(szForm, strlen(szForm));
                 szForm[1] = 0;
@@ -412,14 +412,14 @@ void DumpPlanets() {
                 if (lppl->det == detAll) {
                     CalcPctSurvive(lppl, &pct, NULL);
                     pct = (float)((long double)1.0 - pct);
-                    wsprintf(&szForm[1], "%ld\t%ld\t%d.%d%%", (int32_t)lppl->cMines, (int32_t)lppl->cFactories, LOWORD((int32_t)((long double)pct * 100)),
-                             LOWORD((int32_t)((pct - (long double)(int16_t)LOWORD((int32_t)((long double)pct * 100)) / 100.0) * 10000)));
+                    CchSprintf(&szForm[1], "%ld\t%ld\t%d.%d%%", (int32_t)lppl->cMines, (int32_t)lppl->cFactories, LOWORD((int32_t)((long double)pct * 100)),
+                               LOWORD((int32_t)((pct - (long double)(int16_t)LOWORD((int32_t)((long double)pct * 100)) / 100.0) * 10000)));
                 } else {
                     szForm[2] = '\t';
                     szForm[1] = '\t';
                     szForm[3] = 0;
                     if (gd.fPerPlayerDumps && lppl->uDefGuess != 0) {
-                        cch = wsprintf(&szForm[3], "%d%%", lppl->uDefGuess * 6 + 3);
+                        cch = CchSprintf(&szForm[3], "%d%%", lppl->uDefGuess * 6 + 3);
                         szForm[cch + 3] = 0;
                     }
                 }
@@ -527,7 +527,7 @@ void DumpPlanets() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWritePlanetInformationSOperationTerminated : idsKnownPlanetInformationHasSuccessfullyWrittenS;
-    wsprintf(szWork, PszGetCompressedString(ids), szFile);
+    CchSprintf(szWork, PszGetCompressedString(ids), szFile);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {
@@ -577,9 +577,9 @@ void DumpFleets() {
         } else {
             fFileErrSilent = TRUE;
             if (gd.fPerPlayerDumps) {
-                wsprintf(szFile, "%s.f%d", szBase, idPlayer + 1);
+                CchSprintf(szFile, "%s.f%d", szBase, idPlayer + 1);
             } else {
-                wsprintf(szFile, "%s.fle", szBase);
+                CchSprintf(szFile, "%s.fle", szBase);
             }
             StreamOpen(szFile, mdCreate);
             fOpen = TRUE;
@@ -718,7 +718,7 @@ void DumpFleets() {
     }
 DisplayStatus:
     ids = !fSuccess ? idsUnableWriteFleetInformationSOperationTerminated : idsKnownFleetInformationHasSuccessfullyWrittenS;
-    wsprintf(szWork, PszGetCompressedString(ids), szFile);
+    CchSprintf(szWork, PszGetCompressedString(ids), szFile);
     if (fSuccess) {
         AlertSz(szWork, MB_ICONASTERISK);
     } else {

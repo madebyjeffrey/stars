@@ -2520,3 +2520,79 @@ char *SzVersion() {
     CchSprintf(szWork, "Version %s", STARS_VERSION_DISPLAY);
     return szWork;
 }
+
+int16_t CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall) {
+    int16_t  iWarp;
+    double   dbl;
+    ORDER   *lpord;
+    int16_t  i;
+    int16_t  c;
+    int16_t  iSpeed;
+    int16_t  j;
+    int16_t  cYears;
+    StringId ids;
+
+    cYears = 0;
+    lpord = lpfl->lpplord->rgord;
+    i = 0;
+    while (i < iwp) {
+        dbl = DGetDistance(lpord->pt.x, lpord->pt.y, lpord[1].pt.x, lpord[1].pt.y);
+        iWarp = lpord[1].iWarp;
+        if (iWarp < 11) {
+            iSpeed = iWarp * iWarp;
+        } else {
+            j = FCanFleetUseStargates(lpfl, lpord->pt, lpord[1].pt);
+            switch (j) {
+            case -1:
+                iSpeed = -3;
+                break;
+            case 0:
+                iSpeed = 0;
+                break;
+            case 1:
+                iSpeed = 8000;
+                break;
+            default:
+                if (j & 2) {
+                    iSpeed = -1;
+                } else {
+                    iSpeed = -2;
+                }
+            }
+        }
+        if (iSpeed == 0) {
+            if (hdc) {
+                SetHdcTextColor(hdc, 0xff);
+            }
+            c = CchGetString(idsNever, sz);
+            return c;
+        }
+        if (iSpeed < 0) {
+            if (hdc) {
+                SetHdcTextColor(hdc, 32639);
+            }
+            if (iSpeed == -1) {
+                ids = idsDanger;
+            } else if (iSpeed == -2) {
+                ids = idsUnload2;
+            } else {
+                ids = idsUncertain;
+            }
+            c = CchGetString(ids, sz);
+            return c;
+        }
+        if (iSpeed >= (int16_t)LOWORD((int32_t)dbl)) {
+            iSpeed = 1;
+        } else {
+            iSpeed = (int16_t)(LOWORD((int32_t)dbl) + iSpeed - 1) / iSpeed;
+        }
+        cYears += iSpeed;
+        i++;
+        lpord++;
+    }
+    c = CchSprintf(sz, PszGetCompressedString(!fSmall ? idsDYear : idsDy), cYears);
+    if (cYears != 1 && !fSmall) {
+        sz[c++] = 's';
+    }
+    return c;
+}

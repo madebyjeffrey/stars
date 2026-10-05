@@ -158,5 +158,9 @@ extern uint8_t   vrgplrTypeNew[16];
 extern int16_t   rgOut[16];
 extern char     *lpchBatch;
 extern char     *lpchBatchMac;
+extern char     *rgszZipOrder[4];
+extern char     *szDblDash;
+extern char      szCRLF[3];
+extern ZIPORDER  vrgZip[4];
 
 #endif

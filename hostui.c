@@ -57,3 +57,5 @@ void AdvanceTutor() { return; }
 // LpbLoadTutorLog has no tutorial to replay; the tutorial plays only in the
 // Windows game.
 uint8_t *LpbLoadTutorLog() { return NULL; }
+
+void SetHdcTextColor(HDC hdc, uint32_t cr) { return; }

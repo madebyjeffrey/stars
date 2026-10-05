@@ -23,11 +23,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # in STARS_UI_SOURCES. Some of these files still hold UI functions; the 2.9
 # split moves those out (docs/ROADMAP.md).
 set(STARS_CORE_SOURCES
-    ai.c ai2.c ai3.c ai4.c aiutil.c
-    battle.c build.c create.c file.c globals.c log.c memory.c mine.c msg.c
-    native.c parts.c planet.c produce.c race.c research.c save.c ship.c
-    ship2.c strings.c strings_uncompressed.c thing.c turn.c turn2.c turn3.c
-    util.c utilgen.c
+    ai.c ai2.c ai3.c ai4.c aiutil.c battle.c build.c create.c file.c globals.c
+    log.c memory.c mine.c msg.c native.c parts.c planet.c produce.c race.c
+    research.c save.c ship.c ship2.c strings.c strings_uncompressed.c thing.c
+    turn.c turn2.c turn3.c util.c utilgen.c
 )
 
 # The Windows game's user interface.
