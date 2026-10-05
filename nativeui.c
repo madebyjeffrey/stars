@@ -66,8 +66,9 @@ int16_t FRouteMouseWheel(MSG *pmsg) {
     POINT pt;
     HWND  hwnd;
 
-    pt.x = (short)LOWORD(pmsg->lParam);
-    pt.y = (short)HIWORD(pmsg->lParam);
+    // The message's own cursor position, not lParam: Wine sends the point
+    // of WM_MOUSEHWHEEL in client coordinates rather than screen ones.
+    pt = pmsg->pt;
     hwnd = WindowFromPoint(pt);
     if (!hwnd || hwnd == pmsg->hwnd || GetWindowThreadProcessId(hwnd, NULL) != GetCurrentThreadId())
         return TRUE;
