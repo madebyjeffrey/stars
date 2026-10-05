@@ -1156,7 +1156,7 @@ void GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost) {
             }
             for (i = 0; i < 4; i++) {
                 if (rgCost[i] > 0) {
-                    rgCost[i] -= MulDiv(rgCost[i], cExcess, 100);
+                    rgCost[i] -= LMulDiv(rgCost[i], cExcess, 100);
                     if (rgCost[i] == 0) {
                         rgCost[i] = 1;
                     }

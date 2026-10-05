@@ -382,7 +382,7 @@ char *PszPlayerName(int16_t iPlayer, int16_t fCapital, int16_t fPlural, int16_t 
             CchGetString(idsAre, &szName[strlen(szName)]);
         }
     } else {
-        wsprintf(szName, PszGetCompressedString(idsPlayerD2), iPlayer + 1);
+        CchSprintf(szName, PszGetCompressedString(idsPlayerD2), iPlayer + 1);
         if (!fPlural) {
             strcat(szName, "'s");
         }
@@ -740,11 +740,11 @@ char *PszGetThingName(int16_t id) {
     switch (lpth->ith) {
     case ithMinefield:
         if (lpth->iplr != idPlayer) {
-            wsprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
+            CchSprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
         } else {
             szPlr[0] = 0;
         }
-        wsprintf(szWork, PszGetCompressedString(idsSSMineField), szPlr, rgszMineField[lpth->thm.iType]);
+        CchSprintf(szWork, PszGetCompressedString(idsSSMineField), szPlr, rgszMineField[lpth->thm.iType]);
         break;
     case ithMineralPacket:
         if (lpth->thp.iWarp == 0) {
@@ -752,11 +752,11 @@ char *PszGetThingName(int16_t id) {
             return szWork;
         }
         if (lpth->iplr != idPlayer) {
-            wsprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
+            CchSprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
         } else {
             szPlr[0] = 0;
         }
-        wsprintf(szWork, PszGetCompressedString(idsSmineralPacket), szPlr);
+        CchSprintf(szWork, PszGetCompressedString(idsSmineralPacket), szPlr);
         break;
     case ithWormhole:
         strcpy(szWork, PszGetCompressedString(idsWormhole));
@@ -786,12 +786,12 @@ char *PszGetFleetName(int16_t id) {
     iplr = (uint16_t)id >> 9 & 0xf;
     ifl = id & 0x1ff;
     if (iplr != idPlayer) {
-        wsprintf(szPlr, "%s ", PszPlayerName(iplr, FALSE, FALSE, FALSE, 0, NULL));
+        CchSprintf(szPlr, "%s ", PszPlayerName(iplr, FALSE, FALSE, FALSE, 0, NULL));
     } else {
         szPlr[0] = 0;
     }
     if (lpfl && lpfl->lpszName) {
-        wsprintf(szWork, "%s%s", szPlr, lpfl->lpszName);
+        CchSprintf(szWork, "%s%s", szPlr, lpfl->lpszName);
     } else {
         if (lpfl) {
             ishdef = IshdefPrimaryFromLpfl(lpfl, &cshdef);
@@ -812,7 +812,7 @@ char *PszGetFleetName(int16_t id) {
         } else {
             lpsz = PszGetCompressedString(idsFleet);
         }
-        wsprintf(szWork, "%s%s #%d", szPlr, lpsz, ifl + 1);
+        CchSprintf(szWork, "%s%s #%d", szPlr, lpsz, ifl + 1);
     }
     return szWork;
 }
@@ -851,7 +851,7 @@ char *PszFleetNameFromWord(uint16_t w) {
         }
         lpsz = szShdef;
     }
-    wsprintf(szWork, "%s #%d", lpsz, (w & 0x1ff) + 1);
+    CchSprintf(szWork, "%s #%d", lpsz, (w & 0x1ff) + 1);
     return szWork;
 }
 
@@ -864,7 +864,7 @@ char *PszGetPlanetName(int16_t id) {
     id = rgidPlan[id];
     psz = PszGetCompressedPlanet(id);
     if (fInOrbit) {
-        wsprintf(szWork, PszGetCompressedString(idsOrbitingS), psz);
+        CchSprintf(szWork, PszGetCompressedString(idsOrbitingS), psz);
     } else {
         strcpy(szWork, psz);
     }
@@ -1189,7 +1189,7 @@ NoObj:
     if (x == -1 && y == -1) {
         strcpy(szWork, PszGetCompressedString(idsDeepSpace));
     } else {
-        wsprintf(szWork, PszGetCompressedString(idsSpaceDD), x, y);
+        CchSprintf(szWork, PszGetCompressedString(idsSpaceDD), x, y);
     }
     return szWork;
 }
@@ -1233,9 +1233,9 @@ char *PszGetDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
     d2 = (int32_t)(d / 100);
     d -= (uint32_t)(d2 * 100);
     if (dyArial8 <= 14) {
-        wsprintf(szWork, PszGetCompressedString(idsLdLdLightYears), d2, d);
+        CchSprintf(szWork, PszGetCompressedString(idsLdLdLightYears), d2, d);
     } else {
-        wsprintf(szWork, PszGetCompressedString(idsLdLdLY), d2, d);
+        CchSprintf(szWork, PszGetCompressedString(idsLdLdLY), d2, d);
     }
     return szWork;
 }
@@ -2494,13 +2494,13 @@ void OutputSz(int16_t dt, char *sz) {
     char szDate[100];
     char szTemp[256];
 
-    wsprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
+    CchSprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
     if (!FFileExists(szFile)) {
-        wsprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
+        CchSprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
         OutputFileString(szFile, szTemp);
     }
     GetDateTimeSz(szDate, szTime);
-    wsprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
+    CchSprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
     OutputFileString(szFile, szTemp);
     return;
 }
@@ -2509,7 +2509,7 @@ void TurnLog(StringId ids) {
     char szTemp[256];
 
     if (ini.fLogging) {
-        wsprintf(szTemp, PszFormatIds(ids, NULL), game.turn + 2401);
+        CchSprintf(szTemp, PszFormatIds(ids, NULL), game.turn + 2401);
         OutputSz(6, szTemp);
     }
     return;
@@ -2517,6 +2517,6 @@ void TurnLog(StringId ids) {
 
 char *SzVersion() {
     /* The original formatted idsVersionD02dC ("Version %d.%02d%c") with 2, 60, 'j'. */
-    wsprintf(szWork, "Version %s", STARS_VERSION_DISPLAY);
+    CchSprintf(szWork, "Version %s", STARS_VERSION_DISPLAY);
     return szWork;
 }

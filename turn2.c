@@ -1599,7 +1599,7 @@ void UpdatePlayerScores() {
                 }
             }
         }
-        if (score.cPlanet >= MulDiv(cPlanet, GetVCVal(&game, vcOwnsPercentPlanets, FALSE), 100)) {
+        if (score.cPlanet >= LMulDiv(cPlanet, GetVCVal(&game, vcOwnsPercentPlanets, FALSE), 100)) {
             vlprgScoreX[i].grbitVC |= 1;
             if (GetVCCheck(&game, vcOwnsPercentPlanets) != 0) {
                 rgcCond[i]++;
@@ -1741,9 +1741,9 @@ void CreateBackupDir() {
     if (vcBackupDirs <= 1) {
         strcpy(pchT, "backup");
     } else if (vcBackupDirs <= 99) {
-        wsprintf(pchT, "backup%d", (uint32_t)game.turn % vcBackupDirs);
+        CchSprintf(pchT, "backup%d", (uint32_t)game.turn % vcBackupDirs);
     } else {
-        wsprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
+        CchSprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
     }
     MakeDir(szBackup);
     strcat(szBackup, szDirSep);

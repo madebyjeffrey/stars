@@ -42,14 +42,14 @@ char *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16
         }
         c = CchGetString(ids, szWork);
     } else if (iTurnEnd == 100) {
-        c = wsprintf(szWork, PszGetCompressedString(idsDYears), iTurnBegin);
+        c = CchSprintf(szWork, PszGetCompressedString(idsDYears), iTurnBegin);
     } else if (iTurnBegin == iTurnEnd) {
         if (iTurnBegin == 0) {
             c = CchGetString(idsSkipped, szWork);
         } else if (iTurnBegin == -1) {
             c = CchGetString(idsNeeded, szWork);
         } else {
-            c = wsprintf(szWork, PszGetCompressedString(idsDYear), iTurnBegin);
+            c = CchSprintf(szWork, PszGetCompressedString(idsDYear), iTurnBegin);
             if (iTurnBegin != 1) {
                 szWork[c] = 's';
                 c++;
@@ -57,7 +57,7 @@ char *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16
             }
         }
     } else {
-        c = wsprintf(szWork, PszGetCompressedString(idsDDYears), iTurnBegin, iTurnEnd);
+        c = CchSprintf(szWork, PszGetCompressedString(idsDDYears), iTurnBegin, iTurnEnd);
     }
     if (etaFirst) {
         *etaFirst = iTurnBegin;
@@ -288,10 +288,10 @@ char *PszCalcEnvVar(EnvType iEnv, int16_t iVar) {
     default:
         return PszCalcGravity(iVar);
     case Temperature:
-        wsprintf(szWork, "%d%cC", iVar * 4 - 200, 186);
+        CchSprintf(szWork, "%d%cC", iVar * 4 - 200, 186);
         break;
     case Radiation:
-        wsprintf(szWork, "%dmR", iVar);
+        CchSprintf(szWork, "%dmR", iVar);
     }
     return szWork;
 }
@@ -309,7 +309,7 @@ char *PszCalcGravity(int16_t iGravity) {
     if (iGravity < 50) {
         iVal = 10000 / iVal;
     }
-    wsprintf(szWork, "%d.%02dg", iVal / 100, iVal % 100);
+    CchSprintf(szWork, "%d.%02dg", iVal / 100, iVal % 100);
     return szWork;
 }
 

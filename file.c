@@ -752,7 +752,7 @@ LNextTurn:
     }
     StreamClose();
     if (cturn > 1 && !rgplr[iPlayer].fAi && !ini.fDumpPlanets && !ini.fDumpFleets && !ini.fDumpMap) {
-        wsprintf(szWork, PszGetCompressedString(idsNoteDYearsDataRead), cturn);
+        CchSprintf(szWork, PszGetCompressedString(idsNoteDYearsDataRead), cturn);
         AlertSz(szWork, MB_ICONASTERISK);
     }
     if (FSzPrefixNoCase(pszExt, "hst", 3))
@@ -803,7 +803,7 @@ LNextTurn:
         }
     }
     if (!gd.fDontDoLogFiles) {
-        wsprintf(szWork, "%s.x%s", pszFileName, pszExt + 1);
+        CchSprintf(szWork, "%s.x%s", pszFileName, pszExt + 1);
         if (!FLoadLogFile(szWork) || !FRunLogFile()) {
             AlertSz(PszFormatIds(idsPlayerLogFileAppearsCorruptUnableLoad, NULL), MB_ICONHAND);
             goto LError;

@@ -66,4 +66,14 @@ void GetDateTimeSz(char *szDate, char *szTime);
 // FSzPrefixNoCase compares the first cch characters, ignoring case.
 int16_t FSzPrefixNoCase(char *sz1, char *sz2, int16_t cch);
 
+/*
+ * Formatting and arithmetic
+ *
+ * Win32 long is 32 bits, so the game's formats (and its string table) pass
+ * int32_t values to %ld. CchSprintf formats like wsprintf with l read as 32
+ * bits on every platform. LMulDiv rounds like Win32 MulDiv.
+ */
+int     CchSprintf(char *sz, const char *szFormat, ...);
+int32_t LMulDiv(int32_t lNumber, int32_t lNumerator, int32_t lDenominator);
+
 #endif

@@ -298,9 +298,9 @@ int16_t FWriteDataFile(char *pszFileBase, int16_t iPlayer, int16_t fAppend) {
     MarkPlayersThatSentMsgs(iPlayer);
     MarkPlanetsPlayerLost(iPlayer);
     if (iPlayer == iplrNone) {
-        wsprintf(szWork, "%s.hst", pszFileBase);
+        CchSprintf(szWork, "%s.hst", pszFileBase);
     } else {
-        wsprintf(szWork, "%s.m%d", pszFileBase, iPlayer + 1);
+        CchSprintf(szWork, "%s.m%d", pszFileBase, iPlayer + 1);
     }
     penvMemSav = penvMem;
     penvMem = &env;
@@ -974,7 +974,7 @@ void SetSzWorkFromDt(DtFileType dt, int16_t iPlayer) {
             *pchDot = 0;
         }
     }
-    c = wsprintf(szWork, "%s.", szBase);
+    c = CchSprintf(szWork, "%s.", szBase);
     switch (dt) {
     case dtXY:
     default:
@@ -986,7 +986,7 @@ void SetSzWorkFromDt(DtFileType dt, int16_t iPlayer) {
     case dtLog:
     case dtTurn:
     case dtHist:
-        wsprintf(&szWork[c], "%c%d", dt == dtLog ? 120 : dt == dtHist ? 104 : 109, iPlayer + 1);
+        CchSprintf(&szWork[c], "%c%d", dt == dtLog ? 120 : dt == dtHist ? 104 : 109, iPlayer + 1);
     }
     return;
 }

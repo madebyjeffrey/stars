@@ -363,7 +363,7 @@ void PickANameAndBmp(SHDEF *pshdef, StringId ids, int16_t cids, int16_t ibmpStar
             }
         }
     }
-    wsprintf(pshdef->hul.szClass, "%s %d", PszGetCompressedString(Random(cids) + ids), Random(100));
+    CchSprintf(pshdef->hul.szClass, "%s %d", PszGetCompressedString(Random(cids) + ids), Random(100));
     return;
 }
 

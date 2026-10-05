@@ -1203,13 +1203,13 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 switch (*pszFormat) {
                 case 'f':
                     if (idPlayer != iplrNone) {
-                        c = wsprintf(pch, ".x%d", idPlayer + 1);
+                        c = CchSprintf(pch, ".x%d", idPlayer + 1);
                         goto DoInt;
                     }
                     /* fallthrough */
                 case 't':
                     if (idPlayer != iplrNone) {
-                        c = wsprintf(pch, ".m%d", idPlayer + 1);
+                        c = CchSprintf(pch, ".m%d", idPlayer + 1);
                         goto DoInt;
                     }
                     /* fallthrough */
@@ -1218,7 +1218,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                     pch += 4;
                     break;
                 case 'r':
-                    c = wsprintf(pch, ".h%d", idPlayer + 1);
+                    c = CchSprintf(pch, ".h%d", idPlayer + 1);
                     goto DoInt;
                 case 'y':
                     strcat(pch, ".xy");
@@ -1235,7 +1235,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszGetCompressedString(*pParams + 1348);
                 goto FinishString;
             case 'i':
-                c = wsprintf(pch, PCTD, *pParams);
+                c = CchSprintf(pch, PCTD, *pParams);
             DoInt:
                 pch += c;
                 pParams++;
@@ -1295,9 +1295,9 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 goto FinishString;
             case 'P':
                 if ((long double)(int16_t)(*pParams / 100) >= (long double)10.0) {
-                    c = wsprintf(pch, PCTDPCTPCT, *pParams / 100);
+                    c = CchSprintf(pch, PCTDPCTPCT, *pParams / 100);
                 } else {
-                    c = wsprintf(pch, PCTDXPCTDPCTPCT, *pParams / 100, *pParams - *pParams / 100 * 100);
+                    c = CchSprintf(pch, PCTDXPCTDPCTPCT, *pParams / 100, *pParams - *pParams / 100 * 100);
                 }
                 pch += c;
                 pParams++;
@@ -1365,7 +1365,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszPlayerName(w, FALSE, FALSE, FALSE, 0, NULL);
                 goto FinishString;
             case 'u':
-                c = wsprintf(pch, "%u", *pParams);
+                c = CchSprintf(pch, "%u", *pParams);
                 pch += c;
                 pParams++;
                 break;
@@ -1374,7 +1374,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
             case 'v':
                 l = (int32_t)((uint32_t)pParams[1] << 0x10) | (uint32_t)*pParams;
                 pParams += 2;
-                c = wsprintf(pch, PCTLD, l);
+                c = CchSprintf(pch, PCTLD, l);
                 pch += c;
                 if (*pszFormat == 'v')
                     break;
@@ -1398,7 +1398,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 }
                 if (c != idPlayer) {
                     pchT = PszPlayerName(c, FALSE, FALSE, TRUE, 0, NULL);
-                    wsprintf(pch, "%s %s", pchT, lpshdef->hul.szClass);
+                    CchSprintf(pch, "%s %s", pchT, lpshdef->hul.szClass);
                 } else {
                     strcpy(pch, lpshdef->hul.szClass);
                 }

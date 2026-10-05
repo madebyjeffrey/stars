@@ -633,13 +633,13 @@ RetryAll:
     }
     if (game.cPlayer > 4) {
         dMin = dGal / 20 + 1000;
-        dMax = MulDiv(dGal, 19, 20) + 1000;
+        dMax = LMulDiv(dGal, 19, 20) + 1000;
     } else if (game.cPlayer > 2) {
         dMin = dGal / 10 + 1000;
-        dMax = MulDiv(dGal, 9, 10) + 1000;
+        dMax = LMulDiv(dGal, 9, 10) + 1000;
     } else {
-        dMin = MulDiv(dGal, 3, 20) + 1000;
-        dMax = MulDiv(dGal, 17, 20) + 1000;
+        dMin = LMulDiv(dGal, 3, 20) + 1000;
+        dMax = LMulDiv(dGal, 17, 20) + 1000;
     }
     for (i = 1; i < game.cPlayer; i++) {
         for (j = 0; j < 50; j++) {
@@ -1231,7 +1231,7 @@ RetryAll:
     if (!game.fTutorial) {
         game.lid = DwTickCount();
     }
-    wsprintf(szWork, "%s.xy", szBase);
+    CchSprintf(szWork, "%s.xy", szBase);
     if (!FCreateFile(dtXY, iplrNone, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateUniverseDefinitionFile, NULL), MB_ICONHAND);
         DestroyCurGame();
@@ -1258,7 +1258,7 @@ RetryAll:
     }
     if (game.fSinglePlr) {
         DestroyCurGame();
-        wsprintf(szExt, MPCTD, iplrSingle + 1);
+        CchSprintf(szExt, MPCTD, iplrSingle + 1);
         if (!FLoadGame(szBase, szExt)) {
             AlertSz(PszFormatIds(idsUnableOpenNewTurnFile, NULL), MB_ICONHAND);
             return FALSE;
@@ -1443,7 +1443,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             strcpy(szWork, lpbStart);
             if (!FWasRaceFile(szWork, FALSE)) {
             LCantGetRace:
-                wsprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
+                CchSprintf(szWork, PszGetCompressedString(idsLineDUnableLoadRaceFileS), i + 5, lpbStart);
                 AlertSz(szWork, MB_ICONHAND);
                 goto LError;
             }
@@ -1458,7 +1458,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     if (cNum < 1 || rgl[0] < 0 || rgl[0] > 1) {
     LBadDefVc:
         i += cPlr + 5;
-        wsprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
+        CchSprintf(szWork, PszGetCompressedString(idsLineDHasImproperVictoryConditionDefinition), i);
         AlertSz(szWork, MB_ICONHAND);
         goto LError;
     }
@@ -1577,7 +1577,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
         }
         if (rgplr[i].szName[0] == 0) {
             CchGetString(Random(24) + 1390, rgplr[i].szName);
-            wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
+            CchSprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
         }
     }
     for (i = 1; i < game.cPlayer; i++) {
@@ -1661,7 +1661,7 @@ void CreateTutorWorld() {
     CchGetString(idsTutorialGame, game.szName);
     rgplr[0] = vrgplrDef[0];
     CchGetString(idsHumanoid, rgplr[0].szName);
-    wsprintf(rgplr[0].szNames, "%ss", rgplr[0].szName);
+    CchSprintf(rgplr[0].szNames, "%ss", rgplr[0].szName);
     rgplr[1] = *LpplrComp(idAiTurinDrone, lvlAiEasy);
     rgplr[1].fAi = TRUE;
     rgplr[1].lvlAi = lvlAiEasy;
@@ -1669,9 +1669,9 @@ void CreateTutorWorld() {
     CchGetString(idsBerserker, rgplr[1].szName);
     Randomize(1234567890);
     for (i = 1; i <= 2; i++) {
-        wsprintf(szWork, PszGetCompressedString(idsSHD), szBase, i);
+        CchSprintf(szWork, PszGetCompressedString(idsSHD), szBase, i);
         remove(szWork);
-        wsprintf(szWork, PszGetCompressedString(idsSXD), szBase, i);
+        CchSprintf(szWork, PszGetCompressedString(idsSXD), szBase, i);
         remove(szWork);
     }
     GenerateWorld(FALSE);

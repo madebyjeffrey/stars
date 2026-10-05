@@ -479,7 +479,7 @@ int16_t AlertSz(char *sz, int16_t mbType) {
     char szT[256];
 
     if (ini.fValidate || (ini.fLogging && ini.fGen)) {
-        wsprintf(szT, "Error: %s", sz);
+        CchSprintf(szT, "Error: %s", sz);
         OutputSz(!ini.fValidate ? 6 : 7, szT);
         return IDYES;
     }
@@ -502,7 +502,7 @@ int16_t CchGetString(StringId ids, char *psz) {
 char *PszFromInt(int16_t i, int16_t *pcch) {
     int16_t cch;
 
-    cch = wsprintf(szFormatNumber, PCTD, i);
+    cch = CchSprintf(szFormatNumber, PCTD, i);
     if (pcch) {
         *pcch = cch;
     }
@@ -512,7 +512,7 @@ char *PszFromInt(int16_t i, int16_t *pcch) {
 char *PszFromLong(int32_t l, int16_t *pcch) {
     int16_t cch;
 
-    cch = wsprintf(szFormatNumber, PCTLD, l);
+    cch = CchSprintf(szFormatNumber, PCTLD, l);
     /* The original tested *pcch, reading through the report dumps' NULL. */
     if (pcch) {
         *pcch = cch;
@@ -554,7 +554,7 @@ int16_t CommaFormatLong(char *psz, int32_t l) {
     char   *pchOut;
     char   *pch;
 
-    c = wsprintf(rgch, PCTLD, l);
+    c = CchSprintf(rgch, PCTLD, l);
     pch = rgch;
     pchOut = psz;
     cSkip = c % 3;

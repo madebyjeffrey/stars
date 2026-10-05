@@ -88,13 +88,13 @@ int16_t FGenerateTurn() {
         }
         for (i = 0; i < game.cPlayer; i++) {
             j = mpiplr2[i];
-            wsprintf(szWork, "%s.x%d", szBase, j + 1);
+            CchSprintf(szWork, "%s.x%d", szBase, j + 1);
             idPlayer = j;
             if (FLoadLogFile(szWork) && !FRunLogFile()) {
                 AlertSz(PszFormatIds(idsPlayerLogFileAppearsCorruptUnableLoad, NULL), MB_ICONHAND);
                 goto FreeStuffUp;
             }
-            UpdateProgressGauge(MulDiv(60, i + 1, game.cPlayer) + 370);
+            UpdateProgressGauge(LMulDiv(60, i + 1, game.cPlayer) + 370);
         }
         idPlayer = iplrNone;
         for (i = 0; i < game.cPlayer; i++) {
@@ -287,7 +287,7 @@ int16_t FGenerateTurn() {
                 fDone = TRUE;
             }
             if (i >= 0) {
-                wsprintf(pchCur, ".x%d", i + 1);
+                CchSprintf(pchCur, ".x%d", i + 1);
                 strcpy(pchBak, pchCur);
                 remove(szT);
                 if (!FFileExists(szBase)) {
@@ -374,7 +374,7 @@ void EnsureAis() {
         fErrSav = fFileErrSilent;
         fFileErrSilent = TRUE;
         for (iPlayer = 0; iPlayer < game.cPlayer; iPlayer++) {
-            UpdateProgressGauge(MulDiv(340, iPlayer + 1, game.cPlayer));
+            UpdateProgressGauge(LMulDiv(340, iPlayer + 1, game.cPlayer));
             if (rgmdplr[iPlayer].fAi) {
                 fWorkDone = TRUE;
                 gd.fGeneratingTurn = TRUE;
@@ -582,7 +582,7 @@ void MoveThings(int16_t fPostProd) {
                     goto LRetargetFreighter;
                 }
                 if (lpth->ith == ithMineralPacket) {
-                    pctRate = MulDiv(dLeft, 100, dRange);
+                    pctRate = LMulDiv(dLeft, 100, dRange);
                     if (pctRate < 0) {
                         pctRate = 0;
                     } else if (pctRate > 100) {
@@ -1495,8 +1495,8 @@ LHitSkip1:
             dx = ptDst.x - ptSrc.x;
             dy = ptDst.y - ptSrc.y;
             dTravel = LOWORD((int32_t)((long double)sqrt((double)((uint32_t)(dx * dx) + (uint32_t)(dy * (int16_t)(ptDst.y - ptSrc.y)))) + 0.5));
-            ptAct.x = MulDiv(dx, dEnd, dTravel) + ptSrc.x;
-            ptAct.y = MulDiv(dy, dEnd, dTravel) + ptSrc.y;
+            ptAct.x = LMulDiv(dx, dEnd, dTravel) + ptSrc.x;
+            ptAct.y = LMulDiv(dy, dEnd, dTravel) + ptSrc.y;
             if (cshDead != 0) {
                 lpthSalvage = lpThings;
                 lpthMac = lpThings + cThing;

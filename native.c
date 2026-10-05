@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include <stdarg.h>
+
 #ifdef _WIN32
 #include <direct.h>
 #include <io.h>
@@ -86,6 +88,62 @@ void qsort16(void *base, size_t count, size_t width, int (*compare)(const void *
             hi = highs[pending];
         }
     }
+}
+
+// CchSprintf drops the l from each %ld, %li, %lu, %lx or %lX in szFormat
+// before formatting, since its arguments are 32-bit.
+int CchSprintf(char *sz, const char *szFormat, ...) {
+    char        szFmt[1024];
+    const char *pchIn;
+    char       *pchOut;
+    int         cch;
+    va_list     args;
+
+    pchIn = szFormat;
+    pchOut = szFmt;
+    while (*pchIn != 0 && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+        *pchOut++ = *pchIn;
+        if (*pchIn++ != '%') {
+            continue;
+        }
+        while (*pchIn != 0 && strchr("-+ #0123456789.", *pchIn) && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+            *pchOut++ = *pchIn++;
+        }
+        if (*pchIn == 'l' && strchr("diuxX", pchIn[1])) {
+            pchIn++;
+        }
+        if (*pchIn != 0 && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+            *pchOut++ = *pchIn++;
+        }
+    }
+    *pchOut = 0;
+    va_start(args, szFormat);
+    cch = vsprintf(sz, szFmt, args);
+    va_end(args);
+    return cch;
+}
+
+// LMulDiv returns lNumber * lNumerator / lDenominator rounded half away from
+// zero, or -1 for a zero denominator or a result out of range.
+int32_t LMulDiv(int32_t lNumber, int32_t lNumerator, int32_t lDenominator) {
+    int64_t l;
+
+    if (lDenominator == 0) {
+        return -1;
+    }
+    if (lDenominator < 0) {
+        lNumber = -lNumber;
+        lDenominator = -lDenominator;
+    }
+    if ((lNumber < 0) == (lNumerator < 0)) {
+        l = ((int64_t)lNumber * lNumerator + lDenominator / 2) / lDenominator;
+    } else {
+        l = ((int64_t)lNumber * lNumerator - lDenominator / 2) / lDenominator;
+    }
+    if (l > 2147483647 || l < -2147483647) {
+        return -1;
+    }
+    return (int32_t)l;
 }
 
 #ifdef _WIN32
