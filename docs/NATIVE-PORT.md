@@ -1,7 +1,9 @@
 # Native port
 
 The reconstructed sources build as a native Win32/Win64 executable with
-MinGW. This document covers what the port changes and what it must keep.
+MinGW, and the game code alone builds as `stars-host` with any C11 compiler
+(see Platforms below). This document covers what the port changes and what
+it must keep.
 Each native-port shim is marked `NATIVE` in the source and described in
 detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 
@@ -52,11 +54,13 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.
-- **Warnings kept** (`-Wall -Wextra -Wno-unused-parameter`, 117):
+- **Warnings kept** (`-Wall -Wextra -Wno-unused-parameter`, 118):
   - **Unused-but-set (79):** debug-info locals the original also stores to,
     probably for asserts or debug output that was compiled out.
-  - **Sign-compare (22):** casts such as `(uint32_t)(dx * dx)` record the
-    original's unsigned arithmetic.
+  - **Sign-compare (23):** casts such as `(uint32_t)(dx * dx)` record the
+    original's unsigned arithmetic. Two are `turn.c`'s `min(...)` of a
+    signed and an unsigned value, reported since `min` moved from
+    `windows.h` to `native.h`.
   - **Type-limits (14):** enum range checks on unsigned fields.
   - **Tautological compare (1):** `aiutil.c` `IroEnsureAi`
     `(iTechCur & 0xf) == 0x1a` is an original dead branch.

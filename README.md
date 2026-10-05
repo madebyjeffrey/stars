@@ -26,14 +26,16 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   what the Win32/Win64 build changes, and the original behavior it reproduces.
 - [Known bugs](docs/KNOWN-BUGS.md): the original release bug list, mapped to
   source.
-- [Roadmap](docs/ROADMAP.md): the work planned for 2.8.
+- [Roadmap](docs/ROADMAP.md): the 2.9 split and the bug fixes still open.
 - [Changelog](CHANGELOG.md) and [versioning](docs/VERSIONING.md): what 2.8
   changes from 2.6j, and how versions and build numbers are assigned.
 
 ## Build
 
-The application uses Windows APIs. On macOS or Linux, build a Windows executable
-with CMake 3.23 or later, Ninja, and the x86_64 MinGW-w64 toolchain on PATH.
+The game (`stars.exe`) uses Windows APIs. On macOS or Linux, build it as a
+Windows executable with CMake 3.23 or later, Ninja, and the x86_64 MinGW-w64
+toolchain on PATH. The host alone (`stars-host`, below) builds with the
+native compiler.
 On macOS these build dependencies can be installed with Homebrew:
 
 ```sh
@@ -83,7 +85,19 @@ Turn generation rounds through x87 extended precision, which ARM lacks. On
 Apple silicon, `make host` builds the `macos-host-release` preset, an x86_64
 binary that Rosetta runs (`dist/macos-host-release/bin/stars-host`); it
 generates the same turns as `stars.exe`. A native arm64 build works, but
-its turns can differ, and CMake warns about it.
+its turns can differ, and CMake warns about it. `stars-host --version`
+prints the version, and `make test-host` runs the unit tests natively.
+
+Where `stars-host` differs from `stars.exe`:
+
+- It reads no `stars.ini`, so it uses the settings' defaults: one backup
+  directory, host names in `-v` output, no default password and no logging
+  unless `-l` is given.
+- It doesn't wait for turns (`-w`) or write the `-d` dumps; those still
+  need `stars.exe`.
+- On Linux and macOS it can't tell that another program has a game file
+  open, as Windows file sharing does.
+- Questions get the cautious answer (No, Cancel) and messages go to stderr.
 
 ## GitHub Actions
 

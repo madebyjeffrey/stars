@@ -67,6 +67,20 @@ When goals conflict, apply them in this order:
   for the regression belongs on the `2.6j` branch.
 - `#ifdef STARS_TEST_*` marks test-harness code.
 
+## Code layout
+
+- The game code (`STARS_CORE_SOURCES` in `CMakeLists.txt`) includes only
+  `common.h`, never `windows.h`, and builds without Windows headers. It
+  reaches the player only through the functions in `ui.h`, which the
+  Windows UI and `hostui.c` implement. Put dialogs, drawing and window
+  state in the UI files (`*ui.c` and the others in `STARS_UI_SOURCES`,
+  which include `win.h`); when a game file needs one, add a `ui.h` call.
+- A file split for 2.9 keeps its game logic under its original name, and
+  its window code moves to `<name>ui.c`.
+- Files, the clock and formatting go through `native.c` (`HfOpenFile`,
+  `DwTickCount`, `CchSprintf`, `LMulDiv`, `chDirSep`), never Win32 or
+  `wsprintf` directly.
+
 ## Things that must not change
 
 - `structs.h` layouts that reach disk, `WriteRt`/`ReadRt` record sizes and
@@ -119,6 +133,8 @@ After each batch of edits:
    only after the full suite.
 3. Run the unit tests (`make test-unit`, `tests/unit/README.md`).
 4. Run the tutorial (`make tutorial`).
+5. For changes to the game code, also run the host regression and the
+   native unit tests (`make regression-host`, `make test-host`).
 
 Behavior-neutral changes must match the baseline exactly (unused-storage
 warnings excepted). A behavior change regenerates the baseline with
