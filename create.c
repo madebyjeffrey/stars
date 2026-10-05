@@ -1317,7 +1317,10 @@ int16_t GenNewGameFromFile(char *pszFile) {
     if (setjmp(env) != 0)
         goto LError;
     if (ini.fLogging) {
-        strcpy(szBase, pszFile);
+        /* NATIVE: the host passes szBase itself; see FLoadGame. */
+        if (pszFile != szBase) {
+            strcpy(szBase, pszFile);
+        }
         pchT = strrchr(szBase, 46);
         *pchT = 0;
         TurnLog(idsGeneratingYearD);

@@ -516,7 +516,10 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
         penvMem = penvMemSav;
         fFileErrSilent = fSav;
         if (!fFileErrSilent && idsError != -1) {
-            strcpy(szWork, szFile);
+            /* NATIVE: GenNewGameFromFile passes szWork itself; see FLoadGame. */
+            if (szFile != szWork) {
+                strcpy(szWork, szFile);
+            }
             AlertSz(PszFormatIds(idsError, NULL), MB_ICONHAND);
         }
         return fRet;

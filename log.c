@@ -1241,7 +1241,11 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
             WriteMemRt(rtLogPlayerZpq1, cb, (uint8_t *)(ZIPPRODQ *)vrgZipProd + 14);
         }
     }
-    strcpy(szBase, pszFileBase);
+    /* NATIVE: callers pass szBase itself, and strcpy onto itself is
+       undefined. */
+    if (pszFileBase != szBase) {
+        strcpy(szBase, pszFileBase);
+    }
     if (!FCreateFile(dtLog, iPlayer, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateLogFile, NULL), MB_ICONHAND);
         return FALSE;

@@ -173,7 +173,11 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
 
     grf = 0;
     cturn = 0;
-    strcpy(szBase, pszFileName);
+    /* NATIVE: callers often pass szBase itself, and strcpy onto itself is
+       undefined. */
+    if (pszFileName != szBase) {
+        strcpy(szBase, pszFileName);
+    }
     gd.fFleetLinkValid = FALSE;
     penvMemSav = penvMem;
     penvMem = &env;
