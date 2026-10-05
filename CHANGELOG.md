@@ -11,6 +11,10 @@ produce different results from a 2.6j host for the same turn.
 - The mouse wheel zooms the scanner at the cursor, one zoom level a notch;
   Ctrl+wheel (a touchpad pinch) zooms too. The tilt wheel and Shift+wheel
   scroll the scanner sideways.
+- Dragging the scanner with the left button pans it. A press still selects
+  what is under it, as a click does; the view moves once the mouse moves
+  past the system's drag distance. Dragging a waypoint, Shift and Ctrl
+  clicks and the measuring tape (Shift+right-drag) are unchanged.
 - The wheel goes to the window under the cursor rather than the window with
   the focus, so the panes and lists scroll where the player points, as with
   Windows 10's "scroll inactive windows" setting. A drop-down list the player

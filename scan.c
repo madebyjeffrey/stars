@@ -7,6 +7,15 @@ int16_t  vrgPopRad[19] = {25, 50, 100, 200, 400, 800, 1000, 1500, 2250, 3000, 40
 static int16_t dWheelZoom;
 static int16_t dWheelScroll;
 
+// Dragging the scanner with the left button pans it. fPanDown is set while
+// a plain left press may still become a pan, fPanning once it has. The
+// drag is measured from ptPan, where the scanner's top was xPanTop, yPanTop.
+static int16_t fPanDown;
+static int16_t fPanning;
+static POINT16 ptPan;
+static int16_t xPanTop;
+static int16_t yPanTop;
+
 LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;
     POINT16     pt;
@@ -133,6 +142,13 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             Popup(hwnd, pt.x, pt.y);
             break;
         }
+        // A plain left press acts as a click and, if the mouse then moves,
+        // pans. Shift, Ctrl and the waypoint, mass driver and route modes
+        // keep the press for themselves; a waypoint drag ends with the
+        // button up, which WM_MOUSEMOVE notices.
+        fPanDown = msg == WM_LBUTTONDOWN && !(wParam & (MK_SHIFT | MK_CONTROL)) && !gd.fSetMassMode && !gd.fSetRouteMode &&
+                   !(sel.grobj == grobjFleet && (grbitScan & grbitScanAddWaypoints));
+        ptPan = pt;
         ScanToLogical(&pt);
         FFindNearestObject(pt, gd.fSetMassMode != 0 || gd.fSetRouteMode ? grobjPlanet : grobjPlanet | grobjFleet | grobjOther | grobjThing, &scan);
         if ((gd.fSetMassMode || (sel.grobj == grobjPlanet && (wParam & 4) && IWarpMAFromLppl(&sel.pl, NULL) > 0)) && msg == WM_LBUTTONDOWN) {
@@ -274,6 +290,47 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         scan.grobj = grobjPlanet;
         ChangeScanSel(&scan, 1);
         break;
+    case WM_MOUSEMOVE:
+        if (!fPanDown)
+            goto Default;
+        if (!(wParam & MK_LBUTTON)) {
+            fPanDown = FALSE;
+            goto Default;
+        }
+        pt.x = (short)LOWORD(lParam);
+        pt.y = (short)HIWORD(lParam);
+        if (!fPanning) {
+            if (abs(pt.x - ptPan.x) < GetSystemMetrics(SM_CXDRAG) && abs(pt.y - ptPan.y) < GetSystemMetrics(SM_CYDRAG))
+                break;
+            fPanning = TRUE;
+            xPanTop = xScanTop;
+            yPanTop = yScanTop;
+            SetCapture(hwnd);
+            SetCursor(hcurCloseGrab);
+        }
+        // The galaxy follows the mouse. Scanner tops are multiples of 4, so
+        // the new tops are rounded to them from where the drag began.
+        d = ((xPanTop - ScanToPt(pt.x - ptPan.x)) + 2) & 0xfffc;
+        if (d != xScanTop) {
+            SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)d), 0);
+        }
+        d = ((yPanTop - ScanToPt(pt.y - ptPan.y)) + 2) & 0xfffc;
+        if (d != yScanTop) {
+            SendMessage(hwnd, WM_VSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)d), 0);
+        }
+        break;
+    case WM_LBUTTONUP:
+        fPanDown = FALSE;
+        if (fPanning) {
+            ReleaseCapture();
+        }
+        goto Default;
+    case WM_CAPTURECHANGED:
+        if (fPanning) {
+            fPanning = FALSE;
+            fPanDown = FALSE;
+        }
+        goto Default;
     case WM_MOUSEWHEEL:
     case WM_MOUSEHWHEEL:
         // The wheel zooms at the cursor, as map viewers do; Ctrl+wheel, a
@@ -291,6 +348,11 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 iScanNew = zoom400;
             }
             if (iScanNew != iScanZoom) {
+                // A pan in progress is measured at the old zoom.
+                if (fPanning) {
+                    ReleaseCapture();
+                }
+                fPanDown = FALSE;
                 pt.x = (short)LOWORD(lParam);
                 pt.y = (short)HIWORD(lParam);
                 ScreenToClient16(hwnd, &pt);
