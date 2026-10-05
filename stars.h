@@ -5,7 +5,6 @@
 #include <windows.h>
 
 int WINAPI       WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
-int16_t          FSetUpBatchProcessing();
 int16_t          IPlrAlsoCheater(int16_t iplr);
 int16_t          FGetSystemColors();
 void             FreeStuff();

@@ -400,6 +400,181 @@ void EnsureAis() {
     return;
 }
 
+void VerifyTurns() {
+    int16_t idsError;
+    int16_t idCur;
+    int16_t cAi;
+    int16_t i;
+    int16_t cOut;
+    int16_t fOut;
+
+    idCur = idPlayer;
+    cOut = 0;
+    cAi = 0;
+    lpcd = LpAlloc(1000 * sizeof(COLDROP), htMisc);
+    lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
+    vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
+    memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
+    cColDrop = 0;
+    cXferFull = 0;
+    imemMsgCur = 0;
+    for (i = 0; i < game.cPlayer; i++) {
+        fOut = rgOut[i];
+        idsError = 0;
+        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
+            if (rgplr[i].fAi) {
+                cAi++;
+                rgOut[i] = 0;
+            } else {
+                CchSprintf(szWork, "%s.x%d", szBase, i + 1);
+                idPlayer = i;
+                if (FLoadLogFile(szWork) && !FRunLogFile()) {
+                    rgOut[i] = 3;
+                } else {
+                    rgOut[i] = 0;
+                }
+            }
+        } else if (idsError != 0) {
+            switch (idsError) {
+            case 29:
+                rgOut[i] = 5;
+                break;
+            case 28:
+                rgOut[i] = 4;
+                break;
+            default:
+                rgOut[i] = 3;
+                break;
+            }
+            cOut++;
+        } else if (rgplr[i].fDead) {
+            rgOut[i] = -1;
+        } else if (gd.fPartialTurn) {
+            rgOut[i] = 2;
+            cOut++;
+        } else {
+            rgOut[i] = 1;
+            cOut++;
+        }
+        if (ctickLast == 0 || rgOut[i] != fOut) {
+            ctickLast = DwTickCount();
+        }
+    }
+    FreeLp(vrgPlanResExtra, htMisc);
+    vrgPlanResExtra = NULL;
+    FreeLp(lpcd, htMisc);
+    lpcd = NULL;
+    FreeLp(lpxf, htMisc);
+    lpxf = NULL;
+    idPlayer = idCur;
+    return;
+}
+
+int16_t CTurnsOutSafe() {
+    int16_t idPlayerSav;
+    int16_t fHostModeSav;
+    int16_t fGenSav;
+    int16_t cturn;
+
+    fHostModeSav = gd.fHostMode;
+    fGenSav = gd.fGeneratingTurn;
+    idPlayerSav = idPlayer;
+    idPlayer = iplrNone;
+    gd.fHostMode = TRUE;
+    gd.fGeneratingTurn = FALSE;
+    cturn = CFindTurnsOutstanding();
+    gd.fGeneratingTurn = fGenSav;
+    gd.fHostMode = fHostModeSav;
+    idPlayer = idPlayerSav;
+    return cturn;
+}
+
+int16_t CFindTurnsOutstanding() {
+    int16_t idsError;
+    int16_t cAi;
+    int16_t i;
+    int16_t cOut;
+    int16_t fSav;
+    int16_t fOut;
+
+    cOut = 0;
+    cAi = 0;
+    fSav = fFileErrSilent;
+    fFileErrSilent = TRUE;
+    gd.fGeneratingTurn = TRUE;
+    for (i = 0; i < game.cPlayer; i++) {
+        fOut = rgOut[i];
+        idsError = 0;
+        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
+            if (rgplr[i].fAi) {
+                cAi++;
+            }
+            rgOut[i] = 0;
+        } else if (idsError != 0) {
+            switch (idsError) {
+            case 29:
+                rgOut[i] = 5;
+                break;
+            case 28:
+                rgOut[i] = 4;
+                break;
+            default:
+                rgOut[i] = 3;
+                break;
+            }
+            cOut++;
+        } else if (rgplr[i].fDead) {
+            rgOut[i] = -1;
+        } else if (gd.fPartialTurn) {
+            rgOut[i] = 2;
+            cOut++;
+        } else {
+            rgOut[i] = 1;
+            cOut++;
+        }
+        if (ctickLast == 0 || rgOut[i] != fOut) {
+            ctickLast = DwTickCount();
+        }
+    }
+    gd.fGeneratingTurn = FALSE;
+    gd.fAllAis = cAi == game.cPlayer;
+    fFileErrSilent = FALSE;
+    return cOut;
+}
+
+int16_t FSetUpBatchProcessing() {
+    char   *pch;
+    jmp_buf env;
+    int16_t fSuccess;
+    int16_t cb;
+
+    fSuccess = FALSE;
+    penvMem = &env;
+    if (setjmp(env) != 0)
+        goto LError;
+    StreamOpen(szBase, mdRead);
+    cb = LOWORD(CbFileSize(hf));
+    lpchBatch = LpAlloc(cb, htPerm);
+    RgFromStream(lpchBatch, cb);
+    lpchBatchMac = lpchBatch + cb;
+    pch = szBase;
+    while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
+        *pch = *lpchBatch;
+        lpchBatch++;
+        pch++;
+    }
+    lpchBatch++;
+    pch[-1] = 0;
+    fSuccess = TRUE;
+LError:
+    penvMem = 0;
+    StreamClose();
+    if (!fSuccess) {
+        szBase[0] = 0;
+    }
+    return fSuccess;
+}
+
 void DoOrders(int16_t fPostMovement) {
     PLANET *lppl;
     PLANET *lpplMac;

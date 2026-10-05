@@ -184,39 +184,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     return (int16_t)msg.wParam;
 }
 
-int16_t FSetUpBatchProcessing() {
-    char   *pch;
-    jmp_buf env;
-    int16_t fSuccess;
-    int16_t cb;
-
-    fSuccess = FALSE;
-    penvMem = &env;
-    if (setjmp(env) != 0)
-        goto LError;
-    StreamOpen(szBase, mdRead);
-    cb = LOWORD(GetFileSize((HANDLE)(INT_PTR)hf, NULL));
-    lpchBatch = LpAlloc(cb, htPerm);
-    RgFromStream(lpchBatch, cb);
-    lpchBatchMac = lpchBatch + cb;
-    pch = szBase;
-    while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
-        *pch = *lpchBatch;
-        lpchBatch++;
-        pch++;
-    }
-    lpchBatch++;
-    pch[-1] = 0;
-    fSuccess = TRUE;
-LError:
-    penvMem = 0;
-    StreamClose();
-    if (!fSuccess) {
-        szBase[0] = 0;
-    }
-    return fSuccess;
-}
-
 int16_t FGetSystemColors() {
     HDC         hdc;
     BITMAPINFO *lpbi;

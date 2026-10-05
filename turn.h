@@ -15,5 +15,9 @@ void    MoveThings(int16_t fPostProd);
 void    FuelFleets();
 void    MoveFleets();
 int16_t FTravelThroughMineFields(FLEET *lpfl, int16_t *pdTravel, THING *lpthHit);
+void    VerifyTurns();
+int16_t CTurnsOutSafe();
+int16_t CFindTurnsOutstanding();
+int16_t FSetUpBatchProcessing();
 
 #endif

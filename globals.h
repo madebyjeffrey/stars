@@ -155,5 +155,8 @@ extern uint8_t   vrgAiArmadaPotency[4];
 extern uint8_t   vrgAiCyberArmadaPotency[4];
 extern uint8_t   vrgcAiParts[45];
 extern uint8_t   vrgplrTypeNew[16];
+extern int16_t   rgOut[16];
+extern char     *lpchBatch;
+extern char     *lpchBatchMac;
 
 #endif
