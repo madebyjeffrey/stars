@@ -245,7 +245,7 @@ int16_t FGenerateTurn() {
         CreateBackupDir();
         game.turn++;
         pchCur = &szBase[strlen(szBase)];
-        pchT = strrchr(szBase, 92);
+        pchT = strrchr(szBase, chDirSep);
         strcpy(szT, szBackup);
         if (!pchT) {
             strcat(szT, szBase);
@@ -290,7 +290,7 @@ int16_t FGenerateTurn() {
                 wsprintf(pchCur, ".x%d", i + 1);
                 strcpy(pchBak, pchCur);
                 remove(szT);
-                if (_access(szBase, 0) == -1) {
+                if (!FFileExists(szBase)) {
                     rgfNoXFile[i] = TRUE;
                 } else {
                     rename(szBase, szT);

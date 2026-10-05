@@ -721,7 +721,7 @@ LNextTurn:
         AlertSz(PszFormatIds(idsGameFileAppearsCorruptUnableLoadFile, NULL), MB_ICONHAND);
         goto LError;
     }
-    if ((long)GetFileSize((HANDLE)(INT_PTR)hf, NULL) != _llseek(hf, 0, FILE_CURRENT)) {
+    if (CbFileSize(hf) != LSeekFile(hf, 0, 1)) {
         ReadRt();
         if (hdrCur.rt == rtBOF) {
             game.turn = ((RTBOF *)rgbCur)->turn;
@@ -755,7 +755,7 @@ LNextTurn:
         wsprintf(szWork, PszGetCompressedString(idsNoteDYearsDataRead), cturn);
         AlertSz(szWork, MB_ICONASTERISK);
     }
-    if (strnicmp(pszExt, "hst", 3) == 0)
+    if (FSzPrefixNoCase(pszExt, "hst", 3))
         goto DoneNow;
     if (!rgplr[iPlayer].fAi) {
         lpth = lpThings;
@@ -1307,7 +1307,7 @@ void FileError(MessageId ids) {
 
 void GetFileStatus(int16_t dt, int16_t iPlayer) {
     SetSzWorkFromDt(dt, iPlayer);
-    gd.fReadOnly = _access(szWork, 2) != 0;
+    gd.fReadOnly = FFileReadOnly(szWork);
     return;
 }
 
@@ -1365,7 +1365,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
         }
         if (dt != dtHist) {
             if (fCheckMulti && rtbof.fMulti) {
-                _llseek(hf, -4, 2);
+                LSeekFile(hf, -4, 2);
                 ReadRt();
                 if (hdrCur.rt != rtEOF && hdrCur.cb != 2)
                     goto LBadFile;
@@ -1399,7 +1399,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
         }
     }
     if (fRewind) {
-        _llseek(hf, 0, 0);
+        LSeekFile(hf, 0, 0);
         ReadRt();
     }
     penvMem = penvMemSav;
@@ -1516,7 +1516,7 @@ int16_t FBadFileError(StringId ids) {
 
 void StreamOpen(char *szFile, MdOpenFlags mdOpen) {
     uint32_t dwTick;
-    OFSTRUCT of;
+    int16_t  fMissing;
     int16_t  fNoErr;
     uint32_t dwTickCur;
 
@@ -1524,16 +1524,16 @@ void StreamOpen(char *szFile, MdOpenFlags mdOpen) {
     fNoErr = (mdOpen & 0x4000) != 0;
     mdOpen &= 0xbfff;
 Retry:
-    hf = OpenFile(szFile, &of, mdOpen);
+    hf = HfOpenFile(szFile, mdOpen, &fMissing);
     if (hf == -1) {
-        if (gd.fRetryOpens && of.nErrCode != 2) {
-            dwTickCur = GetTickCount();
+        if (gd.fRetryOpens && !fMissing) {
+            dwTickCur = DwTickCount();
             if (dwTick == 0) {
                 dwTick = dwTickCur + 4000;
             }
             if (dwTickCur < dwTick) {
                 dwTickCur += 500;
-                while (GetTickCount() < dwTickCur) {
+                while (DwTickCount() < dwTickCur) {
                 }
                 goto Retry;
             }
@@ -1547,7 +1547,7 @@ Retry:
 
 void StreamClose() {
     if (hf != -1) {
-        _lclose(hf);
+        CloseFile(hf);
         hf = -1;
     }
     return;
@@ -1558,7 +1558,7 @@ void RgFromStream(void *rg, uint16_t cb) {
         if (vlpMemStream) {
             memcpy(rg, vlpMemStream, cb);
             vlpMemStream += cb;
-        } else if (_lread(hf, rg, cb) != cb) {
+        } else if (CbReadFile(hf, rg, cb) != cb) {
             FileError(idmGroundTroopsValiantlyDestroyedAttackingBarbarian);
             StarsLongJump(penvMem, -1);
         }

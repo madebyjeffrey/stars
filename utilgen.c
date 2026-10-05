@@ -417,19 +417,19 @@ char *PszGetCompressedPlanet(int16_t id) {
 }
 
 void OutputFileString(char *szFile, char *sz) {
-    OFSTRUCT of;
+    int16_t  fMissing;
     uint16_t w;
     int16_t  hf;
 
     w = 2;
-    if (_access(szFile, 0) == -1) {
+    if (!FFileExists(szFile)) {
         w |= 0x1000;
     }
-    hf = OpenFile(szFile, &of, w);
+    hf = HfOpenFile(szFile, w, &fMissing);
     if (hf != -1) {
-        _llseek(hf, 0, 2);
-        _lwrite(hf, sz, strlen(sz));
-        _lclose(hf);
+        LSeekFile(hf, 0, 2);
+        CbWriteFile(hf, sz, strlen(sz));
+        CloseFile(hf);
     }
     return;
 }
@@ -437,7 +437,7 @@ void OutputFileString(char *szFile, char *sz) {
 void StarsCopyFile(char *szSrc, char *szDst) {
     char     rgb[2048];
     int16_t  fFileErrSav;
-    OFSTRUCT of;
+    int16_t  fMissing;
     jmp_buf  env;
     int16_t  hfDst;
     int32_t  cb;
@@ -450,17 +450,17 @@ void StarsCopyFile(char *szSrc, char *szDst) {
     penvMem = &env;
     if (setjmp(env) == 0) {
         StreamOpen(szSrc, mdRead);
-        hfDst = OpenFile(szDst, &of, 4114);
+        hfDst = HfOpenFile(szDst, 4114, &fMissing);
         if (hfDst == -1)
             goto LStreamError;
-        for (cb = (long)GetFileSize((HANDLE)(INT_PTR)hf, NULL); cb > 2048; cb -= 2048) {
+        for (cb = CbFileSize(hf); cb > 2048; cb -= 2048) {
             RgFromStream(rgb, 0x800);
-            if (_lwrite(hfDst, rgb, 0x800) != 0x800)
+            if (CbWriteFile(hfDst, rgb, 0x800) != 0x800)
                 goto LStreamError;
         }
         if (cb != 0) {
             RgFromStream(rgb, LOWORD(cb));
-            _lwrite(hfDst, rgb, LOWORD(cb));
+            CbWriteFile(hfDst, rgb, LOWORD(cb));
         }
     }
 LStreamError:
@@ -468,7 +468,7 @@ LStreamError:
     /* The original closed hf, leaving the copy open with exclusive sharing,
        and returned early on a failed OpenFile without restoring penvMem. */
     if (hfDst != -1) {
-        _lclose(hfDst);
+        CloseFile(hfDst);
     }
     penvMem = penvSav;
     fFileErrSilent = fFileErrSav;

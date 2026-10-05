@@ -2495,12 +2495,11 @@ void OutputSz(int16_t dt, char *sz) {
     char szTemp[256];
 
     wsprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
-    if (_access(szFile, 0) == -1) {
+    if (!FFileExists(szFile)) {
         wsprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
         OutputFileString(szFile, szTemp);
     }
-    _strdate(szDate);
-    _strtime(szTime);
+    GetDateTimeSz(szDate, szTime);
     wsprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
     OutputFileString(szFile, szTemp);
     return;

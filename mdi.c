@@ -1033,7 +1033,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             iplrOld = idPlayer;
             strcpy(szT, vrgszMRU + 256 * (LOWORD(wParam) - 4300));
             psz = strrchr(szT, 46);
-            if (psz && _access(szT, 0) != -1) {
+            if (psz && FFileExists(szT)) {
                 ini.fStartupFile = TRUE;
                 DestroyCurGame();
                 strcpy(szBase, szT);
@@ -2877,7 +2877,7 @@ LRESULT CALLBACK TitleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             psz = PszGetCompressedString(i + 479);
             rghwndBtnSplash[i] = CreateWindow("BUTTON", psz, WS_CHILD | WS_VISIBLE, xCur, rc.bottom - dy - (int16_t)(5 * dyArial8) / 2, dx, dy, hwnd,
                                               (HMENU)(uintptr_t)i, hInst, NULL);
-            if (i == 2 && (szBase[0] == 0 || _access(szBase, 0) == -1)) {
+            if (i == 2 && (szBase[0] == 0 || !FFileExists(szBase))) {
                 EnableWindow(rghwndBtnSplash[2], FALSE);
             }
             if (rc.bottom < 500) {

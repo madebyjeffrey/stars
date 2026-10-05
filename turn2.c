@@ -1731,7 +1731,7 @@ void CreateBackupDir() {
     char *pchT;
 
     strcpy(szBackup, szBase);
-    pchT = strrchr(szBackup, 92);
+    pchT = strrchr(szBackup, chDirSep);
     if (!pchT) {
         pchT = szBackup;
     } else {
@@ -1745,8 +1745,8 @@ void CreateBackupDir() {
     } else {
         wsprintf(pchT, "backup.%03d", (uint32_t)game.turn % vcBackupDirs);
     }
-    _mkdir(szBackup);
-    strcat(szBackup, "\\");
+    MakeDir(szBackup);
+    strcat(szBackup, szDirSep);
     return;
 }
 

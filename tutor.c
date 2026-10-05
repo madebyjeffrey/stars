@@ -221,7 +221,7 @@ void StartTutor(int16_t fRestart) {
             cch = CchGetString(idsTutorial, szBase);
             if (!fRestart) {
                 strcat(szBase, ".xy");
-                if (_access(szBase, 0) != -1 &&
+                if (FFileExists(szBase) &&
                     AlertSz(PszFormatIds(idsTutorialHasRunBeforeWouldLikeDestroy, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) != IDYES) {
                     szBase[cch] = 0;
                     strcat(szBase, ".m1");

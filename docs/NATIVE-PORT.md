@@ -30,6 +30,14 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   `FrameWndProcDeferred` posts the frame's restore and maximize commands back
   to the message loop so Wine's macOS driver can't deadlock the
   load-or-unsubmit `MessageBox`.
+- **Platform layer** (`native.h`/`native.c`): the game code reaches files,
+  the clock and directories only through `HfOpenFile`, `CbReadFile`,
+  `CbWriteFile`, `LSeekFile`, `CbFileSize`, `CloseFile`, `FFileExists`,
+  `FFileReadOnly`, `MakeDir`, `DwTickCount` and `GetDateTimeSz`, and builds
+  paths with `chDirSep`. On Win32 these are the original `OpenFile`,
+  `_lread` and related calls; on POSIX they use `open`, `read` and the like,
+  which have no share modes, so a file another program has open is not
+  refused. The game's heaps (`memory.c`) come from `calloc` and `realloc`.
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.

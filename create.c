@@ -1229,7 +1229,7 @@ RetryAll:
         }
     }
     if (!game.fTutorial) {
-        game.lid = GetTickCount();
+        game.lid = DwTickCount();
     }
     wsprintf(szWork, "%s.xy", szBase);
     if (!FCreateFile(dtXY, iplrNone, NULL)) {
@@ -1324,7 +1324,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     }
     memset(&game, 0, sizeof(GAME));
     StreamOpen(pszFile, mdRead);
-    cb = LOWORD(GetFileSize((HANDLE)(INT_PTR)hf, NULL));
+    cb = LOWORD(CbFileSize(hf));
     if (cb >= 16000) {
         FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
         goto LError;
