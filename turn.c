@@ -5,6 +5,23 @@ int16_t rgiWarpSafe[3] = {4, 6, 5};
 int16_t rgrgdmgMinMine[3][2] = {{500, 600}, {2000, 2500}};
 int16_t rgrgdmgMine[3][2] = {{100, 125}, {500, 600}};
 
+// InitGameStuff sets up what the game code needs before it loads a game:
+// the log and message buffers, the report id lists and the default
+// production template, which ReadIniSettings also sets when stars.ini has
+// none. FCreateStuff calls it for the Windows game.
+void InitGameStuff() {
+    gd.fNoIdleChecks = FALSE;
+    gd.fAisDone = FALSE;
+    vplr = vrgplrDef[0];
+    lpLog = LpAlloc(32000, htLog);
+    lpMsg = LpAlloc(0xffc8, htMsg);
+    vlprgidPlanet = LpAlloc(0x800, htPerm);
+    vlprgidFleet = LpAlloc(0x800, htPerm);
+    CchGetString(idsDefault, vrgZipProd[0].szName);
+    vrgZipProd[0].fValid = TRUE;
+    return;
+}
+
 int16_t FGenerateTurn() {
     int16_t  fErrSav;
     char    *pchT;

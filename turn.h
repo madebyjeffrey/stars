@@ -8,6 +8,7 @@ extern int16_t rgiWarpSafe[3];
 extern int16_t rgrgdmgMinMine[3][2];
 extern int16_t rgrgdmgMine[3][2];
 
+void    InitGameStuff();
 int16_t FGenerateTurn();
 void    EnsureAis();
 void    DoOrders(int16_t fPostMovement);
