@@ -42,7 +42,8 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   refused. The game's heaps (`memory.c`) come from `calloc` and `realloc`.
 - **Formatting and rounding** (`native.c`): the game code formats with
   `CchSprintf`, which reads `%ld` as 32 bits like Win32 `wsprintf` (the
-  string table passes `int32_t` to `%ld`; `long` is 64 bits on 64-bit POSIX),
+  string table passes `int32_t` to `%ld`; `long` is 64 bits on 64-bit POSIX)
+  and, like `wsprintf`, writes at most 1024 bytes,
   and rounds with `LMulDiv`, which matches Win32 `MulDiv`. Every format in
   the string table formats the same through both.
 - **Platforms:** the game code (`common.h`) builds without Windows headers;

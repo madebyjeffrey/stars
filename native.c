@@ -95,36 +95,54 @@ void qsort16(void *base, size_t count, size_t width, int (*compare)(const void *
 }
 
 // CchSprintf drops the l from each %ld, %li, %lu, %lx or %lX in szFormat
-// before formatting, since its arguments are 32-bit.
+// before formatting, since its arguments are 32-bit. Like wsprintf, it
+// writes at most 1024 bytes, the terminator included, and returns the
+// characters it wrote.
 int CchSprintf(char *sz, const char *szFormat, ...) {
-    char        szFmt[1024];
+    char        szFmtSmall[256];
+    char       *szFmt;
+    size_t      cbFmt;
     const char *pchIn;
     char       *pchOut;
     int         cch;
     va_list     args;
 
+    // Dropping l only shortens the format, so a copy its size holds it.
+    cbFmt = strlen(szFormat) + 1;
+    szFmt = cbFmt <= sizeof(szFmtSmall) ? szFmtSmall : malloc(cbFmt);
+    if (!szFmt) {
+        sz[0] = 0;
+        return 0;
+    }
     pchIn = szFormat;
     pchOut = szFmt;
-    while (*pchIn != 0 && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+    while (*pchIn != 0) {
         *pchOut++ = *pchIn;
         if (*pchIn++ != '%') {
             continue;
         }
-        while (*pchIn != 0 && strchr("-+ #0123456789.", *pchIn) && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+        while (*pchIn != 0 && strchr("-+ #0123456789.", *pchIn)) {
             *pchOut++ = *pchIn++;
         }
-        if (*pchIn == 'l' && strchr("diuxX", pchIn[1])) {
+        if (*pchIn == 'l' && pchIn[1] != 0 && strchr("diuxX", pchIn[1])) {
             pchIn++;
         }
-        if (*pchIn != 0 && pchOut < &szFmt[sizeof(szFmt) - 1]) {
+        if (*pchIn != 0) {
             *pchOut++ = *pchIn++;
         }
     }
     *pchOut = 0;
     va_start(args, szFormat);
-    cch = vsprintf(sz, szFmt, args);
+    cch = vsnprintf(sz, 1024, szFmt, args);
     va_end(args);
-    return cch;
+    if (szFmt != szFmtSmall) {
+        free(szFmt);
+    }
+    if (cch < 0) {
+        sz[0] = 0;
+        return 0;
+    }
+    return cch < 1024 ? cch : 1023;
 }
 
 // LMulDiv returns lNumber * lNumerator / lDenominator rounded half away from
