@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <windows.h>
 
-extern char    rgTOWidth[2][2];
+extern char rgTOWidth[2][2];
 
 int16_t          InitMDIApp();
 LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

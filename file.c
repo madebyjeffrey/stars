@@ -1,6 +1,6 @@
 #include "common.h"
 
-char     mpishdefishTutor[6] = {3, 4, 9, 6, 7, 14};
+char mpishdefishTutor[6] = {3, 4, 9, 6, 7, 14};
 
 int16_t FReadShDef(RTSHDEF *lprt, SHDEF *lpshdef, int16_t iplrLoad) {
     char     szTemp[40];

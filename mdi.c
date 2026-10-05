@@ -1,6 +1,6 @@
 #include "win.h"
 
-char    rgTOWidth[2][2] = {{-3}, {2, 1}};
+char rgTOWidth[2][2] = {{-3}, {2, 1}};
 
 int16_t InitMDIApp() {
     WNDCLASS wc;

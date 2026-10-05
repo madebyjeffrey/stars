@@ -150,8 +150,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 } else if (iResTechNext <= 6) {
                     iResTechNext--;
                 }
-                if (iResTechNow != rgplr[idPlayer].iTechNow || iResTechNext != rgplr[idPlayer].iTechNext ||
-                    pctResGlob != rgplr[idPlayer].pctResearch) {
+                if (iResTechNow != rgplr[idPlayer].iTechNow || iResTechNext != rgplr[idPlayer].iTechNext || pctResGlob != rgplr[idPlayer].pctResearch) {
                     rgplr[idPlayer].pctResearch = pctResGlob;
                     rgplr[idPlayer].iTechNow = iResTechNow;
                     rgplr[idPlayer].iTechNext = iResTechNext;
