@@ -94,11 +94,13 @@ add_custom_target(stars_version
 )
 add_dependencies(stars_core stars_version)
 
-target_include_directories(stars_options INTERFACE
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/res"
-    "${STARS_GENERATED_DIR}"
-)
+# The game's headers are found for #include "..." only (-iquote): strings.h
+# is the game's string table, and glibc's <string.h> includes the system
+# <strings.h>. The resource compiler takes them as include directories.
+foreach(STARS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/res" "${STARS_GENERATED_DIR}")
+    target_compile_options(stars_options INTERFACE "$<$<COMPILE_LANGUAGE:C>:SHELL:-iquote ${STARS_INCLUDE_DIR}>")
+    target_include_directories(stars_options INTERFACE "$<$<COMPILE_LANGUAGE:RC>:${STARS_INCLUDE_DIR}>")
+endforeach()
 
 # Match the existing MinGW compile-analysis flags. Plain char is signed, as
 # in the original MSC build; the decompiler relies on it to drop char casts.
