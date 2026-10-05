@@ -2,8 +2,9 @@
 #include "version.h"
 
 // stars-host: the game's host without its windows. It takes the Windows
-// game's host command line (-a, -g, -b, -t, -v, -s, -p, -l; see
-// ParseCmdLine) and exits with the same value; --version prints its version.
+// game's host command line (-a, -g, -b, -t, -v, -s, -p, -l, and the -dm,
+// -dp and -df dumps of a turn file; see ParseCmdLine) and exits with the
+// same value; --version prints its version.
 // Waiting for turns (-w) needs the Windows game's timer and is refused.
 
 // IdAlertBox shows ui.h's messages: there is no player to ask, so they go to
@@ -56,12 +57,20 @@ int main(int argc, char *argv[]) {
     ParseCmdLine(szCmdLine, &fSeed, &lSeed);
     Randomize2(fSeed ? lSeed : DwTickCount());
     if (!ini.fCmdLine) {
-        fprintf(stderr, "usage: stars-host --version | [-s<seed>] [-p<password>] [-l] (-a game.def | -v game.hst | -g[n] [-t] game.hst | -b batchfile)\n");
+        fprintf(stderr, "usage: stars-host --version | [-s<seed>] [-p<password>] [-l] (-a game.def | -v game.hst | -g[n] [-t] game.hst | -b batchfile | "
+                        "-d[m][p][f] game.mN)\n");
         return 2;
     }
     idPlayer = iplrNone;
     ini.fCmdLine = FALSE;
     if (!FRunCmdLine()) {
+        if (ini.fDumpMap || ini.fDumpPlanets || ini.fDumpFleets) {
+            if (!FDumpCmdLineGame()) {
+                fprintf(stderr, "stars-host: -d needs a player's turn file (game.m1 and the like)\n");
+                return 2;
+            }
+            return vretExitValue;
+        }
         fprintf(stderr, "stars-host: nothing to do; -w and opening a game need the Windows game\n");
         return 2;
     }

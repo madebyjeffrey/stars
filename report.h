@@ -12,5 +12,6 @@ char   *PszGetTaskName(FLEET *lpfl, int16_t *picr);
 void    DumpUniverse();
 void    DumpPlanets();
 void    DumpFleets();
+int16_t FDumpCmdLineGame();
 
 #endif

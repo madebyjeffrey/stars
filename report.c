@@ -728,3 +728,41 @@ DisplayStatus:
     penvMem = penvMemSav;
     return;
 }
+
+// FDumpCmdLineGame writes the dumps a command line asks for (-dm, -dp, -df)
+// from the player turn file it names (szBase), as the Windows game does
+// when it opens the file (FOpenGame): universe, then planets, then fleets.
+// It returns FALSE if the file isn't a player's turn file it can load.
+int16_t FDumpCmdLineGame() {
+    char  szFile[256];
+    char *pchDot;
+    char *pchDir;
+
+    strcpy(szFile, szBase);
+    pchDot = strrchr(szFile, '.');
+    pchDir = strrchr(szFile, chDirSep);
+    if (!pchDot || (pchDir && pchDir > pchDot)) {
+        return FALSE;
+    }
+    *pchDot = 0;
+    DestroyCurGame();
+    strcpy(szBase, szFile);
+    fFileErrSilent = TRUE;
+    if (!FLoadGame(szFile, pchDot + 1)) {
+        return FALSE;
+    }
+    fFileErrSilent = FALSE;
+    if (game.lid == 0 || idPlayer == iplrNone) {
+        return FALSE;
+    }
+    if (ini.fDumpMap) {
+        DumpUniverse();
+    }
+    if (ini.fDumpPlanets) {
+        DumpPlanets();
+    }
+    if (ini.fDumpFleets) {
+        DumpFleets();
+    }
+    return TRUE;
+}
