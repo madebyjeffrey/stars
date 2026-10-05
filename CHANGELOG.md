@@ -14,6 +14,12 @@ produce different results from a 2.6j host for the same turn.
 - The mouse wheel scrolls the report tables by rows, as many a notch as the
   mouse settings say; the tilt wheel and Shift+wheel scroll a column a
   notch.
+- Alt+click (Cmd+click on a Mac) with a fleet selected adds a waypoint at
+  the fastest useful speed: the speed a fleet with a colonize task gets,
+  the fastest up to warp 9 whose fuel fits, slowed to the lowest that
+  arrives as soon. Alt held while dropping a dragged waypoint does the
+  same. Players set colonize tasks on scouts to get this speed, at the cost
+  of a warning every turn. Turn generation is unchanged.
 - Dragging the scanner with the left button pans it. A press still selects
   what is under it, as a click does; the view moves once the mouse moves
   past the system's drag distance. Dragging a waypoint, Shift and Ctrl

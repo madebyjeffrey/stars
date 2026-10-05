@@ -16,6 +16,10 @@ static POINT16 ptPan;
 static int16_t xPanTop;
 static int16_t yPanTop;
 
+// FAltDown tells whether Alt is down; Wine's Mac driver sends Alt for Cmd.
+// Alt+click (Cmd+click) adds a waypoint at the fastest useful speed.
+static int16_t FAltDown(void) { return GetKeyState(VK_MENU) < 0; }
+
 LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;
     POINT16     pt;
@@ -109,7 +113,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         rc.bottom -= dySBar;
         if (PtInRect(&rc, PointFrom16(pt)) == 0) {
             SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32512)));
-        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) || (grbitScan & grbitScanAddWaypoints))) {
+        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) || (grbitScan & grbitScanAddWaypoints) || FAltDown())) {
             SetCursor(hcurScanAdd);
         } else if (FNearAWayPoint(pt, FALSE)) {
             SetCursor(hcurOpenGrab);
@@ -146,7 +150,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         // keep the press for themselves; a waypoint drag ends with the
         // button up, which WM_MOUSEMOVE notices.
         fPanDown = msg == WM_LBUTTONDOWN && !(wParam & (MK_SHIFT | MK_CONTROL)) && !gd.fSetMassMode && !gd.fSetRouteMode &&
-                   !(sel.grobj == grobjFleet && (grbitScan & grbitScanAddWaypoints));
+                   !(sel.grobj == grobjFleet && ((grbitScan & grbitScanAddWaypoints) || FAltDown()));
         ptPan = pt;
         ScanToLogical(&pt);
         FFindNearestObject(pt, gd.fSetMassMode != 0 || gd.fSetRouteMode ? grobjPlanet : grobjPlanet | grobjFleet | grobjOther | grobjThing, &scan);
@@ -253,7 +257,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 break;
             goto DblClick;
         } else {
-            if (sel.grobj == grobjFleet && ((wParam & 4) || (grbitScan & grbitScanAddWaypoints))) {
+            if (sel.grobj == grobjFleet && ((wParam & 4) || (grbitScan & grbitScanAddWaypoints) || FAltDown())) {
                 FAddWayPoint(pt, &scan);
                 break;
             }
@@ -2284,7 +2288,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     lpord->grobj = pscan->grobj;
     sel.fl.cord++;
     sel.fl.lpplord->iordMac++;
-    lpord->iWarp = IWarpBestForWaypoint(&sel.fl, lpord);
+    lpord->iWarp = FAltDown() ? IWarpFastestForWaypoint(&sel.fl, lpord) : IWarpBestForWaypoint(&sel.fl, lpord);
     pscan->grobj = grobjOther;
     pscan->grobjFull |= grobjOther;
     pscan->iwp = sel.iwpAct + 1;
@@ -2521,7 +2525,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         lpord->grobj = scan.grobj;
         lpord->id = i;
         lpord->pt = scan.pt;
-        lpord->iWarp = IWarpBestForWaypoint(&sel.fl, lpord);
+        lpord->iWarp = FAltDown() ? IWarpFastestForWaypoint(&sel.fl, lpord) : IWarpBestForWaypoint(&sel.fl, lpord);
         FLookupFleet(idWriteBack, &sel.fl);
         scan.iwp = sel.iwpAct;
         scan.grobjFull |= grobjOther;

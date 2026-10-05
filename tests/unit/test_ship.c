@@ -92,7 +92,100 @@ static void test_FFleetMergeAll_keeps_overflow_fleet(void) {
     TEST_CHECK_(lpflSrc != NULL && lpflSrc->rgcsh[ishdef] == 1000, "the 1000-ship fleet was merged");
 }
 
+// FAddScoutLeg loads a new game, puts one of player 0's first design at its
+// homeworld in sel.fl, as the scanner has a selected fleet, and gives it a
+// waypoint dx light years east with lFuel mg of fuel, more than its tank
+// holds if need be.
+static int16_t FAddScoutLeg(const char *pszTest, int16_t dx, int32_t lFuel) {
+    FLEET  *lpflDst;
+    FLEET  *lpflSrc;
+    ORDER  *lpord;
+    int16_t ishdef;
+
+    if (!FAddScoutPair(pszTest, &lpflDst, &lpflSrc, &ishdef))
+        return FALSE;
+    idPlayer = 0;
+    sel.fl = *lpflDst;
+    sel.fl.rgwtMin[4] = lFuel;
+    lpord = &sel.fl.lpplord->rgord[1];
+    *lpord = lpord[-1];
+    lpord->pt.x += dx;
+    lpord->grobj = grobjOther;
+    lpord->id = 1;
+    sel.fl.cord = 2;
+    sel.fl.lpplord->iordMac = 2;
+    return TRUE;
+}
+
+// LFuelAtWarp returns the fuel sel.fl uses to reach waypoint 1 at iWarp.
+static int32_t LFuelAtWarp(int16_t iWarp) {
+    sel.fl.lpplord->rgord[1].iWarp = iWarp;
+    return LFuelUseToWaypoint(&sel.fl, 1, TRUE);
+}
+
+// CYearsAtWarp returns the years sel.fl takes to reach waypoint 1 at iWarp.
+static int16_t CYearsAtWarp(int16_t iWarp) {
+    ORDER *lpord;
+    double dbl;
+
+    lpord = sel.fl.lpplord->rgord;
+    dbl = DGetDistance(lpord[0].pt.x, lpord[0].pt.y, lpord[1].pt.x, lpord[1].pt.y);
+    return (int16_t)ceil(dbl / (iWarp * iWarp));
+}
+
+// CheckFastestWarp checks the warp IWarpFastestForWaypoint picks for sel.fl's
+// waypoint 1: the fuel fits, no faster warp up to 9 that fits arrives
+// sooner, and a slower one arrives later. It returns the warp.
+static int16_t IWarpCheckFastest(int16_t iWarpBest) {
+    int32_t lFuel;
+    int16_t iWarp;
+    int16_t i;
+
+    lFuel = sel.fl.rgwtMin[4];
+    iWarp = IWarpFastestForWaypoint(&sel.fl, &sel.fl.lpplord->rgord[1]);
+    TEST_CHECK_(iWarp >= iWarpBest && iWarp <= 9, "fastest warp %d, best warp %d", iWarp, iWarpBest);
+    TEST_CHECK_(LFuelAtWarp(iWarp) <= lFuel, "warp %d needs %d mg of %d", iWarp, LFuelAtWarp(iWarp), lFuel);
+    for (i = iWarp + 1; i <= 9; i++) {
+        TEST_CHECK_(LFuelAtWarp(i) > lFuel || CYearsAtWarp(i) == CYearsAtWarp(iWarp), "warp %d fits and arrives sooner than warp %d", i,
+                    iWarp);
+    }
+    if (iWarp > 1) {
+        TEST_CHECK_(CYearsAtWarp(iWarp - 1) > CYearsAtWarp(iWarp), "warp %d arrives as soon as warp %d", iWarp - 1, iWarp);
+    }
+    return iWarp;
+}
+
+// Alt+click waypoints: with fuel to spare the fastest useful warp arrives
+// sooner than the usual one, and nothing faster arrives sooner still.
+// 150 ly takes 2 years at warp 9 and 3 at warp 8.
+static void test_IWarpFastestForWaypoint_plenty_of_fuel(void) {
+    int16_t iWarpBest;
+    int16_t iWarp;
+
+    TEST_ASSERT(FAddScoutLeg("IWarpFastest_plenty", 150, 1000));
+    iWarpBest = IWarpBestForWaypoint(&sel.fl, &sel.fl.lpplord->rgord[1]);
+    iWarp = IWarpCheckFastest(iWarpBest);
+    TEST_CHECK_(iWarp == 9, "fastest warp %d", iWarp);
+    TEST_CHECK_(CYearsAtWarp(iWarp) < CYearsAtWarp(iWarpBest), "warp %d is no sooner than warp %d", iWarp, iWarpBest);
+}
+
+// With less fuel the fastest warp is held to what the tank allows: one
+// short of what two warps above the ideal needs stops it one above.
+static void test_IWarpFastestForWaypoint_low_fuel(void) {
+    int16_t iWarpIdeal;
+    int16_t iWarp;
+
+    TEST_ASSERT(FAddScoutLeg("IWarpFastest_low_fuel", 300, 0));
+    iWarpIdeal = IFindIdealWarp(NULL, FALSE);
+    TEST_ASSERT_(iWarpIdeal <= 7, "ideal warp %d", iWarpIdeal);
+    sel.fl.rgwtMin[4] = LFuelAtWarp(iWarpIdeal + 2) - 1;
+    iWarp = IWarpCheckFastest(iWarpIdeal);
+    TEST_CHECK_(iWarp == iWarpIdeal + 1, "fastest warp %d, ideal warp %d", iWarp, iWarpIdeal);
+}
+
 TEST_LIST = {{"Merge2Fleets keeps no-heal", test_Merge2Fleets_keeps_no_heal},
              {"Merge2Fleets caps ship counts", test_Merge2Fleets_caps_ship_count},
              {"FFleetMergeAll keeps a fleet that would overflow", test_FFleetMergeAll_keeps_overflow_fleet},
+             {"IWarpFastestForWaypoint with plenty of fuel", test_IWarpFastestForWaypoint_plenty_of_fuel},
+             {"IWarpFastestForWaypoint with little fuel", test_IWarpFastestForWaypoint_low_fuel},
              {NULL, NULL}};
