@@ -173,10 +173,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     int16_t      i;
     HPALETTE     hpalSav;
     TEXTMETRIC   tm;
-    int16_t      ich;
     POINT16      pt;
-    char        *pch;
-    char         szTemp[80];
     FARPROC      lpProc;
     int16_t      fRet;
     int16_t      fErrSav;
@@ -198,7 +195,6 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     POINT16      ptD;
     POINT16      ptStart;
     POINT16      ptChg;
-    HCURSOR      hcurSav;
 
     switch (msg) {
     case WM_CREATE:
