@@ -2,7 +2,8 @@
 
 The `2.6jrc3` tag is the faithful reconstruction, original bugs included, and
 the `2.6j` branch keeps it. 2.8 is released (tag `v2.8.0`, branch `2.8` for
-patch releases). `main` is the 2.9 line.
+patch releases). 2.9 is released (tag `v2.9.0`); `main` is the 2.9 line,
+and its builds count toward 2.9.1.
 
 ## 2.9
 
@@ -40,9 +41,8 @@ game code too (`report.c`, with the report window in `reportui.c`):
 it reads the `stars.ini` settings a host uses, so TotalHost can run it
 instead of `stars.exe` under Wine ([TOTALHOST.md](TOTALHOST.md)).
 
-Left:
-
-- Confirm the release's static Linux build on its first run from `main`.
+The release workflow publishes `stars-host-linux-x64.tar.gz`, linked
+statically, beside `stars.exe`. 2.9.0 is released (tag `v2.9.0`).
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`
 and cherry-pick to `2.8`.
