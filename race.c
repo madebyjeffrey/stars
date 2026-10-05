@@ -502,6 +502,7 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
     jmp_buf  env;
     int16_t  fRet;
     int16_t  fSav;
+    char    *pch;
 
     idsError = -1;
     fRet = 0;
@@ -550,7 +551,14 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
                                 szRacePass[0] = 0;
                             }
                             vplr = plr;
-                            strcpy(szRaceFile, szFile);
+                            /* The original copied the whole path into the
+                               16-byte szRaceFile, overrunning the globals
+                               after it when a universe definition names a
+                               race by path. Keep the file name, as the race
+                               dialogs do. */
+                            pch = strrchr(szFile, chDirSep);
+                            strncpy(szRaceFile, pch ? pch + 1 : szFile, sizeof(szRaceFile) - 1);
+                            szRaceFile[sizeof(szRaceFile) - 1] = 0;
                             StreamClose();
                             fFileErrSilent = fSav;
                             penvMem = penvMemSav;

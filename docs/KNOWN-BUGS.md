@@ -372,6 +372,19 @@ ships that fit and leaves the others in their fleet; `FFleetMergeAll`
 leaves out a fleet whose ships wouldn't fit. Moving ships between two
 fleets in the client's transfer dialog was not changed.
 
+### Race File Name Overrun — fixed in 2.9
+
+`race.c`: `FWasRaceFile`; `create.c`: `GenNewGameFromFile`.
+`FWasRaceFile` copies the race file's whole path into `szRaceFile`, a
+16-byte buffer the race dialogs fill with a file name. Creating a universe
+from a definition file (`-a`) names each race by path, so the copy runs
+over the globals after it (`szPassLast`, the `-p` password, and the message
+buffer in the 2.8 build). Nothing read them before they were set again, so
+results did not change; a hardened `strcpy` (macOS) stops the program.
+
+**2.9:** found running `stars-host -a` on macOS. `FWasRaceFile` keeps only
+the file name, cut to fit, as the race dialogs store it.
+
 ### AR Starter Colonies — candidate
 
 `turn3.c`: `SatisfyOrders` (AR colonization/base setup); `turn2.c`: `Produce`,

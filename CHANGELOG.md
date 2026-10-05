@@ -6,6 +6,13 @@ produce different results from a 2.6j host for the same turn.
 
 ## 2.9.0 (unreleased)
 
+### Fixed
+
+- Creating a universe from a definition file no longer writes the race
+  file's path past the end of a 16-byte name buffer (`FWasRaceFile`). Only
+  the file name is kept, as the race dialogs keep it. Results are unchanged;
+  macOS stopped the program at the overrun.
+
 ## 2.8.1
 
 ### Changed
