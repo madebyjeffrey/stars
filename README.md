@@ -71,9 +71,11 @@ presets also build `stars-host.exe`.
 
 ### stars-host
 
-`stars-host` is the game's host without its windows: it creates universes
-and generates turns from the same command line as `stars.exe`
-(`-a game.def`, `-g[n] game.hst`, `-b`, `-t`, `-v`, `-s<seed>`). It builds
+`stars-host` is the game's host without its windows: it creates universes,
+generates turns and writes the dumps from the same command line as
+`stars.exe` (`-a game.def`, `-g[n] game.hst`, `-v game.hst`, `-b`, `-t`,
+`-s<seed>`, `-dm`/`-dp`/`-df game.mN`). `--ini stars.ini` reads the
+`stars.ini` settings a host uses (see below). It builds
 with the native compiler on Linux and macOS, with only CMake and Ninja:
 
 ```sh
@@ -90,11 +92,11 @@ prints the version, and `make test-host` runs the unit tests natively.
 
 Where `stars-host` differs from `stars.exe`:
 
-- It reads no `stars.ini`, so it uses the settings' defaults: one backup
-  directory, host names in `-v` output, no default password and no logging
-  unless `-l` is given.
-- It doesn't wait for turns (`-w`) or write the `-d` dumps; those still
-  need `stars.exe`.
+- It reads `stars.ini` only when given `--ini`, and then only the settings
+  a host uses: `[Files] Logging` and `[Misc] DefaultPassword`,
+  `NewReports` (per-player `-d` files such as `game.p1`), `NoHostNames`
+  and `Backups`. Without it they keep their defaults.
+- It doesn't wait for turns (`-w`).
 - On Linux and macOS it can't tell that another program has a game file
   open, as Windows file sharing does.
 - Questions get the cautious answer (No, Cancel) and messages go to stderr.
