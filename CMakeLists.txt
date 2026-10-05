@@ -25,16 +25,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(STARS_CORE_SOURCES
     ai.c ai2.c ai3.c ai4.c aiutil.c battle.c build.c create.c file.c globals.c
     log.c memory.c mine.c msg.c native.c parts.c planet.c produce.c race.c
-    research.c save.c ship.c ship2.c strings.c strings_uncompressed.c thing.c
-    turn.c turn2.c turn3.c util.c utilgen.c
+    report.c research.c save.c ship.c ship2.c strings.c strings_uncompressed.c
+    thing.c turn.c turn2.c turn3.c util.c utilgen.c
 )
 
 # The Windows game's user interface.
 set(STARS_UI_SOURCES
     battleui.c buildui.c createui.c fileui.c globalsui.c init.c logui.c mdi.c
     mineui.c msgui.c nativeui.c planetui.c popup.c produceui.c raceui.c
-    report.c reportui.c researchui.c scan.c ship2ui.c shipui.c stars.c tb.c
-    thingui.c tutor.c tutor2.c utilgenui.c utilui.c vcr.c
+    reportui.c researchui.c scan.c ship2ui.c shipui.c stars.c tb.c thingui.c
+    tutor.c tutor2.c utilgenui.c utilui.c vcr.c
 )
 
 # Settings every target that compiles game code shares.
@@ -135,11 +135,8 @@ if(NOT WIN32)
         configure_file(tests/scaffold/fixtures/newgame/tiny/humanoid.r1 "${STARS_TEST_DIR}/data/humanoid.r1" COPYONLY)
         file(GLOB STARS_UNIT_TESTS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_*.c")
         # test_native_ports replaces the game's file I/O with --wrap, which
-        # only GNU ld on Windows provides; test_report tests the planet dump,
-        # which is still in the Windows report code (report.c).
-        list(REMOVE_ITEM STARS_UNIT_TESTS
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_native_ports.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_report.c")
+        # only GNU ld on Windows provides.
+        list(REMOVE_ITEM STARS_UNIT_TESTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_native_ports.c")
         foreach(STARS_UNIT_TEST ${STARS_UNIT_TESTS})
             get_filename_component(STARS_TEST_NAME "${STARS_UNIT_TEST}" NAME_WE)
             add_executable(${STARS_TEST_NAME} "${STARS_UNIT_TEST}" tests/unit/stars_test.c hostui.c)
