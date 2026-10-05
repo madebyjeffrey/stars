@@ -1,9 +1,6 @@
 #include "win.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    char    *pch;
-    char    *lpT;
-    int16_t  i;
     MSG      msg;
     uint32_t lSeed;
     int16_t  fSeed;
@@ -31,137 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         AlertSz(PszFormatIds(idsUnableInitializeStars, NULL), MB_ICONHAND);
         return 0;
     }
-    lpT = lpCmdLine;
-    while (*lpT != 0) {
-        for (; *lpT == ' '; lpT++) {
-        }
-        if (*lpT == '-' || *lpT == '/') {
-            for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
-                switch (*lpT) {
-                case 'W':
-                case 'w':
-                    ini.fWait = TRUE;
-                    break;
-                case 'D':
-                case 'd':
-                    for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
-                        switch (*lpT) {
-                        case 'F':
-                        case 'f':
-                            ini.fDumpFleets = TRUE;
-                            break;
-                        case 'P':
-                        case 'p':
-                            ini.fDumpPlanets = TRUE;
-                            break;
-                        case 'M':
-                        case 'm':
-                            ini.fDumpMap = TRUE;
-                        }
-                    }
-                    lpT--;
-                    break;
-                case 'G':
-                case 'g':
-                    ini.fGen = TRUE;
-                    i = 0;
-                    while (lpT[1] >= '0' && lpT[1] <= '9') {
-                        lpT++;
-                        i = 10 * i + *lpT - '0';
-                        if (i > 1000) {
-                            i = 1000;
-                            for (; lpT[1] >= '0' && lpT[1] <= '9'; lpT++) {
-                            }
-                            break;
-                        }
-                    }
-                    if (i <= 0)
-                        break;
-                    ini.cTurnGen = i - 1;
-                    break;
-                case 'A':
-                case 'a':
-                    ini.fNewGame = TRUE;
-                    break;
-                case 'H':
-                case 'h':
-                    gd.fHotSeat = TRUE;
-                    break;
-                case 'X':
-                case 'x':
-                    gd.fExitWindows = TRUE;
-                    break;
-                case 'B':
-                case 'b':
-                    for (lpT++; *lpT == ' '; lpT++) {
-                    }
-                    pch = szBase;
-                    for (; *lpT != 0 && *lpT != ' '; lpT++) {
-                        *pch = *lpT;
-                        pch++;
-                    }
-                    *pch = 0;
-                    lpT--;
-                    if (!FSetUpBatchProcessing())
-                        break;
-                    ini.fBatch = TRUE;
-                    ini.fGen = TRUE;
-                    ini.fStartupFile = TRUE;
-                    ini.fCmdLine = TRUE;
-                    break;
-                case 'V':
-                case 'v':
-                    ini.fValidate = TRUE;
-                    break;
-                case 'L':
-                case 'l':
-                    ini.fLogging = TRUE;
-                    break;
-                case 'T':
-                case 't':
-                    ini.fTry = TRUE;
-                    break;
-                case 'C':
-                case 'c':
-                    ini.fCmdLine = szBase[0] != 0;
-                    break;
-                case 'S':
-                case 's':
-                    /* -s<seed>: a fixed startup seed instead of the clock, so
-                       regression runs repeat exactly. Not in the original. */
-                    fSeed = TRUE;
-                    lSeed = 0;
-                    while (lpT[1] >= '0' && lpT[1] <= '9') {
-                        lpT++;
-                        lSeed = 10 * lSeed + (uint32_t)(*lpT - '0');
-                    }
-                    break;
-                case 'P':
-                case 'p':
-                    for (lpT++; *lpT == ' '; lpT++) {
-                    }
-                    pch = szPassLast;
-                    for (; *lpT != 0 && *lpT != ' ' && pch < &szPassLast[15]; lpT++) {
-                        *pch = *lpT;
-                        pch++;
-                    }
-                    *pch = 0;
-                    lpT--;
-                    lSaltLast = LSaltFromSz(szPassLast);
-                }
-            }
-        } else {
-            pch = szBase;
-            while (*lpT != 0 && *lpT != ' ') {
-                *pch = *lpT;
-                lpT++;
-                pch++;
-            }
-            *pch = 0;
-            ini.fStartupFile = TRUE;
-            ini.fCmdLine = TRUE;
-        }
-    }
+    ParseCmdLine(lpCmdLine, &fSeed, &lSeed);
     /* The original seeded before FCreateStuff; nothing in between draws a
        random number, so seeding after the command line is the same. */
     Randomize2(fSeed ? lSeed : GetTickCount());

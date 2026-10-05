@@ -239,103 +239,42 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         idPlayer = iplrNone;
         if (ini.fCmdLine) {
             ini.fCmdLine = FALSE;
-            if (ini.fValidate) {
-                fFileErrSilent = TRUE;
-                ClearFile(7);
-                if (FLoadGame(szBase, "hst")) {
-                    VerifyTurns();
-                    DestroyCurGame();
-                    EnsureAis();
-                    wsprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
-                    OutputSz(7, szTemp);
-                    for (i = 0; i < game.cPlayer; i++) {
-                        if (rgOut[i] + 1 > 3) {
-                            ich = wsprintf(szTemp, "Error: %d: ", i + 1);
-                        } else {
-                            ich = wsprintf(szTemp, "%d: ", i + 1);
-                        }
-                        if (!gd.fNoHostNames) {
-                            ich += wsprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
-                        }
-                        strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
-                        if (rgplr[i].fHacker) {
-                            strcat(szTemp, " - HACKER");
-                        }
-                        OutputSz(7, szTemp);
-                    }
+            if (FRunCmdLine()) {
+            LExit:
+                if (gd.fExitWindows) {
+                    ExitWindows(vretExitValue, 0);
+                    return 0;
                 }
+                PostQuitMessage(vretExitValue);
+                return 0;
+            }
+            CommandHandler(hwnd, 0xed9);
+            if (ini.fTry)
                 goto LExit;
-            } else if (ini.fNewGame) {
-                GenNewGameFromFile(szBase);
+            if (ini.fGen)
+                goto LNop;
+            if (game.lid == 0)
+                goto LShowStartup;
+            if (idPlayer != iplrNone && (ini.fDumpPlanets || ini.fDumpFleets || ini.fDumpMap)) {
+                if (ini.fDumpMap) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_UNIVERSE, 0);
+                }
+                if (ini.fDumpPlanets) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_PLANETS, 0);
+                }
+                if (ini.fDumpFleets) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_FLEETS, 0);
+                }
                 goto LExit;
             } else {
-                if (ini.fGen) {
-                LBatchNext:
-                    if ((!ini.fWait && !ini.fTry) || CTurnsOutSafe() == 0) {
-                        EnsureAis();
-                        hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
-                        FGenerateTurn();
-                        SetCursor(hcurSav);
-                        if (ini.fBatch && lpchBatch < lpchBatchMac) {
-                        LTryNextBatch:
-                            DestroyCurGame();
-                            pch = szBase;
-                            while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
-                                *pch = *lpchBatch;
-                                lpchBatch++;
-                                pch++;
-                            }
-                            lpchBatch++;
-                            pch[-1] = 0;
-                            ini.fStartupFile = TRUE;
-                            goto LBatchNext;
-                        }
-                        if (ini.cTurnGen == 0)
-                            goto LExit;
-                        ini.cTurnGen--;
-                        goto LBatchNext;
-                    LExit:
-                        if (gd.fExitWindows) {
-                            ExitWindows(vretExitValue, 0);
-                            return 0;
-                        }
-                        PostQuitMessage(vretExitValue);
-                        return 0;
-                    }
-                    if (ini.fTry) {
-                        if (ini.fBatch && lpchBatch < lpchBatchMac)
-                            goto LTryNextBatch;
-                        goto LExit;
-                    }
-                }
-                CommandHandler(hwnd, 0xed9);
-                if (ini.fTry)
-                    goto LExit;
-                if (ini.fGen)
+                ShowWindow(hwndFrame, SW_SHOW);
+                InitializeMenu(NULL);
+                PostMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
+                if (!ini.fWait)
                     goto LNop;
-                if (game.lid == 0)
-                    goto LShowStartup;
-                if (idPlayer != iplrNone && (ini.fDumpPlanets || ini.fDumpFleets || ini.fDumpMap)) {
-                    if (ini.fDumpMap) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_UNIVERSE, 0);
-                    }
-                    if (ini.fDumpPlanets) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_PLANETS, 0);
-                    }
-                    if (ini.fDumpFleets) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_FLEETS, 0);
-                    }
-                    goto LExit;
-                } else {
-                    ShowWindow(hwndFrame, SW_SHOW);
-                    InitializeMenu(NULL);
-                    PostMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
-                    if (!ini.fWait)
-                        goto LNop;
-                    ini.fWait = FALSE;
-                    CommandHandler(hwnd, 0x6a);
-                    goto LNop;
-                }
+                ini.fWait = FALSE;
+                CommandHandler(hwnd, 0x6a);
+                goto LNop;
             }
         }
     LShowStartup:

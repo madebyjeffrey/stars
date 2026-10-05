@@ -19,5 +19,7 @@ void    VerifyTurns();
 int16_t CTurnsOutSafe();
 int16_t CFindTurnsOutstanding();
 int16_t FSetUpBatchProcessing();
+void    ParseCmdLine(char *lpCmdLine, int16_t *pfSeed, uint32_t *plSeed);
+int16_t FRunCmdLine();
 
 #endif

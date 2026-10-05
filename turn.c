@@ -575,6 +575,225 @@ LError:
     return fSuccess;
 }
 
+// ParseCmdLine reads the command line's switches into ini and gd and its
+// file name into szBase; *pfSeed and *plSeed get a -s<seed>. The Windows
+// game and stars-host take the same command line.
+void ParseCmdLine(char *lpCmdLine, int16_t *pfSeed, uint32_t *plSeed) {
+    char   *pch;
+    char   *lpT;
+    int16_t i;
+
+    lpT = lpCmdLine;
+    while (*lpT != 0) {
+        for (; *lpT == ' '; lpT++) {
+        }
+        if (*lpT == '-' || *lpT == '/') {
+            for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
+                switch (*lpT) {
+                case 'W':
+                case 'w':
+                    ini.fWait = TRUE;
+                    break;
+                case 'D':
+                case 'd':
+                    for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
+                        switch (*lpT) {
+                        case 'F':
+                        case 'f':
+                            ini.fDumpFleets = TRUE;
+                            break;
+                        case 'P':
+                        case 'p':
+                            ini.fDumpPlanets = TRUE;
+                            break;
+                        case 'M':
+                        case 'm':
+                            ini.fDumpMap = TRUE;
+                        }
+                    }
+                    lpT--;
+                    break;
+                case 'G':
+                case 'g':
+                    ini.fGen = TRUE;
+                    i = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        i = 10 * i + *lpT - '0';
+                        if (i > 1000) {
+                            i = 1000;
+                            for (; lpT[1] >= '0' && lpT[1] <= '9'; lpT++) {
+                            }
+                            break;
+                        }
+                    }
+                    if (i <= 0)
+                        break;
+                    ini.cTurnGen = i - 1;
+                    break;
+                case 'A':
+                case 'a':
+                    ini.fNewGame = TRUE;
+                    break;
+                case 'H':
+                case 'h':
+                    gd.fHotSeat = TRUE;
+                    break;
+                case 'X':
+                case 'x':
+                    gd.fExitWindows = TRUE;
+                    break;
+                case 'B':
+                case 'b':
+                    for (lpT++; *lpT == ' '; lpT++) {
+                    }
+                    pch = szBase;
+                    for (; *lpT != 0 && *lpT != ' '; lpT++) {
+                        *pch = *lpT;
+                        pch++;
+                    }
+                    *pch = 0;
+                    lpT--;
+                    if (!FSetUpBatchProcessing())
+                        break;
+                    ini.fBatch = TRUE;
+                    ini.fGen = TRUE;
+                    ini.fStartupFile = TRUE;
+                    ini.fCmdLine = TRUE;
+                    break;
+                case 'V':
+                case 'v':
+                    ini.fValidate = TRUE;
+                    break;
+                case 'L':
+                case 'l':
+                    ini.fLogging = TRUE;
+                    break;
+                case 'T':
+                case 't':
+                    ini.fTry = TRUE;
+                    break;
+                case 'C':
+                case 'c':
+                    ini.fCmdLine = szBase[0] != 0;
+                    break;
+                case 'S':
+                case 's':
+                    /* -s<seed>: a fixed startup seed instead of the clock, so
+                       regression runs repeat exactly. Not in the original. */
+                    *pfSeed = TRUE;
+                    *plSeed = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        *plSeed = 10 * *plSeed + (uint32_t)(*lpT - '0');
+                    }
+                    break;
+                case 'P':
+                case 'p':
+                    for (lpT++; *lpT == ' '; lpT++) {
+                    }
+                    pch = szPassLast;
+                    for (; *lpT != 0 && *lpT != ' ' && pch < &szPassLast[15]; lpT++) {
+                        *pch = *lpT;
+                        pch++;
+                    }
+                    *pch = 0;
+                    lpT--;
+                    lSaltLast = LSaltFromSz(szPassLast);
+                }
+            }
+        } else {
+            pch = szBase;
+            while (*lpT != 0 && *lpT != ' ') {
+                *pch = *lpT;
+                lpT++;
+                pch++;
+            }
+            *pch = 0;
+            ini.fStartupFile = TRUE;
+            ini.fCmdLine = TRUE;
+        }
+    }
+    return;
+}
+
+// FRunCmdLine carries out a command line's host work: validating the host
+// file (-v), creating a universe (-a), or generating turns (-g, with -b
+// for a batch of games and -t to generate only when every turn is in). It
+// returns FALSE when there is none to do now: the command line opens a
+// game, or waits (-w) for turns still out, which the Windows game's host
+// timer does.
+int16_t FRunCmdLine() {
+    char   *pch;
+    char    szTemp[80];
+    int16_t ich;
+    int16_t i;
+
+    if (ini.fValidate) {
+        fFileErrSilent = TRUE;
+        ClearFile(7);
+        if (FLoadGame(szBase, "hst")) {
+            VerifyTurns();
+            DestroyCurGame();
+            EnsureAis();
+            CchSprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
+            OutputSz(7, szTemp);
+            for (i = 0; i < game.cPlayer; i++) {
+                if (rgOut[i] + 1 > 3) {
+                    ich = CchSprintf(szTemp, "Error: %d: ", i + 1);
+                } else {
+                    ich = CchSprintf(szTemp, "%d: ", i + 1);
+                }
+                if (!gd.fNoHostNames) {
+                    ich += CchSprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
+                }
+                strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
+                if (rgplr[i].fHacker) {
+                    strcat(szTemp, " - HACKER");
+                }
+                OutputSz(7, szTemp);
+            }
+        }
+        return TRUE;
+    }
+    if (ini.fNewGame) {
+        GenNewGameFromFile(szBase);
+        return TRUE;
+    }
+    if (!ini.fGen) {
+        return FALSE;
+    }
+LBatchNext:
+    if ((!ini.fWait && !ini.fTry) || CTurnsOutSafe() == 0) {
+        EnsureAis();
+        FGenerateTurn();
+        if (ini.fBatch && lpchBatch < lpchBatchMac) {
+        LTryNextBatch:
+            DestroyCurGame();
+            pch = szBase;
+            while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
+                *pch = *lpchBatch;
+                lpchBatch++;
+                pch++;
+            }
+            lpchBatch++;
+            pch[-1] = 0;
+            ini.fStartupFile = TRUE;
+            goto LBatchNext;
+        }
+        if (ini.cTurnGen == 0)
+            return TRUE;
+        ini.cTurnGen--;
+        goto LBatchNext;
+    }
+    if (ini.fTry) {
+        if (ini.fBatch && lpchBatch < lpchBatchMac)
+            goto LTryNextBatch;
+        return TRUE;
+    }
+    return FALSE;
+}
+
 void DoOrders(int16_t fPostMovement) {
     PLANET *lppl;
     PLANET *lpplMac;
