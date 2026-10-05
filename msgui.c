@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;

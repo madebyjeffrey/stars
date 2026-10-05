@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 void DrawThingGauge(HDC hdc, RECT *prc, THING *lpth, int16_t md) {
     int16_t iMode;

@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_AI2_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint8_t vrgISIshAip[19];
 extern uint8_t vrgISAip[182];

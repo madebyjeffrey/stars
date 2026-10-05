@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_STRINGS_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern char    aSTRCmpr[28209];
 extern uint8_t acSTR[1414];

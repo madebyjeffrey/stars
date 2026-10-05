@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 int16_t FWriteTutorialMFile(int16_t iTurn) {
     HRSRC    hrsrc;

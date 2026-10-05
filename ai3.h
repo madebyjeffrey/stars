@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_AI3_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern MacintiRecipeOffset vrgMacIshAip[31];
 extern uint8_t             vrgMacAip[248];

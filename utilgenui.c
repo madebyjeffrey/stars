@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 INT_PTR CALLBACK RandomSeedDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     char     szValue[33];

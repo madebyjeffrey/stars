@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_CREATE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern int16_t vrgvcMax[10];
 extern char    rgNG3Width[9][2];

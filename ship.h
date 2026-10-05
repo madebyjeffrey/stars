@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_SHIP_H
 
 #include <stdint.h>
-#include <windows.h>
 
 int16_t FCanSplit(int32_t cBoat);
 int16_t FCanSplitAll(int32_t cBoat);

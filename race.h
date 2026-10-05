@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_RACE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern int16_t rgRacePrimaryTrait[10];
 extern char    rgRW3Spacing[7];

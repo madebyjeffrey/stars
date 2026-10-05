@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_UTILGEN_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern int16_t aiPNChunkOffset[16];
 extern uint8_t acPN[999];

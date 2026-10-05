@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_THING_H
 
 #include <stdint.h>
-#include <windows.h>
 
 THING  *LpthNew(int16_t iplr, ThingType ith);
 void    FreeLpth(THING *lpth);

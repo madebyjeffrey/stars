@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_MEMORY_H
 
 #include <stdint.h>
-#include <windows.h>
 
 HB   *LphbAlloc(uint16_t cb, HeapType ht);
 HB   *LphbReAlloc(HB *lphb);

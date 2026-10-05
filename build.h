@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_BUILD_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern HullSlotType rggrbitPartsSB[8];
 extern StringId     rgidsPartsSB[8];

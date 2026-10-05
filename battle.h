@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_BATTLE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint8_t rgbrcStart[136];
 

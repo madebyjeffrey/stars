@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_PRODUCE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 void  InitProduction(PROD *rgprod);
 void  FinishProduction(int16_t fWrite);

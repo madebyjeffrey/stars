@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 void BattleVCR(int16_t iBattle) {
     FARPROC  lpProc;

@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_STRUCTS_H
 
 #include <stdint.h>
-#include <windows.h>
 
 #include "enums.h"
 

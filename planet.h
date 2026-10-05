@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_PLANET_H
 
 #include <stdint.h>
-#include <windows.h>
 
 int16_t FGetBestDefensePart(PART *ppart);
 char   *PszProductionETA(PLANET *lppl, PLPROD *lpplprod, ProdItemType iItem, int16_t *etaFirst, int16_t *etaLast);

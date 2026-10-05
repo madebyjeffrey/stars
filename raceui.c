@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 int16_t RaceCreationWizard(HWND hwndParent, int16_t fReadOnly, int16_t fDontWrite) {
     WizardButton mdRet;

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 DWORD GetTextExtent(HDC hdc, LPCSTR str, int len) {
     SIZE size;

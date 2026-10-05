@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_FILE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern char     mpishdefishTutor[6];
 

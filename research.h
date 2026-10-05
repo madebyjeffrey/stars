@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_RESEARCH_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint16_t rggrbitBrParts[17];
 extern int32_t  rglTechCost[27];

@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_MSG_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern char    rgcMsgArgs[387];
 extern uint8_t acMSG[387];

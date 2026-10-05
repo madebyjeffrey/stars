@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_SHIP2_H
 
 #include <stdint.h>
-#include <windows.h>
 
 int16_t FStargateJump(FLEET *lpfl, int16_t isbsSrc, int16_t isbsDst, int16_t dDist);
 int16_t MdCalcStargateDamage(int16_t isbsSrc, int16_t isbsDst, int16_t dDist, int16_t wt, int16_t *ppctDmg);

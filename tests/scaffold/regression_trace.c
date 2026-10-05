@@ -11,7 +11,7 @@
 // be replayed for any range.
 
 #include <stdlib.h>
-#include "common.h"
+#include "win.h"
 
 int16_t __real_Random(int16_t c);
 int16_t __real_PctPlanetCapacity(PLANET *lppl);

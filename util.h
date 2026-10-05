@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_UTIL_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint32_t rgcrDrawStars2b[5];
 extern uint32_t rgcrDrawStars2a[5];

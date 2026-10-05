@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 void NewGameWizard(HWND hwnd, int16_t fReadOnly) {
     int16_t iStepMaxSoFar;

@@ -8,6 +8,68 @@
 #include <stdlib.h>
 
 /*
+ * Win32 basics
+ *
+ * The game code keeps the Win32 names it was written with. These define
+ * them where windows.h is not included; the UI files include windows.h
+ * first (win.h), and its definitions are the same.
+ */
+
+#ifndef TRUE
+#define TRUE  1
+#define FALSE 0
+#endif
+#ifndef LOWORD
+#define LOWORD(l)      ((uint16_t)(((uintptr_t)(l)) & 0xffff))
+#define HIWORD(l)      ((uint16_t)((((uintptr_t)(l)) >> 16) & 0xffff))
+#define LOBYTE(w)      ((uint8_t)(((uintptr_t)(w)) & 0xff))
+#define MAKELONG(a, b) ((int32_t)(((uint16_t)(((uintptr_t)(a)) & 0xffff)) | ((uint32_t)((uint16_t)(((uintptr_t)(b)) & 0xffff))) << 16))
+#endif
+#ifndef max
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
+// AlertSz's message box types and answers (IdAlertBox).
+#ifndef MB_OK
+#define MB_OK              0x0000
+#define MB_OKCANCEL        0x0001
+#define MB_YESNOCANCEL     0x0003
+#define MB_YESNO           0x0004
+#define MB_ICONHAND        0x0010
+#define MB_ICONQUESTION    0x0020
+#define MB_ICONEXCLAMATION 0x0030
+#define MB_ICONASTERISK    0x0040
+#define MB_TASKMODAL       0x2000
+#define IDOK               1
+#define IDCANCEL           2
+#define IDYES              6
+#define IDNO               7
+#endif
+
+// A Win32 RECT, for the frame window position in ini and the UI's structs.
+#ifndef _WINDEF_
+typedef struct tagRECT {
+#ifdef _WIN32
+    long left;
+    long top;
+    long right;
+    long bottom;
+#else
+    int32_t left;
+    int32_t top;
+    int32_t right;
+    int32_t bottom;
+#endif
+} RECT;
+#endif
+
+// Window and device context handles that game structs hold for the UI (RPT,
+// TUTOR, TILE). These match windows.h's STRICT declarations.
+typedef struct HWND__ *HWND;
+typedef struct HDC__  *HDC;
+
+/*
  * Win16 points
  *
  * Win16 POINT held 16-bit ints, and Stars writes records holding points to

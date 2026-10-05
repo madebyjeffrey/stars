@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 void SelectOursAtObject(POINT16 *ppt) {
     int16_t id;

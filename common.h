@@ -1,9 +1,9 @@
 #ifndef STARS_DECOMPILED_COMMON_H
 #define STARS_DECOMPILED_COMMON_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <windows.h>
 
 #include <ctype.h>
 #include <math.h>
@@ -28,12 +28,6 @@ static inline void RawStore32(void *p, uint32_t v) { memcpy(p, &v, sizeof v); }
 
 #include "enums.h"
 #include "native.h"
-#include "nativeui.h"
-
-// Application messages (WM_USER + 0x64...).
-#define WM_STARS_STARTUP  0x0464
-#define WM_STARS_HOST     0x0465
-#define WM_STARS_CONTINUE 0x0466
 
 // Native storage; the analysis model retains the original 18-byte layout.
 typedef jmp_buf ENV;
@@ -53,56 +47,29 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "ai4.h"
 #include "aiutil.h"
 #include "battle.h"
-#include "battleui.h"
 #include "build.h"
-#include "buildui.h"
 #include "create.h"
-#include "createui.h"
 #include "file.h"
-#include "fileui.h"
 #include "globals.h"
-#include "globalsui.h"
-#include "init.h"
 #include "log.h"
-#include "logui.h"
-#include "mdi.h"
 #include "memory.h"
 #include "mine.h"
-#include "mineui.h"
 #include "msg.h"
-#include "msgui.h"
 #include "parts.h"
 #include "planet.h"
-#include "planetui.h"
-#include "popup.h"
 #include "produce.h"
-#include "produceui.h"
 #include "race.h"
-#include "raceui.h"
-#include "report.h"
 #include "research.h"
-#include "researchui.h"
 #include "save.h"
-#include "scan.h"
 #include "ship.h"
-#include "shipui.h"
 #include "ship2.h"
-#include "ship2ui.h"
-#include "stars.h"
 #include "strings.h"
-#include "tb.h"
 #include "thing.h"
-#include "thingui.h"
 #include "turn.h"
-#include "ui.h"
 #include "turn2.h"
 #include "turn3.h"
-#include "tutor.h"
-#include "tutor2.h"
+#include "ui.h"
 #include "util.h"
-#include "utilui.h"
 #include "utilgen.h"
-#include "utilgenui.h"
-#include "vcr.h"
 
 #endif

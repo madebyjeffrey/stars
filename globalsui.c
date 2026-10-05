@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 BTLDATA       *vlpbdVCR = 0;
 BTLDATA       *vlpbdVCRNext = 0;

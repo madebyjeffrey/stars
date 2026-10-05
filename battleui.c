@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 INT_PTR CALLBACK RelationsDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     int16_t     i;

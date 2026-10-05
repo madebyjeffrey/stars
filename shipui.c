@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 void DrawShipOrders(HDC hdc, TILE *ptile, OBJ obj) {
     int16_t swp;

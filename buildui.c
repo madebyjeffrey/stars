@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 int16_t ShipBuilder(POINT16 ptDlgSize) {
     FARPROC lpProcSlot;

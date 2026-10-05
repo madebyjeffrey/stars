@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_TURN_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern int16_t rgpctMineHit[3];
 extern int16_t rgiWarpSafe[3];

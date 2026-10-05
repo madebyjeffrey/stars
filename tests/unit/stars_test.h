@@ -5,7 +5,7 @@
 // in its own process, so each test starts from the game's initial globals
 // and calls FStarsTestInit first. Helpers return FALSE on failure.
 
-#include "common.h"
+#include "win.h"
 
 // Every test links with --wrap=AlertSz: the game's message boxes are recorded
 // here instead of shown, so nothing waits for a click.

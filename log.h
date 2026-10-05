@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_LOG_H
 
 #include <stdint.h>
-#include <windows.h>
 
 void    LogSplitFleet(int16_t id);
 void    LogMergeFleet(int16_t id);

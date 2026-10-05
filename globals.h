@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_GLOBALS_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern BTLPLAN  *rglpbtlplan[16];
 extern COLDROP  *lpcd;
