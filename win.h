@@ -32,6 +32,7 @@
 #include "produceui.h"
 #include "raceui.h"
 #include "report.h"
+#include "reportui.h"
 #include "researchui.h"
 #include "scan.h"
 #include "ship2ui.h"
