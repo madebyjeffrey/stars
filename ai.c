@@ -518,7 +518,7 @@ void DoAiTurn(int16_t iPlayer, uint16_t wMdPlr) {
 
     idSav = idPlayer;
     fAi = TRUE;
-    wsprintf(szExt, MPCTD, iPlayer + 1);
+    CchSprintf(szExt, MPCTD, iPlayer + 1);
     DestroyCurGame();
     if (!FLoadGame(szBase, szExt)) {
         idPlayer = idSav;

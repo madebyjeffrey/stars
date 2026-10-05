@@ -130,7 +130,7 @@ projection defect, fixed above, or something since changed.
 ### SS Pop Steal — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders`; `util.c`: `GetFleetScannerRange`;
-`ship.c`: `TransferStuff`, `ChgCargo`.
+`ship.c`: `ChgCargo`; `shipui.c`: `TransferStuff`.
 Waypoint transport obtains theft permission from the scanner and sets
 `fStealing`. In its load path, the colonist/fuel check merely sets `fDone = TRUE`
 and then continues into cargo removal and loading; it does not reject the
@@ -147,7 +147,7 @@ loads nothing; stealing minerals is unchanged.
 
 ### [freepop] Hack — candidate; host validation is present
 
-`ship.c`: `FEnumCalcJettison`, `TransferStuff`, `ChgCargo`;
+`ship.c`: `FEnumCalcJettison`, `ChgCargo`; `shipui.c`: `TransferStuff`;
 `log.c`: `LogMakeValidXfer`, `FRunLogRecord` (cargo-transfer records);
 `turn2.c`: `FQueueColonistDrop`, `DropColonists`.
 Manual population on an uninhabited world is represented through pending drops
@@ -160,7 +160,7 @@ exploit no longer appears to work in JRC4.
 
 ### Cheap Starbase — fixed in 2.8
 
-`build.c`: `FCheckQueuedShip`, `SlotDlg`; `ship.c`: `CshQueued`,
+`buildui.c`: `FCheckQueuedShip`, `SlotDlg`; `ship.c`: `CshQueued`,
 `RemoveIshdefFromAllQueues`; `log.c`: `FRunLogRecord` (design changes);
 `turn2.c`: `CBuildProdItem`; `produce.c`: `GetProductionCosts`.
 Partial production stores a completion fraction (`PROD.pct`), and the next
@@ -180,7 +180,7 @@ covers the delete-and-recreate variant.
 
 ### Mineral Upload — fixed in 2.8
 
-`ship.c`: `TransferStuff`, `ChgCargo`; `log.c`: `FRunLogRecord`;
+`ship.c`: `ChgCargo`; `shipui.c`: `TransferStuff`; `log.c`: `FRunLogRecord`;
 `turn2.c`: `TransferToOthers`.
 When the host replays a transfer to another player's fleet or planet,
 `FRunLogRecord` removes the cargo from the source in its first pass and
@@ -201,7 +201,7 @@ as the "unable to transfer" message says.
 
 ### Target List Overload — fixed in 2.8
 
-`scan.c`: `ScannerWndProc`; `ship.c`: `ClickInShipOrders`.
+`scan.c`: `ScannerWndProc`; `shipui.c`: `ClickInShipOrders`.
 Both target-popup paths use `rgid[100]` and stop collecting entries at 100.
 Objects beyond the popup limit cannot be chosen through those menus.
 `scan.c`'s `FGetNextObjHere` provides a separate selection traversal, explaining
@@ -305,7 +305,7 @@ over a fleet crashed the native build (a NULL travel-distance read in
 ### Colonization Module Check — fixed in 2.8
 
 `turn3.c`: `SatisfyOrders` (colonize task); `ship2.c`: `FColonizer`;
-`build.c`: `IDropPart`, `SlotDlg`.
+`buildui.c`: `IDropPart`, `SlotDlg`.
 The host colonization check tests a slot's `grhst` and `iItem` against the two
 colonization modules without checking `cItem > 0`. An empty slot retaining its
 module identity can therefore qualify. `FColonizer` is a separate hull-based
@@ -319,8 +319,8 @@ with its module count set to 0 still colonized. The check now requires
 
 ### Race File Corruption — fixed in 2.8
 
-`race.c`: `RaceWizardDlg1`, `FSaveRace`, `IRaceChecksum`;
-`save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`; `mdi.c` (race load check).
+`raceui.c`: `RaceWizardDlg1`, `FSaveRace`; `race.c`: `IRaceChecksum`,
+`FWasRaceFile` (race load check); `save.c`: `WriteRtPlr`; `file.c`: `ReadRtPlr`.
 `IRaceChecksum` XORs the whole in-memory name buffers, including bytes
 after the terminator. `RaceWizardDlg1`'s OK path reads the names with
 `GetDlgItemText` without clearing the buffers (its radio-button path does
@@ -337,7 +337,7 @@ checksums a copy with the names zeroed after their terminators, as
 
 ### Random Race — fixed in 2.8
 
-`race.c`: `RaceWizardDlg1`, `RaceCreationWizard`; `create.c`: `GenerateWorld`,
+`raceui.c`: `RaceWizardDlg1`, `RaceCreationWizard`; `create.c`: `GenerateWorld`,
 `InitNewGamePlr`; `save.c`: `WriteRtPlr`.
 The wizard selects predefined race templates, including Random, and stores
 the resulting player data. `GenerateWorld` calls `CreateRandomRace` when
@@ -354,7 +354,7 @@ page and was still replaced at game creation. Custom now clears the bit.
 ### 32k Ship Limit Per Fleet — fixed in 2.8
 
 `structs.h`: `FLEET.rgcsh` (`int16_t[16]`); `ship.c`: `Merge2Fleets`,
-`FleetTransferCargoBalance`; `ship2.c`: `MergeFleetsDlg`;
+`FleetTransferCargoBalance`; `ship2ui.c`: `MergeFleetsDlg`;
 `turn3.c`: `SatisfyOrders` (merge task); `log.c`: `FRunLogRecord` (merge records).
 `Merge2Fleets` adds ship counts directly into signed 16-bit elements without
 a 32767 limit check. Counts crossing that boundary become negative, while many
@@ -372,11 +372,24 @@ ships that fit and leaves the others in their fleet; `FFleetMergeAll`
 leaves out a fleet whose ships wouldn't fit. Moving ships between two
 fleets in the client's transfer dialog was not changed.
 
+### Race File Name Overrun — fixed in 2.9
+
+`race.c`: `FWasRaceFile`; `create.c`: `GenNewGameFromFile`.
+`FWasRaceFile` copies the race file's whole path into `szRaceFile`, a
+16-byte buffer the race dialogs fill with a file name. Creating a universe
+from a definition file (`-a`) names each race by path, so the copy runs
+over the globals after it (`szPassLast`, the `-p` password, and the message
+buffer in the 2.8 build). Nothing read them before they were set again, so
+results did not change; a hardened `strcpy` (macOS) stops the program.
+
+**2.9:** found running `stars-host -a` on macOS. `FWasRaceFile` keeps only
+the file name, cut to fit, as the race dialogs store it.
+
 ### AR Starter Colonies — candidate
 
 `turn3.c`: `SatisfyOrders` (AR colonization/base setup); `turn2.c`: `Produce`,
-`CBuildProdItem`, `FBuildObject`; `produce.c`: `ChangeProduction`,
-`FinishProduction`, `GetProductionCosts`.
+`CBuildProdItem`, `FBuildObject`; `produce.c`: `FinishProduction`,
+`GetProductionCosts`; `produceui.c`: `ChangeProduction`.
 These create and process the initial base and production queue, and implement
 queue clearing. `Produce` distinguishes an absent queue from a nonempty one
 and calculates research allocation while walking production. A completed
@@ -396,8 +409,8 @@ to close have not been demonstrated.
 
 ### Font Problems on Non-English Windows — located configuration path
 
-`init.c`: `ReadIniSettings`, `FCreateFonts`; `report.c`: `DrawScoreReport`;
-`utilgen.c`: `DiaganolTextOut`.
+`init.c`: `ReadIniSettings`, `FCreateFonts`; `reportui.c`: `DrawScoreReport`;
+`utilgenui.c`: `DiaganolTextOut`.
 Font selection comes from INI settings and Windows font creation; score labels
 use the rotated-text rendering path. A missing/localized face or substituted
 font can change the labels' orientation and layout. Exact locale-specific
@@ -429,7 +442,7 @@ rest of its move, and the caught fleet finishes its pursuit.
 
 ### WP0 Pop Reload Ignored — candidate
 
-`ship.c`: `FEnumCalcJettison`, `TransferStuff`, `ClickInShipOrders`;
+`ship.c`: `FEnumCalcJettison`; `shipui.c`: `TransferStuff`, `ClickInShipOrders`;
 `log.c`: `LogMakeValidXfer`, `FRunLogRecord`;
 `turn2.c`: `FQueueColonistDrop`, `DropColonists`;
 `turn3.c`: `SatisfyOrders` (colonize task).
@@ -465,7 +478,7 @@ foreign-design/display path. Combat damage calculations are a separate path.
 
 ### Battle VCR Point of View — candidate, overlaps the shield report
 
-`vcr.c`: `VCRDlg`, `DrawVCR`, `GetVCRStats`; `build.c`: `DrawBuildSelHull`;
+`vcr.c`: `VCRDlg`, `DrawVCR`, `GetVCRStats`; `buildui.c`: `DrawBuildSelHull`;
 `util.c`: `UpdateShdefCost`, `GetFleetScannerRange`;
 `ship2.c`: `PctCloakFromLpfl`; `popup.c`: `DrawPopup`.
 The VCR opens ship-design inspection for its focused token. Several shared

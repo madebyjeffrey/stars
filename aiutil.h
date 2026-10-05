@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_AIUTIL_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern int32_t vrgAiPacketDist[2];
 extern uint8_t vrgSBAip[85];

@@ -16,7 +16,7 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   2.6j files and writes the same formats, marked as version 2.84 so that
   2.6j doesn't load them.
 - `main`: the 2.9 line, splitting the game into core, UI and host builds so
-  the host can run on Linux.
+  the host (`stars-host`) runs on Linux and macOS.
 
 ## Documentation
 
@@ -26,14 +26,16 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
   what the Win32/Win64 build changes, and the original behavior it reproduces.
 - [Known bugs](docs/KNOWN-BUGS.md): the original release bug list, mapped to
   source.
-- [Roadmap](docs/ROADMAP.md): the work planned for 2.8.
+- [Roadmap](docs/ROADMAP.md): the 2.9 split and the bug fixes still open.
 - [Changelog](CHANGELOG.md) and [versioning](docs/VERSIONING.md): what 2.8
   changes from 2.6j, and how versions and build numbers are assigned.
 
 ## Build
 
-The application uses Windows APIs. On macOS or Linux, build a Windows executable
-with CMake 3.23 or later, Ninja, and the x86_64 MinGW-w64 toolchain on PATH.
+The game (`stars.exe`) uses Windows APIs. On macOS or Linux, build it as a
+Windows executable with CMake 3.23 or later, Ninja, and the x86_64 MinGW-w64
+toolchain on PATH. The host alone (`stars-host`, below) builds with the
+native compiler.
 On macOS these build dependencies can be installed with Homebrew:
 
 ```sh
@@ -64,18 +66,53 @@ cmake --build --preset mingw-release
 ```
 
 This writes `dist/mingw-release/bin/stars.exe` with optimization enabled and
-debug data stripped. Test hooks are disabled in ordinary builds.
+debug data stripped. Test hooks are disabled in ordinary builds. The MinGW
+presets also build `stars-host.exe`.
+
+### stars-host
+
+`stars-host` is the game's host without its windows: it creates universes,
+generates turns and writes the dumps from the same command line as
+`stars.exe` (`-a game.def`, `-g[n] game.hst`, `-v game.hst`, `-b`, `-t`,
+`-s<seed>`, `-dm`/`-dp`/`-df game.mN`). `--ini stars.ini` reads the
+`stars.ini` settings a host uses (see below). It builds
+with the native compiler on Linux and macOS, with only CMake and Ninja:
+
+```sh
+make host               # or: cmake --preset host-release && cmake --build --preset host-release
+dist/host-release/bin/stars-host -g1 /path/to/game.hst
+```
+
+Turn generation rounds through x87 extended precision, which ARM lacks. On
+Apple silicon, `make host` builds the `macos-host-release` preset, an x86_64
+binary that Rosetta runs (`dist/macos-host-release/bin/stars-host`); it
+generates the same turns as `stars.exe`. A native arm64 build works, but
+its turns can differ, and CMake warns about it. `stars-host --version`
+prints the version, and `make test-host` runs the unit tests natively.
+
+Where `stars-host` differs from `stars.exe`:
+
+- It reads `stars.ini` only when given `--ini`, and then only the settings
+  a host uses: `[Files] Logging` and `[Misc] DefaultPassword`,
+  `NewReports` (per-player `-d` files such as `game.p1`), `NoHostNames`
+  and `Backups`. Without it they keep their defaults.
+- It doesn't wait for turns (`-w`).
+- On Linux and macOS it can't tell that another program has a game file
+  open, as Windows file sharing does.
+- Questions get the cautious answer (No, Cancel) and messages go to stderr.
 
 ## GitHub Actions
 
 Every push to `main` builds the optimized MinGW Release executable and updates
 the rolling [`latest` prerelease](https://github.com/sirgwain/stars/releases/tag/latest).
 Both `stars.exe` and `stars!.hlp` are attached; download them into the same
-directory. Superseded main builds remain available as workflow artifacts.
+directory. `stars-host-linux-x64.tar.gz` holds `stars-host` for x86-64 Linux,
+built with gcc and linked statically after its unit tests pass. Superseded
+main builds remain available as workflow artifacts.
 
 Pushing a version tag (for example `v2.8.0`) builds that tag's source, checks
 that it reports exactly that version, and publishes a release with the same
-two files. Other tags (such as `2.6jrc3`) publish releases named after the
+files (tags from before 2.9 have no `stars-host`). Other tags (such as `2.6jrc3`) publish releases named after the
 tag. The rolling `latest` tag is excluded. See
 [versioning](docs/VERSIONING.md) for how build numbers are derived:
 
@@ -90,7 +127,9 @@ The tutorial uses the same Release preset as the published builds, with the
 read-only test observer enabled. The native regression workflow also builds in
 Release mode on pull requests and main pushes, comparing
 all checkpoints through turn 150 against the checked-in native baseline
-(`tests/scaffold/fixtures/regression/native/`). The original game's
+(`tests/scaffold/fixtures/regression/native/`); it also runs every scenario
+through `stars-host` built natively on Linux (`make regression-host`), and
+the unit tests run natively there too (`make test-host`). The original game's
 checkpoints are kept alongside it as the record of 2.6j behavior.
 All workflows can also be run manually; the release workflow accepts `main`
 or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
@@ -105,6 +144,7 @@ comparison and AI update commands used by checkpoint testing:
 make regression        # every baseline scenario through turn 150
 make regression-quick  # smallai4 through turn 10
 make regression-export # after a full run, replace the baseline
+make regression-host   # the same run through stars-host, without Wine
 ```
 
 `make regression` builds the fixed-seed release `stars.exe` and

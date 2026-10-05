@@ -24,6 +24,42 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "host-debug",
+      "displayName": "stars-host with the native compiler (Debug)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/dist/host-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "host-release",
+      "inherits": "host-debug",
+      "displayName": "stars-host with the native compiler (Release)",
+      "binaryDir": "${sourceDir}/dist/host-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "macos-host-debug",
+      "inherits": "host-debug",
+      "displayName": "stars-host for x86_64 macOS, run by Rosetta on Apple silicon (Debug)",
+      "binaryDir": "${sourceDir}/dist/macos-host-debug",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
+      "name": "macos-host-release",
+      "inherits": "macos-host-debug",
+      "displayName": "stars-host for x86_64 macOS, run by Rosetta on Apple silicon (Release)",
+      "binaryDir": "${sourceDir}/dist/macos-host-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
@@ -41,7 +77,29 @@
       "name": "run-wine",
       "displayName": "Run stars.exe in Wine",
       "configurePreset": "mingw-debug",
-      "targets": ["run_in_wine"]
+      "targets": [
+        "run_in_wine"
+      ]
+    },
+    {
+      "name": "host-debug",
+      "displayName": "Build stars-host (native Debug)",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "host-release",
+      "displayName": "Build stars-host (native Release)",
+      "configurePreset": "host-release"
+    },
+    {
+      "name": "macos-host-debug",
+      "displayName": "Build stars-host (x86_64 macOS Debug)",
+      "configurePreset": "macos-host-debug"
+    },
+    {
+      "name": "macos-host-release",
+      "displayName": "Build stars-host (x86_64 macOS Release)",
+      "configurePreset": "macos-host-release"
     }
   ]
 }

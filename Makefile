@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all version-header save-cli compile test-unit scenario run-wine fmt compile-check res resources regression regression-quick regression-export tutorial tutorial-reject clean
+.PHONY: help all version-header save-cli compile host test-unit test-host scenario run-wine fmt compile-check res resources regression regression-quick regression-host regression-export tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -22,12 +22,22 @@ BASELINE_DIR     := tests/scaffold/fixtures/regression/native
 SCENARIOS ?= $(shell $(PYTHON) -c "import json; print(' '.join(json.load(open('$(BASELINE_DIR)/run.json'))['scenarios']))")
 THROUGH   ?= 150
 REGRESSION_ARGS = $(foreach s,$(SCENARIOS),--scenario $(s)) --through $(THROUGH)
+# stars-host with the native compiler. Apple silicon builds it for x86_64
+# (run by Rosetta) to keep x87 rounding; see docs/NATIVE-PORT.md.
+ifeq ($(shell uname -sm),Darwin arm64)
+HOST_PRESET ?= macos-host-release
+else
+HOST_PRESET ?= host-release
+endif
+HOST_WORK   ?= $(DIST_DIR)/scaffold/regression/host
 
 help:
 	@echo "Targets:"
 	@echo "  save-cli             Build the standalone test save CLI"
 	@echo "  compile              Build stars.exe with the MinGW CMake preset"
+	@echo "  host                 Build stars-host with the native compiler (HOST_PRESET=$(HOST_PRESET))"
 	@echo "  test-unit            Build and run the unit tests in tests/unit under Wine"
+	@echo "  test-host            Build and run the unit tests that need no windows, natively"
 	@echo "  scenario             Build a test game into dist/scenarios/SCENARIO (no SCENARIO: list them)"
 	@echo "  fmt                  Format C sources and headers (FORMAT_FILES=ai.c to limit)"
 	@echo "  compile-check        Check C syntax (FILES=ai.c to limit) and resources"
@@ -35,6 +45,7 @@ help:
 	@echo "  regression           Run the native regression and compare it with the baseline"
 	@echo "                       (SCENARIOS=\"noai smallai4\" and THROUGH=10 to limit)"
 	@echo "  regression-quick     Run smallai4 through turn 10 and compare"
+	@echo "  regression-host      Run the native regression with stars-host instead of stars.exe"
 	@echo "  regression-export    Replace the baseline with the last full regression run"
 	@echo "  tutorial             Run the complete AutoHotkey v2 tutorial under Wine"
 	@echo "  tutorial-reject      Verify early Generate is rejected"
@@ -52,6 +63,11 @@ compile:
 
 test-unit: compile
 	cd "$(DIST_DIR)/mingw-debug" && ctest --output-on-failure --timeout 300 $(CTEST_ARGS)
+
+# The unit tests that need no windows, built with the host preset and run
+# without Wine.
+test-host: host
+	cd "$(DIST_DIR)/$(HOST_PRESET)" && ctest --output-on-failure --timeout 300 $(CTEST_ARGS)
 
 # SCENARIO names one of the games in tests/scenarios/scenarios.c.
 SCENARIO_DIR = $(abspath $(DIST_DIR))/scenarios/$(SCENARIO)
@@ -104,6 +120,18 @@ regression: save-cli
 
 regression-quick:
 	$(MAKE) regression SCENARIOS=smallai4 THROUGH=10
+
+host:
+	$(CMAKE) --preset $(HOST_PRESET)
+	$(CMAKE) --build --preset $(HOST_PRESET)
+
+# The same run and baseline as `make regression`, through stars-host and
+# without Wine.
+regression-host: save-cli host
+	rm -rf "$(HOST_WORK)"
+	$(PYTHON) tests/scaffold/regression.py prepare --seed $(SEED) --exe "$(DIST_DIR)/$(HOST_PRESET)/bin/stars-host" --work "$(HOST_WORK)"
+	$(PYTHON) tests/scaffold/regression.py run --cli "$(SAVE_CLI)" --work "$(HOST_WORK)" $(REGRESSION_ARGS)
+	$(PYTHON) tests/scaffold/regression.py compare "$(BASELINE_DIR)" "$(HOST_WORK)" $(REGRESSION_ARGS) --report "$(DIST_DIR)/scaffold/regression/host-comparison.json"
 
 # For a commit that changes behavior on purpose: after a full `make
 # regression`, replace the baseline with that run.

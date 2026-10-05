@@ -143,6 +143,18 @@ checkpoints/001/... through checkpoints/150/...
 Checkpoint manifests contain commands, years, and raw SHA-256 hashes. Backups
 and diagnostic logs are not treated as game-state files.
 
+## stars-host
+
+`make regression-host` runs the same scenarios and launches through
+`stars-host` built with the native compiler, without Wine, and compares
+them with the same baseline. `regression.py` runs an executable without an
+`.exe` suffix directly and gives it POSIX paths. On Apple silicon the
+target builds `stars-host` for x86_64 (Rosetta), because turn generation
+needs x87 extended precision: a native arm64 build diverges in the
+Cybertron AI from turn 1 (`IdGetBestScannerDest` truncates
+`(long double)iSize * 0.3`, which is just under 360 with x87 and exactly
+360 in a 64-bit `long double`).
+
 ## Compare
 
 To compare a native run against the checked-in native baseline:

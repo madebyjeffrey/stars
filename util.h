@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_UTIL_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint32_t rgcrDrawStars2b[5];
 extern uint32_t rgcrDrawStars2a[5];
@@ -19,7 +18,6 @@ void     CalcPctSurvive(PLANET *lppl, float *ppct, float *ppctSmart);
 int16_t  FLookupPlanet(int16_t iPlanet, PLANET *ppl);
 int32_t  DpOfLpflIshdef(FLEET *lpfl, int16_t ishdef);
 int16_t  FLookupThing(int16_t idth, THING *pth);
-void     SelectOursAtObject(POINT16 *ppt);
 int32_t  LComputePower(SHDEF *lpshdef);
 void     ComputeShdefPowers();
 int32_t  DpShieldOfShdef(SHDEF *lpshdef, int16_t iplr);
@@ -48,7 +46,6 @@ FLEET   *LpflNewSplit(FLEET *pfl);
 int16_t  FFleetMergeAll(FLEET *pfl);
 int16_t  FFleetSplitAll(FLEET *pfl);
 char    *PszGetLocName(GrobjClass grobj, int16_t id, int16_t x, int16_t y);
-int16_t  CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall);
 int16_t  IshdefPrimaryFromLpfl(FLEET *lpfl, int16_t *pcDiff);
 char    *PszGetDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 double   DGetDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
@@ -63,7 +60,6 @@ int32_t  LCalcFuelGainFromRamScoops(FLEET *lpfl, int16_t iWarp, int32_t dTravel)
 int32_t  CalcPlayerScore(int16_t iPlr, SCORE *pscore);
 void     GetTrueHullCost(int16_t iPlayer, HUL *lphul, uint16_t *rgCost);
 void     DecorateHullName(int16_t iplr, int16_t ish, char *psz);
-void     DrawABunchOfStars(HDC hdc, RECT *prc);
 int16_t  FMatchTarget(FLEET *lpflTarget, MdTarget mdTarget, int16_t fExact);
 void     ValidateWaypoints();
 int32_t  ChgPopFromPlanet(PLANET *lppl, int16_t fUpdate);
@@ -72,9 +68,14 @@ int16_t  FFleetCanJumpgate(FLEET *lpfl);
 int32_t  WtFromLpfl(FLEET *lpfl);
 int16_t  FCanBuildShdef(SHDEF *lpshdef, int16_t iplr);
 int16_t  IshFindSimilarDesign(HUL *lphul, int16_t iPlrDst);
-void     DrawPlanetPrintDot(HDC hdc, int16_t x, int16_t y, int16_t iSize);
 void     ClearFile(int16_t dt);
 void     OutputSz(int16_t dt, char *sz);
 void     TurnLog(StringId ids);
+int16_t  PtToScan(int16_t d);
+int16_t  ScanToPt(int16_t d);
+char    *SzVersion();
+void     ChangeScanSel(SCAN *pscan, int16_t fValidScan);
+int16_t  FFindSomethingAndSelectIt();
+int16_t  CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall);
 
 #endif

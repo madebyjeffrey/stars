@@ -13,7 +13,7 @@ static void test_IRaceChecksum_ignores_stale_name_bytes(void) {
 
     TEST_ASSERT(FStarsTestInit());
     TEST_ASSERT(FStarsTestDir("IRaceChecksum_stale_name", szDir, sizeof(szDir)));
-    TEST_ASSERT(FWasRaceFile("data\\humanoid.r1", FALSE));
+    TEST_ASSERT(FWasRaceFile("data" szDirSep "humanoid.r1", FALSE));
     plr = vplr;
     strcpy(plr.szName, "Longname");
     strcpy(plr.szNames, "Longnames");
@@ -22,7 +22,7 @@ static void test_IRaceChecksum_ignores_stale_name_bytes(void) {
     strcpy(plr.szNames, "Bos");
 
     // Save as FSaveRace does.
-    snprintf(szFile, sizeof(szFile), "%s\\short.r1", szDir);
+    snprintf(szFile, sizeof(szFile), "%s%sshort.r1", szDir, szDirSep);
     TEST_ASSERT(FCreateFile(dtRace, iplrNone, szFile));
     WriteRtPlr(&plr, NULL);
     icksum = IRaceChecksum(&plr);
@@ -86,6 +86,7 @@ static void test_ReadRtPlr_bounds_record_lengths(void) {
         TEST_CHECK(buf.rgchGuard[i] == 0x55);
 }
 
+#ifdef _WIN32
 // Random race: the Random template is only the random-race bit, which
 // GenerateWorld replaces with a random race. Choosing Custom on the first
 // wizard page keeps the race being edited, so a race that had been Random
@@ -108,8 +109,11 @@ static void test_RaceWizardDlg1_custom_clears_random(void) {
     DestroyWindow(hwnd);
     TEST_CHECK_(GetRaceGrbit(&vplr, ibitRaceAIPlayer) == 0, "the custom race is still random");
 }
+#endif
 
 TEST_LIST = {{"IRaceChecksum ignores stale name bytes", test_IRaceChecksum_ignores_stale_name_bytes},
              {"ReadRtPlr bounds record lengths", test_ReadRtPlr_bounds_record_lengths},
+#ifdef _WIN32
              {"RaceWizardDlg1 Custom clears the random-race bit", test_RaceWizardDlg1_custom_clears_random},
+#endif
              {NULL, NULL}};

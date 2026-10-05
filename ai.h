@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_AI_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern uint8_t              vrgAiRobotoidResOrder[36];
 extern uint8_t              vrgTDAip[141];

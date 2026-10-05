@@ -1,15 +1,28 @@
 # Unit tests
 
 Each `test_<name>.c` here is an [acutest](https://github.com/mity/acutest)
-program linked with the game code (the `stars_core` object library) and its
-resources. They build as Windows console programs with the normal MinGW
-build, and CTest runs them through Wine:
+program linked with the game code (the `stars_core` and `stars_ui` object
+libraries) and its resources. They build as Windows console programs with
+the normal MinGW build, and CTest runs them through Wine:
 
 ```sh
 make test-unit                           # build mingw-debug and run them all
 make test-unit CTEST_ARGS='-R test_turn' # one file
 dist/mingw-debug/tests/test_turn.exe --list   # under wine: the tests in a file
 ```
+
+They also build natively with the host presets, linked with the game code
+and `hostui.c` instead of the Windows interface, and run without Wine:
+
+```sh
+make test-host                           # macos-host-release on Apple silicon, host-release elsewhere
+make test-host CTEST_ARGS='-R test_turn'
+```
+
+The native build leaves out what needs Windows: `test_native_ports.c`
+(`--wrap` is GNU ld's) and the dialog tests in `test_battle.c` and
+`test_race.c` (`#ifdef _WIN32`). Use `szDirSep` for paths and `getcwd` for
+the working directory so a test builds on both.
 
 Acutest runs every test in its own process, so each test starts from the
 game's initial globals. Tests run in `<build>/tests`, where CMake copies the
@@ -30,12 +43,23 @@ fixture race to `data/humanoid.r1`.
   behavior needs two generations. `test_turn.c` shows the plumbing and
   `test_ai4.c` a full example.
 
+## Golden files
+
+`test_report.c` checks the universe, planet and fleet dumps against
+`tests/unit/golden`, so the Windows build and `stars-host` keep writing
+the same files. If a change to the dumps is intended, regenerate them from
+the Windows build and commit them with the change:
+
+```sh
+cd dist/mingw-debug/tests && STARS_UPDATE_GOLDEN=1 wine ./test_report.exe
+```
+
 ## Bug fixes
 
 A bug fix in [docs/ROADMAP.md](../../docs/ROADMAP.md) step 5 adds a test that
 fails on the code before the fix. Name the test after the behavior it
 checks and put it in the file for the source file that holds the fix.
-Every test links with `--wrap=AlertSz`: the game's message boxes are
-recorded in `cStarsTestAlert`/`szStarsTestAlert` instead of shown (Yes/No
-boxes answer Yes). `test_native_ports.c` also wraps file I/O (see
+The game's message boxes are recorded in `cStarsTestAlert`/`szStarsTestAlert`
+instead of shown (Yes/No boxes answer Yes): on Windows every test links with
+`--wrap=AlertSz`, and natively `stars_test.c` supplies `IdAlertBox`. `test_native_ports.c` also wraps file I/O (see
 `CMakeLists.txt`); give other tests that need wraps the same treatment.

@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_SAVE_H
 
 #include <stdint.h>
-#include <windows.h>
 
 void    WriteOrders(FLEET *lpfl);
 void    WriteRtPlr(PLAYER *pplr, uint8_t *pbStore);

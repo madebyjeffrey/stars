@@ -15,7 +15,6 @@ INT_PTR CALLBACK PanicDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 void             ShowTutor(int16_t fShow);
 void             DrawTutorText(HWND hwnd);
 void             StartTutor(int16_t fRestart);
-void             AdvanceTutor();
 void             EndTutor(int16_t fClose);
 void             SaveGameState();
 void             RestoreGameState();

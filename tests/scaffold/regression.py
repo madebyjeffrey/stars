@@ -47,9 +47,8 @@ def prepare(args):
         lines = (ROOT / f"tests/scaffold/fixtures/regression/{name}.def").read_text().splitlines()
         lines[1] = lines[1].rsplit(" ", 1)[0] + f" {args.seed}"
         manifest["fixtures"][name] = hashlib.sha256("\n".join(lines).encode("ascii")).hexdigest()
-        game_dir = windows_path(dest)
-        lines[4] = game_dir + "\\human.r1"
-        lines[-1] = game_dir + "\\game.xy"
+        lines[4] = game_path(exe, dest, "human.r1")
+        lines[-1] = game_path(exe, dest, "game.xy")
         (dest / "game.def").write_bytes(("\r\n".join(lines) + "\r\n").encode("ascii"))
         shutil.copyfile(ROOT / "tests/scaffold/fixtures/newgame/tiny/humanoid.r1", dest / "human.r1")
         manifest["scenarios"][name] = {p.name: digest(p) for p in dest.iterdir()}
@@ -75,6 +74,19 @@ def checked_files(directory, checksums, label):
 def windows_path(path):
     """windows_path converts a host path to Wine's Z: drive."""
     return "Z:" + str(path).replace("/", "\\")
+
+
+def runs_in_wine(exe):
+    """runs_in_wine tells a Windows executable (run under Wine) from a native
+    stars-host built with the host presets."""
+    return Path(exe).suffix.lower() == ".exe"
+
+
+def game_path(exe, path, filename):
+    """game_path names a file in a game directory the way exe reads paths."""
+    if runs_in_wine(exe):
+        return windows_path(path) + "\\" + filename
+    return str(Path(path) / filename)
 
 
 def copy_files(source, destination, filenames):
@@ -137,9 +149,9 @@ def launch_command(exe, seed, directory, turn, previous):
     -s<seed> replaces the clock as the startup seed, so a launch repeats
     exactly; the seed resets on every launch.
     """
-    game_path = windows_path(directory)
-    flags = ["-a", game_path + "\\game.def"] if turn == 0 else [f"-g{turn - previous}", game_path + "\\game.hst"]
-    return ["wine", str(exe), f"-s{seed}", *flags], directory
+    flags = ["-a", game_path(exe, directory, "game.def")] if turn == 0 else [f"-g{turn - previous}", game_path(exe, directory, "game.hst")]
+    launcher = ["wine"] if runs_in_wine(exe) else []
+    return [*launcher, str(exe), f"-s{seed}", *flags], directory
 
 
 def capture_checkpoint(directory, snapshots, name, turn, command, exit_code):

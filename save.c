@@ -298,9 +298,9 @@ int16_t FWriteDataFile(char *pszFileBase, int16_t iPlayer, int16_t fAppend) {
     MarkPlayersThatSentMsgs(iPlayer);
     MarkPlanetsPlayerLost(iPlayer);
     if (iPlayer == iplrNone) {
-        wsprintf(szWork, "%s.hst", pszFileBase);
+        CchSprintf(szWork, "%s.hst", pszFileBase);
     } else {
-        wsprintf(szWork, "%s.m%d", pszFileBase, iPlayer + 1);
+        CchSprintf(szWork, "%s.m%d", pszFileBase, iPlayer + 1);
     }
     penvMemSav = penvMem;
     penvMem = &env;
@@ -969,12 +969,12 @@ void SetSzWorkFromDt(DtFileType dt, int16_t iPlayer) {
 
     pchDot = strrchr(szBase, 46);
     if (pchDot) {
-        pchSlash = strrchr(szBase, 92);
+        pchSlash = strrchr(szBase, chDirSep);
         if (!pchSlash || pchSlash < pchDot) {
             *pchDot = 0;
         }
     }
-    c = wsprintf(szWork, "%s.", szBase);
+    c = CchSprintf(szWork, "%s.", szBase);
     switch (dt) {
     case dtXY:
     default:
@@ -986,7 +986,7 @@ void SetSzWorkFromDt(DtFileType dt, int16_t iPlayer) {
     case dtLog:
     case dtTurn:
     case dtHist:
-        wsprintf(&szWork[c], "%c%d", dt == dtLog ? 120 : dt == dtHist ? 104 : 109, iPlayer + 1);
+        CchSprintf(&szWork[c], "%c%d", dt == dtLog ? 120 : dt == dtHist ? 104 : 109, iPlayer + 1);
     }
     return;
 }
@@ -1029,7 +1029,7 @@ void WriteBOF(int16_t iPlayer, int16_t dt, int16_t fMulti) {
     rtbof.turn = game.turn;
     rtbof.fCrippled = FALSE;
     rtbof.iPlayer = iPlayer;
-    rtbof.lSaltTime = (int16_t)(LOWORD(GetTickCount()) + Random(2000));
+    rtbof.lSaltTime = (int16_t)(LOWORD(DwTickCount()) + Random(2000));
     rtbof.dt = dt;
     rtbof.fDone = gd.fSubmit;
     rtbof.fInUse = gd.fHostMode;
@@ -1123,7 +1123,7 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
                 ((PLAYER *)rgbCur)->idAi = idAiMaid;
             }
             ((PLAYER *)rgbCur)->lSalt = ~((PLAYER *)rgbCur)->lSalt;
-            _llseek(hf, (int16_t)-(hdrCur.cb + 2), 1);
+            LSeekFile(hf, (int16_t)-(hdrCur.cb + 2), 1);
             SetFileSeeds(lSeedSav1, lSeedSav2);
             WriteRt(rtPlr, hdrCur.cb, rgbCur);
             fChange = dt == dtTurn;
@@ -1132,13 +1132,13 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
         break;
     }
     if (fChange) {
-        _llseek(hf, 0, 0);
+        LSeekFile(hf, 0, 0);
         WriteRt(rtBOF, 16, &rtbof);
     }
     fSuccess = TRUE;
 LBadFile:
     if ((dt & 0x2000) && fSuccess) {
-        _llseek(hf, 0, 2);
+        LSeekFile(hf, 0, 2);
     } else {
         StreamClose();
     }
@@ -1164,7 +1164,7 @@ void WriteRt(RecordType rt, int16_t cb, void *rg) {
 }
 
 void RgToStream(void *rg, uint16_t cb) {
-    if (cb != 0 && _lwrite(hf, rg, cb) != cb) {
+    if (cb != 0 && CbWriteFile(hf, rg, cb) != cb) {
         AlertSz(PszFormatIds(idsErrorWritingFile, NULL), MB_ICONHAND);
         StarsLongJump(penvMem, -1);
     }

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 uint8_t rgPalGray[20] = {10, 20, 30, 40, 61, 71, 81, 92, 112, 122, 133, 143, 161, 171, 182, 193, 215, 225, 235, 245};
 
@@ -21,9 +21,6 @@ int16_t FCreateStuff() {
     } else {
         gd.mdScreenSize = 3;
     }
-    gd.fNoIdleChecks = FALSE;
-    gd.fAisDone = FALSE;
-    vplr = vrgplrDef[0];
     hrgnHuge = CreateRectRgn(-10, -10, 2000, 2000);
     hrgnScratch = CreateRectRgn(0, 0, 10, 10);
     hbrShip = HbrGet(65280);
@@ -141,8 +138,6 @@ int16_t FCreateStuff() {
     rghiconVCR[4] = LoadIcon(hInst, "Torp2Ico");
     rghiconVCR[5] = LoadIcon(hInst, "Torp3Ico");
     rghiconVCR[6] = LoadIcon(hInst, "Torp4Ico");
-    lpLog = LpAlloc(32000, htLog);
-    lpMsg = LpAlloc(0xffc8, htMsg);
     lpfnFakeComboProc = MakeProcInstance(FakeComboProc, hInst);
     lpfnFakeCEProc = MakeProcInstance(FakeCEProc, hInst);
     lpfnFakeEditProc = MakeProcInstance(FakeEditProc, hInst);
@@ -153,8 +148,7 @@ int16_t FCreateStuff() {
     lpfnGaugeDlgProc = MakeProcInstance(ProgressGaugeDlg, hInst);
     lpb2k = LpAlloc(0x800, htPerm);
     vlprgidMisc = LpAlloc(0x800, htPerm);
-    vlprgidPlanet = LpAlloc(0x800, htPerm);
-    vlprgidFleet = LpAlloc(0x800, htPerm);
+    InitGameStuff();
     if (fFailed || !hbmpScanner || !hbmpUnknownPlanet || !hbmpBackBld || !hdibRaces || !hdibRacesT || !hdibRacesX || !hbmpMono || !hbmpScanShip || !hbmpMsg ||
         !hiconHost || !hiconStars || !hiconWait) {
         AlertSz(PszFormatIds(idsUnableLoadBitmaps, NULL), MB_ICONHAND);

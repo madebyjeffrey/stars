@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 ITEMACTION rgiaUnloadAllCol[5] = {{0}, {0}, {0}, {.iAction = iActionUnloadAll}};
 ITEMACTION rgiaQuikDrop[5] = {{.iAction = iActionUnloadAll},
@@ -221,7 +221,7 @@ void StartTutor(int16_t fRestart) {
             cch = CchGetString(idsTutorial, szBase);
             if (!fRestart) {
                 strcat(szBase, ".xy");
-                if (_access(szBase, 0) != -1 &&
+                if (FFileExists(szBase) &&
                     AlertSz(PszFormatIds(idsTutorialHasRunBeforeWouldLikeDestroy, NULL), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL) != IDYES) {
                     szBase[cch] = 0;
                     strcat(szBase, ".m1");

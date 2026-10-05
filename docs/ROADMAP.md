@@ -9,9 +9,13 @@ patch releases). `main` is the 2.9 line.
 Split the game into separate builds so the host can run on Linux:
 
 - **Core:** turn generation and file I/O, with no Windows UI dependencies.
-- **UI:** the Win32 client on top of the core.
+  Done: the game files (`STARS_CORE_SOURCES`) include only `common.h` and
+  reach the player only through `ui.h`.
+- **UI:** the Win32 client on top of the core. Done: the `*ui.c` files and
+  the other UI files (`STARS_UI_SOURCES`) include `win.h`.
 - **Host:** a command-line build of the core (`-g`, `-a` and the like) for
-  Windows and Linux.
+  Windows and Linux. Done: `stars-host` (`host.c`, `hostui.c`), released for
+  x86-64 Linux; the MinGW build also makes `stars-host.exe`.
 
 To keep in mind:
 
@@ -19,9 +23,26 @@ To keep in mind:
   native regression baseline is the test: the Linux host's run must match
   it. Watch the x87 rounding casts (`long double`), `qsort16` tie order and
   the RNG first.
-- The product name's `x64` (`2.8x64`) is fixed in `cmake/version.cmake`;
-  give each build its own platform label.
+- Each build shows its platform in its version name (done; see
+  [VERSIONING.md](VERSIONING.md)).
+
 - The file format stays at 2.84 unless a record changes.
+
+Verified: `stars-host` matches the native baseline under Wine and on x86-64
+macOS (`make regression-host`), and its `-v` check file matches
+`stars.exe`'s. CI runs the regression and the native unit tests (`make
+test-host`) on x86-64 Linux.
+
+The dumps (`-dm`, `-dp`, `-df`, which TotalHost's movie scripts use) are
+game code too (`report.c`, with the report window in `reportui.c`):
+`stars-host` writes them, byte for byte as `stars.exe` does, and
+`test_report` checks them against golden files on both builds. With `--ini`
+it reads the `stars.ini` settings a host uses, so TotalHost can run it
+instead of `stars.exe` under Wine ([TOTALHOST.md](TOTALHOST.md)).
+
+Left:
+
+- Confirm the release's static Linux build on its first run from `main`.
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`
 and cherry-pick to `2.8`.
@@ -35,7 +56,7 @@ Work proceeded in this order:
 3. Reverting the Win16 parity emulation, one commit each (done).
 4. Replacing the `win16defines.h` shims with native Win32 code, one group at
    a time, behavior-neutral (done; what the port still needs is in
-   `native.h`/`native.c`).
+   `native.h`/`native.c` and `nativeui.h`/`nativeui.c`).
 5. Original bug fixes from [KNOWN-BUGS.md](KNOWN-BUGS.md) (below).
 
 ## 5. Bug fixes
@@ -66,10 +87,11 @@ as an exploit.
 
 Ported the acutest setup from the earlier `stars-decompile` effort; see
 [tests/unit/README.md](../tests/unit/README.md). The game sources build once
-as the `stars_core` object library, linked into `stars.exe` and into one
-acutest executable per `tests/unit/test_<file>.c`. CTest runs the tests
-under Wine (`make test-unit`, and the unit-test CI workflow). Acutest runs
-each test in its own process, so tests start from fresh globals.
+as the `stars_core` and `stars_ui` object libraries, linked into `stars.exe`
+and into one acutest executable per `tests/unit/test_<file>.c`. CTest runs
+the tests under Wine (`make test-unit`, and the unit-test CI workflow); 2.9
+also builds those that need no windows natively (`make test-host`). Acutest
+runs each test in its own process, so tests start from fresh globals.
 
 - Function tests call one function with crafted inputs.
 - Turn tests use `stars_test.h` to create a tiny game (optionally with AI

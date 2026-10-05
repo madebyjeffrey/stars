@@ -1,6 +1,6 @@
 // Read-only UI test observer. Linked only with STARS_TEST_TUTORIAL=ON.
 #include <stdarg.h>
-#include "common.h"
+#include "win.h"
 
 int16_t __real_InitInstance(int16_t nCmdShow);
 

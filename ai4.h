@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_AI4_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern CybertronRecipeOffset vrgCyberIshAip[36];
 extern uint8_t               vrgCyberAip[301];

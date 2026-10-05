@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_TURN2_H
 
 #include <stdint.h>
-#include <windows.h>
 
 void    Produce();
 int16_t CBuildProdItem(PLANET *lppl, PROD *lpprod, PROD *pprodPartial, int32_t *rgRes, int16_t fAlchemy, int16_t *pmdStatus, int16_t fCalcOnly);

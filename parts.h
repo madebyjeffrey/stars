@@ -2,7 +2,6 @@
 #define STARS_DECOMPILED_PARTS_H
 
 #include <stdint.h>
-#include <windows.h>
 
 extern SHDEF     rgshdefSBT[4];
 extern BEAM      rgbeam[24];

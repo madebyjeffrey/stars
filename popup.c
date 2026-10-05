@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 BattleUnitFlags mpimdgrbitBU[8] = {grBuClassUnarmed, grBuClassUnarmed, grBuClassScout,   grBuClassWarship,
                                    grBuClassUtility, grBuClassBomber,  grBuClassUnarmed, grBuClassUnarmed};

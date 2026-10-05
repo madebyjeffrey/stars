@@ -48,4 +48,73 @@ static void test_DumpPlanets_mines_and_factories(void) {
     TEST_CHECK_(fFound, "no row for %s", szName);
 }
 
-TEST_LIST = {{"DumpPlanets mines and factories", test_DumpPlanets_mines_and_factories}, {NULL, NULL}};
+// FSameAsGolden compares a dump with its expected copy in
+// tests/unit/golden, or writes the copy when STARS_UPDATE_GOLDEN is set.
+static int16_t FSameAsGolden(const char *szExt) {
+    char   szFile[MAX_PATH];
+    char   szGolden[MAX_PATH];
+    char   rgb1[4096];
+    char   rgb2[4096];
+    size_t cb1;
+    size_t cb2;
+    FILE  *pf1;
+    FILE  *pf2;
+    int    fSame;
+
+    snprintf(szFile, sizeof(szFile), "%s.%s", szBase, szExt);
+    snprintf(szGolden, sizeof(szGolden), "%s/dumps.%s", STARS_TEST_GOLDEN_DIR, szExt);
+    pf1 = fopen(szFile, "rb");
+    if (pf1 == NULL)
+        return FALSE;
+    pf2 = fopen(szGolden, getenv("STARS_UPDATE_GOLDEN") ? "wb" : "rb");
+    if (pf2 == NULL) {
+        fclose(pf1);
+        return FALSE;
+    }
+    fSame = TRUE;
+    if (getenv("STARS_UPDATE_GOLDEN")) {
+        while ((cb1 = fread(rgb1, 1, sizeof(rgb1), pf1)) > 0)
+            fwrite(rgb1, 1, cb1, pf2);
+    } else {
+        do {
+            cb1 = fread(rgb1, 1, sizeof(rgb1), pf1);
+            cb2 = fread(rgb2, 1, sizeof(rgb2), pf2);
+            if (cb1 != cb2 || memcmp(rgb1, rgb2, cb1) != 0)
+                fSame = FALSE;
+        } while (fSame && cb1 > 0);
+    }
+    fclose(pf1);
+    fclose(pf2);
+    return fSame;
+}
+
+// The universe, planet and fleet dumps (-dm, -dp, -df) are what TotalHost
+// reads for its movies, and stars-host writes them off Windows. They must
+// match the Windows build's, kept in tests/unit/golden, in both the
+// original layout and the per-player one ([Misc] NewReports=1).
+static void test_Dumps_match_golden_files(void) {
+    char        szDir[MAX_PATH];
+    const char *rgszAi[] = {"#1 4"};
+    int16_t     fPerPlayer;
+
+    TEST_ASSERT(FStarsTestInit());
+    TEST_ASSERT(FStarsTestDir("Dumps_match_golden_files", szDir, sizeof(szDir)));
+    TEST_ASSERT(FStarsTestNewGame(szDir, 12345, rgszAi, 1));
+    TEST_ASSERT(FStarsTestGenerate());
+    TEST_ASSERT(FStarsTestGenerate());
+    TEST_ASSERT(FStarsTestLoadPlayer(0));
+    for (fPerPlayer = FALSE; fPerPlayer <= TRUE; fPerPlayer++) {
+        gd.fPerPlayerDumps = fPerPlayer;
+        DumpUniverse();
+        DumpPlanets();
+        DumpFleets();
+    }
+    TEST_CHECK_(FSameAsGolden("map"), "game.map differs from tests/unit/golden/dumps.map");
+    TEST_CHECK_(FSameAsGolden("pla"), "game.pla differs from tests/unit/golden/dumps.pla");
+    TEST_CHECK_(FSameAsGolden("fle"), "game.fle differs from tests/unit/golden/dumps.fle");
+    TEST_CHECK_(FSameAsGolden("p1"), "game.p1 differs from tests/unit/golden/dumps.p1");
+    TEST_CHECK_(FSameAsGolden("f1"), "game.f1 differs from tests/unit/golden/dumps.f1");
+}
+
+TEST_LIST = {
+    {"DumpPlanets mines and factories", test_DumpPlanets_mines_and_factories}, {"Dumps match golden files", test_Dumps_match_golden_files}, {NULL, NULL}};

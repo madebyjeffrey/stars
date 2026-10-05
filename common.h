@@ -1,9 +1,9 @@
 #ifndef STARS_DECOMPILED_COMMON_H
 #define STARS_DECOMPILED_COMMON_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <windows.h>
 
 #include <ctype.h>
 #include <math.h>
@@ -29,11 +29,6 @@ static inline void RawStore32(void *p, uint32_t v) { memcpy(p, &v, sizeof v); }
 #include "enums.h"
 #include "native.h"
 
-// Application messages (WM_USER + 0x64...).
-#define WM_STARS_STARTUP  0x0464
-#define WM_STARS_HOST     0x0465
-#define WM_STARS_CONTINUE 0x0466
-
 // Native storage; the analysis model retains the original 18-byte layout.
 typedef jmp_buf ENV;
 
@@ -56,34 +51,26 @@ typedef int (*QSORTCOMPARE)(const void *, const void *);
 #include "create.h"
 #include "file.h"
 #include "globals.h"
-#include "init.h"
 #include "log.h"
-#include "mdi.h"
 #include "memory.h"
 #include "mine.h"
 #include "msg.h"
 #include "parts.h"
 #include "planet.h"
-#include "popup.h"
 #include "produce.h"
 #include "race.h"
 #include "report.h"
 #include "research.h"
 #include "save.h"
-#include "scan.h"
 #include "ship.h"
 #include "ship2.h"
-#include "stars.h"
 #include "strings.h"
-#include "tb.h"
 #include "thing.h"
 #include "turn.h"
 #include "turn2.h"
 #include "turn3.h"
-#include "tutor.h"
-#include "tutor2.h"
+#include "ui.h"
 #include "util.h"
 #include "utilgen.h"
-#include "vcr.h"
 
 #endif

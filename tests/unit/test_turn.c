@@ -49,11 +49,11 @@ static void test_generate_backs_up_unsubmitted_turn(void) {
     TEST_ASSERT(FStarsTestInit());
     TEST_ASSERT(FStarsTestDir("generate_backs_up_unsubmitted_turn", szDir, sizeof(szDir)));
     TEST_ASSERT(FStarsTestNewGame(szDir, 12345, NULL, 0));
-    snprintf(szFile, sizeof(szFile), "%s\\game.m1", szDir);
+    snprintf(szFile, sizeof(szFile), "%s%sgame.m1", szDir, szDirSep);
     TEST_ASSERT(FReadFile(szFile, rgbBefore, sizeof(rgbBefore), &cbBefore));
 
     TEST_ASSERT(FStarsTestGenerate());
-    snprintf(szFile, sizeof(szFile), "%s\\backup\\game.m1", szDir);
+    snprintf(szFile, sizeof(szFile), "%s%sbackup%sgame.m1", szDir, szDirSep, szDirSep);
     TEST_ASSERT_(FReadFile(szFile, rgbBackup, sizeof(rgbBackup), &cbBackup), "no %s", szFile);
     TEST_CHECK(cbBackup == cbBefore && memcmp(rgbBackup, rgbBefore, cbBefore) == 0);
 }
@@ -132,16 +132,16 @@ static void test_MoveFleets_caught_pursuer_keeps_moving(void) {
 // way it travels. With a 14% chance per light-year, 80 light-years inside
 // the field all but guarantee a hit.
 static void test_FTravelThroughMineFields_speed_bump_any_direction(void) {
-    char        szDir[MAX_PATH];
-    const char *rgszAi[] = {"#1 4"};
+    char                 szDir[MAX_PATH];
+    const char          *rgszAi[] = {"#1 4"};
     static const int16_t rgdxy[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-    PLANET     *lppl;
-    FLEET      *lpfl;
-    THING      *lpth;
-    POINT16     pt;
-    int16_t     ish;
-    int16_t     idir;
-    int16_t     dTravel;
+    PLANET              *lppl;
+    FLEET               *lpfl;
+    THING               *lpth;
+    POINT16              pt;
+    int16_t              ish;
+    int16_t              idir;
+    int16_t              dTravel;
 
     for (idir = 0; idir < 4; idir++) {
         TEST_CASE_("direction %d,%d", rgdxy[idir][0], rgdxy[idir][1]);

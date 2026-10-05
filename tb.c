@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 char    vrgTBBtn[29] = {tbNormalView,
                         tbSurfaceMineralView,

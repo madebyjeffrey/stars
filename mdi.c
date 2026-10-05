@@ -1,6 +1,6 @@
-#include "common.h"
+#include "win.h"
 
-char    rgTOWidth[2][2] = {{-3}, {2, 1}};
+char rgTOWidth[2][2] = {{-3}, {2, 1}};
 
 int16_t InitMDIApp() {
     WNDCLASS wc;
@@ -161,15 +161,19 @@ void CreateChildWindows() {
     return;
 }
 
+// PostOpenGame finishes opening a game GenerateWorld just created, as the
+// File menu does after opening one.
+void PostOpenGame() {
+    SendMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
+    return;
+}
+
 LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC          hdc;
     int16_t      i;
     HPALETTE     hpalSav;
     TEXTMETRIC   tm;
-    int16_t      ich;
     POINT16      pt;
-    char        *pch;
-    char         szTemp[80];
     FARPROC      lpProc;
     int16_t      fRet;
     int16_t      fErrSav;
@@ -231,101 +235,42 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         idPlayer = iplrNone;
         if (ini.fCmdLine) {
             ini.fCmdLine = FALSE;
-            if (ini.fValidate) {
-                fFileErrSilent = TRUE;
-                ClearFile(7);
-                if (FLoadGame(szBase, "hst")) {
-                    VerifyTurns();
-                    DestroyCurGame();
-                    EnsureAis();
-                    wsprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
-                    OutputSz(7, szTemp);
-                    for (i = 0; i < game.cPlayer; i++) {
-                        if (rgOut[i] + 1 > 3) {
-                            ich = wsprintf(szTemp, "Error: %d: ", i + 1);
-                        } else {
-                            ich = wsprintf(szTemp, "%d: ", i + 1);
-                        }
-                        if (!gd.fNoHostNames) {
-                            ich += wsprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
-                        }
-                        strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
-                        if (rgplr[i].fHacker) {
-                            strcat(szTemp, " - HACKER");
-                        }
-                        OutputSz(7, szTemp);
-                    }
+            if (FRunCmdLine()) {
+            LExit:
+                if (gd.fExitWindows) {
+                    ExitWindows(vretExitValue, 0);
+                    return 0;
                 }
+                PostQuitMessage(vretExitValue);
+                return 0;
+            }
+            CommandHandler(hwnd, 0xed9);
+            if (ini.fTry)
                 goto LExit;
-            } else if (ini.fNewGame) {
-                GenNewGameFromFile(szBase);
+            if (ini.fGen)
+                goto LNop;
+            if (game.lid == 0)
+                goto LShowStartup;
+            if (idPlayer != iplrNone && (ini.fDumpPlanets || ini.fDumpFleets || ini.fDumpMap)) {
+                if (ini.fDumpMap) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_UNIVERSE, 0);
+                }
+                if (ini.fDumpPlanets) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_PLANETS, 0);
+                }
+                if (ini.fDumpFleets) {
+                    PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_FLEETS, 0);
+                }
                 goto LExit;
             } else {
-                if (ini.fGen) {
-                LBatchNext:
-                    if ((!ini.fWait && !ini.fTry) || CTurnsOutSafe() == 0) {
-                        EnsureAis();
-                        FGenerateTurn();
-                        if (ini.fBatch && lpchBatch < lpchBatchMac) {
-                        LTryNextBatch:
-                            DestroyCurGame();
-                            pch = szBase;
-                            while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
-                                *pch = *lpchBatch;
-                                lpchBatch++;
-                                pch++;
-                            }
-                            lpchBatch++;
-                            pch[-1] = 0;
-                            ini.fStartupFile = TRUE;
-                            goto LBatchNext;
-                        }
-                        if (ini.cTurnGen == 0)
-                            goto LExit;
-                        ini.cTurnGen--;
-                        goto LBatchNext;
-                    LExit:
-                        if (gd.fExitWindows) {
-                            ExitWindows(vretExitValue, 0);
-                            return 0;
-                        }
-                        PostQuitMessage(vretExitValue);
-                        return 0;
-                    }
-                    if (ini.fTry) {
-                        if (ini.fBatch && lpchBatch < lpchBatchMac)
-                            goto LTryNextBatch;
-                        goto LExit;
-                    }
-                }
-                CommandHandler(hwnd, 0xed9);
-                if (ini.fTry)
-                    goto LExit;
-                if (ini.fGen)
+                ShowWindow(hwndFrame, SW_SHOW);
+                InitializeMenu(NULL);
+                PostMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
+                if (!ini.fWait)
                     goto LNop;
-                if (game.lid == 0)
-                    goto LShowStartup;
-                if (idPlayer != iplrNone && (ini.fDumpPlanets || ini.fDumpFleets || ini.fDumpMap)) {
-                    if (ini.fDumpMap) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_UNIVERSE, 0);
-                    }
-                    if (ini.fDumpPlanets) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_PLANETS, 0);
-                    }
-                    if (ini.fDumpFleets) {
-                        PostMessage(hwndFrame, WM_COMMAND, IDM_DEBUG_DUMP_FLEETS, 0);
-                    }
-                    goto LExit;
-                } else {
-                    ShowWindow(hwndFrame, SW_SHOW);
-                    InitializeMenu(NULL);
-                    PostMessage(hwndFrame, WM_COMMAND, IDM_FRAME_POST_OPEN, 0);
-                    if (!ini.fWait)
-                        goto LNop;
-                    ini.fWait = FALSE;
-                    CommandHandler(hwnd, 0x6a);
-                    goto LNop;
-                }
+                ini.fWait = FALSE;
+                CommandHandler(hwnd, 0x6a);
+                goto LNop;
             }
         }
     LShowStartup:
@@ -921,38 +866,6 @@ void RestoreSelection() {
     return;
 }
 
-int16_t FFindSomethingAndSelectIt() {
-    PLANET *lpplMac;
-    PLANET *lppl;
-    int16_t i;
-    FLEET  *lpfl;
-
-    lppl = LpplFromId(rgplr[idPlayer].idPlanetHome);
-    if (!lppl || lppl->iPlayer != idPlayer) {
-        lppl = lpPlanets;
-        lpplMac = lpPlanets + cPlanet;
-        for (; lppl < lpplMac && lppl->iPlayer != idPlayer; lppl++) {
-        }
-        if (lppl == lpplMac) {
-            lppl = NULL;
-        }
-    }
-    if (lppl) {
-        SelectAdjPlanet(0, lppl->id);
-        return TRUE;
-    }
-    for (i = 0; i < cFleet; i++) {
-        lpfl = rglpfl[i];
-        if (!rglpfl[i])
-            break;
-        if (lpfl->iPlayer == idPlayer) {
-            SelectAdjFleet(0, lpfl->id);
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 void CommandHandler(HWND hwnd, WPARAM wParam) {
     POINT16  pt;
     HMENU    hmenu;
@@ -995,6 +908,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
     int32_t  x;
     int16_t  idCur;
     HCURSOR  hcurSav;
+    HCURSOR  hcurT;
     uint32_t dwTickCur;
     uint32_t dwTickBase;
     int16_t  mf;
@@ -1054,7 +968,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
             iplrOld = idPlayer;
             strcpy(szT, vrgszMRU + 256 * (LOWORD(wParam) - 4300));
             psz = strrchr(szT, 46);
-            if (psz && _access(szT, 0) != -1) {
+            if (psz && FFileExists(szT)) {
                 ini.fStartupFile = TRUE;
                 DestroyCurGame();
                 strcpy(szBase, szT);
@@ -1350,7 +1264,9 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
         RepGen:
             ShowProgressGauge();
             EnsureAis();
+            hcurT = SetCursor(LoadCursor(NULL, IDC_WAIT));
             FGenerateTurn();
+            SetCursor(hcurT);
             switch (LOWORD(wParam)) {
             case IDM_DEBUG_GEN_10_TURNS:
             case IDM_DEBUG_GEN_100_TURNS:
@@ -1753,56 +1669,6 @@ void InitializeMenu(HMENU hmenu) {
     return;
 }
 
-void EnsureAis() {
-    int16_t fHostSav;
-    int16_t fErrSav;
-    int16_t fOpened;
-    int16_t fWorkDone;
-    int16_t fSubmitSav;
-    int16_t iPlayer;
-    MDPLR   rgmdplr[16];
-
-    fSubmitSav = gd.fSubmit;
-    fWorkDone = FALSE;
-    if (!gd.fAisDone) {
-        fHostSav = gd.fHostMode;
-        if (!gd.fHostMode) {
-            DestroyCurGame();
-            FLoadGame(szBase, "hst");
-        }
-        for (iPlayer = 0; iPlayer < game.cPlayer; iPlayer++) {
-            *(uint16_t *)&rgmdplr[iPlayer] = rgplr[iPlayer].wMdPlr;
-        }
-        gd.fSubmit = TRUE;
-        fErrSav = fFileErrSilent;
-        fFileErrSilent = TRUE;
-        for (iPlayer = 0; iPlayer < game.cPlayer; iPlayer++) {
-            UpdateProgressGauge(MulDiv(340, iPlayer + 1, game.cPlayer));
-            if (rgmdplr[iPlayer].fAi) {
-                fWorkDone = TRUE;
-                gd.fGeneratingTurn = TRUE;
-                gd.fHostMode = TRUE;
-                fOpened = FOpenFile(dtLog, iPlayer, 32);
-                gd.fGeneratingTurn = FALSE;
-                gd.fHostMode = fHostSav;
-                if (fOpened) {
-                    StreamClose();
-                } else {
-                    DoAiTurn(iPlayer, *(uint16_t *)&rgmdplr[iPlayer]);
-                }
-            }
-        }
-        gd.fSubmit = fSubmitSav;
-        if (fWorkDone) {
-            DestroyCurGame();
-            FLoadGame(szBase, "hst");
-        }
-        fFileErrSilent = fErrSav;
-        gd.fAisDone = TRUE;
-    }
-    return;
-}
-
 HMENU GetASubMenu(HWND hwnd, MainMenu iMenu) {
     int16_t fChildMenu;
     HMENU   hmenu;
@@ -1935,80 +1801,11 @@ LGotFileName:
     return 1;
 }
 
-int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
-    int16_t  idsError;
-    int32_t  lSaltSav;
-    PLAYER   plr;
-    jmp_buf *penvMemSav;
-    jmp_buf  env;
-    int16_t  fRet;
-    int16_t  fSav;
-
-    idsError = -1;
-    fRet = 0;
-    fSav = fFileErrSilent;
-    fFileErrSilent = TRUE;
-    penvMemSav = penvMem;
-    penvMem = &env;
-    if (setjmp(env) != 0) {
-    LBadFile:
-        StreamClose();
-        penvMem = penvMemSav;
-        fFileErrSilent = fSav;
-        if (!fFileErrSilent && idsError != -1) {
-            strcpy(szWork, szFile);
-            AlertSz(PszFormatIds(idsError, NULL), MB_ICONHAND);
-        }
-        return fRet;
-    }
-    {
-        StreamOpen(szFile, mdRead);
-        ReadRt();
-        if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
-            idsError = 13;
-            fRet = -1;
-            goto LBadFile;
-        } else {
-            wVersFile = ((RTBOF *)rgbCur)->wVersion;
-            if (((RTBOF *)rgbCur)->dt == 5) {
-                ReadRt();
-                if (hdrCur.rt == rtPlr) {
-                    idsError = 3;
-                    ReadRtPlr(&plr, rgbCur);
-                    ReadRt();
-                    if (hdrCur.rt == rtEOF && RawLoad16(rgbCur) == IRaceChecksum(&plr)) {
-                        lSaltSav = lSaltCur;
-                        lSaltCur = plr.lSalt;
-                        if (fChkPass && !FCheckPassword()) {
-                            lSaltCur = lSaltSav;
-                            fRet = -1;
-                            goto LBadFile;
-                        } else {
-                            lSaltCur = lSaltSav;
-                            if (plr.lSalt != 0) {
-                                strcpy(szRacePass, szPassLast);
-                            } else {
-                                szRacePass[0] = 0;
-                            }
-                            vplr = plr;
-                            strcpy(szRaceFile, szFile);
-                            StreamClose();
-                            fFileErrSilent = fSav;
-                            penvMem = penvMemSav;
-                            return 1;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    goto LBadFile;
-}
-
 void BringUpHostDlg() {
     POINT16 pt;
     FARPROC lpProc;
     int16_t fRet;
+    HCURSOR hcurSav;
 
     if (!gd.fHostMode) {
         if (!gd.fReadOnly) {
@@ -2039,7 +1836,9 @@ Top:
             ShowProgressGauge();
         }
         EnsureAis();
+        hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
         FGenerateTurn();
+        SetCursor(hcurSav);
         if (iPassCnt != 0) {
             iPassCnt--;
             if (GetAsyncKeyState(VK_SHIFT) >= 0 && GetAsyncKeyState(VK_CONTROL) >= 0)
@@ -2139,148 +1938,6 @@ void DrawHostDialog2(HWND hwnd, HDC hdcIn) {
         ReleaseDC(hwnd, hdc);
     }
     return;
-}
-
-void VerifyTurns() {
-    int16_t idsError;
-    int16_t idCur;
-    int16_t cAi;
-    int16_t i;
-    int16_t cOut;
-    int16_t fOut;
-
-    idCur = idPlayer;
-    cOut = 0;
-    cAi = 0;
-    lpcd = LpAlloc(1000 * sizeof(COLDROP), htMisc);
-    lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
-    vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
-    memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
-    cColDrop = 0;
-    cXferFull = 0;
-    imemMsgCur = 0;
-    for (i = 0; i < game.cPlayer; i++) {
-        fOut = rgOut[i];
-        idsError = 0;
-        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
-            if (rgplr[i].fAi) {
-                cAi++;
-                rgOut[i] = 0;
-            } else {
-                wsprintf(szWork, "%s.x%d", szBase, i + 1);
-                idPlayer = i;
-                if (FLoadLogFile(szWork) && !FRunLogFile()) {
-                    rgOut[i] = 3;
-                } else {
-                    rgOut[i] = 0;
-                }
-            }
-        } else if (idsError != 0) {
-            switch (idsError) {
-            case 29:
-                rgOut[i] = 5;
-                break;
-            case 28:
-                rgOut[i] = 4;
-                break;
-            default:
-                rgOut[i] = 3;
-                break;
-            }
-            cOut++;
-        } else if (rgplr[i].fDead) {
-            rgOut[i] = -1;
-        } else if (gd.fPartialTurn) {
-            rgOut[i] = 2;
-            cOut++;
-        } else {
-            rgOut[i] = 1;
-            cOut++;
-        }
-        if (ctickLast == 0 || rgOut[i] != fOut) {
-            ctickLast = GetTickCount();
-        }
-    }
-    FreeLp(vrgPlanResExtra, htMisc);
-    vrgPlanResExtra = NULL;
-    FreeLp(lpcd, htMisc);
-    lpcd = NULL;
-    FreeLp(lpxf, htMisc);
-    lpxf = NULL;
-    idPlayer = idCur;
-    return;
-}
-
-int16_t CTurnsOutSafe() {
-    int16_t idPlayerSav;
-    int16_t fHostModeSav;
-    int16_t fGenSav;
-    int16_t cturn;
-
-    fHostModeSav = gd.fHostMode;
-    fGenSav = gd.fGeneratingTurn;
-    idPlayerSav = idPlayer;
-    idPlayer = iplrNone;
-    gd.fHostMode = TRUE;
-    gd.fGeneratingTurn = FALSE;
-    cturn = CFindTurnsOutstanding();
-    gd.fGeneratingTurn = fGenSav;
-    gd.fHostMode = fHostModeSav;
-    idPlayer = idPlayerSav;
-    return cturn;
-}
-
-int16_t CFindTurnsOutstanding() {
-    int16_t idsError;
-    int16_t cAi;
-    int16_t i;
-    int16_t cOut;
-    int16_t fSav;
-    int16_t fOut;
-
-    cOut = 0;
-    cAi = 0;
-    fSav = fFileErrSilent;
-    fFileErrSilent = TRUE;
-    gd.fGeneratingTurn = TRUE;
-    for (i = 0; i < game.cPlayer; i++) {
-        fOut = rgOut[i];
-        idsError = 0;
-        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
-            if (rgplr[i].fAi) {
-                cAi++;
-            }
-            rgOut[i] = 0;
-        } else if (idsError != 0) {
-            switch (idsError) {
-            case 29:
-                rgOut[i] = 5;
-                break;
-            case 28:
-                rgOut[i] = 4;
-                break;
-            default:
-                rgOut[i] = 3;
-                break;
-            }
-            cOut++;
-        } else if (rgplr[i].fDead) {
-            rgOut[i] = -1;
-        } else if (gd.fPartialTurn) {
-            rgOut[i] = 2;
-            cOut++;
-        } else {
-            rgOut[i] = 1;
-            cOut++;
-        }
-        if (ctickLast == 0 || rgOut[i] != fOut) {
-            ctickLast = GetTickCount();
-        }
-    }
-    gd.fGeneratingTurn = FALSE;
-    gd.fAllAis = cAi == game.cPlayer;
-    fFileErrSilent = FALSE;
-    return cOut;
 }
 
 INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -2517,6 +2174,7 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
     int16_t cOut;
     int16_t fSav;
     int16_t idCur;
+    HCURSOR hcurSav;
 
     if (!fProcessingTimer) {
         fProcessingTimer = TRUE;
@@ -2569,7 +2227,9 @@ VOID CALLBACK HostTimerProc(HWND hwnd, UINT msg, UINT_PTR idTimer, DWORD dwTime)
                 ShowProgressGauge();
             }
             EnsureAis();
+            hcurSav = SetCursor(LoadCursor(NULL, IDC_WAIT));
             FGenerateTurn();
+            SetCursor(hcurSav);
             HideProgressGauge();
             if (ini.fGen) {
                 PostQuitMessage(vretExitValue);
@@ -3010,7 +2670,7 @@ LRESULT CALLBACK TitleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             psz = PszGetCompressedString(i + 479);
             rghwndBtnSplash[i] = CreateWindow("BUTTON", psz, WS_CHILD | WS_VISIBLE, xCur, rc.bottom - dy - (int16_t)(5 * dyArial8) / 2, dx, dy, hwnd,
                                               (HMENU)(uintptr_t)i, hInst, NULL);
-            if (i == 2 && (szBase[0] == 0 || _access(szBase, 0) == -1)) {
+            if (i == 2 && (szBase[0] == 0 || !FFileExists(szBase))) {
                 EnableWindow(rghwndBtnSplash[2], FALSE);
             }
             if (rc.bottom < 500) {

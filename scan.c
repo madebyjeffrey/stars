@@ -1,4 +1,4 @@
-#include "common.h"
+#include "win.h"
 
 uint32_t rgcrScanMine[3] = {16711680, 65535, 255};
 int16_t  vrgPopRad[19] = {25, 50, 100, 200, 400, 800, 1000, 1500, 2250, 3000, 4000, 5000, 6000, 7500, 9000, 11000, 14000, 18000, 25000};
@@ -316,70 +316,6 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
     return 0;
-}
-
-int16_t PtToScan(int16_t d) {
-    if (iScanZoom == zoom100) {
-        return d;
-    }
-    switch (iScanZoom) {
-    case zoom400:
-        d *= 4;
-        break;
-    case zoom200:
-        d *= 2;
-        break;
-    case zoom50:
-        d >>= 1;
-        break;
-    case zoom25:
-        d >>= 2;
-        break;
-    case zoom38:
-        d = ((d << 1) + d) >> 3;
-        break;
-    case zoom75:
-        d = ((d << 1) + d) >> 2;
-        break;
-    case zoom125:
-        d = ((d << 2) + d) >> 2;
-        break;
-    case zoom150:
-        d = ((d << 1) + d) >> 1;
-    }
-    return d;
-}
-
-int16_t ScanToPt(int16_t d) {
-    if (iScanZoom == zoom100) {
-        return d;
-    }
-    switch (iScanZoom) {
-    case zoom400:
-        d >>= 2;
-        break;
-    case zoom200:
-        d >>= 1;
-        break;
-    case zoom50:
-        d *= 2;
-        break;
-    case zoom25:
-        d *= 4;
-        break;
-    case zoom38:
-        d = (int16_t)(d * 8) / 3;
-        break;
-    case zoom75:
-        d = (int16_t)(d * 4) / 3;
-        break;
-    case zoom125:
-        d = (int16_t)(d * 4) / 5;
-        break;
-    case zoom150:
-        d = (int16_t)(d * 2) / 3;
-    }
-    return d;
 }
 
 int16_t DrawScanner(HDC hdc, RECT *prc) {
@@ -2252,118 +2188,6 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     return TRUE;
 }
 
-int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
-    int32_t lFuel;
-    int16_t iWarp;
-    int16_t cTravel;
-    int16_t iwp;
-    int16_t lDist;
-    int16_t cSpeed;
-    int16_t fGoFlatOutAi;
-    int16_t fGoFlatOut;
-    int16_t iWarpAi;
-    int16_t iWarpSav;
-    int16_t j;
-    int16_t i;
-    PLANET *lppl;
-    int16_t iWarpOld;
-    SCAN    scan;
-
-    iWarpSav = lpord->iWarp;
-    iWarp = IFindIdealWarp(NULL, FALSE);
-    if (fAi) {
-        iWarpAi = IFindIdealWarp(NULL, TRUE);
-    }
-    for (iwp = lpfl->cord - 1; iwp >= 0 && lpord != &lpfl->lpplord->rgord[iwp]; iwp--) {
-    }
-    if (iwp <= 0) {
-        return iWarp;
-    }
-    if (lpord->grTask == grTaskColonize || lpord->grTask == grTaskScrap) {
-        fGoFlatOut = TRUE;
-    } else {
-        fGoFlatOut = FALSE;
-        for (i = 0; i < 16; i++) {
-            if (lpfl->rgcsh[i] > 0) {
-                for (j = 0; j < rglpshdef[lpfl->iPlayer][i].hul.chs; j++) {
-                    if (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].grhst == hstSpecialM &&
-                        (rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMColonizationModule ||
-                         rglpshdef[lpfl->iPlayer][i].hul.rghs[j].iItem == ispecialMOrbitalConstructionModule)) {
-                        fGoFlatOut = TRUE;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    if (!fGoFlatOut && fAi) {
-        fGoFlatOutAi = TRUE;
-        fGoFlatOut = TRUE;
-    } else {
-        fGoFlatOutAi = FALSE;
-    }
-    if (iWarp < 9) {
-        iWarpOld = iWarp;
-        if (FFindNearestObject(lpord->pt, grobjPlanet | mdExact, &scan)) {
-            lppl = LpplFromId(scan.idpl);
-        } else {
-            lppl = NULL;
-        }
-        if (!fGoFlatOut && (!lppl || (lppl->iPlayer != iplrNone && lppl->iPlayer != idPlayer))) {
-            if (iwp > 1 && lpord[-1].iWarp > (uint16_t)iWarp && lpord[-1].iWarp <= 10) {
-                iWarp = lpord[-1].iWarp;
-            }
-            if (LFuelUseToWaypoint(lpfl, iwp, TRUE) >= (int32_t)(LGetFleetStat(lpfl, 1) / 10) || lpfl->rgwtMin[4] < (int32_t)(LGetFleetStat(lpfl, 1) * 7) / 10)
-                goto LOptimizeSpeed;
-            iWarp++;
-            goto LTryLimitedSpeed;
-        } else {
-            if (fGoFlatOutAi && lppl && lppl->iPlayer == idPlayer && rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef != ihuldefOrbitalFort) {
-                fGoFlatOutAi = FALSE;
-            }
-            iWarp = 9;
-        }
-    LTryLimitedSpeed:
-        while (iWarp > iWarpOld) {
-            lpord->iWarp = iWarp;
-            lFuel = LFuelUseToWaypoint(lpfl, iwp, TRUE);
-            if (lFuel > lpfl->rgwtMin[4])
-                goto LDecWarp;
-            if (((lppl && lppl->fStarbase && lppl->iPlayer == idPlayer && LphuldefFromId(rglpshdefSB[idPlayer][lppl->isb].hul.ihuldef)->hul.wtCargoMax != 0) ||
-                 lFuel <= (int32_t)(lpfl->rgwtMin[4] / 2) || fGoFlatOut))
-                break;
-        LDecWarp:
-            iWarp--;
-        }
-        lpord->iWarp = iWarpSav;
-    }
-    if (fGoFlatOutAi && iWarp > iWarpAi) {
-        iWarp = iWarpAi;
-    }
-LOptimizeSpeed:
-    if (iWarp > 1 && lpord->grobj != grobjFleet) {
-        lDist = LOWORD((int32_t)DGetDistance(lpord->pt.x, lpord->pt.y, lpord[-1].pt.x, lpord[-1].pt.y));
-        cSpeed = iWarp * iWarp;
-        cTravel = (int16_t)(iWarp * iWarp + lDist - 1) / cSpeed;
-        do {
-            iWarp--;
-            if (iWarp <= 1)
-                break;
-            cSpeed = iWarp * iWarp;
-        } while (cTravel == (int16_t)(lDist + cSpeed - 1) / cSpeed);
-        iWarp++;
-    } else {
-        cTravel = 2;
-    }
-    if (FCanFleetUseStargates(lpfl, lpord[-1].pt, lpord->pt) == 1) {
-        iWarp = 11;
-    }
-    if (iWarp > 11) {
-        iWarp = 9;
-    }
-    return iWarp;
-}
-
 int16_t FNearAWayPoint(POINT16 pt, int16_t fLogical) {
     ORDER  *lpord;
     int16_t i;
@@ -2642,103 +2466,6 @@ int16_t SetScanWp(int16_t iNew) {
     scan.iwp = iNew;
     ChangeScanSel(&scan, 1);
     return iNew;
-}
-
-void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
-    int16_t fMineFieldSel;
-    RECT    rcMine;
-    int16_t fChgWp;
-    int16_t iRad;
-    HDC     hdc;
-    POINT16 ptTL; /* NATIVE: RECT corners are 32-bit; LogicalToScan takes POINT16 */
-    POINT16 ptBR;
-
-    if (!fValidScan) {
-        FFindNearestObject(pscan->pt, pscan->grobj, pscan);
-    }
-    if (memcmp(pscan, &sel.scan, sizeof(SCAN)) != 0) {
-        fChgWp = pscan->iwp != iwpNone && pscan->iwp != sel.iwpAct;
-        fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel) {
-            iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
-            rcMine.left = lpThings[sel.scan.ith].pt.x;
-            rcMine.top = lpThings[sel.scan.ith].pt.y;
-            rcMine.right = rcMine.left + iRad;
-            rcMine.bottom = rcMine.top - iRad;
-            rcMine.left -= iRad;
-            rcMine.top += iRad;
-            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
-            ptTL.x = rcMine.left;
-            ptTL.y = rcMine.top;
-            LogicalToScan(&ptTL);
-            rcMine.left = ptTL.x;
-            rcMine.top = ptTL.y;
-            ptBR.x = rcMine.right;
-            ptBR.y = rcMine.bottom;
-            LogicalToScan(&ptBR);
-            rcMine.right = ptBR.x;
-            rcMine.bottom = ptBR.y;
-            InflateRect(&rcMine, 1, 1);
-        }
-        RedrawScanSel(NULL, -1);
-        sel.scan = *pscan;
-        if ((sel.scan.grobjFull & grobjPlanet) && fValidScan != 2) {
-            sel.scan.grobj = grobjPlanet;
-        }
-        if (fChgWp) {
-            sel.iwpAct = pscan->iwp;
-            FillOrdersLB();
-            SetOrdersLbSel(pscan->iwp);
-            UpdateOrdersDDs(0);
-            DrawPlanShip(NULL, 0x122);
-        }
-        RedrawScanSel(NULL, 1);
-        if (fChgWp) {
-            FEnsurePointOnScreen(pscan->pt, TRUE);
-        }
-        DrawScannerSBar(NULL, NULL, NULL, FALSE);
-        InvalidateRect(hwndMine, NULL, TRUE);
-        SetMineralTitleBar(hwndMine);
-        if (fMineFieldSel) {
-            hdc = GetDC(hwndScanner);
-            DrawScanner(hdc, &rcMine);
-            ReleaseDC(hwndScanner, hdc);
-        }
-        fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
-        if (fMineFieldSel) {
-            iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
-            rcMine.left = lpThings[sel.scan.ith].pt.x;
-            rcMine.top = lpThings[sel.scan.ith].pt.y;
-            rcMine.right = rcMine.left + iRad;
-            rcMine.bottom = rcMine.top - iRad;
-            rcMine.left -= iRad;
-            rcMine.top += iRad;
-            /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
-            ptTL.x = rcMine.left;
-            ptTL.y = rcMine.top;
-            LogicalToScan(&ptTL);
-            rcMine.left = ptTL.x;
-            rcMine.top = ptTL.y;
-            ptBR.x = rcMine.right;
-            ptBR.y = rcMine.bottom;
-            LogicalToScan(&ptBR);
-            rcMine.right = ptBR.x;
-            rcMine.bottom = ptBR.y;
-            InflateRect(&rcMine, 1, 1);
-        }
-        if (fMineFieldSel) {
-            hdc = GetDC(hwndScanner);
-            DrawScanner(hdc, &rcMine);
-            ReleaseDC(hwndScanner, hdc);
-        }
-        if (sel.pl.id != idplNone) {
-            DrawPlanShip(NULL, 0x4002);
-        }
-        if (gd.fTutorial && idPlayer == 0) {
-            AdvanceTutor();
-        }
-    }
-    return;
 }
 
 int16_t FGetNextObjHere(SCAN *pscan, int16_t fOnlyOurs) {
@@ -3041,4 +2768,107 @@ int16_t FHandleMeasuringTape(SCAN *pscan, POINT16 pt) {
         return TRUE;
     }
     return FALSE;
+}
+
+// ShowScanSel draws (fVis 1) or erases (0, or -1 to leave the main
+// selection's marker) the scanner's selection markers.
+void ShowScanSel(int16_t fVis) {
+    RedrawScanSel(NULL, fVis);
+    return;
+}
+
+// ShowScanSelChange redraws the scanner, orders and mineral views after
+// ChangeScanSel moved the scanner selection from *pscanOld to *pscan.
+void ShowScanSelChange(SCAN *pscanOld, SCAN *pscan, int16_t fChgWp) {
+    int16_t fMineFieldSel;
+    RECT    rcMine;
+    int16_t iRad;
+    HDC     hdc;
+    POINT16 ptTL; /* NATIVE: RECT corners are 32-bit; LogicalToScan takes POINT16 */
+    POINT16 ptBR;
+
+    fMineFieldSel = pscanOld->grobj == grobjThing && lpThings[pscanOld->ith].ith == ithMinefield;
+    if (fMineFieldSel) {
+        iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[pscanOld->ith].thm.cMines) + 1.0));
+        rcMine.left = lpThings[pscanOld->ith].pt.x;
+        rcMine.top = lpThings[pscanOld->ith].pt.y;
+        rcMine.right = rcMine.left + iRad;
+        rcMine.bottom = rcMine.top - iRad;
+        rcMine.left -= iRad;
+        rcMine.top += iRad;
+        /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+        ptTL.x = rcMine.left;
+        ptTL.y = rcMine.top;
+        LogicalToScan(&ptTL);
+        rcMine.left = ptTL.x;
+        rcMine.top = ptTL.y;
+        ptBR.x = rcMine.right;
+        ptBR.y = rcMine.bottom;
+        LogicalToScan(&ptBR);
+        rcMine.right = ptBR.x;
+        rcMine.bottom = ptBR.y;
+        InflateRect(&rcMine, 1, 1);
+    }
+    if (fChgWp) {
+        FillOrdersLB();
+        SetOrdersLbSel(pscan->iwp);
+        UpdateOrdersDDs(0);
+        DrawPlanShip(NULL, 0x122);
+    }
+    RedrawScanSel(NULL, 1);
+    if (fChgWp) {
+        FEnsurePointOnScreen(pscan->pt, TRUE);
+    }
+    DrawScannerSBar(NULL, NULL, NULL, FALSE);
+    InvalidateRect(hwndMine, NULL, TRUE);
+    SetMineralTitleBar(hwndMine);
+    if (fMineFieldSel) {
+        hdc = GetDC(hwndScanner);
+        DrawScanner(hdc, &rcMine);
+        ReleaseDC(hwndScanner, hdc);
+    }
+    fMineFieldSel = sel.scan.grobj == grobjThing && lpThings[sel.scan.ith].ith == ithMinefield;
+    if (fMineFieldSel) {
+        iRad = LOWORD((int32_t)((long double)sqrt((double)lpThings[sel.scan.ith].thm.cMines) + 1.0));
+        rcMine.left = lpThings[sel.scan.ith].pt.x;
+        rcMine.top = lpThings[sel.scan.ith].pt.y;
+        rcMine.right = rcMine.left + iRad;
+        rcMine.bottom = rcMine.top - iRad;
+        rcMine.left -= iRad;
+        rcMine.top += iRad;
+        /* NATIVE: original passed (POINT16 *)&rcMine.left and &rcMine.right */
+        ptTL.x = rcMine.left;
+        ptTL.y = rcMine.top;
+        LogicalToScan(&ptTL);
+        rcMine.left = ptTL.x;
+        rcMine.top = ptTL.y;
+        ptBR.x = rcMine.right;
+        ptBR.y = rcMine.bottom;
+        LogicalToScan(&ptBR);
+        rcMine.right = ptBR.x;
+        rcMine.bottom = ptBR.y;
+        InflateRect(&rcMine, 1, 1);
+    }
+    if (fMineFieldSel) {
+        hdc = GetDC(hwndScanner);
+        DrawScanner(hdc, &rcMine);
+        ReleaseDC(hwndScanner, hdc);
+    }
+    if (sel.pl.id != idplNone) {
+        DrawPlanShip(NULL, 0x4002);
+    }
+    if (gd.fTutorial && idPlayer == 0) {
+        AdvanceTutor();
+    }
+    return;
+}
+
+// ShowSelAt scrolls the scanner to a newly selected object at pt and
+// updates the scanner status bar and the mineral window.
+void ShowSelAt(POINT16 pt) {
+    CtrPointScan(pt, TRUE);
+    DrawScannerSBar(NULL, NULL, NULL, FALSE);
+    InvalidateRect(hwndMine, NULL, TRUE);
+    SetMineralTitleBar(hwndMine);
+    return;
 }

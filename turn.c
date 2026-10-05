@@ -5,6 +5,23 @@ int16_t rgiWarpSafe[3] = {4, 6, 5};
 int16_t rgrgdmgMinMine[3][2] = {{500, 600}, {2000, 2500}};
 int16_t rgrgdmgMine[3][2] = {{100, 125}, {500, 600}};
 
+// InitGameStuff sets up what the game code needs before it loads a game:
+// the log and message buffers, the report id lists and the default
+// production template, which ReadIniSettings also sets when stars.ini has
+// none. FCreateStuff calls it for the Windows game.
+void InitGameStuff() {
+    gd.fNoIdleChecks = FALSE;
+    gd.fAisDone = FALSE;
+    vplr = vrgplrDef[0];
+    lpLog = LpAlloc(32000, htLog);
+    lpMsg = LpAlloc(0xffc8, htMsg);
+    vlprgidPlanet = LpAlloc(0x800, htPerm);
+    vlprgidFleet = LpAlloc(0x800, htPerm);
+    CchGetString(idsDefault, vrgZipProd[0].szName);
+    vrgZipProd[0].fValid = TRUE;
+    return;
+}
+
 int16_t FGenerateTurn() {
     int16_t  fErrSav;
     char    *pchT;
@@ -19,7 +36,6 @@ int16_t FGenerateTurn() {
     int16_t  i;
     jmp_buf  env;
     char     szT[256];
-    HCURSOR  hcurSav;
     int16_t  idCur;
     int16_t  fFollow;
     char    *pchBak;
@@ -37,7 +53,6 @@ int16_t FGenerateTurn() {
 
     idCur = idPlayer;
     fSuccess = FALSE;
-    hcurSav = SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32514)));
     DestroyCurGame();
     if (gd.fTutorial) {
         Randomize(1234567890);
@@ -47,7 +62,6 @@ int16_t FGenerateTurn() {
     UpdateProgressGauge(360);
     if (!FLoadGame(szBase, "hst")) {
         fFileErrSilent = fErrSav;
-        SetCursor(hcurSav);
         TurnLog(idsCantFindHostFile);
         return FALSE;
     }
@@ -91,13 +105,13 @@ int16_t FGenerateTurn() {
         }
         for (i = 0; i < game.cPlayer; i++) {
             j = mpiplr2[i];
-            wsprintf(szWork, "%s.x%d", szBase, j + 1);
+            CchSprintf(szWork, "%s.x%d", szBase, j + 1);
             idPlayer = j;
             if (FLoadLogFile(szWork) && !FRunLogFile()) {
                 AlertSz(PszFormatIds(idsPlayerLogFileAppearsCorruptUnableLoad, NULL), MB_ICONHAND);
                 goto FreeStuffUp;
             }
-            UpdateProgressGauge(MulDiv(60, i + 1, game.cPlayer) + 370);
+            UpdateProgressGauge(LMulDiv(60, i + 1, game.cPlayer) + 370);
         }
         idPlayer = iplrNone;
         for (i = 0; i < game.cPlayer; i++) {
@@ -248,7 +262,7 @@ int16_t FGenerateTurn() {
         CreateBackupDir();
         game.turn++;
         pchCur = &szBase[strlen(szBase)];
-        pchT = strrchr(szBase, 92);
+        pchT = strrchr(szBase, chDirSep);
         strcpy(szT, szBackup);
         if (!pchT) {
             strcat(szT, szBase);
@@ -290,10 +304,10 @@ int16_t FGenerateTurn() {
                 fDone = TRUE;
             }
             if (i >= 0) {
-                wsprintf(pchCur, ".x%d", i + 1);
+                CchSprintf(pchCur, ".x%d", i + 1);
                 strcpy(pchBak, pchCur);
                 remove(szT);
-                if (_access(szBase, 0) == -1) {
+                if (!FFileExists(szBase)) {
                     rgfNoXFile[i] = TRUE;
                 } else {
                     rename(szBase, szT);
@@ -349,9 +363,454 @@ FreeStuffUp:
     if (fSuccess && ini.fGen) {
         vretExitValue = 1;
     }
-    SetCursor(hcurSav);
     TurnLog(fSuccess + 1380);
     return fSuccess;
+}
+
+void EnsureAis() {
+    int16_t fHostSav;
+    int16_t fErrSav;
+    int16_t fOpened;
+    int16_t fWorkDone;
+    int16_t fSubmitSav;
+    int16_t iPlayer;
+    MDPLR   rgmdplr[16];
+
+    fSubmitSav = gd.fSubmit;
+    fWorkDone = FALSE;
+    if (!gd.fAisDone) {
+        fHostSav = gd.fHostMode;
+        if (!gd.fHostMode) {
+            DestroyCurGame();
+            FLoadGame(szBase, "hst");
+        }
+        for (iPlayer = 0; iPlayer < game.cPlayer; iPlayer++) {
+            *(uint16_t *)&rgmdplr[iPlayer] = rgplr[iPlayer].wMdPlr;
+        }
+        gd.fSubmit = TRUE;
+        fErrSav = fFileErrSilent;
+        fFileErrSilent = TRUE;
+        for (iPlayer = 0; iPlayer < game.cPlayer; iPlayer++) {
+            UpdateProgressGauge(LMulDiv(340, iPlayer + 1, game.cPlayer));
+            if (rgmdplr[iPlayer].fAi) {
+                fWorkDone = TRUE;
+                gd.fGeneratingTurn = TRUE;
+                gd.fHostMode = TRUE;
+                fOpened = FOpenFile(dtLog, iPlayer, 32);
+                gd.fGeneratingTurn = FALSE;
+                gd.fHostMode = fHostSav;
+                if (fOpened) {
+                    StreamClose();
+                } else {
+                    DoAiTurn(iPlayer, *(uint16_t *)&rgmdplr[iPlayer]);
+                }
+            }
+        }
+        gd.fSubmit = fSubmitSav;
+        if (fWorkDone) {
+            DestroyCurGame();
+            FLoadGame(szBase, "hst");
+        }
+        fFileErrSilent = fErrSav;
+        gd.fAisDone = TRUE;
+    }
+    return;
+}
+
+void VerifyTurns() {
+    int16_t idsError;
+    int16_t idCur;
+    int16_t cAi;
+    int16_t i;
+    int16_t cOut;
+    int16_t fOut;
+
+    idCur = idPlayer;
+    cOut = 0;
+    cAi = 0;
+    lpcd = LpAlloc(1000 * sizeof(COLDROP), htMisc);
+    lpxf = LpAlloc(1000 * sizeof(XFERFULL), htMisc);
+    vrgPlanResExtra = LpAlloc(game.cPlanMax * 2, htMisc);
+    memset(vrgPlanResExtra, 0, game.cPlanMax * 2);
+    cColDrop = 0;
+    cXferFull = 0;
+    imemMsgCur = 0;
+    for (i = 0; i < game.cPlayer; i++) {
+        fOut = rgOut[i];
+        idsError = 0;
+        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
+            if (rgplr[i].fAi) {
+                cAi++;
+                rgOut[i] = 0;
+            } else {
+                CchSprintf(szWork, "%s.x%d", szBase, i + 1);
+                idPlayer = i;
+                if (FLoadLogFile(szWork) && !FRunLogFile()) {
+                    rgOut[i] = 3;
+                } else {
+                    rgOut[i] = 0;
+                }
+            }
+        } else if (idsError != 0) {
+            switch (idsError) {
+            case 29:
+                rgOut[i] = 5;
+                break;
+            case 28:
+                rgOut[i] = 4;
+                break;
+            default:
+                rgOut[i] = 3;
+                break;
+            }
+            cOut++;
+        } else if (rgplr[i].fDead) {
+            rgOut[i] = -1;
+        } else if (gd.fPartialTurn) {
+            rgOut[i] = 2;
+            cOut++;
+        } else {
+            rgOut[i] = 1;
+            cOut++;
+        }
+        if (ctickLast == 0 || rgOut[i] != fOut) {
+            ctickLast = DwTickCount();
+        }
+    }
+    FreeLp(vrgPlanResExtra, htMisc);
+    vrgPlanResExtra = NULL;
+    FreeLp(lpcd, htMisc);
+    lpcd = NULL;
+    FreeLp(lpxf, htMisc);
+    lpxf = NULL;
+    idPlayer = idCur;
+    return;
+}
+
+int16_t CTurnsOutSafe() {
+    int16_t idPlayerSav;
+    int16_t fHostModeSav;
+    int16_t fGenSav;
+    int16_t cturn;
+
+    fHostModeSav = gd.fHostMode;
+    fGenSav = gd.fGeneratingTurn;
+    idPlayerSav = idPlayer;
+    idPlayer = iplrNone;
+    gd.fHostMode = TRUE;
+    gd.fGeneratingTurn = FALSE;
+    cturn = CFindTurnsOutstanding();
+    gd.fGeneratingTurn = fGenSav;
+    gd.fHostMode = fHostModeSav;
+    idPlayer = idPlayerSav;
+    return cturn;
+}
+
+int16_t CFindTurnsOutstanding() {
+    int16_t idsError;
+    int16_t cAi;
+    int16_t i;
+    int16_t cOut;
+    int16_t fSav;
+    int16_t fOut;
+
+    cOut = 0;
+    cAi = 0;
+    fSav = fFileErrSilent;
+    fFileErrSilent = TRUE;
+    gd.fGeneratingTurn = TRUE;
+    for (i = 0; i < game.cPlayer; i++) {
+        fOut = rgOut[i];
+        idsError = 0;
+        if (rgplr[i].fAi || FCheckLogFile(i, &idsError)) {
+            if (rgplr[i].fAi) {
+                cAi++;
+            }
+            rgOut[i] = 0;
+        } else if (idsError != 0) {
+            switch (idsError) {
+            case 29:
+                rgOut[i] = 5;
+                break;
+            case 28:
+                rgOut[i] = 4;
+                break;
+            default:
+                rgOut[i] = 3;
+                break;
+            }
+            cOut++;
+        } else if (rgplr[i].fDead) {
+            rgOut[i] = -1;
+        } else if (gd.fPartialTurn) {
+            rgOut[i] = 2;
+            cOut++;
+        } else {
+            rgOut[i] = 1;
+            cOut++;
+        }
+        if (ctickLast == 0 || rgOut[i] != fOut) {
+            ctickLast = DwTickCount();
+        }
+    }
+    gd.fGeneratingTurn = FALSE;
+    gd.fAllAis = cAi == game.cPlayer;
+    fFileErrSilent = FALSE;
+    return cOut;
+}
+
+int16_t FSetUpBatchProcessing() {
+    char   *pch;
+    jmp_buf env;
+    int16_t fSuccess;
+    int16_t cb;
+
+    fSuccess = FALSE;
+    penvMem = &env;
+    if (setjmp(env) != 0)
+        goto LError;
+    StreamOpen(szBase, mdRead);
+    cb = LOWORD(CbFileSize(hf));
+    lpchBatch = LpAlloc(cb, htPerm);
+    RgFromStream(lpchBatch, cb);
+    lpchBatchMac = lpchBatch + cb;
+    pch = szBase;
+    while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
+        *pch = *lpchBatch;
+        lpchBatch++;
+        pch++;
+    }
+    lpchBatch++;
+    pch[-1] = 0;
+    fSuccess = TRUE;
+LError:
+    penvMem = 0;
+    StreamClose();
+    if (!fSuccess) {
+        szBase[0] = 0;
+    }
+    return fSuccess;
+}
+
+// ParseCmdLine reads the command line's switches into ini and gd and its
+// file name into szBase; *pfSeed and *plSeed get a -s<seed>. The Windows
+// game and stars-host take the same command line.
+void ParseCmdLine(char *lpCmdLine, int16_t *pfSeed, uint32_t *plSeed) {
+    char   *pch;
+    char   *lpT;
+    int16_t i;
+
+    lpT = lpCmdLine;
+    while (*lpT != 0) {
+        for (; *lpT == ' '; lpT++) {
+        }
+        /* Windows switches may start with '/'; where '/' separates
+           directories, only '-' does. */
+        if (*lpT == '-' || (*lpT == '/' && chDirSep != '/')) {
+            for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
+                switch (*lpT) {
+                case 'W':
+                case 'w':
+                    ini.fWait = TRUE;
+                    break;
+                case 'D':
+                case 'd':
+                    for (lpT++; *lpT != 0 && *lpT != ' '; lpT++) {
+                        switch (*lpT) {
+                        case 'F':
+                        case 'f':
+                            ini.fDumpFleets = TRUE;
+                            break;
+                        case 'P':
+                        case 'p':
+                            ini.fDumpPlanets = TRUE;
+                            break;
+                        case 'M':
+                        case 'm':
+                            ini.fDumpMap = TRUE;
+                        }
+                    }
+                    lpT--;
+                    break;
+                case 'G':
+                case 'g':
+                    ini.fGen = TRUE;
+                    i = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        i = 10 * i + *lpT - '0';
+                        if (i > 1000) {
+                            i = 1000;
+                            for (; lpT[1] >= '0' && lpT[1] <= '9'; lpT++) {
+                            }
+                            break;
+                        }
+                    }
+                    if (i <= 0)
+                        break;
+                    ini.cTurnGen = i - 1;
+                    break;
+                case 'A':
+                case 'a':
+                    ini.fNewGame = TRUE;
+                    break;
+                case 'H':
+                case 'h':
+                    gd.fHotSeat = TRUE;
+                    break;
+                case 'X':
+                case 'x':
+                    gd.fExitWindows = TRUE;
+                    break;
+                case 'B':
+                case 'b':
+                    for (lpT++; *lpT == ' '; lpT++) {
+                    }
+                    pch = szBase;
+                    for (; *lpT != 0 && *lpT != ' '; lpT++) {
+                        *pch = *lpT;
+                        pch++;
+                    }
+                    *pch = 0;
+                    lpT--;
+                    if (!FSetUpBatchProcessing())
+                        break;
+                    ini.fBatch = TRUE;
+                    ini.fGen = TRUE;
+                    ini.fStartupFile = TRUE;
+                    ini.fCmdLine = TRUE;
+                    break;
+                case 'V':
+                case 'v':
+                    ini.fValidate = TRUE;
+                    break;
+                case 'L':
+                case 'l':
+                    ini.fLogging = TRUE;
+                    break;
+                case 'T':
+                case 't':
+                    ini.fTry = TRUE;
+                    break;
+                case 'C':
+                case 'c':
+                    ini.fCmdLine = szBase[0] != 0;
+                    break;
+                case 'S':
+                case 's':
+                    /* -s<seed>: a fixed startup seed instead of the clock, so
+                       regression runs repeat exactly. Not in the original. */
+                    *pfSeed = TRUE;
+                    *plSeed = 0;
+                    while (lpT[1] >= '0' && lpT[1] <= '9') {
+                        lpT++;
+                        *plSeed = 10 * *plSeed + (uint32_t)(*lpT - '0');
+                    }
+                    break;
+                case 'P':
+                case 'p':
+                    for (lpT++; *lpT == ' '; lpT++) {
+                    }
+                    pch = szPassLast;
+                    for (; *lpT != 0 && *lpT != ' ' && pch < &szPassLast[15]; lpT++) {
+                        *pch = *lpT;
+                        pch++;
+                    }
+                    *pch = 0;
+                    lpT--;
+                    lSaltLast = LSaltFromSz(szPassLast);
+                }
+            }
+        } else {
+            pch = szBase;
+            while (*lpT != 0 && *lpT != ' ') {
+                *pch = *lpT;
+                lpT++;
+                pch++;
+            }
+            *pch = 0;
+            ini.fStartupFile = TRUE;
+            ini.fCmdLine = TRUE;
+        }
+    }
+    return;
+}
+
+// FRunCmdLine carries out a command line's host work: validating the host
+// file (-v), creating a universe (-a), or generating turns (-g, with -b
+// for a batch of games and -t to generate only when every turn is in). It
+// returns FALSE when there is none to do now: the command line opens a
+// game, or waits (-w) for turns still out, which the Windows game's host
+// timer does.
+int16_t FRunCmdLine() {
+    char   *pch;
+    char    szTemp[80];
+    int16_t ich;
+    int16_t i;
+
+    if (ini.fValidate) {
+        fFileErrSilent = TRUE;
+        ClearFile(7);
+        if (FLoadGame(szBase, "hst")) {
+            VerifyTurns();
+            DestroyCurGame();
+            EnsureAis();
+            CchSprintf(szTemp, "\"%s\" Year: %d", game.szName, game.turn + 2400);
+            OutputSz(7, szTemp);
+            for (i = 0; i < game.cPlayer; i++) {
+                if (rgOut[i] + 1 > 3) {
+                    ich = CchSprintf(szTemp, "Error: %d: ", i + 1);
+                } else {
+                    ich = CchSprintf(szTemp, "%d: ", i + 1);
+                }
+                if (!gd.fNoHostNames) {
+                    ich += CchSprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
+                }
+                strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
+                if (rgplr[i].fHacker) {
+                    strcat(szTemp, " - HACKER");
+                }
+                OutputSz(7, szTemp);
+            }
+        }
+        return TRUE;
+    }
+    if (ini.fNewGame) {
+        GenNewGameFromFile(szBase);
+        return TRUE;
+    }
+    if (!ini.fGen) {
+        return FALSE;
+    }
+LBatchNext:
+    if ((!ini.fWait && !ini.fTry) || CTurnsOutSafe() == 0) {
+        EnsureAis();
+        FGenerateTurn();
+        if (ini.fBatch && lpchBatch < lpchBatchMac) {
+        LTryNextBatch:
+            DestroyCurGame();
+            pch = szBase;
+            while (*lpchBatch != '\n' && lpchBatch != lpchBatchMac) {
+                *pch = *lpchBatch;
+                lpchBatch++;
+                pch++;
+            }
+            lpchBatch++;
+            pch[-1] = 0;
+            ini.fStartupFile = TRUE;
+            goto LBatchNext;
+        }
+        if (ini.cTurnGen == 0)
+            return TRUE;
+        ini.cTurnGen--;
+        goto LBatchNext;
+    }
+    if (ini.fTry) {
+        if (ini.fBatch && lpchBatch < lpchBatchMac)
+            goto LTryNextBatch;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 void DoOrders(int16_t fPostMovement) {
@@ -536,7 +995,7 @@ void MoveThings(int16_t fPostProd) {
                     goto LRetargetFreighter;
                 }
                 if (lpth->ith == ithMineralPacket) {
-                    pctRate = MulDiv(dLeft, 100, dRange);
+                    pctRate = LMulDiv(dLeft, 100, dRange);
                     if (pctRate < 0) {
                         pctRate = 0;
                     } else if (pctRate > 100) {
@@ -1449,8 +1908,8 @@ LHitSkip1:
             dx = ptDst.x - ptSrc.x;
             dy = ptDst.y - ptSrc.y;
             dTravel = LOWORD((int32_t)((long double)sqrt((double)((uint32_t)(dx * dx) + (uint32_t)(dy * (int16_t)(ptDst.y - ptSrc.y)))) + 0.5));
-            ptAct.x = MulDiv(dx, dEnd, dTravel) + ptSrc.x;
-            ptAct.y = MulDiv(dy, dEnd, dTravel) + ptSrc.y;
+            ptAct.x = LMulDiv(dx, dEnd, dTravel) + ptSrc.x;
+            ptAct.y = LMulDiv(dy, dEnd, dTravel) + ptSrc.y;
             if (cshDead != 0) {
                 lpthSalvage = lpThings;
                 lpthMac = lpThings + cThing;

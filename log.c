@@ -514,7 +514,7 @@ void DirtyGame(int16_t fDirty) {
     if (fDirty != game.fDirty) {
         game.fDirty = fDirty;
         if (!fAi) {
-            SetMsgTitle(hwndMessage);
+            UpdateMsgTitle();
         }
     }
     return;
@@ -1072,14 +1072,12 @@ int16_t FRunLogRecord(RecordType rt, int16_t cb, uint8_t *lpb) {
 }
 
 int16_t FLoadLogFile(char *pszLog) {
-    HGLOBAL  hres;
     jmp_buf *penvMemSav;
     jmp_buf  env;
     int16_t  fRet;
     int16_t  cbLog;
     int16_t  iCur;
     MSGPLR  *lpmp;
-    HRSRC    hrsrc;
     int16_t  cSkip;
 
     fRet = TRUE;
@@ -1090,8 +1088,6 @@ int16_t FLoadLogFile(char *pszLog) {
     if (setjmp(env) != 0) {
         penvMem = penvMemSav;
         if (vlpMemStream) {
-            GlobalUnlock(hres);
-            FreeResource(hres);
             return FALSE;
         }
         if (hf == -1) {
@@ -1102,20 +1098,13 @@ int16_t FLoadLogFile(char *pszLog) {
     }
     if (game.fTutorial && idPlayer == 0 && gd.fGeneratingTurn) {
         cSkip = game.turn;
-        hrsrc = FindResource(hInst, MAKEINTRESOURCE(10001), MAKEINTRESOURCE(10000));
-        hres = LoadResource(hInst, hrsrc);
-        if (!hres) {
-        BailOut:
+        vlpMemStream = LpbLoadTutorLog();
+        if (!vlpMemStream) {
             penvMem = penvMemSav;
             return FALSE;
         }
-        vlpMemStream = LockResource(hres);
-        if (!vlpMemStream)
-            goto BailOut;
         if (game.turn >= *vlpMemStream) {
             vlpMemStream = NULL;
-            GlobalUnlock(hres);
-            FreeResource(hres);
             goto StrOpen;
         }
         vlpMemStream++;
@@ -1134,8 +1123,6 @@ int16_t FLoadLogFile(char *pszLog) {
     FailSuccess:
         if (vlpMemStream) {
             vlpMemStream = NULL;
-            GlobalUnlock(hres);
-            FreeResource(hres);
         } else {
             StreamClose();
         }
@@ -1180,8 +1167,6 @@ int16_t FLoadLogFile(char *pszLog) {
     imemLogCur = cbLog;
 Done:
     if (vlpMemStream) {
-        GlobalUnlock(hres);
-        FreeResource(hres);
         vlpMemStream = NULL;
     } else {
         StreamClose();
@@ -1256,7 +1241,11 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
             WriteMemRt(rtLogPlayerZpq1, cb, (uint8_t *)(ZIPPRODQ *)vrgZipProd + 14);
         }
     }
-    strcpy(szBase, pszFileBase);
+    /* NATIVE: callers pass szBase itself, and strcpy onto itself is
+       undefined. */
+    if (pszFileBase != szBase) {
+        strcpy(szBase, pszFileBase);
+    }
     if (!FCreateFile(dtLog, iPlayer, NULL)) {
         AlertSz(PszFormatIds(idsUnableCreateLogFile, NULL), MB_ICONHAND);
         return FALSE;
@@ -1288,74 +1277,6 @@ int16_t FWriteLogFile(char *pszFileBase, int16_t iPlayer) {
     DirtyGame(FALSE);
     gd.fWriteTurnNum = TRUE;
     return TRUE;
-}
-
-int16_t FWriteTutorialMFile(int16_t iTurn) {
-    HRSRC    hrsrc;
-    char     szT[30];
-    HGLOBAL  hres;
-    jmp_buf *penvMemSav;
-    jmp_buf  env;
-    int16_t  cch;
-    int16_t  cSkip;
-
-    cSkip = iTurn;
-    penvMemSav = penvMem;
-    penvMem = &env;
-    if (setjmp(env) != 0) {
-        penvMem = penvMemSav;
-        if (vlpMemStream) {
-            GlobalUnlock(hres);
-            FreeResource(hres);
-            return 0;
-        }
-        if (hf == -1) {
-            return 1;
-        }
-        StreamClose();
-        return 0;
-    }
-    if (iTurn < 32) {
-        hrsrc = FindResource(hInst, MAKEINTRESOURCE(10003), MAKEINTRESOURCE(10002));
-    } else {
-        hrsrc = FindResource(hInst, MAKEINTRESOURCE(10005), MAKEINTRESOURCE(10004));
-        cSkip -= 32;
-    }
-    hres = LoadResource(hInst, hrsrc);
-    if (!hres) {
-    BailOut:
-        penvMem = penvMemSav;
-        return 0;
-    }
-    vlpMemStream = LockResource(hres);
-    if (!vlpMemStream)
-        goto BailOut;
-    if (cSkip >= *vlpMemStream) {
-        vlpMemStream = NULL;
-        GlobalUnlock(hres);
-        FreeResource(hres);
-        penvMem = penvMemSav;
-        return 2;
-    }
-    vlpMemStream++;
-    while (cSkip-- != 0) {
-        do {
-            vlpMemStream += 2 + ((HDR *)vlpMemStream)->cb;
-        } while (((HDR *)vlpMemStream)->rt != rtBOF);
-    }
-    cch = CchGetString(idsTutorial, szT);
-    strcpy(&szT[cch], iTurn == 37 ? ".hst" : ".m1");
-    StreamOpen(szT, mdCreate);
-    do {
-        RgToStream(vlpMemStream, ((HDR *)vlpMemStream)->cb + 2);
-        vlpMemStream += 2 + ((HDR *)vlpMemStream)->cb;
-    } while (((HDR *)vlpMemStream)->rt != rtBOF);
-    StreamClose();
-    vlpMemStream = NULL;
-    GlobalUnlock(hres);
-    FreeResource(hres);
-    penvMem = penvMemSav;
-    return 1;
 }
 
 int16_t FWriteHistFile(int16_t iPlayer) {

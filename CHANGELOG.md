@@ -6,6 +6,27 @@ produce different results from a 2.6j host for the same turn.
 
 ## 2.9.0 (unreleased)
 
+### Added
+
+- `stars-host`, the game's host without windows, for Windows, Linux and
+  macOS. It takes `stars.exe`'s host command line (`-a`, `-g`, `-b`, `-t`,
+  `-v`, `-s`, `-p`, `-l`) and generates the same turns where `long double`
+  is x87 extended precision (x86-64; on Apple silicon, an x86_64 build run
+  by Rosetta). Messages go to stderr; it never waits for a player.
+  `stars-host --version` prints its version, which names its platform
+  (`2.9 linux-x64`, `2.9 macos-x64`); the Windows build keeps `2.9x64`.
+  It writes the universe, planet and fleet dumps (`-dm`, `-dp`, `-df`) as
+  `stars.exe` does, and `--ini <file>` reads the `stars.ini` settings a
+  host uses (`[Files] Logging`; `[Misc] DefaultPassword`, `NewReports`,
+  `NoHostNames`, `Backups`).
+
+### Fixed
+
+- Creating a universe from a definition file no longer writes the race
+  file's path past the end of a 16-byte name buffer (`FWasRaceFile`). Only
+  the file name is kept, as the race dialogs keep it. Results are unchanged;
+  macOS stopped the program at the overrun.
+
 ## 2.8.1
 
 ### Changed

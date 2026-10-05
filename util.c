@@ -1,4 +1,5 @@
 #include "common.h"
+#include "version.h"
 
 uint32_t rgcrDrawStars2b[5] = {8355711, 127, 32512, 8323072};
 uint32_t rgcrDrawStars2a[5] = {12632256, 255, 65280, 16711680};
@@ -210,57 +211,6 @@ int16_t FLookupThing(int16_t idth, THING *pth) {
     return FALSE;
 }
 
-void SelectOursAtObject(POINT16 *ppt) {
-    int16_t id;
-    POINT16 pt;
-    int16_t ish;
-    int16_t i;
-    FLEET  *lpfl;
-    SCAN    scan;
-
-    if (ppt->x == -1) {
-        if (ppt->y & 0x8000) {
-            SelectAdjFleet(0, ppt->y & 0x7fff);
-            return;
-        }
-        pt = rgptPlan[ppt->y];
-    } else {
-        pt = *ppt;
-    }
-    id = idflNone;
-    for (ish = 0; ish < cFleet; ish++) {
-        lpfl = rglpfl[ish];
-        if (!rglpfl[ish])
-            break;
-        if (pt.x == lpfl->pt.x && pt.y == lpfl->pt.y) {
-            if (lpfl->iPlayer == idPlayer) {
-                SelectAdjFleet(0, lpfl->id);
-                return;
-            }
-            if (id == idflNone) {
-                id = lpfl->id;
-            }
-        }
-    }
-    for (i = 0; i < game.cPlanMax; i++) {
-        if (rgptPlan[i].x == pt.x && rgptPlan[i].y == pt.y) {
-            SelectAdjPlanet(0, i);
-            return;
-        }
-    }
-    scan.iwp = iwpNone;
-    if (FFindNearestObject(pt, grobjThing, &scan) && scan.grobj == grobjThing && scan.ith != ithNone && lpThings[scan.ith].ith == ithMineralPacket &&
-        lpThings[scan.ith].thp.iWarp == 0) {
-        ChangeScanSel(&scan, 1);
-        FEnsurePointOnScreen(scan.pt, TRUE);
-        UpdateWindow(hwndScanner);
-        SendMessage(hwndScanner, WM_CHAR, 'v', 0);
-    } else if (id != idflNone) {
-        SelectAdjFleet(0, id);
-    }
-    return;
-}
-
 int32_t LComputePower(SHDEF *lpshdef) {
     int16_t dSpeed;
     int16_t dxRange;
@@ -432,7 +382,7 @@ char *PszPlayerName(int16_t iPlayer, int16_t fCapital, int16_t fPlural, int16_t 
             CchGetString(idsAre, &szName[strlen(szName)]);
         }
     } else {
-        wsprintf(szName, PszGetCompressedString(idsPlayerD2), iPlayer + 1);
+        CchSprintf(szName, PszGetCompressedString(idsPlayerD2), iPlayer + 1);
         if (!fPlural) {
             strcat(szName, "'s");
         }
@@ -790,11 +740,11 @@ char *PszGetThingName(int16_t id) {
     switch (lpth->ith) {
     case ithMinefield:
         if (lpth->iplr != idPlayer) {
-            wsprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
+            CchSprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
         } else {
             szPlr[0] = 0;
         }
-        wsprintf(szWork, PszGetCompressedString(idsSSMineField), szPlr, rgszMineField[lpth->thm.iType]);
+        CchSprintf(szWork, PszGetCompressedString(idsSSMineField), szPlr, rgszMineField[lpth->thm.iType]);
         break;
     case ithMineralPacket:
         if (lpth->thp.iWarp == 0) {
@@ -802,11 +752,11 @@ char *PszGetThingName(int16_t id) {
             return szWork;
         }
         if (lpth->iplr != idPlayer) {
-            wsprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
+            CchSprintf(szPlr, "%s ", PszPlayerName(lpth->iplr, FALSE, FALSE, FALSE, 0, NULL));
         } else {
             szPlr[0] = 0;
         }
-        wsprintf(szWork, PszGetCompressedString(idsSmineralPacket), szPlr);
+        CchSprintf(szWork, PszGetCompressedString(idsSmineralPacket), szPlr);
         break;
     case ithWormhole:
         strcpy(szWork, PszGetCompressedString(idsWormhole));
@@ -836,12 +786,12 @@ char *PszGetFleetName(int16_t id) {
     iplr = (uint16_t)id >> 9 & 0xf;
     ifl = id & 0x1ff;
     if (iplr != idPlayer) {
-        wsprintf(szPlr, "%s ", PszPlayerName(iplr, FALSE, FALSE, FALSE, 0, NULL));
+        CchSprintf(szPlr, "%s ", PszPlayerName(iplr, FALSE, FALSE, FALSE, 0, NULL));
     } else {
         szPlr[0] = 0;
     }
     if (lpfl && lpfl->lpszName) {
-        wsprintf(szWork, "%s%s", szPlr, lpfl->lpszName);
+        CchSprintf(szWork, "%s%s", szPlr, lpfl->lpszName);
     } else {
         if (lpfl) {
             ishdef = IshdefPrimaryFromLpfl(lpfl, &cshdef);
@@ -862,7 +812,7 @@ char *PszGetFleetName(int16_t id) {
         } else {
             lpsz = PszGetCompressedString(idsFleet);
         }
-        wsprintf(szWork, "%s%s #%d", szPlr, lpsz, ifl + 1);
+        CchSprintf(szWork, "%s%s #%d", szPlr, lpsz, ifl + 1);
     }
     return szWork;
 }
@@ -901,7 +851,7 @@ char *PszFleetNameFromWord(uint16_t w) {
         }
         lpsz = szShdef;
     }
-    wsprintf(szWork, "%s #%d", lpsz, (w & 0x1ff) + 1);
+    CchSprintf(szWork, "%s #%d", lpsz, (w & 0x1ff) + 1);
     return szWork;
 }
 
@@ -914,7 +864,7 @@ char *PszGetPlanetName(int16_t id) {
     id = rgidPlan[id];
     psz = PszGetCompressedPlanet(id);
     if (fInOrbit) {
-        wsprintf(szWork, PszGetCompressedString(idsOrbitingS), psz);
+        CchSprintf(szWork, PszGetCompressedString(idsOrbitingS), psz);
     } else {
         strcpy(szWork, psz);
     }
@@ -951,7 +901,7 @@ int16_t FDeleteFleet(int16_t idFleet, GrobjClass grobjSel, int16_t idSel) {
         return FALSE;
     }
     if (idFleet == sel.fl.id) {
-        RedrawScanSel(NULL, 0);
+        ShowScanSel(0);
     }
     lpfl->fDead = TRUE;
     FleetOrdersChangeTarget(lpfl);
@@ -993,10 +943,42 @@ int16_t FDeleteFleet(int16_t idFleet, GrobjClass grobjSel, int16_t idSel) {
             }
         }
     }
-    if (!gd.fGeneratingTurn && hwndMessage) {
-        SetMsgTitle(hwndMessage);
+    if (!gd.fGeneratingTurn) {
+        UpdateMsgTitle();
     }
     return TRUE;
+}
+
+int16_t FFindSomethingAndSelectIt() {
+    PLANET *lpplMac;
+    PLANET *lppl;
+    int16_t i;
+    FLEET  *lpfl;
+
+    lppl = LpplFromId(rgplr[idPlayer].idPlanetHome);
+    if (!lppl || lppl->iPlayer != idPlayer) {
+        lppl = lpPlanets;
+        lpplMac = lpPlanets + cPlanet;
+        for (; lppl < lpplMac && lppl->iPlayer != idPlayer; lppl++) {
+        }
+        if (lppl == lpplMac) {
+            lppl = NULL;
+        }
+    }
+    if (lppl) {
+        SelectAdjPlanet(0, lppl->id);
+        return TRUE;
+    }
+    for (i = 0; i < cFleet; i++) {
+        lpfl = rglpfl[i];
+        if (!rglpfl[i])
+            break;
+        if (lpfl->iPlayer == idPlayer) {
+            SelectAdjFleet(0, lpfl->id);
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 FLEET *LpflNew(int16_t iPlr, int16_t idPl) {
@@ -1207,85 +1189,9 @@ NoObj:
     if (x == -1 && y == -1) {
         strcpy(szWork, PszGetCompressedString(idsDeepSpace));
     } else {
-        wsprintf(szWork, PszGetCompressedString(idsSpaceDD), x, y);
+        CchSprintf(szWork, PszGetCompressedString(idsSpaceDD), x, y);
     }
     return szWork;
-}
-
-int16_t CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall) {
-    int16_t  iWarp;
-    double   dbl;
-    ORDER   *lpord;
-    int16_t  i;
-    int16_t  c;
-    int16_t  iSpeed;
-    int16_t  j;
-    int16_t  cYears;
-    StringId ids;
-
-    cYears = 0;
-    lpord = lpfl->lpplord->rgord;
-    i = 0;
-    while (i < iwp) {
-        dbl = DGetDistance(lpord->pt.x, lpord->pt.y, lpord[1].pt.x, lpord[1].pt.y);
-        iWarp = lpord[1].iWarp;
-        if (iWarp < 11) {
-            iSpeed = iWarp * iWarp;
-        } else {
-            j = FCanFleetUseStargates(lpfl, lpord->pt, lpord[1].pt);
-            switch (j) {
-            case -1:
-                iSpeed = -3;
-                break;
-            case 0:
-                iSpeed = 0;
-                break;
-            case 1:
-                iSpeed = 8000;
-                break;
-            default:
-                if (j & 2) {
-                    iSpeed = -1;
-                } else {
-                    iSpeed = -2;
-                }
-            }
-        }
-        if (iSpeed == 0) {
-            if (hdc) {
-                SetTextColor(hdc, 0xff);
-            }
-            c = CchGetString(idsNever, sz);
-            return c;
-        }
-        if (iSpeed < 0) {
-            if (hdc) {
-                SetTextColor(hdc, 32639);
-            }
-            if (iSpeed == -1) {
-                ids = idsDanger;
-            } else if (iSpeed == -2) {
-                ids = idsUnload2;
-            } else {
-                ids = idsUncertain;
-            }
-            c = CchGetString(ids, sz);
-            return c;
-        }
-        if (iSpeed >= (int16_t)LOWORD((int32_t)dbl)) {
-            iSpeed = 1;
-        } else {
-            iSpeed = (int16_t)(LOWORD((int32_t)dbl) + iSpeed - 1) / iSpeed;
-        }
-        cYears += iSpeed;
-        i++;
-        lpord++;
-    }
-    c = wsprintf(sz, PszGetCompressedString(!fSmall ? idsDYear : idsDy), cYears);
-    if (cYears != 1 && !fSmall) {
-        sz[c++] = 's';
-    }
-    return c;
 }
 
 int16_t IshdefPrimaryFromLpfl(FLEET *lpfl, int16_t *pcDiff) {
@@ -1327,9 +1233,9 @@ char *PszGetDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
     d2 = (int32_t)(d / 100);
     d -= (uint32_t)(d2 * 100);
     if (dyArial8 <= 14) {
-        wsprintf(szWork, PszGetCompressedString(idsLdLdLightYears), d2, d);
+        CchSprintf(szWork, PszGetCompressedString(idsLdLdLightYears), d2, d);
     } else {
-        wsprintf(szWork, PszGetCompressedString(idsLdLdLY), d2, d);
+        CchSprintf(szWork, PszGetCompressedString(idsLdLdLY), d2, d);
     }
     return szWork;
 }
@@ -1522,6 +1428,93 @@ int16_t FFindNearestObject(POINT16 pt, GrobjClass grobj, SCAN *pscan) {
         return TRUE;
     }
     return FALSE;
+}
+
+int16_t PtToScan(int16_t d) {
+    if (iScanZoom == zoom100) {
+        return d;
+    }
+    switch (iScanZoom) {
+    case zoom400:
+        d *= 4;
+        break;
+    case zoom200:
+        d *= 2;
+        break;
+    case zoom50:
+        d >>= 1;
+        break;
+    case zoom25:
+        d >>= 2;
+        break;
+    case zoom38:
+        d = ((d << 1) + d) >> 3;
+        break;
+    case zoom75:
+        d = ((d << 1) + d) >> 2;
+        break;
+    case zoom125:
+        d = ((d << 2) + d) >> 2;
+        break;
+    case zoom150:
+        d = ((d << 1) + d) >> 1;
+    }
+    return d;
+}
+
+int16_t ScanToPt(int16_t d) {
+    if (iScanZoom == zoom100) {
+        return d;
+    }
+    switch (iScanZoom) {
+    case zoom400:
+        d >>= 2;
+        break;
+    case zoom200:
+        d >>= 1;
+        break;
+    case zoom50:
+        d *= 2;
+        break;
+    case zoom25:
+        d *= 4;
+        break;
+    case zoom38:
+        d = (int16_t)(d * 8) / 3;
+        break;
+    case zoom75:
+        d = (int16_t)(d * 4) / 3;
+        break;
+    case zoom125:
+        d = (int16_t)(d * 4) / 5;
+        break;
+    case zoom150:
+        d = (int16_t)(d * 2) / 3;
+    }
+    return d;
+}
+
+void ChangeScanSel(SCAN *pscan, int16_t fValidScan) {
+    int16_t fChgWp;
+    SCAN    scanOld;
+
+    if (!fValidScan) {
+        FFindNearestObject(pscan->pt, pscan->grobj, pscan);
+    }
+    if (memcmp(pscan, &sel.scan, sizeof(SCAN)) != 0) {
+        fChgWp = pscan->iwp != iwpNone && pscan->iwp != sel.iwpAct;
+        scanOld = sel.scan;
+        ShowScanSel(-1);
+        sel.scan = *pscan;
+        if ((sel.scan.grobjFull & grobjPlanet) && fValidScan != 2) {
+            sel.scan.grobj = grobjPlanet;
+        }
+        if (fChgWp) {
+            sel.iwpAct = pscan->iwp;
+        }
+        ShowScanSelChange(&scanOld, pscan, fChgWp);
+    }
+    return;
 }
 
 void UpdateShdefCost(SHDEF *lpshdef) {
@@ -2042,53 +2035,6 @@ void DecorateHullName(int16_t iplr, int16_t ish, char *psz) {
     return;
 }
 
-void DrawABunchOfStars(HDC hdc, RECT *prc) {
-    int32_t lPixTot;
-    int16_t iMax;
-    int16_t dy;
-    int16_t i;
-    int16_t iClr;
-    int16_t dx;
-    RECT    rcOut;
-    RECT    rc;
-
-    rc = *prc;
-    PushRandom(17, 11);
-    InflateRect(&rc, -3, -3);
-    dx = rc.right - rc.left;
-    dy = rc.bottom - rc.top;
-    lPixTot = (uint32_t)(dx * (int16_t)(rc.bottom - rc.top));
-    for (iClr = 0; iClr < 5; iClr++) {
-        iMax = LOWORD((int32_t)(lPixTot / rgDSDivCnt[iClr]));
-        for (i = 0; i < iMax; i++) {
-            rcOut.left = Random(dx) + rc.left;
-            rcOut.top = Random(dy) + rc.top;
-            rcOut.right = rcOut.left + 1;
-            rcOut.bottom = rcOut.top + 1;
-            SetBkColor(hdc, rgcrDrawStars[iClr]);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-        }
-    }
-    for (iClr = 0; iClr < 4; iClr++) {
-        iMax = LOWORD((int32_t)(lPixTot / rgDSDivCnt2[iClr])) + 1;
-        for (i = 0; i < iMax; i++) {
-            rcOut.left = Random(dx) + rc.left;
-            rcOut.top = Random(dy) + rc.top;
-            rcOut.right = rcOut.left + 3;
-            rcOut.bottom = rcOut.top + 3;
-            SetBkColor(hdc, rgcrDrawStars2b[iClr]);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-            SetBkColor(hdc, rgcrDrawStars2a[iClr]);
-            InflateRect(&rcOut, -1, 0);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-            InflateRect(&rcOut, 1, -1);
-            ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rcOut, NULL, 0, NULL);
-        }
-    }
-    PopRandom();
-    return;
-}
-
 int16_t FMatchTarget(FLEET *lpflTarget, MdTarget mdTarget, int16_t fExact) {
     int16_t imd;
     int16_t ish;
@@ -2526,20 +2472,6 @@ int16_t IshFindSimilarDesign(HUL *lphul, int16_t iPlrDst) {
     return ishdefNone;
 }
 
-void DrawPlanetPrintDot(HDC hdc, int16_t x, int16_t y, int16_t iSize) {
-    if (iSize == 0) {
-        PatBlt(hdc, x - 3, y - 1, 7, 3, BLACKNESS);
-        PatBlt(hdc, x - 1, y - 3, 3, 7, BLACKNESS);
-        PatBlt(hdc, x - 2, y - 2, 5, 5, BLACKNESS);
-    } else {
-        PatBlt(hdc, x - 5, y - 2, 11, 5, BLACKNESS);
-        PatBlt(hdc, x - 2, y - 5, 5, 11, BLACKNESS);
-        PatBlt(hdc, x - 4, y - 3, 9, 7, BLACKNESS);
-        PatBlt(hdc, x - 3, y - 4, 7, 9, BLACKNESS);
-    }
-    return;
-}
-
 void ClearFile(int16_t dt) {
     char *pch;
     char  szFile[256];
@@ -2562,14 +2494,13 @@ void OutputSz(int16_t dt, char *sz) {
     char szDate[100];
     char szTemp[256];
 
-    wsprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
-    if (_access(szFile, 0) == -1) {
-        wsprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
+    CchSprintf(szFile, "%s.%s", szBase, mpdtsz[dt]);
+    if (!FFileExists(szFile)) {
+        CchSprintf(szTemp, "Stars! %s\r\n\r\n", SzVersion());
         OutputFileString(szFile, szTemp);
     }
-    _strdate(szDate);
-    _strtime(szTime);
-    wsprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
+    GetDateTimeSz(szDate, szTime);
+    CchSprintf(szTemp, "%s %s - %s\r\n", szDate, szTime, sz);
     OutputFileString(szFile, szTemp);
     return;
 }
@@ -2578,8 +2509,90 @@ void TurnLog(StringId ids) {
     char szTemp[256];
 
     if (ini.fLogging) {
-        wsprintf(szTemp, PszFormatIds(ids, NULL), game.turn + 2401);
+        CchSprintf(szTemp, PszFormatIds(ids, NULL), game.turn + 2401);
         OutputSz(6, szTemp);
     }
     return;
+}
+
+char *SzVersion() {
+    /* The original formatted idsVersionD02dC ("Version %d.%02d%c") with 2, 60, 'j'. */
+    CchSprintf(szWork, "Version %s", STARS_VERSION_DISPLAY);
+    return szWork;
+}
+
+int16_t CchGetETA(HDC hdc, FLEET *lpfl, char *sz, int16_t iwp, int16_t fSmall) {
+    int16_t  iWarp;
+    double   dbl;
+    ORDER   *lpord;
+    int16_t  i;
+    int16_t  c;
+    int16_t  iSpeed;
+    int16_t  j;
+    int16_t  cYears;
+    StringId ids;
+
+    cYears = 0;
+    lpord = lpfl->lpplord->rgord;
+    i = 0;
+    while (i < iwp) {
+        dbl = DGetDistance(lpord->pt.x, lpord->pt.y, lpord[1].pt.x, lpord[1].pt.y);
+        iWarp = lpord[1].iWarp;
+        if (iWarp < 11) {
+            iSpeed = iWarp * iWarp;
+        } else {
+            j = FCanFleetUseStargates(lpfl, lpord->pt, lpord[1].pt);
+            switch (j) {
+            case -1:
+                iSpeed = -3;
+                break;
+            case 0:
+                iSpeed = 0;
+                break;
+            case 1:
+                iSpeed = 8000;
+                break;
+            default:
+                if (j & 2) {
+                    iSpeed = -1;
+                } else {
+                    iSpeed = -2;
+                }
+            }
+        }
+        if (iSpeed == 0) {
+            if (hdc) {
+                SetHdcTextColor(hdc, 0xff);
+            }
+            c = CchGetString(idsNever, sz);
+            return c;
+        }
+        if (iSpeed < 0) {
+            if (hdc) {
+                SetHdcTextColor(hdc, 32639);
+            }
+            if (iSpeed == -1) {
+                ids = idsDanger;
+            } else if (iSpeed == -2) {
+                ids = idsUnload2;
+            } else {
+                ids = idsUncertain;
+            }
+            c = CchGetString(ids, sz);
+            return c;
+        }
+        if (iSpeed >= (int16_t)LOWORD((int32_t)dbl)) {
+            iSpeed = 1;
+        } else {
+            iSpeed = (int16_t)(LOWORD((int32_t)dbl) + iSpeed - 1) / iSpeed;
+        }
+        cYears += iSpeed;
+        i++;
+        lpord++;
+    }
+    c = CchSprintf(sz, PszGetCompressedString(!fSmall ? idsDYear : idsDy), cYears);
+    if (cYears != 1 && !fSmall) {
+        sz[c++] = 's';
+    }
+    return c;
 }
