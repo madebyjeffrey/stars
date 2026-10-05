@@ -44,6 +44,10 @@ target_link_libraries(stars_ui PUBLIC stars_options)
 add_executable(stars WIN32 res/stars.rc)
 target_link_libraries(stars PRIVATE stars_core stars_ui)
 
+# The command-line host: the game code and host.c, no windows.
+add_executable(stars-host host.c)
+target_link_libraries(stars-host PRIVATE stars_core)
+
 # version.h is regenerated on every build so the build number follows HEAD;
 # it is rewritten only when the version changes.
 set(STARS_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
@@ -63,7 +67,7 @@ add_custom_target(stars_version
 add_dependencies(stars_core stars_version)
 add_dependencies(stars_ui stars_version)
 
-set_target_properties(stars PROPERTIES
+set_target_properties(stars stars-host PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
