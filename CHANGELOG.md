@@ -29,6 +29,13 @@ produce different results from a 2.6j host for the same turn.
   Windows 10's "scroll inactive windows" setting. A drop-down list the player
   only points at ignores the wheel, so it can't change an order by accident.
 
+### Fixed
+
+- The scanner no longer leaves a band drawn out of place when it scrolls
+  while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
+  followed at once by a trackpad scroll. The original drew the pending
+  area at the new position and then scrolled it with the rest.
+
 ## 2.9.0 (2026-10-05)
 
 ### Added

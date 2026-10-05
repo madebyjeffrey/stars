@@ -1982,16 +1982,27 @@ void SetScanScrollBars(HWND hwnd) {
 }
 
 void ScrollScanner(int16_t dx, int16_t dy) {
-    HDC  hdc;
-    RECT rcUpd;
-    RECT rcUpd2;
-    RECT rc;
+    HDC     hdc;
+    RECT    rcUpd;
+    RECT    rcUpd2;
+    RECT    rc;
+    int16_t fPending;
 
     if ((dx != 0 || dy != 0) && IsWindowVisible(hwndScanner) != 0 && !gd.fNoScannerDraw) {
         hdc = GetDC(hwndScanner);
         GetClientRect(hwndScanner, &rc);
-        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp || hwndBrowser) {
+        // The scroll handlers move the scanner's top before calling here, so
+        // a repaint still pending would be drawn at the new position and
+        // then scrolled with the rest, leaving a band drawn out of place.
+        // A wheel zoom invalidates the whole scanner, and a trackpad's next
+        // scroll comes before its WM_PAINT. Redraw the map instead.
+        fPending = GetUpdateRect(hwndScanner, NULL, FALSE) != 0;
+        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp || hwndBrowser || fPending) {
             DrawScanner(hdc, &rc);
+            if (fPending) {
+                rc.bottom -= dySBar;
+                ValidateRect(hwndScanner, &rc);
+            }
             goto RelDC;
         }
         rc.bottom -= dySBar;
