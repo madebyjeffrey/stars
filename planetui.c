@@ -1736,26 +1736,23 @@ void FillShipDD(int16_t idSkip) {
 }
 
 void FillPlanetProdLB(HWND hwnd, PLPROD *lpplprod, PLANET *lppl) {
-    int16_t fMinimal;
     int32_t rgwtMin[4];
     int16_t i;
-    int16_t cItem;
     char    szTemp[80];
     int32_t resCost;
     char   *psz;
-    char    ch;
-    PROD   *lpprod;
-    int16_t etaLast;
-    int16_t etaFirst;
 
-    fMinimal = lppl != NULL;
-    if (!fMinimal) {
-        lppl = &sel.pl;
-        if (!hwnd) {
-            hwnd = hwndPlanetProdLB;
-        }
-        SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
+    /* Given a planet, leave its queue's first item in szWork; see
+       PszProdQueueTop. */
+    if (lppl) {
+        PszProdQueueTop(lppl, lpplprod);
+        return;
     }
+    lppl = &sel.pl;
+    if (!hwnd) {
+        hwnd = hwndPlanetProdLB;
+    }
+    SendMessage(hwnd, LB_RESETCONTENT, 0, 0);
     if (!lpplprod) {
         lpplprod = lppl->lpplprod;
     }
@@ -1766,57 +1763,16 @@ void FillPlanetProdLB(HWND hwnd, PLPROD *lpplprod, PLANET *lppl) {
             goto NoMsg;
         psz = PszGetCompressedString(idsTopQueue);
     }
-    if (!fMinimal) {
-        SendMessage(hwnd, LB_ADDSTRING, 0, (LPARAM)psz);
-    } else if (psz != szWork) {
-        strcpy(szWork, psz);
-    }
+    SendMessage(hwnd, LB_ADDSTRING, 0, (LPARAM)psz);
 NoMsg:
     if (lpplprod) {
         resCost = 0;
         for (i = 0; i < 4; i++) {
             rgwtMin[i] = 0;
         }
-        for (i = 0, lpprod = lpplprod->rgprod; i < lpplprod->iprodMac; i++, lpprod++) {
-            psz = PszNameProdItem(lpprod);
-            EstimateItemProdSched(lppl, lpplprod, i, &etaFirst, &etaLast);
-            if ((etaFirst == 0 && etaLast == 0) || (etaFirst == -1 && etaLast == -1)) {
-                if (fMinimal)
-                    continue;
-                ch = '&';
-            } else if ((etaFirst > 1 && etaFirst < 100) || (etaFirst == 100 && lpprod->grobj == grobjPlanet && lpprod->iItem < mdIdleFactory)) {
-                ch = ' ';
-            } else if (etaFirst == 1 && etaLast == 1) {
-                ch = '*';
-            } else if (etaFirst < 100) {
-                ch = '#';
-            } else {
-                ch = '!';
-            }
-            cItem = lpprod->cItem;
-            wsprintf(szTemp, "%c%5d%s", ch, cItem, psz);
-            if (lpprod->grobj == grobjPlanet) {
-                if (lpprod->iItem < mdIdleFactory) {
-                    szTemp[1] += 2;
-                    if (lpprod->iItem == iobjAlchemy) {
-                        szTemp[5] = '*';
-                    }
-                }
-                switch (lpprod->iItem) {
-                case mdIdleTerraform:
-                case iobjMinTerraform:
-                case iobjMaxTerraform:
-                    szTemp[1]++;
-                }
-            }
-            if (fMinimal) {
-                strcpy(szWork, szTemp);
-                return;
-            }
+        for (i = 0; i < lpplprod->iprodMac; i++) {
+            FProdItemLine(lppl, lpplprod, i, TRUE, szTemp);
             SendMessage(hwnd, LB_ADDSTRING, 0, (LPARAM)szTemp);
-        }
-        if (fMinimal) {
-            CchGetString(idsQueueEmpty, szWork);
         }
     }
     return;

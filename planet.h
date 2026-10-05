@@ -32,4 +32,7 @@ int16_t FCanTerraformLppl(PLANET *lppl, int16_t *rgEnvMin, int16_t *rgEnvMax, in
 void    UninhabitPlanet(PLANET *lppl);
 int16_t PctCloakFromHuldef(HUL *lphul, int16_t iplr, int16_t *ppctSteal);
 
+int16_t FProdItemLine(PLANET *lppl, PLPROD *lpplprod, int16_t iprod, int16_t fShowNever, char *szLine);
+char   *PszProdQueueTop(PLANET *lppl, PLPROD *lpplprod);
+
 #endif

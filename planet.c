@@ -965,3 +965,80 @@ int16_t PctCloakFromHuldef(HUL *lphul, int16_t iplr, int16_t *ppctSteal) {
     }
     return 98;
 }
+
+// FProdItemLine formats production queue item iprod as the planet window
+// lists it: a schedule mark, the count and the name. An item that will
+// never be built is marked '&' if fShowNever is set, or is left out
+// (FALSE). PszNameProdItem names the item in szWork.
+int16_t FProdItemLine(PLANET *lppl, PLPROD *lpplprod, int16_t iprod, int16_t fShowNever, char *szLine) {
+    char    ch;
+    int16_t cItem;
+    char   *psz;
+    PROD   *lpprod;
+    int16_t etaLast;
+    int16_t etaFirst;
+
+    lpprod = &lpplprod->rgprod[iprod];
+    psz = PszNameProdItem(lpprod);
+    EstimateItemProdSched(lppl, lpplprod, iprod, &etaFirst, &etaLast);
+    if ((etaFirst == 0 && etaLast == 0) || (etaFirst == -1 && etaLast == -1)) {
+        if (!fShowNever)
+            return FALSE;
+        ch = '&';
+    } else if ((etaFirst > 1 && etaFirst < 100) || (etaFirst == 100 && lpprod->grobj == grobjPlanet && lpprod->iItem < mdIdleFactory)) {
+        ch = ' ';
+    } else if (etaFirst == 1 && etaLast == 1) {
+        ch = '*';
+    } else if (etaFirst < 100) {
+        ch = '#';
+    } else {
+        ch = '!';
+    }
+    cItem = lpprod->cItem;
+    CchSprintf(szLine, "%c%5d%s", ch, cItem, psz);
+    if (lpprod->grobj == grobjPlanet) {
+        if (lpprod->iItem < mdIdleFactory) {
+            szLine[1] += 2;
+            if (lpprod->iItem == iobjAlchemy) {
+                szLine[5] = '*';
+            }
+        }
+        switch (lpprod->iItem) {
+        case mdIdleTerraform:
+        case iobjMinTerraform:
+        case iobjMaxTerraform:
+            szLine[1]++;
+        }
+    }
+    return TRUE;
+}
+
+// PszProdQueueTop returns, in szWork, the first item of lppl's production
+// queue (lpplprod, or the planet's own) that will be built, as
+// FProdItemLine formats it, or "Queue is empty". The reports and the
+// planet dump show it.
+char *PszProdQueueTop(PLANET *lppl, PLPROD *lpplprod) {
+    char    szLine[80];
+    char   *psz;
+    int16_t i;
+
+    if (!lpplprod) {
+        lpplprod = lppl->lpplprod;
+    }
+    if (!lpplprod || lpplprod->iprodMac == 0) {
+        psz = PszGetCompressedString(idsQueueEmpty);
+        if (psz != szWork) {
+            strcpy(szWork, psz);
+        }
+    }
+    if (lpplprod) {
+        for (i = 0; i < lpplprod->iprodMac; i++) {
+            if (FProdItemLine(lppl, lpplprod, i, FALSE, szLine)) {
+                strcpy(szWork, szLine);
+                return szWork;
+            }
+        }
+        CchGetString(idsQueueEmpty, szWork);
+    }
+    return szWork;
+}

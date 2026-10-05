@@ -405,7 +405,7 @@ void DumpPlanets() {
                 RgToStream(szForm, strlen(szForm));
                 szForm[1] = 0;
                 if (lppl->det == detAll) {
-                    FillPlanetProdLB(NULL, NULL, lppl);
+                    PszProdQueueTop(lppl, NULL);
                     strcpy(&szForm[1], szWork);
                 }
                 RgToStream(szForm, strlen(szForm));
