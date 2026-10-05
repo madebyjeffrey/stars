@@ -43,6 +43,17 @@ fixture race to `data/humanoid.r1`.
   behavior needs two generations. `test_turn.c` shows the plumbing and
   `test_ai4.c` a full example.
 
+## Golden files
+
+`test_report.c` checks the universe, planet and fleet dumps against
+`tests/unit/golden`, so the Windows build and `stars-host` keep writing
+the same files. If a change to the dumps is intended, regenerate them from
+the Windows build and commit them with the change:
+
+```sh
+cd dist/mingw-debug/tests && STARS_UPDATE_GOLDEN=1 wine ./test_report.exe
+```
+
 ## Bug fixes
 
 A bug fix in [docs/ROADMAP.md](../../docs/ROADMAP.md) step 5 adds a test that
