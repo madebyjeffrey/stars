@@ -46,7 +46,7 @@ add_library(stars_core OBJECT ${STARS_CORE_SOURCES})
 target_link_libraries(stars_core PUBLIC stars_options)
 
 # The command-line host: the game code and host.c, no windows.
-add_executable(stars-host host.c)
+add_executable(stars-host host.c hostui.c)
 target_link_libraries(stars-host PRIVATE stars_core)
 set_target_properties(stars-host PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
@@ -99,6 +99,31 @@ if(NOT WIN32)
     if(NOT STARS_X87_LONG_DOUBLE)
         message(WARNING "long double is not x87 extended precision here, so stars-host's turns can differ "
                         "from the Windows game's. On Apple silicon, use the macos-host presets (x86_64, run by Rosetta).")
+    endif()
+    # Unit tests (tests/unit) that need no windows, with hostui.c for the
+    # user interface. The Windows build below runs them all under Wine.
+    option(STARS_BUILD_TESTS "Build the unit tests in tests/unit" ON)
+    if(STARS_BUILD_TESTS)
+        enable_testing()
+        set(STARS_TEST_DIR "${CMAKE_BINARY_DIR}/tests")
+        file(MAKE_DIRECTORY "${STARS_TEST_DIR}/data")
+        configure_file(tests/scaffold/fixtures/newgame/tiny/humanoid.r1 "${STARS_TEST_DIR}/data/humanoid.r1" COPYONLY)
+        file(GLOB STARS_UNIT_TESTS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_*.c")
+        # test_native_ports replaces the game's file I/O with --wrap, which
+        # only GNU ld on Windows provides; test_report tests the planet dump,
+        # which is still in the Windows report code (report.c).
+        list(REMOVE_ITEM STARS_UNIT_TESTS
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_native_ports.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_report.c")
+        foreach(STARS_UNIT_TEST ${STARS_UNIT_TESTS})
+            get_filename_component(STARS_TEST_NAME "${STARS_UNIT_TEST}" NAME_WE)
+            add_executable(${STARS_TEST_NAME} "${STARS_UNIT_TEST}" tests/unit/stars_test.c hostui.c)
+            target_link_libraries(${STARS_TEST_NAME} PRIVATE stars_core)
+            target_include_directories(${STARS_TEST_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
+            set_target_properties(${STARS_TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
+            add_test(NAME ${STARS_TEST_NAME} COMMAND ${STARS_TEST_NAME})
+            set_tests_properties(${STARS_TEST_NAME} PROPERTIES WORKING_DIRECTORY "${STARS_TEST_DIR}")
+        endforeach()
     endif()
     # The rest builds the Windows game and its tests.
     return()

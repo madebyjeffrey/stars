@@ -2,6 +2,8 @@
 
 #include "stars_test.h"
 
+#ifdef _WIN32
+// The battle plans dialog, which needs Windows.
 // OpenBattlePlans loads player 1's turn file and opens the real Battle Plans
 // dialog on its first plan.
 static HWND OpenBattlePlans(const char *pszTest) {
@@ -43,6 +45,7 @@ static void test_BattlePlansDlg_stores_choices(void) {
     TEST_CHECK_(btlplan.mdTactic == 1, "tactic %d", btlplan.mdTactic);
     DestroyWindow(hwnd);
 }
+#endif
 
 // Starbase friendly fire: in Win16, a starbase whose battle plan attacked
 // everyone or one player set the attack mask of whichever player iplrCur
@@ -50,20 +53,20 @@ static void test_BattlePlansDlg_stores_choices(void) {
 // the starbase owner, its friend and its target, that the starbase attacks
 // only the target and nobody attacks the friend or is attacked by it.
 static void test_CplrBattle_starbase_attacks_only_its_target(void) {
-    char        szDir[MAX_PATH];
-    const char *rgszAi[] = {"#1 4", "#2 4"};
+    char                 szDir[MAX_PATH];
+    const char          *rgszAi[] = {"#1 4", "#2 4"};
     static const int16_t rgrgiplr[6][3] = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}};
-    PLANET     *lppl;
-    FLEET      *lpfl;
-    uint16_t    rggrfAttack[16];
-    uint16_t    grfPlayer;
-    uint16_t    grfSpectator;
-    int16_t     icase;
-    int16_t     iplrSB;
-    int16_t     iplrFriend;
-    int16_t     iplrTarget;
-    int16_t     i;
-    int16_t     ish;
+    PLANET              *lppl;
+    FLEET               *lpfl;
+    uint16_t             rggrfAttack[16];
+    uint16_t             grfPlayer;
+    uint16_t             grfSpectator;
+    int16_t              icase;
+    int16_t              iplrSB;
+    int16_t              iplrFriend;
+    int16_t              iplrTarget;
+    int16_t              i;
+    int16_t              ish;
 
     for (icase = 0; icase < 6; icase++) {
         iplrSB = rgrgiplr[icase][0];
@@ -102,6 +105,8 @@ static void test_CplrBattle_starbase_attacks_only_its_target(void) {
     }
 }
 
-TEST_LIST = {{"BattlePlansDlg stores drop-down choices", test_BattlePlansDlg_stores_choices},
-             {"CplrBattle starbase attacks only its target", test_CplrBattle_starbase_attacks_only_its_target},
+TEST_LIST = {{"CplrBattle starbase attacks only its target", test_CplrBattle_starbase_attacks_only_its_target},
+#ifdef _WIN32
+             {"BattlePlansDlg stores drop-down choices", test_BattlePlansDlg_stores_choices},
+#endif
              {NULL, NULL}};

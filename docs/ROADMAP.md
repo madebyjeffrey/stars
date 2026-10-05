@@ -29,8 +29,11 @@ Progress:
   reached from the game code only through `ui.h`. `stars-host` (`host.c`)
   links the game code alone and matches the native baseline under Wine and
   on x86-64 macOS (`make regression-host`).
-- Next: run `make regression-host` on x86-64 Linux and in CI; build the unit
-  tests that need no windows natively; per-platform version labels.
+  The unit tests that need no windows build and run natively too (`make
+  test-host`).
+- Next: run `make regression-host` and `make test-host` on x86-64 Linux and
+  in CI; move the planet, fleet and universe dumps out of `report.c` so
+  `test_report` and the host can use them; per-platform version labels.
 - The file format stays at 2.84 unless a record changes.
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`

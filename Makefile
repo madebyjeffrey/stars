@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all version-header save-cli compile host test-unit scenario run-wine fmt compile-check res resources regression regression-quick regression-host regression-export tutorial tutorial-reject clean
+.PHONY: help all version-header save-cli compile host test-unit test-host scenario run-wine fmt compile-check res resources regression regression-quick regression-host regression-export tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -37,6 +37,7 @@ help:
 	@echo "  compile              Build stars.exe with the MinGW CMake preset"
 	@echo "  host                 Build stars-host with the native compiler (HOST_PRESET=$(HOST_PRESET))"
 	@echo "  test-unit            Build and run the unit tests in tests/unit under Wine"
+	@echo "  test-host            Build and run the unit tests that need no windows, natively"
 	@echo "  scenario             Build a test game into dist/scenarios/SCENARIO (no SCENARIO: list them)"
 	@echo "  fmt                  Format C sources and headers (FORMAT_FILES=ai.c to limit)"
 	@echo "  compile-check        Check C syntax (FILES=ai.c to limit) and resources"
@@ -62,6 +63,11 @@ compile:
 
 test-unit: compile
 	cd "$(DIST_DIR)/mingw-debug" && ctest --output-on-failure --timeout 300 $(CTEST_ARGS)
+
+# The unit tests that need no windows, built with the host preset and run
+# without Wine.
+test-host: host
+	cd "$(DIST_DIR)/$(HOST_PRESET)" && ctest --output-on-failure --timeout 300 $(CTEST_ARGS)
 
 # SCENARIO names one of the games in tests/scenarios/scenarios.c.
 SCENARIO_DIR = $(abspath $(DIST_DIR))/scenarios/$(SCENARIO)

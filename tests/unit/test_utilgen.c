@@ -64,21 +64,21 @@ static void test_PszFromLong(void) {
 // the copy open with exclusive sharing, and its failed-open return skipped
 // restoring penvMem and fFileErrSilent.
 static void test_StarsCopyFile(void) {
-    char     szCwd[MAX_PATH];
-    char     szSrc[MAX_PATH];
-    char     szDst[MAX_PATH];
-    char     szBad[MAX_PATH];
-    char     rgb[16];
-    FILE    *fp;
-    jmp_buf  env;
-    int16_t  fSilentSav;
+    char    szCwd[MAX_PATH];
+    char    szSrc[MAX_PATH];
+    char    szDst[MAX_PATH];
+    char    szBad[MAX_PATH];
+    char    rgb[16];
+    FILE   *fp;
+    jmp_buf env;
+    int16_t fSilentSav;
 
     TEST_ASSERT(FStarsTestInit());
-    TEST_ASSERT(GetCurrentDirectoryA(sizeof(szCwd), szCwd) != 0);
-    snprintf(szSrc, sizeof(szSrc), "%s\\copy-src.txt", szCwd);
-    snprintf(szDst, sizeof(szDst), "%s\\copy-dst.txt", szCwd);
-    snprintf(szBad, sizeof(szBad), "%s\\no-such-dir\\copy-dst.txt", szCwd);
-    DeleteFileA(szDst);
+    TEST_ASSERT(getcwd(szCwd, sizeof(szCwd)) != NULL);
+    snprintf(szSrc, sizeof(szSrc), "%s%scopy-src.txt", szCwd, szDirSep);
+    snprintf(szDst, sizeof(szDst), "%s%scopy-dst.txt", szCwd, szDirSep);
+    snprintf(szBad, sizeof(szBad), "%s%sno-such-dir%scopy-dst.txt", szCwd, szDirSep, szDirSep);
+    remove(szDst);
     fp = fopen(szSrc, "wb");
     TEST_ASSERT(fp != NULL);
     fputs("stars copy", fp);
