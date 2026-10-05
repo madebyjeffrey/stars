@@ -1,20 +1,21 @@
 #include "common.h"
 
 HB *LphbAlloc(uint16_t cb, HeapType ht) {
-    HGLOBAL hmem;
-    HB     *lphb;
+    void *hmem;
+    HB   *lphb;
 
     lphb = NULL;
     cb += sizeof(HB);
     if (cb < mphtcbAlloc[ht]) {
         cb = mphtcbAlloc[ht];
     }
-    hmem = GlobalAlloc(34, (uint32_t)cb);
+    /* NATIVE: the original locked a zero-filled GlobalAlloc block. */
+    hmem = calloc(1, cb);
     if (!hmem) {
         AlertSz(PszFormatIds(idsMemory, NULL), MB_ICONHAND);
         StarsLongJump(penvMem, -1);
     }
-    lphb = (HB *)GlobalLock(hmem);
+    lphb = (HB *)hmem;
     lphb->hmem = hmem;
     lphb->cbBlock = cb;
     lphb->cbSlop = cb - sizeof(HB);
@@ -27,7 +28,7 @@ HB *LphbAlloc(uint16_t cb, HeapType ht) {
 }
 
 HB *LphbReAlloc(HB *lphb) {
-    HGLOBAL  hmem;
+    void    *hmem;
     HB      *lphbT;
     HB      *lphbNew;
     uint16_t cbCur;
@@ -44,14 +45,15 @@ HB *LphbReAlloc(HB *lphb) {
     if (cbCur > (uint16_t)(0xffdc - cbGrow)) {
         cbGrow = 0xffdc - cbCur;
     }
-    GlobalUnlock(hmem);
-    hmem = GlobalReAlloc(hmem, (uint32_t)(lphb->cbBlock + cbGrow), 34);
+    /* NATIVE: GlobalReAlloc zero-filled the bytes it added. */
+    hmem = realloc(hmem, (size_t)(lphb->cbBlock + cbGrow));
     if (!hmem) {
     LReAllocOOM:
         AlertSz(PszFormatIds(idsMemory, NULL), MB_ICONHAND);
         StarsLongJump(penvMem, -1);
     }
-    lphbNew = (HB *)GlobalLock(hmem);
+    memset((uint8_t *)hmem + cbCur, 0, cbGrow);
+    lphbNew = (HB *)hmem;
     lphbNew->hmem = hmem;
     if (rglphb[lphbNew->ht] == lphb) {
         rglphb[lphbNew->ht] = lphbNew;
@@ -67,15 +69,14 @@ HB *LphbReAlloc(HB *lphb) {
 }
 
 void FreeHb(HB *lphb) {
-    HGLOBAL hmem;
-    HB     *lphbNext;
+    void *hmem;
+    HB   *lphbNext;
 
     if (lphb) {
         for (; lphb; lphb = lphbNext) {
             lphbNext = lphb->lphbNext;
             hmem = lphb->hmem;
-            GlobalUnlock(hmem);
-            GlobalFree(hmem);
+            free(hmem);
         }
     }
     return;
