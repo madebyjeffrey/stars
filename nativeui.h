@@ -62,9 +62,11 @@ DWORD GetTextExtent(HDC hdc, LPCSTR str, int len);
 // FrameWndProc (see nativeui.c).
 LRESULT CALLBACK FrameWndProcDeferred(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// FRouteMouseWheel sends wheel messages to the window under the cursor and
-// CWheelNotches gathers wheel deltas into notches (see nativeui.c).
+// FRouteMouseWheel sends wheel messages to the window under the cursor,
+// CWheelNotches gathers wheel deltas into notches and CWheelLines gives the
+// lines a notch scrolls (see nativeui.c).
 int16_t FRouteMouseWheel(MSG *pmsg);
 int16_t CWheelNotches(int16_t *pdWheel, int16_t dWheel);
+int16_t CWheelLines(int16_t cPage);
 
 #endif

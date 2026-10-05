@@ -96,3 +96,18 @@ int16_t CWheelNotches(int16_t *pdWheel, int16_t dWheel) {
     *pdWheel = (int16_t)(d - c * WHEEL_DELTA);
     return c;
 }
+
+// CWheelLines returns how many lines a wheel notch scrolls, from the
+// player's mouse settings, or cPage when they scroll a page a notch.
+int16_t CWheelLines(int16_t cPage) {
+    UINT cLines;
+
+    if (cPage < 1) {
+        cPage = 1;
+    }
+    if (!SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &cLines, 0))
+        cLines = 3;
+    if (cLines == WHEEL_PAGESCROLL || cLines > (UINT)cPage)
+        return cPage;
+    return (int16_t)cLines;
+}

@@ -161,8 +161,7 @@ are outside the game code and are not planned.
   `PatBlt`, then a `PATCOPY` fill). Tracking it down needs screenshot
   capture in the tutorial runner. macOS Wine's GDI capture returns blank
   images, so use another capture method or a Linux/Xvfb run.
-- **Mouse wheel and panning:** the wheel zooms the scanner at the cursor
-  and goes to the window under the cursor, and left-drag pans the scanner
-  (done). Still to do: wheel scrolling in the report tables (`ReportDlg`
-  rows and columns, through its `WM_VSCROLL`/`WM_HSCROLL` paths) and the
-  wheel stepping through messages in the message pane.
+- **Mouse wheel and panning:** the wheel zooms the scanner at the cursor,
+  scrolls the report tables and goes to the window under the cursor, and
+  left-drag pans the scanner (done). Still to do: the wheel stepping
+  through messages in the message pane.

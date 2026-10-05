@@ -11,6 +11,9 @@ produce different results from a 2.6j host for the same turn.
 - The mouse wheel zooms the scanner at the cursor, one zoom level a notch;
   Ctrl+wheel (a touchpad pinch) zooms too. The tilt wheel and Shift+wheel
   scroll the scanner sideways.
+- The mouse wheel scrolls the report tables by rows, as many a notch as the
+  mouse settings say; the tilt wheel and Shift+wheel scroll a column a
+  notch.
 - Dragging the scanner with the left button pans it. A press still selects
   what is under it, as a click does; the view moves once the mouse moves
   past the system's drag distance. Dragging a waypoint, Shift and Ctrl

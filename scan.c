@@ -42,7 +42,6 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     int16_t     d;
     int16_t     dy;
     int16_t     dx;
-    UINT        cLines;
 
     switch (msg) {
     case WM_MDIACTIVATE:
@@ -363,10 +362,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         c = CWheelNotches(&dWheelScroll, msg == WM_MOUSEWHEEL ? -d : d);
         if (c == 0)
             break;
-        if (!SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &cLines, 0)) {
-            cLines = 3;
-        }
-        d = cLines == WHEEL_PAGESCROLL ? c * dScanPage : c * (int16_t)cLines * dScanInc;
+        d = c * CWheelLines(dScanPage / dScanInc) * dScanInc;
         SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)(xScanTop + d)), 0);
         break;
     case WM_SIZE:
