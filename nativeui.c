@@ -42,3 +42,56 @@ LRESULT CALLBACK FrameWndProcDeferred(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
     }
     return FrameWndProc(hwnd, msg, wParam, lParam);
 }
+
+/*
+ * Mouse wheel routing
+ *
+ * Windows sends wheel messages to the focus window, and the scanner, planet
+ * and message panes hand focus back to the frame when clicked, so the wheel
+ * would reach none of them. Windows 10's "scroll inactive windows" setting
+ * sends the wheel to the window under the cursor instead; Wine and older
+ * Windows do not. The message loop calls FRouteMouseWheel to do the same.
+ */
+
+// FIsComboBox tells whether hwnd is a combo box.
+static int16_t FIsComboBox(HWND hwnd) {
+    char szClass[16];
+
+    return hwnd && GetClassNameA(hwnd, szClass, sizeof(szClass)) && lstrcmpiA(szClass, "ComboBox") == 0;
+}
+
+// FRouteMouseWheel points a wheel message at the window under the cursor.
+// It returns FALSE when the message should be dropped.
+int16_t FRouteMouseWheel(MSG *pmsg) {
+    POINT pt;
+    HWND  hwnd;
+
+    pt.x = (short)LOWORD(pmsg->lParam);
+    pt.y = (short)HIWORD(pmsg->lParam);
+    hwnd = WindowFromPoint(pt);
+    if (!hwnd || hwnd == pmsg->hwnd || GetWindowThreadProcessId(hwnd, NULL) != GetCurrentThreadId())
+        return TRUE;
+    // A closed drop-down list changes its selection on the wheel. One the
+    // player only points at must not change an order or a battle plan; the
+    // edit of a CBS_DROPDOWN box is a child of the box.
+    if (FIsComboBox(hwnd) || FIsComboBox(GetParent(hwnd)))
+        return FALSE;
+    pmsg->hwnd = hwnd;
+    return TRUE;
+}
+
+// CWheelNotches adds a wheel delta to *pdWheel and returns the whole notches
+// (WHEEL_DELTA each) gathered, keeping the remainder. Touchpads and fine
+// wheels send part notches. A change of direction starts over.
+int16_t CWheelNotches(int16_t *pdWheel, int16_t dWheel) {
+    int32_t d;
+    int16_t c;
+
+    d = *pdWheel;
+    if ((d < 0 && dWheel > 0) || (d > 0 && dWheel < 0))
+        d = 0;
+    d += dWheel;
+    c = (int16_t)(d / WHEEL_DELTA);
+    *pdWheel = (int16_t)(d - c * WHEEL_DELTA);
+    return c;
+}

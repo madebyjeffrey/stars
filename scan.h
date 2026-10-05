@@ -20,6 +20,7 @@ void             ScrollScanner(int16_t dx, int16_t dy);
 void             RedrawScanSel(HDC hdc, int16_t fVis);
 int16_t          FEnsurePointOnScreen(POINT16 pt, int16_t fScroll);
 void             CtrPointScan(POINT16 pt, int16_t fScroll);
+void             ZoomScanAt(ScanZoom iScanNew, POINT16 ptScan);
 void             LogicalToScan(POINT16 *ppt);
 void             ScanToLogical(POINT16 *ppt);
 int16_t          FAddWayPoint(POINT16 ptIn, SCAN *pscan);

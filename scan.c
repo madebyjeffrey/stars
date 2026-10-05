@@ -3,6 +3,10 @@
 uint32_t rgcrScanMine[3] = {16711680, 65535, 255};
 int16_t  vrgPopRad[19] = {25, 50, 100, 200, 400, 800, 1000, 1500, 2250, 3000, 4000, 5000, 6000, 7500, 9000, 11000, 14000, 18000, 25000};
 
+// Wheel deltas short of a notch, for zooming and sideways scrolling.
+static int16_t dWheelZoom;
+static int16_t dWheelScroll;
+
 LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;
     POINT16     pt;
@@ -29,6 +33,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     int16_t     d;
     int16_t     dy;
     int16_t     dx;
+    UINT        cLines;
 
     switch (msg) {
     case WM_MDIACTIVATE:
@@ -268,6 +273,39 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             break;
         scan.grobj = grobjPlanet;
         ChangeScanSel(&scan, 1);
+        break;
+    case WM_MOUSEWHEEL:
+    case WM_MOUSEHWHEEL:
+        // The wheel zooms at the cursor, as map viewers do; Ctrl+wheel, a
+        // touchpad pinch, zooms too. The tilt wheel and Shift+wheel scroll
+        // sideways, wheel down to the right.
+        d = GET_WHEEL_DELTA_WPARAM(wParam);
+        if (msg == WM_MOUSEWHEEL && !(GET_KEYSTATE_WPARAM(wParam) & MK_SHIFT)) {
+            c = CWheelNotches(&dWheelZoom, d);
+            if (c == 0)
+                break;
+            iScanNew = iScanZoom + c;
+            if (iScanNew < zoom25) {
+                iScanNew = zoom25;
+            } else if (iScanNew > zoom400) {
+                iScanNew = zoom400;
+            }
+            if (iScanNew != iScanZoom) {
+                pt.x = (short)LOWORD(lParam);
+                pt.y = (short)HIWORD(lParam);
+                ScreenToClient16(hwnd, &pt);
+                ZoomScanAt(iScanNew, pt);
+            }
+            break;
+        }
+        c = CWheelNotches(&dWheelScroll, msg == WM_MOUSEWHEEL ? -d : d);
+        if (c == 0)
+            break;
+        if (!SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &cLines, 0)) {
+            cLines = 3;
+        }
+        d = cLines == WHEEL_PAGESCROLL ? c * dScanPage : c * (int16_t)cLines * dScanInc;
+        SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)(xScanTop + d)), 0);
         break;
     case WM_SIZE:
         SetScanScrollBars(hwnd);
@@ -2068,6 +2106,29 @@ void CtrPointScan(POINT16 pt, int16_t fScroll) {
             }
         }
     }
+    return;
+}
+
+// ZoomScanAt sets the scanner zoom to iScanNew and keeps the galaxy point
+// under ptScan, a scanner client point, where it is on screen. The menu's
+// zoom command centers on the selection instead.
+void ZoomScanAt(ScanZoom iScanNew, POINT16 ptScan) {
+    POINT16 pt;
+    RECT    rc;
+
+    GetClientRect(hwndScanner, &rc);
+    rc.bottom -= dySBar;
+    if (ptScan.y >= rc.bottom) {
+        ptScan.y = rc.bottom - 1;
+    }
+    pt = ptScan;
+    ScanToLogical(&pt);
+    SendMessage(hwndFrame, WM_COMMAND, iScanNew + 3905, 0);
+    if (iScanZoom != iScanNew)
+        return;
+    pt.x += (ScanToPt(rc.right) >> 1) - ScanToPt(ptScan.x);
+    pt.y += ScanToPt(ptScan.y) - (ScanToPt(rc.bottom) >> 1);
+    CtrPointScan(pt, FALSE);
     return;
 }
 

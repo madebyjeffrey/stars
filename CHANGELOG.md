@@ -4,6 +4,18 @@ Changes from the original Stars! 2.6jrc3 (tag `2.6jrc3`, branch `2.6j`).
 Entries marked **host results** change turn generation, so a 2.8 host can
 produce different results from a 2.6j host for the same turn.
 
+## Unreleased
+
+### Added
+
+- The mouse wheel zooms the scanner at the cursor, one zoom level a notch;
+  Ctrl+wheel (a touchpad pinch) zooms too. The tilt wheel and Shift+wheel
+  scroll the scanner sideways.
+- The wheel goes to the window under the cursor rather than the window with
+  the focus, so the panes and lists scroll where the player points, as with
+  Windows 10's "scroll inactive windows" setting. A drop-down list the player
+  only points at ignores the wheel, so it can't change an order by accident.
+
 ## 2.9.0 (2026-10-05)
 
 ### Added
