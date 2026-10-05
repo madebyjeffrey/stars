@@ -1,0 +1,7 @@
+Fleet Name	X	Y	Planet	Destination	Battle Plan	Ship Cnt	Iron	Bora	Germ	Col	Fuel	Owner	ETA	Warp	Mass	Cloak	Scan	Pen	Task	Mining	Sweep	Laying	Terra	Unarmed	Scout	Warship	Utility	Bomber
+Humanoid Armed Probe #1	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	50	1	0	0	23	0	66	30	(no task here)	0	16	0	0	0	1	0	0	0
+Humanoid Long Range Scout #2	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	300	1	0	0	25	0	66	30	(no task here)	0	0	0	0	0	1	0	0	0
+Humanoid Santa Maria #3	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	200	1	0	0	61	0	0	0	(no task here)	0	0	0	0	1	0	0	0	0
+Humanoid Teamster #4	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	450	1	0	0	130	0	50	0	(no task here)	0	0	0	0	1	0	0	0	0
+Humanoid Stalwart Defender #5	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	530	1	0	0	186	0	66	30	(no task here)	0	16	0	0	0	1	0	0	0
+Humanoid Cotton Picker #6	1216	1153	Kutuzov	-- 	Default	1	0	0	0	0	210	1	0	0	574	0	50	0	(no task here)	8	0	0	0	1	0	0	0	0

@@ -237,3 +237,32 @@ These aren't fixes for 2.8 but explain other things TotalHost writes:
 - `StarsAI`/`decryptAI`: switches a player between human, inactive and
   housekeeping AI in the `.hst`.
 - `StarsPWD`: resets a player's password in the `.hst`.
+
+## Running TotalHost on stars-host
+
+TotalHost runs `stars.exe` under Wine (`$WINE_executable` in
+`scripts.dbi/config.base.pl`) for five things, all of which `stars-host`
+does natively on x86-64 Linux, with the same exit codes:
+
+| TotalHost | Command | Reads back |
+| --- | --- | --- |
+| `page.pl` creates a game | `-a game.df2` | the game files |
+| `Make_CHK` | `-v game.hst` | `game.chk` (identical but for the version line) |
+| `GenerateTurn` | `-g<n> game.hst` | the turn files |
+| `movie_starmapper.pl` | `-dm game.m1`, `-dp game.mN` | `game.map`, `game.pN` |
+
+To switch:
+
+- Point `$WINE_executable` at `stars-host --ini <path>/stars.ini`, the
+  `stars.ini` TotalHost keeps for `stars.exe`. The movie script copies
+  `game.pN`, which needs `[Misc] NewReports=1` there; without `--ini`,
+  `stars-host` writes `game.pla`.
+- Pass Unix paths: the command lines above build `$Dir_WINE\\…` paths, and
+  `page.pl` writes them into the `.df2` race lines too. `stars-host` reads
+  `/` as the directory separator and takes switches only after `-`.
+- The waits for `stars.exe` (the `sleep 2` between movie launches and
+  `Make_CHK`'s poll for a newer `.chk`) can go: `stars-host` has written its
+  files when it exits.
+- As with `stars.exe`, a turn file's dumps need its password (`-p`) or none;
+  the movie script removes them first (`StarsPWD`).
+

@@ -68,3 +68,4 @@ dkms.conf
 
 snippets/
 /AGENTS-private.md
+!tests/unit/golden/dumps.map

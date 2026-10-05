@@ -23,18 +23,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # in STARS_UI_SOURCES. Some of these files still hold UI functions; the 2.9
 # split moves those out (docs/ROADMAP.md).
 set(STARS_CORE_SOURCES
-    ai.c ai2.c ai3.c ai4.c aiutil.c
-    battle.c build.c create.c file.c globals.c log.c memory.c mine.c msg.c
-    native.c parts.c planet.c produce.c race.c research.c save.c ship.c
-    ship2.c strings.c strings_uncompressed.c thing.c turn.c turn2.c turn3.c
-    util.c utilgen.c
+    ai.c ai2.c ai3.c ai4.c aiutil.c battle.c build.c create.c file.c globals.c
+    log.c memory.c mine.c msg.c native.c parts.c planet.c produce.c race.c
+    report.c research.c save.c ship.c ship2.c strings.c strings_uncompressed.c
+    thing.c turn.c turn2.c turn3.c util.c utilgen.c
 )
 
 # The Windows game's user interface.
 set(STARS_UI_SOURCES
     battleui.c buildui.c createui.c fileui.c globalsui.c init.c logui.c mdi.c
     mineui.c msgui.c nativeui.c planetui.c popup.c produceui.c raceui.c
-    report.c researchui.c scan.c ship2ui.c shipui.c stars.c tb.c thingui.c
+    reportui.c researchui.c scan.c ship2ui.c shipui.c stars.c tb.c thingui.c
     tutor.c tutor2.c utilgenui.c utilui.c vcr.c
 )
 
@@ -136,16 +135,14 @@ if(NOT WIN32)
         configure_file(tests/scaffold/fixtures/newgame/tiny/humanoid.r1 "${STARS_TEST_DIR}/data/humanoid.r1" COPYONLY)
         file(GLOB STARS_UNIT_TESTS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_*.c")
         # test_native_ports replaces the game's file I/O with --wrap, which
-        # only GNU ld on Windows provides; test_report tests the planet dump,
-        # which is still in the Windows report code (report.c).
-        list(REMOVE_ITEM STARS_UNIT_TESTS
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_native_ports.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_report.c")
+        # only GNU ld on Windows provides.
+        list(REMOVE_ITEM STARS_UNIT_TESTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/test_native_ports.c")
         foreach(STARS_UNIT_TEST ${STARS_UNIT_TESTS})
             get_filename_component(STARS_TEST_NAME "${STARS_UNIT_TEST}" NAME_WE)
             add_executable(${STARS_TEST_NAME} "${STARS_UNIT_TEST}" tests/unit/stars_test.c hostui.c)
             target_link_libraries(${STARS_TEST_NAME} PRIVATE stars_core)
             target_include_directories(${STARS_TEST_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
+            target_compile_definitions(${STARS_TEST_NAME} PRIVATE STARS_TEST_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/golden")
             set_target_properties(${STARS_TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
             add_test(NAME ${STARS_TEST_NAME} COMMAND ${STARS_TEST_NAME})
             set_tests_properties(${STARS_TEST_NAME} PROPERTIES WORKING_DIRECTORY "${STARS_TEST_DIR}")
@@ -228,6 +225,7 @@ if(STARS_BUILD_TESTS)
         # Message boxes would wait for a click; stars_test.c records them.
         target_link_options(${STARS_TEST_NAME} PRIVATE "LINKER:--wrap=AlertSz")
         target_include_directories(${STARS_TEST_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit")
+        target_compile_definitions(${STARS_TEST_NAME} PRIVATE STARS_TEST_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/golden")
         set_target_properties(${STARS_TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${STARS_TEST_DIR}")
         if(WINE_EXECUTABLE)
             set_property(TARGET ${STARS_TEST_NAME} PROPERTY CROSSCOMPILING_EMULATOR "${WINE_EXECUTABLE}")

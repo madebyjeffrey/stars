@@ -33,14 +33,16 @@ macOS (`make regression-host`), and its `-v` check file matches
 `stars.exe`'s. CI runs the regression and the native unit tests (`make
 test-host`) on x86-64 Linux.
 
+The dumps (`-dm`, `-dp`, `-df`, which TotalHost's movie scripts use) are
+game code too (`report.c`, with the report window in `reportui.c`):
+`stars-host` writes them, byte for byte as `stars.exe` does, and
+`test_report` checks them against golden files on both builds. With `--ini`
+it reads the `stars.ini` settings a host uses, so TotalHost can run it
+instead of `stars.exe` under Wine ([TOTALHOST.md](TOTALHOST.md)).
+
 Left:
 
-- Confirm the first CI run on Linux (the regression and unit test jobs, and
-  the release's static build).
-- Move the planet, fleet and universe dumps (`DumpPlanets` and the others)
-  out of `report.c`, so `stars-host` can write them (`-dm`, `-dp`, which
-  TotalHost's movie scripts use) and `test_report` runs natively. They
-  depend on report helpers that draw (`PszGetETA`).
+- Confirm the release's static Linux build on its first run from `main`.
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`
 and cherry-pick to `2.8`.

@@ -20,8 +20,7 @@ make test-host CTEST_ARGS='-R test_turn'
 ```
 
 The native build leaves out what needs Windows: `test_native_ports.c`
-(`--wrap` is GNU ld's), `test_report.c` (the planet dump is still in the
-Windows report code) and the dialog tests in `test_battle.c` and
+(`--wrap` is GNU ld's) and the dialog tests in `test_battle.c` and
 `test_race.c` (`#ifdef _WIN32`). Use `szDirSep` for paths and `getcwd` for
 the working directory so a test builds on both.
 
@@ -43,6 +42,17 @@ fixture race to `data/humanoid.r1`.
   orders while one turn generates and the next turn carries them out, so AI
   behavior needs two generations. `test_turn.c` shows the plumbing and
   `test_ai4.c` a full example.
+
+## Golden files
+
+`test_report.c` checks the universe, planet and fleet dumps against
+`tests/unit/golden`, so the Windows build and `stars-host` keep writing
+the same files. If a change to the dumps is intended, regenerate them from
+the Windows build and commit them with the change:
+
+```sh
+cd dist/mingw-debug/tests && STARS_UPDATE_GOLDEN=1 wine ./test_report.exe
+```
 
 ## Bug fixes
 

@@ -409,7 +409,7 @@ to close have not been demonstrated.
 
 ### Font Problems on Non-English Windows — located configuration path
 
-`init.c`: `ReadIniSettings`, `FCreateFonts`; `report.c`: `DrawScoreReport`;
+`init.c`: `ReadIniSettings`, `FCreateFonts`; `reportui.c`: `DrawScoreReport`;
 `utilgenui.c`: `DiaganolTextOut`.
 Font selection comes from INI settings and Windows font creation; score labels
 use the rotated-text rendering path. A missing/localized face or substituted

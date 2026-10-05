@@ -40,6 +40,10 @@ void RedrawPlanShip(TileBits grbit);
 void InvalidateMine();
 void UpdateMsgTitle();
 
+// Report text: the fleet report's helpers colour the text they return when
+// they draw it into hdc.
+void SetHdcTextColor(HDC hdc, uint32_t cr);
+
 // The tutorial.
 void     AdvanceTutor();
 uint8_t *LpbLoadTutorLog();
