@@ -53,6 +53,24 @@ jobs:
             exit 1
           fi
 
+      # stars-host, the game's host without windows, for x86-64 Linux. The
+      # runner's gcc gives x87 long double, which turn generation needs.
+      # It links statically so it runs on older glibc. Refs from before
+      # 2.9 have no host preset and publish only stars.exe.
+      - name: Build Linux stars-host
+        run: |
+          if ! cmake --list-presets | grep -q '"host-release"'; then
+            echo "No host-release preset at this ref; skipping stars-host."
+            exit 0
+          fi
+          cmake --preset host-release -DCMAKE_EXE_LINKER_FLAGS=-static
+          cmake --build --preset host-release --parallel 2
+          (cd dist/host-release && ctest --output-on-failure --timeout 300)
+          file dist/host-release/bin/stars-host
+          dist/host-release/bin/stars-host --version
+          tar -C dist/host-release/bin -czf dist/release/stars-host-linux-x64.tar.gz stars-host
+          echo "STARS_HOST_ASSET=dist/release/stars-host-linux-x64.tar.gz" >> "$GITHUB_ENV"
+
       - name: Save build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -63,12 +81,25 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Save Linux stars-host artifact
+        if: env.STARS_HOST_ASSET != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: stars-host-linux-x64-${{ github.sha }}
+          path: ${{ env.STARS_HOST_ASSET }}
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           commit=$(git rev-parse HEAD)
+          assets=(dist/release/stars.exe 'dist/release/stars!.hlp')
+          if [[ -n "${STARS_HOST_ASSET:-}" ]]; then
+            assets+=("$STARS_HOST_ASSET")
+          fi
           if [[ "$GITHUB_REF_TYPE" == branch ]]; then
             # An older queued build must not replace a newer main build.
             main_commit=$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq '.object.sha')
@@ -91,6 +122,10 @@ jobs:
 
           Download stars.exe and stars!.hlp into the same directory.
 
+          stars-host-linux-x64.tar.gz holds stars-host, the game's host without
+          windows, for x86-64 Linux. It takes stars.exe's host command line
+          (-a, -g, -v, -b, -t, -s) and generates the same turns.
+
           Commit: $commit
           Build: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           EOF
@@ -107,20 +142,20 @@ jobs:
             if [[ "$release_exists" == true ]]; then
               gh release edit "$tag" --title "Latest development build ($STARS_VERSION)" \
                 --prerelease --latest=false --notes-file dist/release/notes.md
-              gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
+              gh release upload "$tag" "${assets[@]}" --clobber
             else
               gh release create "$tag" --verify-tag --title "Latest development build ($STARS_VERSION)" \
                 --prerelease --latest=false --notes-file dist/release/notes.md \
-                dist/release/stars.exe 'dist/release/stars!.hlp'
+                "${assets[@]}"
             fi
           elif [[ "$release_exists" == true ]]; then
             # Allow a failed tag run to be retried without creating another release.
-            gh release upload "$tag" dist/release/stars.exe 'dist/release/stars!.hlp' --clobber
+            gh release upload "$tag" "${assets[@]}" --clobber
           else
             title="$tag"
             if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               title="Stars! $STARS_DISPLAY"
             fi
             gh release create "$tag" --verify-tag --title "$title" --generate-notes \
-              dist/release/stars.exe 'dist/release/stars!.hlp'
+              "${assets[@]}"
           fi

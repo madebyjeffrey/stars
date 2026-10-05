@@ -90,11 +90,13 @@ its turns can differ, and CMake warns about it.
 Every push to `main` builds the optimized MinGW Release executable and updates
 the rolling [`latest` prerelease](https://github.com/sirgwain/stars/releases/tag/latest).
 Both `stars.exe` and `stars!.hlp` are attached; download them into the same
-directory. Superseded main builds remain available as workflow artifacts.
+directory. `stars-host-linux-x64.tar.gz` holds `stars-host` for x86-64 Linux,
+built with gcc and linked statically after its unit tests pass. Superseded
+main builds remain available as workflow artifacts.
 
 Pushing a version tag (for example `v2.8.0`) builds that tag's source, checks
 that it reports exactly that version, and publishes a release with the same
-two files. Other tags (such as `2.6jrc3`) publish releases named after the
+files (tags from before 2.9 have no `stars-host`). Other tags (such as `2.6jrc3`) publish releases named after the
 tag. The rolling `latest` tag is excluded. See
 [versioning](docs/VERSIONING.md) for how build numbers are derived:
 
@@ -109,7 +111,9 @@ The tutorial uses the same Release preset as the published builds, with the
 read-only test observer enabled. The native regression workflow also builds in
 Release mode on pull requests and main pushes, comparing
 all checkpoints through turn 150 against the checked-in native baseline
-(`tests/scaffold/fixtures/regression/native/`). The original game's
+(`tests/scaffold/fixtures/regression/native/`); it also runs every scenario
+through `stars-host` built natively on Linux (`make regression-host`), and
+the unit tests run natively there too (`make test-host`). The original game's
 checkpoints are kept alongside it as the record of 2.6j behavior.
 All workflows can also be run manually; the release workflow accepts `main`
 or a tag. Publishing uses the built-in `GITHUB_TOKEN` with `contents: write`;
