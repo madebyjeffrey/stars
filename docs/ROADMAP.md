@@ -19,8 +19,8 @@ To keep in mind:
   native regression baseline is the test: the Linux host's run must match
   it. Watch the x87 rounding casts (`long double`), `qsort16` tie order and
   the RNG first.
-- The product name's `x64` (`2.8x64`) is fixed in `cmake/version.cmake`;
-  give each build its own platform label.
+- Each build shows its platform in its version name (done; see
+  [VERSIONING.md](VERSIONING.md)).
 
 Progress:
 
@@ -33,7 +33,7 @@ Progress:
   test-host`).
 - Next: run `make regression-host` and `make test-host` on x86-64 Linux and
   in CI; move the planet, fleet and universe dumps out of `report.c` so
-  `test_report` and the host can use them; per-platform version labels.
+  `test_report` and the host can use them.
 - The file format stays at 2.84 unless a record changes.
 
 The 2.8 reproduce-first items (5.3 below) still apply; fix them on `main`

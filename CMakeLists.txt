@@ -55,8 +55,32 @@ set_target_properties(stars-host PROPERTIES
 # version.h is regenerated on every build so the build number follows HEAD;
 # it is rewritten only when the version changes.
 set(STARS_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+# The platform label in the version shown (cmake/version.cmake): os-arch.
+if(WIN32)
+    set(STARS_PLATFORM_OS "windows")
+elseif(APPLE)
+    set(STARS_PLATFORM_OS "macos")
+else()
+    string(TOLOWER "${CMAKE_SYSTEM_NAME}" STARS_PLATFORM_OS)
+endif()
+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+    set(STARS_PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+else()
+    set(STARS_PLATFORM_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+string(TOLOWER "${STARS_PLATFORM_ARCH}" STARS_PLATFORM_ARCH)
+if(STARS_PLATFORM_ARCH MATCHES "^(x86_64|amd64)$")
+    set(STARS_PLATFORM_ARCH "x64")
+elseif(STARS_PLATFORM_ARCH MATCHES "^(arm64|aarch64)$")
+    set(STARS_PLATFORM_ARCH "arm64")
+elseif(STARS_PLATFORM_ARCH MATCHES ";")
+    set(STARS_PLATFORM_ARCH "universal")
+endif()
+set(STARS_PLATFORM "${STARS_PLATFORM_OS}-${STARS_PLATFORM_ARCH}")
+
 set(STARS_VERSION_COMMAND "${CMAKE_COMMAND}"
     -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -DPLATFORM=${STARS_PLATFORM}
     -DOUTPUT=${STARS_GENERATED_DIR}/version.h
     -DVERSION_BASE=${PROJECT_VERSION}
     -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cmake")

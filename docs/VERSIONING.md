@@ -17,11 +17,16 @@ shown to players. `cmake/version.cmake` generates it from git into
 | Before the first `v` tag | `2.8.0-dev.N+g…`, N counted from `2.6jrc3` | `2.8x64 (2.8.0-dev.N+g…)` | N |
 
 The version (`STARS_VERSION_STRING`) is what tags, `FileVersion` and the
-release check use. The name shown (`STARS_VERSION_DISPLAY`) marks this line
-as a 64-bit Win32 build: `2.8x64` for 2.8.0 and `2.8.1x64` for 2.8.1.
-Development builds append the full version in parentheses. It appears in
-the About box, on the splash screen and in report headers (`SzVersion` in
-`util.c`), in `ProductVersion` and in release titles.
+release check use; it never names a platform (a semver `-` suffix would
+make it a pre-release). The name shown (`STARS_VERSION_DISPLAY`) adds the
+platform: the Windows build keeps the `x64` players know, `2.8x64` for
+2.8.0 and `2.8.1x64` for 2.8.1, and other builds of `stars-host` name
+theirs after the version: `2.9 linux-x64`, `2.9 macos-x64`,
+`2.9 macos-arm64`. CMake passes the platform (`STARS_VERSION_PLATFORM`,
+`os-arch`) to `cmake/version.cmake`. Development builds append the full
+version in parentheses. It appears in the About box, on the splash screen
+and in report headers (`SzVersion` in `util.c`), in `ProductVersion`, in
+release titles and in `stars-host --version`.
 
 A development build is numbered toward the next version: the patch after the
 last `vX.Y.Z` tag, or `project(stars VERSION …)` in `CMakeLists.txt` if that

@@ -13,6 +13,8 @@ produce different results from a 2.6j host for the same turn.
   `-v`, `-s`, `-p`, `-l`) and generates the same turns where `long double`
   is x87 extended precision (x86-64; on Apple silicon, an x86_64 build run
   by Rosetta). Messages go to stderr; it never waits for a player.
+  `stars-host --version` prints its version, which names its platform
+  (`2.9 linux-x64`, `2.9 macos-x64`); the Windows build keeps `2.9x64`.
 
 ### Fixed
 

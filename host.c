@@ -1,9 +1,10 @@
 #include "common.h"
+#include "version.h"
 
 // stars-host: the game's host without its windows. It takes the Windows
 // game's host command line (-a, -g, -b, -t, -v, -s, -p, -l; see
-// ParseCmdLine) and exits with the same value. Waiting for turns (-w)
-// needs the Windows game's timer and is refused.
+// ParseCmdLine) and exits with the same value; --version prints its version.
+// Waiting for turns (-w) needs the Windows game's timer and is refused.
 
 // IdAlertBox shows ui.h's messages: there is no player to ask, so they go to
 // stderr and questions get the cautious answer. hostui.c has the rest of
@@ -28,6 +29,11 @@ int main(int argc, char *argv[]) {
     uint32_t lSeed;
     int      i;
 
+    // ParseCmdLine reads each letter after a '-' as a switch.
+    if (argc == 2 && strcmp(argv[1], "--version") == 0) {
+        printf("stars-host %s\n", STARS_VERSION_DISPLAY);
+        return 0;
+    }
     // ParseCmdLine reads one string, as WinMain received it. File names
     // can't hold spaces, as in the Windows game.
     szCmdLine[0] = 0;
@@ -50,7 +56,7 @@ int main(int argc, char *argv[]) {
     ParseCmdLine(szCmdLine, &fSeed, &lSeed);
     Randomize2(fSeed ? lSeed : DwTickCount());
     if (!ini.fCmdLine) {
-        fprintf(stderr, "usage: stars-host [-s<seed>] [-p<password>] [-l] (-a game.def | -v game.hst | -g[n] [-t] game.hst | -b batchfile)\n");
+        fprintf(stderr, "usage: stars-host --version | [-s<seed>] [-p<password>] [-l] (-a game.def | -v game.hst | -g[n] [-t] game.hst | -b batchfile)\n");
         return 2;
     }
     idPlayer = iplrNone;
