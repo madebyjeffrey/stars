@@ -15,6 +15,7 @@
 0x0007 idmHaveAttackedFirstRateStormTroopersThough 4 "\L have attacked you on \p with \v00 first-rate storm troopers. Though your colonists put up a spirited defense they are crushed."
 0x0008 idmInvolvedWayRaceUninhabitedPlanetForcesCrush 2 "You were involved in a \i-way race for the uninhabited planet, \p. Your forces crush all the opposition."
 0x0009 idmColonistsDestroyedWayRaceUninhabitedPlanetContro 3 "Your colonists were destroyed in a \i-way race for the uninhabited planet, \p. \L now in control of the planet."
+@range 2 + 1 for a Macintosh race (turn2.c)
 0x000a idmColonistsControl 1 "Your colonists are now in control of \p."
 0x000b idmColonistsHaveDeployedOrbitalConstructionModuleHa 1 "Your colonists have deployed the Orbital Construction Module and you now have a Starter Colony orbiting \p."
 0x000c idmTroopsCrushSColonistsControlPlanet 2 "Your troops crush \l's Colonists on \p. You are now in control of the planet."
@@ -40,6 +41,7 @@
 0x0020 idmCloseFightDidGreatDamageForcesBefore 4 "In a close fight at \n, \s did great damage to the forces of \l before being destroyed."
 0x0021 idmPeopleWatchedAmazementForcesAnnihilatedEachOther 3 "Your people on \p watched in amazement as the forces of \l and \l annihilated each other."
 0x0022 idmColonyObservedForcesDefeatingForces 3 "Your colony on \p observed \l forces defeating the forces of \l."
+@range 2 + fMac (turn2.c)
 0x0023 idmColonistsHaveDiedOffLongerControlPlanet 1 "All of your colonists on \p have died off. You no longer control the planet."
 0x0024 idmColonistsOrbitingHaveDiedOffStarbaseHas 1 "All of your colonists orbiting \p have died off. Your starbase has been lost and you no longer control the planet."
 0x0025 idmPopulationHasDecreased 5 "The population on \p has decreased from \v00 to \v00."
@@ -58,6 +60,7 @@
 0x0032 idmStarbaseHasBuiltNewShipsWhichRouted 4 "Your starbase at \p has built \i new \z ships which are being routed to \p."
 0x0033 idmStarbaseHasBuiltNewWhichWillRouted 3 "Your starbase at \p has built a new \z which will not be routed to \p due to a lack of fuel."
 0x0034 idmStarbaseHasBuiltNewShipsWhichWill 4 "Your starbase at \p has built \i new \z ships which will not be routed to \p due to a lack of fuel."
+@range 2 idmHaveBuiltFactory + 1 (turn2.c)
 0x0035 idmHaveBuiltFactory 1 "You have built a factory on \p."
 0x0036 idmHaveBuiltFactories 2 "You have built \i factories on \p."
 0x0037 idmHaveBuiltMine 1 "You have built a mine on \p."
@@ -69,12 +72,14 @@
 0x003d idmWillNeverMakeWaypointFuelCapacityMg 5 "\s will never make it to its next waypoint as its fuel capacity is \vmg and the trip requires approximately \vmg of fuel."
 0x003e idmHasCompletedOrdersProductionQueueEmpty 1 "\p has completed its orders. The production queue is empty."
 0x003f idmProductionQueueEmpty 1 "The production queue on \p is empty."
+@range 2 + fMac (turn2.c)
 0x0040 idmColonistsHaveJumpedShipLongerControlPlanet 1 "All of your colonists on \p have jumped ship. You no longer control the planet."
 0x0041 idmColonistsOrbitingHaveAbandonedStarbaseLongerCont 1 "Your colonists orbiting \p have abandoned their starbase and you no longer control the planet."
 0x0042 idmSuccessfullyTransferred 5 "\o successfully transferred \V of \m to \o."
 0x0043 idmSuccessfullyTransferred2 5 "\o successfully transferred \V \m to \o."
 0x0044 idmSuccessfullyReceived 5 "\o successfully received \V of \m from \o."
 0x0045 idmSuccessfullyReceived2 5 "\o successfully received \V \m from \o."
+@range 8 transfer results, idm + 4 (turn2.c)
 0x0046 idmAttemptedTransferSuccessfullyReceived 7 "\o attempted to transfer \V of \m to \o. Only \U was successfully received."
 0x0047 idmAttemptedTransferColonistsSuccessfullyReceivedRe 7 "\o attempted to transfer \V \m to \o. Only \v00 Colonists were successfully received. The rest perished in Deep Space!"
 0x0048 idmReceivedHoweverSentRemainderLostSpace 7 "\o only received \V of \m from \o. However, \U was sent. The remainder was lost in space."
@@ -94,14 +99,17 @@
 0x0056 idmCaptainHasAttemptedBeamColonistsOverruledBridge 2 "The captain of \s has attempted to beam colonists down to \p, but was overruled by the bridge crew since your people cannot survive on the surface of a planet."
 0x0057 idmColonistsAttemptingSetShopReducedProtoplasmicBlo 1 "Your colonists attempting to set up shop on \p were reduced to protoplasmic blobs when they landed on the surface due to their inability to survive on planets."
 0x0058 idmColonistsAssaultingHaveKilledForcesOrbitingStarb 1 "All of your colonists assaulting \p have been killed by forces from the orbiting starbase."
+@range 2 + pl.fStarbase (turn3.c)
 0x0059 idmHasDismantledKtMineralsWhichHaveDeposited 4 "\F has been dismantled for \vkT of minerals which have deposited on \p."
 0x005a idmHasDismantledKtMineralsStarbaseOrbiting 4 "\F has been dismantled for \vkT of minerals at the starbase orbiting \p."
 0x005b idmHasDismantledScrapLeftDeepSpace 2 "\X\F has been dismantled. The scrap was left in deep space."
+@range 2 + pl.fStarbase (turn3.c)
 0x005c idmHasDismantledKtMineralsWhichHaveDeposited2 6 "\F has been dismantled for \vkT of minerals which have deposited on \p. Ultimate recycling has also made \v resources available for immediate use (less if other ships were scrapped here this year)."
 0x005d idmHasDismantledKtMineralsStarbaseOrbitingUltimate 6 "\F has been dismantled for \vkT of minerals at the starbase orbiting \p. Ultimate recycling has also made \v resources available for immediate use (less if other ships were scrapped here this year)."
 0x005e idmColonistsSettlingHaveFoundStrangeArtifactBoostin 3 "Your colonists settling \p have found a strange artifact boosting your research in \j by \i resources."
 0x005f idmRecentBreakthroughHasAlsoGivenBenefit 3 "Your recent breakthrough in \j has also given you the \k benefit."
 0x0060 idmHasBombedKillingColonists 3 "\s has bombed \p, killing \i00 colonists."
+@range 9 bombing by one fleet, -2 to +6 from idmHasBombedKillingColonistsDestroyingOneInstallati (battle.c)
 0x0061 idmHasBombedDestroyingOneInstallation 2 "\s has bombed \p, destroying one installation."
 0x0062 idmHasBombedDestroyingDefensesFactoriesMines 3 "\s has bombed \p, destroying \i defenses, factories and mines."
 0x0063 idmHasBombedKillingColonistsDestroyingOneInstallati 4 "\s has bombed \p, killing \i00 colonists, and destroying one\X installation."
@@ -112,6 +120,7 @@
 0x0068 idmHasBombedKillingColonistsDestroyingOneInstallati2 5 "\s has bombed \p, killing \i00 colonists, and destroying one\X installation.  Planetary defenses stopped \P of your bombs."
 0x0069 idmHasBombedKillingColonistsDestroyingDefensesFacto2 5 "\s has bombed \p, killing \i00 colonists, and destroying \i defenses, factories and mines. Planetary defenses stopped \P of your bombs."
 0x006a idmHasBombedKillingColonists2 3 "The \s has bombed \p, killing \i00 of your colonists."
+@range 9 bombing by one fleet, to the planet owner, -2 to +6 (battle.c)
 0x006b idmHasBombedDestroyingOneInstallations 3 "The \s has bombed \p, destroying one\X of your installations."
 0x006c idmHasBombedDestroyingDefensesFactoriesMines2 3 "The \s has bombed \p, destroying \i of your defenses, factories and mines."
 0x006d idmHasBombedKillingColonistsDestroyingOneInstallati3 3 "The \s has bombed \p, killing \i00 of your colonists, and destroying one of your installations."
@@ -132,14 +141,17 @@
 0x007c idmHasBuiltNewPlanetaryScanner 3 "\p has built a new \k planetary scanner."
 0x007d idmHasLoadedMiningRobotsWorking 6 "\s has been loaded with \V of \m by the mining robots of \s working on \p."
 0x007e idmBattleTookPlacePressGotoButtonView 2 "A battle took place at \n. Press the Goto button to view the VCR recording of the battle."
+@range 4 opening tips, + j (create.c)
 0x007f idmTipCanHideUnimportantMessagesClickingCheckmark 0 "Tip: You can hide unimportant messages by clicking the checkmark in the messages titlebar. You can reshow these messages at any time by clicking on the magnifying glass in the titlebar."
 0x0080 idmTipAddWaypointsSelectShipClickDesired 0 "Tip: To add waypoints, select a ship, then click on the desired destination while holding down the Shift key. You can also drag existing waypoints to move them to a new location."
 0x0081 idmTipDesignOwnShipsPressF4Select 0 "Tip: To design your own ships, press 'F4', select 'Available Hull Types', pick one from the dropdown, and hit the 'Copy' button."
 0x0082 idmTipPopupHelpAvailableManyDisplayedStatistics 0 "Tip: Popup help is available over many of the displayed statistics. For example you can click on planet statistics in the summary window to get additional details."
+@range 4 comet by iSize (turn2.c)
 0x0083 idmSmallCometHasCrashedBringingNewMinerals 1 "A small comet has crashed into \p bringing new minerals and altering the planet's environment."
 0x0084 idmMediumSizedCometHasCrashedBringingSignificant 1 "A medium-sized comet has crashed into \p bringing a significant quantity of minerals to the planet."
 0x0085 idmLargeCometHasCrashedBringingWideVariety 1 "A large comet has crashed into \p bringing a wide variety of new minerals and drastically altering the planet's environment."
 0x0086 idmHugeCometHasCrashedEmbeddingVastQuantities 1 "A huge comet has crashed into \p embedding vast quantities of minerals in the planet and radically altering its environment."
+@range 4 comet on your planet by iSize (turn2.c)
 0x0087 idmSmallCometHasCrashedPlanetKilling25 2 "A small comet has crashed into your planet \p, killing 25% of your colonists. The comet brought additional minerals and has altered the planet's \e."
 0x0088 idmMediumSizedCometHasCrashedPlanetKilling 3 "A medium-sized comet has crashed into your planet \p, killing 45% of your colonists. The comet brought additional minerals and has altered the planet's \e and \e."
 0x0089 idmLargeCometHasCrashedPlanetKilling65 4 "A large comet has crashed into your planet \p, killing 65% of your colonists. The comet brought significant quantities of minerals and has altered the planet's \e, \e, and \e."
@@ -160,6 +172,7 @@
 0x0098 idmBattleTookPlaceDestroyedHoweverTookDamage2 6 "A battle took place at \n. Your \z*\i destroyed \z*\i, however, it took some damage in the fray."
 0x0099 idmBattleTookPlaceDestroyedWhichDamagedFray2 6 "A battle took place at \n. Your \z*\i was destroyed by \z*\i, which was damaged in the fray."
 0x009a idmBattleTookPlaceNeitherNorCompletelyDestroyed 6 "A battle took place at \n. Neither your \z*\i nor \z*\i was completely destroyed in the incident."
+@range 9 battle results, idm + 2, + 5 and + 7 (battle.c)
 0x009b idmBattleTookPlaceAgainstForcesDestroyedEnemy 4 "A battle took place at \n against \l. \i of your forces destroyed all of the enemy forces, taking no casualties."
 0x009c idmBattleTookPlaceAgainstForcesDestroyedEnemys 4 "A battle took place at \n against \l. All of your forces were destroyed by \i of the enemy's forces."
 0x009d idmBattleTookPlaceAgainstForcesDestroyedEnemy2 5 "A battle took place at \n against \l. \i of your forces destroyed all of the enemy forces, however, \i of your ships were destroyed."
@@ -210,6 +223,7 @@
 0x00ca idmHasStoppedMineFieldMinesHaveInflicted 5 "\s has been stopped in your \M mine field at \n. Your mines have inflicted \i damage points, but you didn't manage to destroy any ships."
 0x00cb idmHasStoppedMineFieldMinesHaveInflicted2 6 "\s has been stopped in your \M mine field at \n. Your mines have inflicted \i damage points and you have destroyed \i of the ships."
 0x00cc idmHasAnnihilatedMineField2 5 "\X\s has been annihilated in your \M mine field at \n."
+@range 3 idmHasBuiltNew, ++ for cargo and fuel (turn2.c)
 0x00cd idmHasBuiltNew 2 "\p has built a new \z."
 0x00ce idmHasBuiltNewShipsKtTotalHull 3 "\p has built a new \z. Ships up to \ikT in total hull weight can now be built at this facility."
 0x00cf idmHasBuiltNewShipsAnySizeCan 2 "\p has built a new \z. Ships of any size can now be built here."
@@ -224,6 +238,7 @@
 0x00d8 idmBombardedKtMineralPacketColonistsKilledCollision 5 "\p was bombarded with a \vkT mineral packet\S. \i00 of your colonists were killed by the collision."
 0x00d9 idmBombardedKtMineralPacketColonistsDefensesDestroy 6 "\p was bombarded with a \vkT mineral packet\S. \i00 of your colonists and \i of your defenses were destroyed by the collision."
 0x00da idmAnnihilatedMineralPacketColonistsKilled 2 "\p was annihilated by a mineral packet\S.  All of your colonists were killed."
+@range 2 idm++ (log.c)
 0x00db idmDidntGetAttemptedTransferMineralPacketAnother 4 "\s didn't get all the \m it attempted to transfer from the mineral packet as another player stole it first. Only \ikT of \m was actually acquired."
 0x00dc idmDidntGetAnyAttemptedTransferMineralPacket 2 "\s didn't get any of the \m it attempted to transfer from the mineral packet as another player stole it first."
 0x00dd idmUnableTransferKtKtRequest 4 "\o was unable to transfer \ikT of \m out of the \ikT request."
@@ -299,6 +314,7 @@
 0x0129 idmHasOrdersBuildMineralPacketEitherDoesnt 1 "\p has orders to build a mineral packet, but either doesn't have a mass accelerator, or hasn't targeted the accelerator. The order to build has been canceled."
 0x012a idmHasOrdersBuildPlanetaryInstallationsBeyondMaximu 1 "\p has orders to build planetary installations beyond the maximum allowed. The orders have been reduced to the maximum allowable."
 0x012b idmMysteriousTradingVesselBroadcastingProposalHasDe 1 "\XA mysterious trading vessel broadcasting a proposal has been detected entering known space."
+@range 2 + (pctCur == pctNew) (turn2.c)
 0x012c idmHasImprovedValue 4 "\s has improved \p from a value of \i% to \i%."
 0x012d idmCurrentlyUnableImproveValueBeyond 3 "\s is currently unable to improve the value of \p beyond \i%."
 0x012e idmHasRetroBombedUndoingTerraforming 3 "\s has retro-bombed \p, undoing \i% of its terraforming."
@@ -313,8 +329,10 @@
 0x0137 idmHasExecutedOrdersFollowFleetAwaitsFurther 1 "\s has executed orders to follow a fleet and awaits further direction."
 0x0138 idmHadOrdersFollowFleetWhichDidntMove 1 "\s had orders to follow a fleet which didn't move. The crew awaits further orders."
 0x0139 idmStarbaseBuiltNewSDueLack27b 4 "Your starbase at \p built \i new \z(s) but due to a lack of 27B/6 Fleet ID Requisition forms they have been merged with \s which fortunately happend to be nearby."
+@range 2 trader part and hull messages + 47 in battle (battle.c)
 0x013a idmExaminationWreckageBattleUncoveredPlansNewPart 2 "Examination of wreckage from the battle at \n uncovered plans for a new part to place on your ships."
 0x013b idmExaminationWreckageBattleUncoveredPlansNewShip 2 "Examination of wreckage from the battle at \n uncovered plans for a new ship hull."
+@range 8 scrapping, ++ and + pl.fStarbase (turn3.c)
 0x013c idmHasDismantledKtMineralsStarbaseOrbitingProcess 4 "\s has been dismantled for \vkT of minerals at the starbase orbiting \p. In the process you have discovered a new technology."
 0x013d idmHasDismantledKtMineralsStarbaseOrbitingProcess2 5 "\s has been dismantled for \vkT of minerals at the starbase orbiting \p. In the process you have gained a research level in \j."
 0x013e idmHasDismantledKtMineralsWhichHaveDeposited3 6 "\s has been dismantled for \vkT of minerals which have deposited on \p. It has also made \v resources available for immediate use. In the process you have discovered a new technology."
@@ -338,6 +356,7 @@
 0x0150 idmHasAbsorbedMysteryTraderReturnTraderTried 1 "\F has been absorbed by the Mystery Trader. In return, the trader tried to give you a ship, but you were unable to store the design records necessary for upkeep."
 0x0151 idmMassPacketAppearsCollisionCourseWhichCurrently 2 "\XA mass packet appears to be on a collision course with \p, which currently is unable to safely catch the packet."
 0x0152 idmStarbaseScheduledCompleteRemainingProductionItem 1 "Your starbase at \p is scheduled to complete all remaining production items this year."
+@range 2 + (i > 1) (file.c)
 0x0153 idmHaveReceivedOneBattleRecordingYear 0 "You have received one battle recording this year."
 0x0154 idmHaveReceivedBattleRecordingsYear 1 "You have received \i battle recordings this year."
 0x0155 idmAllowedTransferColonistsAnotherPlayer 1 "\s is not allowed to transfer colonists to another player."
@@ -345,6 +364,7 @@
 0x0157 idmRecentBreakthroughHasAlsoTaughtHowBuild2 3 "Your recent breakthrough in \j has also taught you how to build the \k scanner. All existing planetary scanners have been upgraded to the new technology."
 0x0158 idmBreedingActivitiesHaveOverflowedLivingSpaceColon 4 "Breeding activities on \s have overflowed living space.  \v00 colonists have been beamed down to \p."
 0x0159 idmIntelligenceGatheringActivitiesCombinedSynergist 2 "Your intelligence gathering activities combined with synergistic science have aided your research efforts in \j by \i resources."
+@range 2 + (pctCur == pctNew) (turn2.c)
 0x015a idmHasDegradedValue 4 "\s has degraded \p from a value of \i% to \i%."
 0x015b idmCurrentlyUnableDegradeValueBeyond 3 "\s is currently unable to degrade the value of \p beyond \i%."
 0x015c idmEngineersHaveManagedImproveUnderlying1 2 "Your engineers on \p have managed to improve the underlying \e by 1%."
@@ -358,6 +378,7 @@
 0x0164 idmHasDamagedDetonatingMineFieldMinesHave2 6 "\s has been damaged by your detonating \M mine field at \n. Your mines have inflicted \i damage points and you have destroyed \i of the ships."
 0x0165 idmHasTriedBeamColonistsDeepSpaceOrder 1 "\s has tried to beam colonists to deep space. This order has been canceled."
 0x0166 idmFleetsHaveBombedKillingColonists 3 "Your fleets\X have bombed \p, killing \i00 colonists."
+@range 9 bombing by several fleets, -2 to +6 (battle.c)
 0x0167 idmFleetsHaveBombedDestroyingOneInstallation 2 "Your fleets\X have bombed \p, destroying one installation."
 0x0168 idmFleetsHaveBombedDestroyingDefensesFactoriesMines 3 "Your fleets\X have bombed \p, destroying \i defenses, factories and mines."
 0x0169 idmFleetsHaveBombedKillingColonistsDestroyingOne 4 "Your fleets\X have bombed \p, killing \i00 colonists, and destroying one\X installation."
@@ -368,6 +389,7 @@
 0x016e idmFleetsHaveBombedKillingColonistsDestroyingOne2 5 "Your fleets\X have bombed \p, killing \i00 colonists, and destroying one\X installation.  Planetary defenses stopped \P of your bombs."
 0x016f idmFleetsHaveBombedKillingColonistsDestroyingDefens2 5 "Your fleets\X have bombed \p, killing \i00 colonists, and destroying \i defenses, factories and mines. Planetary defenses stopped \P of your bombs."
 0x0170 idmFleetsHaveBombedKillingColonists2 3 "\O fleets have bombed \p, killing \i00 of your colonists."
+@range 9 bombing by several fleets, to the planet owner, -2 to +6 (battle.c)
 0x0171 idmFleetsHaveBombedDestroyingOneInstallations 3 "\O fleets have bombed \p, destroying one\X of your installations."
 0x0172 idmFleetsHaveBombedDestroyingDefensesFactoriesMines2 3 "\O fleets have bombed \p, destroying \i of your defenses, factories and mines."
 0x0173 idmFleetsHaveBombedKillingColonistsDestroyingOne3 3 "\O fleets have bombed \p, killing \i00 of your colonists, and destroying one of your installations."
