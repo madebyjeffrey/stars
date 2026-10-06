@@ -1,0 +1,153 @@
+# Scanners: rgscanner (SCANNER). data/datagen.py describes the format.
+# An entry's position is its iscanner value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iscannerBatScanner
+  szName: "Bat Scanner"
+  cMass: 2
+  resCost: 1
+  rgwtOreCost: [1, 0, 1]
+  ibmp: 59
+
+- name: iscannerRhinoScanner
+  rgTech: [0, 0, 0, 0, 1]
+  szName: "Rhino Scanner"
+  cMass: 5
+  resCost: 3
+  rgwtOreCost: [3, 0, 2]
+  ibmp: 48
+  dRange: 50
+
+- name: iscannerMoleScanner
+  rgTech: [0, 0, 0, 0, 4]
+  szName: "Mole Scanner"
+  cMass: 2
+  resCost: 9
+  rgwtOreCost: [2, 0, 2]
+  ibmp: 49
+  dRange: 100
+
+- name: iscannerDNAScanner
+  rgTech: [0, 0, 3, 0, 0, 6]
+  szName: "DNA Scanner"
+  cMass: 2
+  resCost: 5
+  rgwtOreCost: [1, 1, 1]
+  ibmp: 52
+  dRange: 125
+
+- name: iscannerPossumScanner
+  rgTech: [0, 0, 0, 0, 5]
+  szName: "Possum Scanner"
+  cMass: 3
+  resCost: 18
+  rgwtOreCost: [3, 0, 3]
+  ibmp: 61
+  dRange: 150
+
+- name: iscannerPickPocketScanner
+  rgTech: [4, 0, 0, 0, 4, 4]
+  szName: "Pick Pocket Scanner"
+  cMass: 15
+  resCost: 35
+  rgwtOreCost: [8, 10, 6]
+  ibmp: 56
+  dRange: 80
+  grfAbilities: scannerSteals
+
+- name: iscannerChameleonScanner
+  rgTech: [3, 0, 0, 0, 6]
+  szName: "Chameleon Scanner"
+  cMass: 6
+  resCost: 25
+  rgwtOreCost: [4, 6, 4]
+  ibmp: 63
+  dRange: 160
+  grfAbilities: scannerSteals
+
+- name: iscannerFerretScanner
+  rgTech: [3, 0, 0, 0, 7, 2]
+  szName: "Ferret Scanner"
+  cMass: 2
+  resCost: 36
+  rgwtOreCost: [2, 0, 8]
+  ibmp: 53
+  dRange: 185
+  grfAbilities: scannerPenetrating50
+
+- name: iscannerDolphinScanner
+  rgTech: [5, 0, 0, 0, 10, 4]
+  szName: "Dolphin Scanner"
+  cMass: 4
+  resCost: 40
+  rgwtOreCost: [5, 5, 10]
+  ibmp: 54
+  dRange: 220
+  grfAbilities: scannerPenetrating100
+
+- name: iscannerGazelleScanner
+  rgTech: [4, 0, 0, 0, 8]
+  szName: "Gazelle Scanner"
+  cMass: 5
+  resCost: 24
+  rgwtOreCost: [4, 0, 5]
+  ibmp: 50
+  dRange: 225
+
+- name: iscannerRNAScanner
+  rgTech: [0, 0, 5, 0, 0, 10]
+  szName: "RNA Scanner"
+  cMass: 2
+  resCost: 20
+  rgwtOreCost: [1, 1, 2]
+  ibmp: 60
+  dRange: 230
+
+- name: iscannerCheetahScanner
+  rgTech: [5, 0, 0, 0, 11]
+  szName: "Cheetah Scanner"
+  cMass: 4
+  resCost: 50
+  rgwtOreCost: [3, 1, 13]
+  ibmp: 62
+  dRange: 275
+
+- name: iscannerElephantScanner
+  rgTech: [6, 0, 0, 0, 16, 7]
+  szName: "Elephant Scanner"
+  cMass: 6
+  resCost: 70
+  rgwtOreCost: [8, 5, 14]
+  ibmp: 55
+  dRange: 300
+  grfAbilities: scannerPenetrating200
+
+- name: iscannerEagleEyeScanner
+  rgTech: [6, 0, 0, 0, 14]
+  szName: "Eagle Eye Scanner"
+  cMass: 3
+  resCost: 64
+  rgwtOreCost: [3, 2, 21]
+  ibmp: 51
+  dRange: 335
+
+- name: iscannerRobberBaronScanner
+  rgTech: [10, 0, 0, 0, 15, 10]
+  szName: "Robber Baron Scanner"
+  cMass: 20
+  resCost: 90
+  rgwtOreCost: [10, 10, 10]
+  ibmp: 57
+  dRange: 220
+  grfAbilities: scannerSteals
+
+- name: iscannerPeerlessScanner
+  rgTech: [7, 0, 0, 0, 24]
+  szName: "Peerless Scanner"
+  cMass: 4
+  resCost: 90
+  rgwtOreCost: [3, 2, 30]
+  ibmp: 58
+  dRange: 500

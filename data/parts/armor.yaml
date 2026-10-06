@@ -1,0 +1,112 @@
+# Armor: rgarmor (ARMOR). data/datagen.py describes the format.
+# An entry's position is its iarmor value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iarmorTritanium
+  szName: "Tritanium"
+  cMass: 60
+  resCost: 10
+  rgwtOreCost: [5]
+  ibmp: 64
+  dp: 50
+
+- name: iarmorCrobmnium
+  rgTech: [0, 0, 0, 3]
+  szName: "Crobmnium"
+  cMass: 56
+  resCost: 13
+  rgwtOreCost: [6]
+  ibmp: 65
+  dp: 75
+
+- name: iarmorCarbonicArmor
+  rgTech: [0, 0, 0, 0, 0, 4]
+  szName: "Carbonic Armor"
+  cMass: 25
+  resCost: 15
+  rgwtOreCost: [0, 0, 5]
+  ibmp: 70
+  dp: 100
+
+- name: iarmorStrobnium
+  rgTech: [0, 0, 0, 6]
+  szName: "Strobnium"
+  cMass: 54
+  resCost: 18
+  rgwtOreCost: [8]
+  ibmp: 68
+  dp: 120
+
+- name: iarmorOrganicArmor
+  rgTech: [0, 0, 0, 0, 0, 7]
+  szName: "Organic Armor"
+  cMass: 15
+  resCost: 20
+  rgwtOreCost: [0, 0, 6]
+  ibmp: 71
+  dp: 175
+
+- name: iarmorKelarium
+  rgTech: [0, 0, 0, 9]
+  szName: "Kelarium"
+  cMass: 50
+  resCost: 25
+  rgwtOreCost: [9, 1]
+  ibmp: 67
+  dp: 180
+
+- name: iarmorFieldedKelarium
+  rgTech: [4, 0, 0, 10]
+  szName: "Fielded Kelarium"
+  cMass: 50
+  resCost: 28
+  rgwtOreCost: [10, 0, 2]
+  ibmp: 78
+  dp: 175
+
+- name: iarmorDepletedNeutronium
+  rgTech: [0, 0, 0, 10, 3]
+  szName: "Depleted Neutronium"
+  cMass: 50
+  resCost: 28
+  rgwtOreCost: [10, 0, 2]
+  ibmp: 79
+  dp: 200
+
+- name: iarmorNeutronium
+  rgTech: [0, 0, 0, 12]
+  szName: "Neutronium"
+  cMass: 45
+  resCost: 30
+  rgwtOreCost: [11, 2, 1]
+  ibmp: 69
+  dp: 275
+
+- name: iarmorMegaPolyShell
+  rgTech: [14, 0, 0, 14, 14, 6]
+  szName: "Mega Poly Shell"
+  cMass: 20
+  resCost: 65
+  rgwtOreCost: [18, 6, 6]
+  ibmp: 110
+  dp: 400
+
+- name: iarmorValanium
+  rgTech: [0, 0, 0, 16]
+  szName: "Valanium"
+  cMass: 40
+  resCost: 50
+  rgwtOreCost: [15]
+  ibmp: 66
+  dp: 500
+
+- name: iarmorSuperlatanium
+  rgTech: [0, 0, 0, 24]
+  szName: "Superlatanium"
+  cMass: 30
+  resCost: 100
+  rgwtOreCost: [25]
+  ibmp: 77
+  dp: 1500

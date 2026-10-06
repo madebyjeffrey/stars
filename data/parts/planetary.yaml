@@ -1,0 +1,121 @@
+# Planetary installations: scanners and defenses: rgplanetary (PLANETARY). data/datagen.py describes the format.
+# An entry's position is its iplanetary value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iplanetaryViewer50
+  szName: "Viewer 50"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 80
+  grAbility: 50
+
+- name: iplanetaryViewer90
+  rgTech: [0, 0, 0, 0, 1]
+  szName: "Viewer 90"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 81
+  grAbility: 90
+
+- name: iplanetaryScoper150
+  rgTech: [0, 0, 0, 0, 3]
+  szName: "Scoper 150"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 82
+  grAbility: 150
+
+- name: iplanetaryScoper220
+  rgTech: [0, 0, 0, 0, 6]
+  szName: "Scoper 220"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 83
+  grAbility: 220
+
+- name: iplanetaryScoper280
+  rgTech: [0, 0, 0, 0, 8]
+  szName: "Scoper 280"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 90
+  grAbility: 280
+
+- name: iplanetarySnooper320X
+  rgTech: [3, 0, 0, 0, 10, 3]
+  szName: "Snooper 320X"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 84
+  grAbility: -320
+
+- name: iplanetarySnooper400X
+  rgTech: [4, 0, 0, 0, 13, 6]
+  szName: "Snooper 400X"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 85
+  grAbility: -400
+
+- name: iplanetarySnooper500X
+  rgTech: [5, 0, 0, 0, 16, 7]
+  szName: "Snooper 500X"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 86
+  grAbility: -500
+
+- name: iplanetarySnooper620X
+  rgTech: [7, 0, 0, 0, 23, 9]
+  szName: "Snooper 620X"
+  resCost: 100
+  rgwtOreCost: [10, 10, 70]
+  ibmp: 91
+  grAbility: -620
+
+- name: iplanetarySDI
+  szName: "SDI"
+  resCost: 15
+  rgwtOreCost: [5, 5, 5]
+  ibmp: 72
+  grAbility: 10
+
+- name: iplanetaryMissileBattery
+  rgTech: [5]
+  szName: "Missile Battery"
+  resCost: 15
+  rgwtOreCost: [5, 5, 5]
+  ibmp: 73
+  grAbility: 20
+
+- name: iplanetaryLaserBattery
+  rgTech: [10]
+  szName: "Laser Battery"
+  resCost: 15
+  rgwtOreCost: [5, 5, 5]
+  ibmp: 74
+  grAbility: 24
+
+- name: iplanetaryPlanetaryShield
+  rgTech: [16]
+  szName: "Planetary Shield"
+  resCost: 15
+  rgwtOreCost: [5, 5, 5]
+  ibmp: 75
+  grAbility: 30
+
+- name: iplanetaryNeutronShield
+  rgTech: [23]
+  szName: "Neutron Shield"
+  resCost: 15
+  rgwtOreCost: [5, 5, 5]
+  ibmp: 76
+  grAbility: 38
+
+- name: iplanetaryGenesisDevice
+  rgTech: [20, 10, 10, 20, 10, 20]
+  szName: "Genesis Device"
+  resCost: 5000
+  ibmp: 175

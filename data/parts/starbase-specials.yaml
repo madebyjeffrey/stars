@@ -1,0 +1,140 @@
+# Starbase specials: stargates and mass drivers: rgspecialSB (SPECIALSB). data/datagen.py describes the format.
+# An entry's position is its ispecialSB value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ispecialSBStargate100250
+  rgTech: [0, 0, 5, 5]
+  szName: "Stargate 100/250"
+  resCost: 400
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 144
+  grAbility: 100
+  grAbility2: 250
+
+- name: ispecialSBStargateAny300
+  rgTech: [0, 0, 6, 10]
+  szName: "Stargate any/300"
+  resCost: 500
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 145
+  grAbility: -1
+  grAbility2: 300
+
+- name: ispecialSBStargate150600
+  rgTech: [0, 0, 11, 7]
+  szName: "Stargate 150/600"
+  resCost: 1000
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 146
+  grAbility: 150
+  grAbility2: 600
+
+- name: ispecialSBStargate300500
+  rgTech: [0, 0, 9, 13]
+  szName: "Stargate 300/500"
+  resCost: 1200
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 147
+  grAbility: 300
+  grAbility2: 500
+
+- name: ispecialSBStargate100Any
+  rgTech: [0, 0, 16, 12]
+  szName: "Stargate 100/any"
+  resCost: 1400
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 148
+  grAbility: 100
+  grAbility2: -1
+
+- name: ispecialSBStargateAny800
+  rgTech: [0, 0, 12, 18]
+  szName: "Stargate any/800"
+  resCost: 1400
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 149
+  grAbility: -1
+  grAbility2: 800
+
+- name: ispecialSBStargateAnyAny
+  rgTech: [0, 0, 19, 24]
+  szName: "Stargate any/any"
+  resCost: 1600
+  rgwtOreCost: [100, 40, 40]
+  ibmp: 150
+  grAbility: -1
+  grAbility2: -1
+
+- name: ispecialSBMassDriver5
+  rgTech: [4]
+  szName: "Mass Driver 5"
+  resCost: 140
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 151
+  grAbility: 5
+
+- name: ispecialSBMassDriver6
+  rgTech: [7]
+  szName: "Mass Driver 6"
+  resCost: 288
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 152
+  grAbility: 6
+
+- name: ispecialSBMassDriver7
+  rgTech: [9]
+  szName: "Mass Driver 7"
+  resCost: 1024
+  rgwtOreCost: [200, 200, 200]
+  ibmp: 153
+  grAbility: 7
+
+- name: ispecialSBSuperDriver8
+  rgTech: [11]
+  szName: "Super Driver 8"
+  resCost: 512
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 154
+  grAbility: 8
+
+- name: ispecialSBSuperDriver9
+  rgTech: [13]
+  szName: "Super Driver 9"
+  resCost: 648
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 155
+  grAbility: 9
+
+- name: ispecialSBUltraDriver10
+  rgTech: [15]
+  szName: "Ultra Driver 10"
+  resCost: 1936
+  rgwtOreCost: [200, 200, 200]
+  ibmp: 156
+  grAbility: 10
+
+- name: ispecialSBUltraDriver11
+  rgTech: [17]
+  szName: "Ultra Driver 11"
+  resCost: 968
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 157
+  grAbility: 11
+
+- name: ispecialSBUltraDriver12
+  rgTech: [20]
+  szName: "Ultra Driver 12"
+  resCost: 1152
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 158
+  grAbility: 12
+
+- name: ispecialSBUltraDriver13
+  rgTech: [24]
+  szName: "Ultra Driver 13"
+  resCost: 1352
+  rgwtOreCost: [48, 40, 40]
+  ibmp: 159
+  grAbility: 13

@@ -1,0 +1,138 @@
+# Starbase hulls: rghuldefSB (HULDEF). data/datagen.py describes the format.
+# An entry's position is its isbhull value; huldef is its HulDef name, numbered
+# after the ship hulls. Saved ship designs store the HulDef: add new entries
+# at the end; never reorder or remove one.
+
+- name: isbhullOrbitalFort
+  huldef: ihuldefOrbitalFort
+  hul:
+    szClass: "Orbital Fort"
+    resCost: 80
+    rgwtOreCost: [24, 0, 34]
+    ibmp: 128
+    dp: 100
+    rghs:
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstWeapon, cItem: 12}
+      - {grhst: hstShArm, cItem: 12}
+      - {grhst: hstWeapon, cItem: 12}
+      - {grhst: hstShArm, cItem: 12}
+  init: 10
+  imdAttack: hullAttackHeavy
+  wrcCargo: 65535
+  rgbrc: [68, 36, 70, 100, 66]
+
+- name: isbhullSpaceDock
+  huldef: ihuldefSpaceDock
+  hul:
+    rgTech: [0, 0, 0, 4]
+    szClass: "Space Dock"
+    resCost: 200
+    rgwtOreCost: [40, 10, 50]
+    ibmp: 132
+    wtCargoMax: 200
+    dp: 250
+    rghs:
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShArm, cItem: 24}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShield, cItem: 24}
+      - {grhst: hstSpecialE, cItem: 2}
+      - {grhst: hstSpecialE, cItem: 2}
+      - {grhst: hstWeapon, cItem: 16}
+  init: 12
+  imdAttack: hullAttackHeavy
+  wrcCargo: 17510
+  rgbrc: [34, 20, 65, 71, 116, 38, 102, 98]
+
+- name: isbhullSpaceStation
+  huldef: ihuldefSpaceStation
+  hul:
+    szClass: "Space Station"
+    resCost: 1200
+    rgwtOreCost: [240, 160, 500]
+    ibmp: 136
+    wtCargoMax: 65535
+    dp: 500
+    rghs:
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShield, cItem: 16}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShArm, cItem: 16}
+      - {grhst: hstShield, cItem: 16}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstShArm, cItem: 16}
+  init: 14
+  imdAttack: hullAttackHeavy
+  wrcCargo: 17510
+  rgbrc: [66, 5, 3, 88, 80, 133, 100, 131, 36, 48, 70, 56]
+
+- name: isbhullUltraStation
+  huldef: ihuldefUltraStation
+  hul:
+    rgTech: [0, 0, 0, 12]
+    szClass: "Ultra Station"
+    resCost: 1200
+    rgwtOreCost: [240, 160, 600]
+    ibmp: 140
+    wtCargoMax: 65535
+    dp: 1000
+    rghs:
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShield, cItem: 20}
+      - {grhst: hstShield, cItem: 20}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstShArm, cItem: 20}
+      - {grhst: hstWeapon, cItem: 16}
+      - {grhst: hstShArm, cItem: 20}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstWeapon, cItem: 16}
+  init: 16
+  imdAttack: hullAttackHeavy
+  wrcCargo: 17510
+  rgbrc: [36, 80, 66, 88, 98, 38, 70, 3, 131, 56, 100, 102, 48, 34, 5, 133]
+
+- name: isbhullDeathStar
+  huldef: ihuldefDeathStart
+  hul:
+    rgTech: [0, 0, 0, 17]
+    szClass: "Death Star"
+    resCost: 1500
+    rgwtOreCost: [240, 160, 700]
+    ibmp: 144
+    wtCargoMax: 65535
+    dp: 1500
+    rghs:
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstWeapon, cItem: 32}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstShield, cItem: 30}
+      - {grhst: hstShield, cItem: 30}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstWeapon, cItem: 32}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstWeapon, cItem: 32}
+      - {grhst: hstSomeSB, cItem: 1}
+      - {grhst: hstShArm, cItem: 20}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstShArm, cItem: 20}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstWeapon, cItem: 32}
+  init: 18
+  imdAttack: hullAttackHeavy
+  wrcCargo: 17510
+  rgbrc: [20, 96, 65, 104, 98, 38, 71, 2, 130, 40, 116, 102, 32, 34, 6, 134]

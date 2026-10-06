@@ -1,0 +1,152 @@
+# Engines: rgengine (ENGINE). data/datagen.py describes the format.
+# An entry's position is its iengine value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iengineSettlersDelight
+  szName: "Settler's Delight"
+  cMass: 2
+  resCost: 2
+  rgwtOreCost: [1, 0, 1]
+  ibmp: 8
+  grfAbilities: engineSettlersDelight
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 140, 275, 480, 576]
+
+- name: iengineQuickJump5
+  szName: "Quick Jump 5"
+  cMass: 4
+  resCost: 3
+  rgwtOreCost: [3, 0, 1]
+  rgcFuelUsed: [0, 0, 25, 100, 100, 100, 180, 500, 800, 900, 1080]
+
+- name: iengineFuelMizer
+  rgTech: [0, 0, 2]
+  szName: "Fuel Mizer"
+  cMass: 6
+  resCost: 11
+  rgwtOreCost: [8]
+  ibmp: 9
+  grfAbilities: engineFuelMizer
+  rgcFuelUsed: [0, 0, 0, 0, 0, 35, 120, 175, 235, 360, 420]
+
+- name: iengineLongHump6
+  rgTech: [0, 0, 3]
+  szName: "Long Hump 6"
+  cMass: 9
+  resCost: 6
+  rgwtOreCost: [5, 0, 1]
+  ibmp: 1
+  rgcFuelUsed: [0, 0, 20, 60, 100, 100, 105, 450, 750, 900, 1080]
+
+- name: iengineDaddyLongLegs7
+  rgTech: [0, 0, 5]
+  szName: "Daddy Long Legs 7"
+  cMass: 13
+  resCost: 12
+  rgwtOreCost: [11, 0, 3]
+  ibmp: 2
+  rgcFuelUsed: [0, 0, 20, 60, 70, 100, 100, 110, 600, 750, 900]
+
+- name: iengineAlphaDrive8
+  rgTech: [0, 0, 7]
+  szName: "Alpha Drive 8"
+  cMass: 17
+  resCost: 28
+  rgwtOreCost: [16, 0, 3]
+  ibmp: 3
+  rgcFuelUsed: [0, 0, 15, 50, 60, 70, 100, 100, 115, 700, 840]
+
+- name: iengineTransGalacticDrive
+  rgTech: [0, 0, 9]
+  szName: "Trans-Galactic Drive"
+  cMass: 25
+  resCost: 50
+  rgwtOreCost: [20, 20, 9]
+  ibmp: 4
+  rgcFuelUsed: [0, 0, 15, 35, 45, 55, 70, 80, 90, 100, 120]
+
+- name: iengineInterspace10
+  rgTech: [0, 0, 11]
+  szName: "Interspace-10"
+  cMass: 25
+  resCost: 60
+  rgwtOreCost: [18, 25, 10]
+  ibmp: 12
+  grfAbilities: engineInterspace10
+  rgcFuelUsed: [0, 0, 10, 30, 40, 50, 60, 70, 80, 90, 100]
+
+- name: iengineEnigmaPulsar
+  rgTech: [7, 0, 13, 5, 9]
+  szName: "Enigma Pulsar"
+  cMass: 20
+  resCost: 40
+  rgwtOreCost: [12, 15, 11]
+  ibmp: 109
+  grfAbilities: engineEnigmaPulsar
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 65, 75, 85, 95, 105]
+
+- name: iengineTransStar10
+  rgTech: [0, 0, 23]
+  szName: "Trans-Star 10"
+  cMass: 5
+  resCost: 10
+  rgwtOreCost: [3, 0, 3]
+  ibmp: 117
+  rgcFuelUsed: [0, 0, 5, 15, 20, 25, 30, 35, 40, 45, 50]
+
+- name: iengineRadiatingHydroRamScoop
+  rgTech: [2, 0, 6]
+  szName: "Radiating Hydro-Ram Scoop"
+  cMass: 10
+  resCost: 8
+  rgwtOreCost: [3, 2, 9]
+  ibmp: 7
+  grfAbilities: engineRadiatingRamScoop
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 165, 375, 600, 720]
+
+- name: iengineSubGalacticFuelScoop
+  rgTech: [2, 0, 8]
+  szName: "Sub-Galactic Fuel Scoop"
+  cMass: 20
+  resCost: 12
+  rgwtOreCost: [4, 4, 7]
+  ibmp: 5
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 85, 105, 210, 380, 456]
+
+- name: iengineTransGalacticFuelScoop
+  rgTech: [3, 0, 9]
+  szName: "Trans-Galactic Fuel Scoop"
+  cMass: 19
+  resCost: 18
+  rgwtOreCost: [5, 4, 12]
+  ibmp: 6
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 88, 100, 145, 174]
+
+- name: iengineTransGalacticSuperScoop
+  rgTech: [4, 0, 12]
+  szName: "Trans-Galactic Super Scoop"
+  cMass: 18
+  resCost: 24
+  rgwtOreCost: [6, 4, 16]
+  ibmp: 10
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 0, 65, 90, 108]
+
+- name: iengineTransGalacticMizerScoop
+  rgTech: [4, 0, 16]
+  szName: "Trans-Galactic Mizer Scoop"
+  cMass: 11
+  resCost: 20
+  rgwtOreCost: [5, 2, 13]
+  ibmp: 11
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 84]
+
+- name: iengineGalaxyScoop
+  rgTech: [5, 0, 20]
+  szName: "Galaxy Scoop"
+  cMass: 8
+  resCost: 12
+  rgwtOreCost: [4, 2, 9]
+  ibmp: 191
+  grfAbilities: engineGalaxyScoop
+  rgcFuelUsed: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60]

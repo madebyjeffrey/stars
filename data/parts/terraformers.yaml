@@ -1,0 +1,144 @@
+# Terraformers: rgterra (TERRA). data/datagen.py describes the format.
+# An entry's position is its iterra value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iterraTotalTerraform3
+  szName: "Total Terraform ±3"
+  resCost: 70
+  ibmp: 184
+  grAbility: 3
+
+- name: iterraTotalTerraform5
+  rgTech: [0, 0, 0, 0, 0, 3]
+  szName: "Total Terraform ±5"
+  resCost: 70
+  ibmp: 185
+  grAbility: 5
+
+- name: iterraTotalTerraform7
+  rgTech: [0, 0, 0, 0, 0, 6]
+  szName: "Total Terraform ±7"
+  resCost: 70
+  ibmp: 186
+  grAbility: 7
+
+- name: iterraTotalTerraform10
+  rgTech: [0, 0, 0, 0, 0, 9]
+  szName: "Total Terraform ±10"
+  resCost: 70
+  ibmp: 187
+  grAbility: 10
+
+- name: iterraTotalTerraform15
+  rgTech: [0, 0, 0, 0, 0, 13]
+  szName: "Total Terraform ±15"
+  resCost: 70
+  ibmp: 188
+  grAbility: 15
+
+- name: iterraTotalTerraform20
+  rgTech: [0, 0, 0, 0, 0, 17]
+  szName: "Total Terraform ±20"
+  resCost: 70
+  ibmp: 180
+  grAbility: 20
+
+- name: iterraTotalTerraform25
+  rgTech: [0, 0, 0, 0, 0, 22]
+  szName: "Total Terraform ±25"
+  resCost: 70
+  ibmp: 172
+  grAbility: 25
+
+- name: iterraTotalTerraform30
+  rgTech: [0, 0, 0, 0, 0, 25]
+  szName: "Total Terraform ±30"
+  resCost: 70
+  ibmp: 164
+  grAbility: 30
+
+- name: iterraGravityTerraform3
+  rgTech: [0, 0, 1, 0, 0, 1]
+  szName: "Gravity Terraform ±3"
+  resCost: 100
+  ibmp: 160
+  grAbility: 3
+
+- name: iterraGravityTerraform7
+  rgTech: [0, 0, 5, 0, 0, 2]
+  szName: "Gravity Terraform ±7"
+  resCost: 100
+  ibmp: 161
+  grAbility: 7
+
+- name: iterraGravityTerraform11
+  rgTech: [0, 0, 10, 0, 0, 3]
+  szName: "Gravity Terraform ±11"
+  resCost: 100
+  ibmp: 162
+  grAbility: 11
+
+- name: iterraGravityTerraform15
+  rgTech: [0, 0, 16, 0, 0, 4]
+  szName: "Gravity Terraform ±15"
+  resCost: 100
+  ibmp: 163
+  grAbility: 15
+
+- name: iterraTempTerraform3
+  rgTech: [1, 0, 0, 0, 0, 1]
+  szName: "Temp Terraform ±3"
+  resCost: 100
+  ibmp: 168
+  grAbility: 3
+
+- name: iterraTempTerraform7
+  rgTech: [5, 0, 0, 0, 0, 2]
+  szName: "Temp Terraform ±7"
+  resCost: 100
+  ibmp: 169
+  grAbility: 7
+
+- name: iterraTempTerraform11
+  rgTech: [10, 0, 0, 0, 0, 3]
+  szName: "Temp Terraform ±11"
+  resCost: 100
+  ibmp: 170
+  grAbility: 11
+
+- name: iterraTempTerraform15
+  rgTech: [16, 0, 0, 0, 0, 4]
+  szName: "Temp Terraform ±15"
+  resCost: 100
+  ibmp: 171
+  grAbility: 15
+
+- name: iterraRadiationTerraform3
+  rgTech: [0, 1, 0, 0, 0, 1]
+  szName: "Radiation Terraform ±3"
+  resCost: 100
+  ibmp: 176
+  grAbility: 3
+
+- name: iterraRadiationTerraform7
+  rgTech: [0, 5, 0, 0, 0, 2]
+  szName: "Radiation Terraform ±7"
+  resCost: 100
+  ibmp: 177
+  grAbility: 7
+
+- name: iterraRadiationTerraform11
+  rgTech: [0, 10, 0, 0, 0, 3]
+  szName: "Radiation Terraform ±11"
+  resCost: 100
+  ibmp: 178
+  grAbility: 11
+
+- name: iterraRadiationTerraform15
+  rgTech: [0, 16, 0, 0, 0, 4]
+  szName: "Radiation Terraform ±15"
+  resCost: 100
+  ibmp: 179
+  grAbility: 15

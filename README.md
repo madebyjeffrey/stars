@@ -33,15 +33,26 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
 ## Build
 
 The game (`stars.exe`) uses Windows APIs. On macOS or Linux, build it as a
-Windows executable with CMake 3.23 or later, Ninja, Python 3, and the x86_64
-MinGW-w64 toolchain on PATH. The host alone (`stars-host`, below) builds with
-the native compiler. The build runs `text/textgen.py` to compile the game's
-strings, messages, tutorial and planet names from `text/*.txt`.
+Windows executable with CMake 3.23 or later, Ninja, Python 3 with PyYAML, and
+the x86_64 MinGW-w64 toolchain on PATH. The host alone (`stars-host`, below)
+builds with the native compiler. The build runs `text/textgen.py` to compile
+the game's strings, messages, tutorial and planet names from `text/*.txt`,
+and `data/datagen.py` to compile the parts tables from `data/parts/*.yaml`.
 On macOS these build dependencies can be installed with Homebrew:
 
 ```sh
 brew install cmake ninja mingw-w64
 ```
+
+Homebrew's Python doesn't let `pip` install into it, so put PyYAML in a
+virtualenv and point CMake at it:
+
+```sh
+python3 -m venv ~/.venvs/stars && ~/.venvs/stars/bin/pip install pyyaml
+cmake --preset mingw-debug -DPython3_EXECUTABLE=$HOME/.venvs/stars/bin/python
+```
+
+On Debian or Ubuntu, install `python3-yaml`.
 
 From the project directory:
 

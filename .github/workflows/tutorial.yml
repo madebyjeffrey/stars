@@ -36,7 +36,7 @@ jobs:
           sudo wget -qNP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/noble/winehq-noble.sources
           sudo apt-get update
           sudo apt-get install -y --install-recommends winehq-stable
-          sudo apt-get install -y gcc-mingw-w64-x86-64 cmake ninja-build xvfb xauth
+          sudo apt-get install -y gcc-mingw-w64-x86-64 cmake ninja-build python3-yaml xvfb xauth
           wine --version
 
       - name: Walk every tutorial year

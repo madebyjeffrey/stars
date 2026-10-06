@@ -42,7 +42,7 @@ jobs:
       - name: Install Wine, MinGW and virtual display
         run: |
           sudo apt-get update
-          sudo apt-get install -y wine64 wine gcc-mingw-w64-x86-64 cmake ninja-build xvfb xauth
+          sudo apt-get install -y wine64 wine gcc-mingw-w64-x86-64 cmake ninja-build python3-yaml xvfb xauth
 
       - name: Build stars.exe and save CLI
         run: |
@@ -115,7 +115,7 @@ jobs:
       - name: Install build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends cmake ninja-build
+          sudo apt-get install -y --no-install-recommends cmake ninja-build python3-yaml
 
       - name: Generate and compare all scenarios through turn 150
         run: make regression-host

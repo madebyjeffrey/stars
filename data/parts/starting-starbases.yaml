@@ -1,0 +1,88 @@
+# Starting starbase designs: rgshdefSBT (SHDEF). data/datagen.py describes the format.
+# An entry's position is its StartingStarbase value; add new entries at the end.
+
+- name: Starbase
+  hul:
+    ihuldef: ihuldefSpaceStation
+    szClass: "Starbase"
+    resCost: 276
+    rgwtOreCost: [67, 80, 53]
+    ibmp: 8
+    wtCargoMax: 65535
+    dp: 1000
+    rghs:
+      - {grhst: hstSpecialSB}
+      - {grhst: hstBeam, cItem: 8}
+      - {grhst: hstShield, cItem: 8}
+      - {grhst: hstBeam, cItem: 8}
+      - {grhst: hstShield, cItem: 8}
+      - {grhst: hstShield, cItem: 8}
+      - {grhst: hstSpecialEM}
+      - {grhst: hstBeam, cItem: 8}
+      - {grhst: hstSpecialEM}
+      - {grhst: hstBeam, cItem: 8}
+      - {grhst: hstSpecialSB, iItem: 1}
+      - {grhst: hstShield, cItem: 8}
+  det: detMinimal
+  fInclude: true
+  ishdef: 16
+  turn: 1
+
+- name: AcceleratorPlatform
+  hul:
+    ihuldef: ihuldefOrbitalFort
+    szClass: "Accelerator Platform"
+    resCost: 276
+    rgwtOreCost: [67, 80, 53]
+    wtCargoMax: 65535
+    dp: 1000
+    rghs:
+      - {grhst: hstSpecialSB, iItem: 7, cItem: 1}
+      - {grhst: hstBeam, cItem: 6}
+      - {grhst: hstShield, iItem: 1, cItem: 6}
+      - {grhst: hstBeam, cItem: 6}
+      - {grhst: hstShield, iItem: 1, cItem: 6}
+  det: detMinimal
+  fInclude: true
+  ishdef: 17
+  turn: 1
+
+- name: PortholetoBeyond
+  hul:
+    ihuldef: ihuldefOrbitalFort
+    szClass: "Porthole to Beyond"
+    resCost: 276
+    rgwtOreCost: [67, 80, 53]
+    ibmp: 1
+    wtCargoMax: 65535
+    dp: 1000
+    rghs:
+      - {grhst: hstSpecialSB, cItem: 1}
+      - {grhst: hstBeam, cItem: 6}
+      - {grhst: hstShield, cItem: 6}
+      - {grhst: hstBeam, cItem: 6}
+      - {grhst: hstShield, cItem: 6}
+  det: detMinimal
+  fInclude: true
+  ishdef: 18
+  turn: 1
+
+- name: StarterColony
+  hul:
+    ihuldef: ihuldefOrbitalFort
+    szClass: "Starter Colony"
+    resCost: 276
+    rgwtOreCost: [67, 80, 53]
+    ibmp: 1
+    wtCargoMax: 65535
+    dp: 1000
+    rghs:
+      - {grhst: hstSpecialSB}
+      - {grhst: hstBeam}
+      - {grhst: hstShield}
+      - {grhst: hstBeam}
+      - {grhst: hstShield}
+  det: detMinimal
+  fInclude: true
+  ishdef: 19
+  turn: 1

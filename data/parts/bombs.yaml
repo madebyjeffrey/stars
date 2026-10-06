@@ -1,0 +1,163 @@
+# Bombs: rgbomb (BOMB). data/datagen.py describes the format.
+# An entry's position is its ibomb value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ibombLadyFingerBomb
+  rgTech: [0, 2]
+  szName: "Lady Finger Bomb"
+  cMass: 40
+  resCost: 5
+  rgwtOreCost: [1, 20]
+  ibmp: 35
+  cRounds: 1
+  dDmgCol: 6
+  dDmgBldg: 2
+
+- name: ibombBlackCatBomb
+  rgTech: [0, 5]
+  szName: "Black Cat Bomb"
+  cMass: 45
+  resCost: 7
+  rgwtOreCost: [1, 22]
+  ibmp: 36
+  cRounds: 1
+  dDmgCol: 9
+  dDmgBldg: 4
+
+- name: ibombM70Bomb
+  rgTech: [0, 8]
+  szName: "M-70 Bomb"
+  cMass: 50
+  resCost: 9
+  rgwtOreCost: [1, 24]
+  ibmp: 37
+  cRounds: 1
+  dDmgCol: 12
+  dDmgBldg: 6
+
+- name: ibombM80Bomb
+  rgTech: [0, 11]
+  szName: "M-80 Bomb"
+  cMass: 55
+  resCost: 12
+  rgwtOreCost: [1, 25]
+  ibmp: 38
+  cRounds: 1
+  dDmgCol: 17
+  dDmgBldg: 7
+
+- name: ibombCherryBomb
+  rgTech: [0, 14]
+  szName: "Cherry Bomb"
+  cMass: 52
+  resCost: 11
+  rgwtOreCost: [1, 25]
+  ibmp: 39
+  cRounds: 1
+  dDmgCol: 25
+  dDmgBldg: 10
+
+- name: ibombLBU17Bomb
+  rgTech: [0, 5, 0, 0, 8]
+  szName: "LBU-17 Bomb"
+  cMass: 30
+  resCost: 7
+  rgwtOreCost: [1, 15, 15]
+  ibmp: 32
+  cRounds: 1
+  dDmgCol: 2
+  dDmgBldg: 16
+
+- name: ibombLBU32Bomb
+  rgTech: [0, 10, 0, 0, 10]
+  szName: "LBU-32 Bomb"
+  cMass: 35
+  resCost: 10
+  rgwtOreCost: [1, 24, 15]
+  ibmp: 33
+  cRounds: 1
+  dDmgCol: 3
+  dDmgBldg: 28
+
+- name: ibombLBU74Bomb
+  rgTech: [0, 15, 0, 0, 12]
+  szName: "LBU-74 Bomb"
+  cMass: 45
+  resCost: 14
+  rgwtOreCost: [1, 33, 12]
+  ibmp: 34
+  cRounds: 1
+  dDmgCol: 4
+  dDmgBldg: 45
+
+- name: ibombHushABoom
+  rgTech: [0, 12, 0, 0, 12, 12]
+  szName: "Hush-a-Boom"
+  cMass: 5
+  resCost: 5
+  rgwtOreCost: [1, 5]
+  ibmp: 182
+  cRounds: 1
+  dDmgCol: 30
+  dDmgBldg: 2
+
+- name: ibombRetroBomb
+  rgTech: [0, 10, 0, 0, 0, 12]
+  szName: "Retro Bomb"
+  cMass: 45
+  resCost: 50
+  rgwtOreCost: [15, 15, 10]
+  ibmp: 174
+  cRounds: 1
+
+- name: ibombSmartBomb
+  rgTech: [0, 5, 0, 0, 0, 7]
+  szName: "Smart Bomb"
+  cMass: 50
+  resCost: 27
+  rgwtOreCost: [1, 22]
+  ibmp: 112
+  cRounds: 1
+  dDmgCol: 13
+
+- name: ibombNeutronBomb
+  rgTech: [0, 10, 0, 0, 0, 10]
+  szName: "Neutron Bomb"
+  cMass: 57
+  resCost: 30
+  rgwtOreCost: [1, 30]
+  ibmp: 113
+  cRounds: 1
+  dDmgCol: 22
+
+- name: ibombEnrichedNeutronBomb
+  rgTech: [0, 15, 0, 0, 0, 12]
+  szName: "Enriched Neutron Bomb"
+  cMass: 64
+  resCost: 25
+  rgwtOreCost: [1, 36]
+  ibmp: 114
+  cRounds: 1
+  dDmgCol: 35
+
+- name: ibombPeerlessBomb
+  rgTech: [0, 22, 0, 0, 0, 15]
+  szName: "Peerless Bomb"
+  cMass: 55
+  resCost: 32
+  rgwtOreCost: [1, 33]
+  ibmp: 115
+  cRounds: 1
+  dDmgCol: 50
+
+- name: ibombAnnihilatorBomb
+  rgTech: [0, 26, 0, 0, 0, 17]
+  szName: "Annihilator Bomb"
+  cMass: 50
+  resCost: 28
+  rgwtOreCost: [1, 30]
+  ibmp: 116
+  cRounds: 1
+  dDmgCol: 70

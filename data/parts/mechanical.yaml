@@ -1,0 +1,100 @@
+# Mechanical parts: rgspecialM (SPECIAL). data/datagen.py describes the format.
+# An entry's position is its ispecialM value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ispecialMColonizationModule
+  szName: "Colonization Module"
+  cMass: 32
+  resCost: 10
+  rgwtOreCost: [12, 10, 10]
+  ibmp: 106
+  grAbility: 1
+
+- name: ispecialMOrbitalConstructionModule
+  szName: "Orbital Construction Module"
+  cMass: 50
+  resCost: 20
+  rgwtOreCost: [20, 15, 15]
+  ibmp: 107
+  grAbility: 1
+
+- name: ispecialMCargoPod
+  rgTech: [0, 0, 0, 3]
+  szName: "Cargo Pod"
+  cMass: 5
+  resCost: 10
+  rgwtOreCost: [5, 0, 2]
+  ibmp: 96
+  grAbility: 2
+
+- name: ispecialMSuperCargoPod
+  rgTech: [3, 0, 0, 9]
+  szName: "Super Cargo Pod"
+  cMass: 7
+  resCost: 15
+  rgwtOreCost: [8, 0, 2]
+  ibmp: 97
+  grAbility: 2
+
+- name: ispecialMMultiCargoPod
+  rgTech: [5, 0, 0, 11, 5]
+  szName: "Multi Cargo Pod"
+  cMass: 9
+  resCost: 25
+  rgwtOreCost: [12, 0, 3]
+  ibmp: 118
+  grAbility: 2
+
+- name: ispecialMFuelTank
+  szName: "Fuel Tank"
+  cMass: 3
+  resCost: 4
+  rgwtOreCost: [6]
+  ibmp: 104
+  grAbility: 4
+
+- name: ispecialMSuperFuelTank
+  rgTech: [6, 0, 4, 14]
+  szName: "Super Fuel Tank"
+  cMass: 8
+  resCost: 8
+  rgwtOreCost: [8]
+  ibmp: 105
+  grAbility: 4
+
+- name: ispecialMManeuveringJet
+  rgTech: [2, 0, 3]
+  szName: "Maneuvering Jet"
+  cMass: 5
+  resCost: 10
+  rgwtOreCost: [5, 0, 5]
+  ibmp: 102
+  grAbility: 1
+
+- name: ispecialMOverthruster
+  rgTech: [5, 0, 12]
+  szName: "Overthruster"
+  cMass: 5
+  resCost: 20
+  rgwtOreCost: [10, 0, 8]
+  ibmp: 103
+  grAbility: 2
+
+- name: ispecialMJumpGate
+  rgTech: [16, 0, 20, 20, 16]
+  szName: "Jump Gate"
+  cMass: 10
+  resCost: 40
+  rgwtOreCost: [0, 0, 50]
+  ibmp: 208
+
+- name: ispecialMBeamDeflector
+  rgTech: [6, 6, 0, 6, 6]
+  szName: "Beam Deflector"
+  cMass: 1
+  resCost: 8
+  rgwtOreCost: [0, 0, 10]
+  ibmp: 209
+  grAbility: 10

@@ -1,0 +1,690 @@
+# Ship hulls: rghuldef (HULDEF). data/datagen.py describes the format.
+# An entry's position is its HulDef value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+
+- name: ihuldefSmallFreighter
+  hul:
+    szClass: "Small Freighter"
+    wtEmpty: 25
+    resCost: 20
+    rgwtOreCost: [12, 0, 17]
+    wtCargoMax: 70
+    wtFuelMax: 130
+    dp: 25
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstShArm, cItem: 1}
+  imdCategory: hullCatFreighter
+  wrcCargo: 13141
+  rgbrc: [49, 55, 53]
+
+- name: ihuldefMediumFreighter
+  hul:
+    rgTech: [0, 0, 0, 3]
+    szClass: "Medium Freighter"
+    wtEmpty: 60
+    resCost: 40
+    rgwtOreCost: [20, 0, 19]
+    ibmp: 4
+    wtCargoMax: 210
+    wtFuelMax: 450
+    dp: 50
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstShArm, cItem: 1}
+  imdCategory: hullCatFreighter
+  wrcCargo: 12886
+  rgbrc: [48, 56, 54]
+
+- name: ihuldefLargeFreighter
+  hul:
+    rgTech: [0, 0, 0, 8]
+    szClass: "Large Freighter"
+    wtEmpty: 125
+    resCost: 100
+    rgwtOreCost: [35, 0, 21]
+    ibmp: 8
+    wtCargoMax: 1200
+    wtFuelMax: 2600
+    dp: 150
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstScanSpec, cItem: 2}
+      - {grhst: hstShArm, cItem: 2}
+  imdCategory: hullCatFreighter
+  wrcCargo: 8806
+  rgbrc: [48, 38, 70]
+
+- name: ihuldefSuperFreighter
+  hul:
+    rgTech: [0, 0, 0, 13]
+    szClass: "Super Freighter"
+    wtEmpty: 175
+    resCost: 125
+    rgwtOreCost: [45, 0, 21]
+    ibmp: 12
+    wtCargoMax: 3000
+    wtFuelMax: 8000
+    dp: 400
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstScanSpec, cItem: 3}
+      - {grhst: hstShArm, cItem: 5}
+      - {grhst: hstSpecialE, cItem: 2}
+  imdCategory: hullCatFreighter
+  wrcCargo: 8840
+  rgbrc: [64, 40, 72, 104]
+
+- name: ihuldefScout
+  hul:
+    szClass: "Scout"
+    wtEmpty: 8
+    resCost: 10
+    rgwtOreCost: [4, 2, 4]
+    ibmp: 16
+    wtFuelMax: 50
+    dp: 20
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+  init: 1
+  imdAttack: hullAttackLight
+  imdCategory: hullCatScout
+  wrcCargo: 65535
+  rgbrc: [50, 54, 52]
+
+- name: ihuldefFrigate
+  hul:
+    rgTech: [0, 0, 0, 6]
+    szClass: "Frigate"
+    wtEmpty: 8
+    resCost: 12
+    rgwtOreCost: [4, 2, 4]
+    ibmp: 20
+    wtFuelMax: 125
+    dp: 45
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstScanner, cItem: 2}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstShArm, cItem: 2}
+  init: 4
+  imdAttack: hullAttackLight
+  imdCategory: hullCatScout
+  wrcCargo: 65535
+  rgbrc: [49, 55, 53, 51]
+
+- name: ihuldefDestroyer
+  hul:
+    rgTech: [0, 0, 0, 3]
+    szClass: "Destroyer"
+    wtEmpty: 30
+    resCost: 35
+    rgwtOreCost: [15, 3, 5]
+    ibmp: 24
+    wtFuelMax: 280
+    dp: 200
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstWeapon, cItem: 1}
+      - {grhst: hstWeapon, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstArmor, cItem: 2}
+      - {grhst: hstSpecialM, cItem: 1}
+      - {grhst: hstSpecialE, cItem: 1}
+  init: 3
+  imdAttack: hullAttackLight
+  imdCategory: hullCatScout
+  wrcCargo: 65535
+  rgbrc: [66, 21, 117, 70, 68, 35, 99]
+
+- name: ihuldefCruiser
+  hul:
+    rgTech: [0, 0, 0, 9]
+    szClass: "Cruiser"
+    wtEmpty: 90
+    resCost: 85
+    rgwtOreCost: [40, 5, 8]
+    ibmp: 28
+    wtFuelMax: 600
+    dp: 700
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstShSpec, cItem: 1}
+      - {grhst: hstShSpec, cItem: 1}
+      - {grhst: hstWeapon, cItem: 2}
+      - {grhst: hstWeapon, cItem: 2}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstShArm, cItem: 2}
+  init: 5
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatWarship
+  wrcCargo: 65535
+  rgbrc: [49, 35, 67, 21, 85, 55, 53]
+
+- name: ihuldefBattleCruiser
+  hul:
+    rgTech: [0, 0, 0, 10]
+    szClass: "Battle Cruiser"
+    wtEmpty: 120
+    resCost: 120
+    rgwtOreCost: [55, 8, 12]
+    ibmp: 32
+    wtFuelMax: 1400
+    dp: 1000
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstShSpec, cItem: 2}
+      - {grhst: hstShSpec, cItem: 2}
+      - {grhst: hstWeapon, cItem: 3}
+      - {grhst: hstWeapon, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstShArm, cItem: 4}
+  init: 5
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatWarship
+  wrcCargo: 65535
+  rgbrc: [49, 35, 67, 21, 85, 55, 53]
+
+- name: ihuldefBattleship
+  hul:
+    rgTech: [0, 0, 0, 13]
+    szClass: "Battleship"
+    wtEmpty: 222
+    resCost: 225
+    rgwtOreCost: [120, 25, 20]
+    ibmp: 36
+    wtFuelMax: 2800
+    dp: 2000
+    rghs:
+      - {grhst: hstEngine, cItem: 4}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstShield, cItem: 8}
+      - {grhst: hstWeapon, cItem: 6}
+      - {grhst: hstWeapon, cItem: 6}
+      - {grhst: hstWeapon, cItem: 2}
+      - {grhst: hstWeapon, cItem: 2}
+      - {grhst: hstWeapon, cItem: 4}
+      - {grhst: hstArmor, cItem: 6}
+      - {grhst: hstSpecialE, cItem: 3}
+      - {grhst: hstSpecialE, cItem: 3}
+  init: 10
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatWarship
+  wrcCargo: 65535
+  rgbrc: [48, 56, 38, 20, 84, 2, 98, 70, 52, 34, 66]
+
+- name: ihuldefDreadnought
+  hul:
+    rgTech: [0, 0, 0, 16]
+    szClass: "Dreadnought"
+    wtEmpty: 250
+    resCost: 275
+    rgwtOreCost: [140, 30, 25]
+    ibmp: 40
+    wtFuelMax: 4500
+    dp: 4500
+    rghs:
+      - {grhst: hstEngine, cItem: 5}
+      - {grhst: hstShArm, cItem: 4}
+      - {grhst: hstShArm, cItem: 4}
+      - {grhst: hstWeapon, cItem: 6}
+      - {grhst: hstWeapon, cItem: 6}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstSpecialE, cItem: 4}
+      - {grhst: hstWeapon, cItem: 8}
+      - {grhst: hstWeapon, cItem: 8}
+      - {grhst: hstArmor, cItem: 8}
+      - {grhst: hstShWeap, cItem: 5}
+      - {grhst: hstShWeap, cItem: 5}
+      - {grhst: hstSome, cItem: 2}
+  init: 10
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatWarship
+  wrcCargo: 65535
+  rgbrc: [64, 32, 96, 18, 114, 50, 82, 36, 100, 68, 54, 86, 72]
+
+- name: ihuldefPrivateer
+  hul:
+    rgTech: [0, 0, 0, 4]
+    szClass: "Privateer"
+    wtEmpty: 65
+    resCost: 50
+    rgwtOreCost: [50, 3, 2]
+    ibmp: 44
+    wtCargoMax: 250
+    wtFuelMax: 650
+    dp: 150
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstShArm, cItem: 2}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+  init: 3
+  imdAttack: hullAttackLight
+  imdCategory: hullCatUtility
+  wrcCargo: 17255
+  rgbrc: [65, 55, 87, 37, 101]
+
+- name: ihuldefRogue
+  hul:
+    rgTech: [0, 0, 0, 8]
+    szClass: "Rogue"
+    wtEmpty: 75
+    resCost: 60
+    rgwtOreCost: [80, 5, 5]
+    ibmp: 48
+    wtCargoMax: 500
+    wtFuelMax: 2250
+    dp: 450
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstShArm, cItem: 3}
+      - {grhst: hstSpecMine, cItem: 2}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSpecMine, cItem: 2}
+      - {grhst: hstSpecialE, cItem: 1}
+      - {grhst: hstSpecialE, cItem: 1}
+  init: 4
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatUtility
+  wrcCargo: 13174
+  rgbrc: [65, 70, 102, 72, 20, 116, 38, 18, 114]
+
+- name: ihuldefGalleon
+  hul:
+    rgTech: [0, 0, 0, 11]
+    szClass: "Galleon"
+    wtEmpty: 125
+    resCost: 105
+    rgwtOreCost: [70, 5, 5]
+    ibmp: 52
+    wtCargoMax: 1000
+    wtFuelMax: 2500
+    dp: 900
+    rghs:
+      - {grhst: hstEngine, cItem: 4}
+      - {grhst: hstShArm, cItem: 2}
+      - {grhst: hstShArm, cItem: 2}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSpecMine, cItem: 2}
+      - {grhst: hstSpecialEM, cItem: 2}
+      - {grhst: hstScanner, cItem: 2}
+  init: 4
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatUtility
+  wrcCargo: 12918
+  rgbrc: [64, 19, 115, 21, 117, 54, 86, 72]
+
+- name: ihuldefMiniColonyShip
+  hul:
+    szClass: "Mini-Colony Ship"
+    wtEmpty: 8
+    resCost: 3
+    rgwtOreCost: [2, 0, 2]
+    ibmp: 56
+    wtCargoMax: 10
+    wtFuelMax: 150
+    dp: 10
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstSpecialM, cItem: 1}
+  wrcCargo: 13398
+  rgbrc: [50, 54]
+
+- name: ihuldefColonyShip
+  hul:
+    szClass: "Colony Ship"
+    wtEmpty: 20
+    resCost: 20
+    rgwtOreCost: [10, 0, 15]
+    ibmp: 60
+    wtCargoMax: 25
+    wtFuelMax: 200
+    dp: 20
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstSpecialM, cItem: 1}
+  wrcCargo: 13398
+  rgbrc: [50, 54]
+
+- name: ihuldefMiniBomber
+  hul:
+    rgTech: [0, 0, 0, 1]
+    szClass: "Mini Bomber"
+    wtEmpty: 28
+    resCost: 35
+    rgwtOreCost: [20, 5, 10]
+    ibmp: 64
+    wtFuelMax: 120
+    dp: 50
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstBomb, cItem: 2}
+  imdAttack: hullAttackBomber
+  imdCategory: hullCatBomber
+  wrcCargo: 65535
+  rgbrc: [51, 53]
+
+- name: ihuldefB17Bomber
+  hul:
+    rgTech: [0, 0, 0, 6]
+    szClass: "B-17 Bomber"
+    wtEmpty: 69
+    resCost: 150
+    rgwtOreCost: [55, 10, 10]
+    ibmp: 68
+    wtFuelMax: 400
+    dp: 175
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstScanSpec, cItem: 1}
+  imdAttack: hullAttackBomber
+  imdCategory: hullCatBomber
+  wrcCargo: 65535
+  rgbrc: [49, 51, 53, 55]
+
+- name: ihuldefStealthBomber
+  hul:
+    rgTech: [0, 0, 0, 8]
+    szClass: "Stealth Bomber"
+    wtEmpty: 70
+    resCost: 175
+    rgwtOreCost: [55, 10, 15]
+    ibmp: 72
+    wtFuelMax: 750
+    dp: 225
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstSpecialE, cItem: 3}
+  imdAttack: hullAttackBomber
+  imdCategory: hullCatBomber
+  wrcCargo: 65535
+  rgbrc: [50, 36, 68, 38, 70]
+
+- name: ihuldefB52Bomber
+  hul:
+    rgTech: [0, 0, 0, 15]
+    szClass: "B-52 Bomber"
+    wtEmpty: 110
+    resCost: 280
+    rgwtOreCost: [90, 15, 10]
+    ibmp: 76
+    wtFuelMax: 750
+    dp: 450
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstBomb, cItem: 4}
+      - {grhst: hstScanSpec, cItem: 2}
+      - {grhst: hstShield, cItem: 2}
+  imdAttack: hullAttackBomber
+  imdCategory: hullCatBomber
+  wrcCargo: 65535
+  rgbrc: [49, 19, 83, 37, 69, 55, 51]
+
+- name: ihuldefMidgetMiner
+  hul:
+    szClass: "Midget Miner"
+    wtEmpty: 10
+    resCost: 20
+    rgwtOreCost: [10, 0, 3]
+    ibmp: 80
+    wtFuelMax: 210
+    dp: 100
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstMining, cItem: 2}
+  imdCategory: hullCatMiner
+  wrcCargo: 65535
+  rgbrc: [51, 53]
+
+- name: ihuldefMiniMiner
+  hul:
+    rgTech: [0, 0, 0, 2]
+    szClass: "Mini-Miner"
+    wtEmpty: 80
+    resCost: 50
+    rgwtOreCost: [25, 0, 6]
+    ibmp: 84
+    wtFuelMax: 210
+    dp: 130
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstScanSpec, cItem: 1}
+      - {grhst: hstMining, cItem: 1}
+      - {grhst: hstMining, cItem: 1}
+  imdCategory: hullCatMiner
+  wrcCargo: 65535
+  rgbrc: [50, 54, 36, 68]
+
+- name: ihuldefMiner
+  hul:
+    rgTech: [0, 0, 0, 6]
+    szClass: "Miner"
+    wtEmpty: 110
+    resCost: 110
+    rgwtOreCost: [32, 0, 6]
+    ibmp: 88
+    wtFuelMax: 500
+    dp: 475
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstScanSpecArm, cItem: 2}
+      - {grhst: hstMining, cItem: 2}
+      - {grhst: hstMining, cItem: 1}
+      - {grhst: hstMining, cItem: 2}
+      - {grhst: hstMining, cItem: 1}
+  imdCategory: hullCatMiner
+  wrcCargo: 65535
+  rgbrc: [49, 55, 35, 37, 67, 69]
+
+- name: ihuldefMaxiMiner
+  hul:
+    rgTech: [0, 0, 0, 11]
+    szClass: "Maxi-Miner"
+    wtEmpty: 110
+    resCost: 140
+    rgwtOreCost: [32, 0, 6]
+    ibmp: 92
+    wtFuelMax: 850
+    dp: 1400
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstScanSpecArm, cItem: 2}
+      - {grhst: hstMining, cItem: 4}
+      - {grhst: hstMining, cItem: 1}
+      - {grhst: hstMining, cItem: 4}
+      - {grhst: hstMining, cItem: 1}
+  imdCategory: hullCatMiner
+  wrcCargo: 65535
+  rgbrc: [49, 55, 35, 37, 67, 69]
+
+- name: ihuldefUltraMiner
+  hul:
+    rgTech: [0, 0, 0, 14]
+    szClass: "Ultra-Miner"
+    wtEmpty: 100
+    resCost: 130
+    rgwtOreCost: [30, 0, 6]
+    ibmp: 96
+    wtFuelMax: 1300
+    dp: 1500
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstScanSpecArm, cItem: 3}
+      - {grhst: hstMining, cItem: 4}
+      - {grhst: hstMining, cItem: 2}
+      - {grhst: hstMining, cItem: 4}
+      - {grhst: hstMining, cItem: 2}
+  imdCategory: hullCatMiner
+  wrcCargo: 65535
+  rgbrc: [49, 55, 35, 37, 67, 69]
+
+- name: ihuldefFuelTransport
+  hul:
+    rgTech: [0, 0, 0, 4]
+    szClass: "Fuel Transport"
+    wtEmpty: 12
+    resCost: 50
+    rgwtOreCost: [10, 0, 5]
+    ibmp: 100
+    wtFuelMax: 750
+    dp: 5
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstShield, cItem: 1}
+  imdCategory: hullCatFuelTransport
+  wrcCargo: 65535
+  rgbrc: [51, 53]
+
+- name: ihuldefSuperFuelXport
+  hul:
+    rgTech: [0, 0, 0, 7]
+    szClass: "Super-Fuel Xport"
+    wtEmpty: 111
+    resCost: 70
+    rgwtOreCost: [20, 0, 8]
+    ibmp: 104
+    wtFuelMax: 2250
+    dp: 12
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstShield, cItem: 2}
+      - {grhst: hstScanner, cItem: 1}
+  imdCategory: hullCatFuelTransport
+  wrcCargo: 65535
+  rgbrc: [50, 52, 54]
+
+- name: ihuldefMiniMineLayer
+  hul:
+    szClass: "Mini Mine Layer"
+    wtEmpty: 10
+    resCost: 20
+    rgwtOreCost: [8, 2, 5]
+    ibmp: 108
+    wtFuelMax: 400
+    dp: 60
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstMines, cItem: 2}
+      - {grhst: hstMines, cItem: 2}
+      - {grhst: hstScanSpec, cItem: 1}
+  imdCategory: hullCatUtility
+  wrcCargo: 65535
+  rgbrc: [50, 36, 68, 54]
+
+- name: ihuldefSuperMineLayer
+  hul:
+    rgTech: [0, 0, 0, 15]
+    szClass: "Super Mine Layer"
+    wtEmpty: 30
+    resCost: 30
+    rgwtOreCost: [20, 3, 9]
+    ibmp: 112
+    wtFuelMax: 2200
+    dp: 1200
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstMines, cItem: 8}
+      - {grhst: hstMines, cItem: 8}
+      - {grhst: hstShArm, cItem: 3}
+      - {grhst: hstScanSpec, cItem: 3}
+      - {grhst: hstSpecMine, cItem: 3}
+  imdCategory: hullCatUtility
+  wrcCargo: 65535
+  rgbrc: [49, 35, 67, 53, 39, 71]
+
+- name: ihuldefNubian
+  hul:
+    rgTech: [0, 0, 0, 26]
+    szClass: "Nubian"
+    wtEmpty: 100
+    resCost: 150
+    rgwtOreCost: [75, 12, 12]
+    ibmp: 124
+    wtFuelMax: 5000
+    dp: 5000
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 3}
+  init: 2
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatUtility
+  wrcCargo: 65535
+  rgbrc: [64, 32, 96, 18, 114, 50, 82, 36, 100, 68, 54, 86, 72]
+
+- name: ihuldefMiniMorph
+  hul:
+    rgTech: [0, 0, 0, 8]
+    szClass: "Mini Morph"
+    wtEmpty: 70
+    resCost: 100
+    rgwtOreCost: [30, 8, 8]
+    ibmp: 120
+    wtCargoMax: 150
+    wtFuelMax: 400
+    dp: 250
+    rghs:
+      - {grhst: hstEngine, cItem: 2}
+      - {grhst: hstSome, cItem: 3}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSome, cItem: 2}
+  init: 2
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatUtility
+  wrcCargo: 9318
+  rgbrc: [48, 50, 38, 70, 56, 18, 82]
+
+- name: ihuldefMetaMorph
+  hul:
+    rgTech: [0, 0, 0, 10]
+    szClass: "Meta Morph"
+    wtEmpty: 85
+    resCost: 120
+    rgwtOreCost: [50, 12, 12]
+    ibmp: 116
+    wtCargoMax: 300
+    wtFuelMax: 700
+    dp: 500
+    rghs:
+      - {grhst: hstEngine, cItem: 3}
+      - {grhst: hstSome, cItem: 8}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSome, cItem: 1}
+      - {grhst: hstSome, cItem: 2}
+      - {grhst: hstSome, cItem: 2}
+  init: 2
+  imdAttack: hullAttackHeavy
+  imdCategory: hullCatUtility
+  wrcCargo: 9318
+  rgbrc: [48, 50, 38, 70, 56, 18, 82]
