@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help all version-header save-cli compile host test-unit test-host scenario run-wine fmt compile-check res resources regression regression-quick regression-host regression-export tutorial tutorial-reject clean
+.PHONY: help all version-header text-header text-unreferenced save-cli compile host test-unit test-host scenario run-wine fmt compile-check res resources regression regression-quick regression-host regression-export tutorial tutorial-reject clean
 
 DIST_DIR    ?= dist
 CMAKE       ?= cmake
@@ -41,6 +41,7 @@ help:
 	@echo "  scenario             Build a test game into dist/scenarios/SCENARIO (no SCENARIO: list them)"
 	@echo "  fmt                  Format C sources and headers (FORMAT_FILES=ai.c to limit)"
 	@echo "  compile-check        Check C syntax (FILES=ai.c to limit) and resources"
+	@echo "  text-unreferenced    List text rows that no code names and no @range covers"
 	@echo "  res / resources      Compile res/stars.rc into $(DIST_DIR)/stars_res.o"
 	@echo "  regression           Run the native regression and compare it with the baseline"
 	@echo "                       (SCENARIOS=\"noai smallai4\" and THROUGH=10 to limit)"
@@ -87,15 +88,22 @@ run-wine:
 fmt:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)
 
-# Direct compiles need the generated version.h that CMake builds normally make.
+# Direct compiles need the generated version.h and text tables that CMake
+# builds normally make.
 VERSION_DIR := $(abspath $(DIST_DIR))/generated
+text-header:
+	@$(PYTHON) text/textgen.py "$(VERSION_DIR)"
+
+text-unreferenced:
+	@$(PYTHON) text/textgen.py --unreferenced
+
 version-header:
 	@mkdir -p "$(VERSION_DIR)"
 	@$(CMAKE) -DSOURCE_DIR="$(CURDIR)" -DOUTPUT="$(VERSION_DIR)/version.h" \
 		-DVERSION_BASE=$$(sed -n 's/^project(stars VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt) \
 		-P cmake/version.cmake
 
-compile-check: version-header
+compile-check: version-header text-header
 	@set -e; for f in $(FILES); do \
 		$(MINGW_CC) -std=gnu11 -fsigned-char -fsyntax-only -fmax-errors=0 -Wno-pointer-sign -I. -I"$(VERSION_DIR)" "$$f"; \
 	done

@@ -33,9 +33,10 @@ The original 2.6jrc3 stars.exe included ~1MB of debug symbols with function name
 ## Build
 
 The game (`stars.exe`) uses Windows APIs. On macOS or Linux, build it as a
-Windows executable with CMake 3.23 or later, Ninja, and the x86_64 MinGW-w64
-toolchain on PATH. The host alone (`stars-host`, below) builds with the
-native compiler.
+Windows executable with CMake 3.23 or later, Ninja, Python 3, and the x86_64
+MinGW-w64 toolchain on PATH. The host alone (`stars-host`, below) builds with
+the native compiler. The build runs `text/textgen.py` to compile the game's
+strings, messages, tutorial and planet names from `text/*.txt`.
 On macOS these build dependencies can be installed with Homebrew:
 
 ```sh

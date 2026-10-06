@@ -2,7 +2,6 @@
 """Build and run the AutoHotkey v2 tutorial walkthrough in an isolated Wine prefix."""
 
 import argparse
-import ast
 import configparser
 import datetime
 import hashlib
@@ -20,6 +19,8 @@ import zipfile
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "text"))
+import textgen  # noqa: E402
 AHK_VERSION = "2.0.28"
 AHK_SHA256 = "b63be7548792b4ad0dfe424d91cc69376694ed2f758245b7a75a0c77d693b478"
 AHK_URL = f"https://github.com/AutoHotkey/AutoHotkey/releases/download/v{AHK_VERSION}/AutoHotkey_{AHK_VERSION}.zip"
@@ -47,12 +48,8 @@ def prepare_runtime(path, download):
 
 def generate_catalog(stage):
     """generate_catalog exports tutorial instructions and numeric resource constants for the AHK runner."""
-    source = (ROOT / "strings_uncompressed.c").read_text()
-    source = source.split("const char *const aTUTUncompressed[] = {", 1)[1].split("\n};", 1)[0]
-    instructions = {}
-    for match in re.finditer(r"/\*\s*(\d+)\s*\([^*]+\*/(.*?)(?=/\*|$)", source, re.S):
-        literals = re.findall(r'"(?:[^"\\]|\\.)*"', match[2])
-        instructions[int(match[1])] = "".join(ast.literal_eval(value) for value in literals)
+    rows, _ = textgen.ParseTable(str(ROOT / "text/tutorial.txt"), "idt", False)
+    instructions = {row.id: row.text for row in rows}
     if set(instructions) != set(range(640)):
         raise ValueError("Expected exactly 640 tutorial string fragments (80 pages)")
     with (stage / "instructions.ini").open("w", encoding="utf-8") as output:
@@ -69,8 +66,7 @@ def generate_catalog(stage):
         output.write(",\n".join(f'    "{name}", {value}' for name, value in sorted(defines.items())))
         output.write("\n)\n")
     task_source = (ROOT / "tutor.c").read_text().split("int16_t FTutorTaskDone() {", 1)[1].split("int16_t FCheck", 1)[0]
-    enums = (ROOT / "enums.h").read_text()
-    tutor_ids = {name: int(value) for name, value in re.findall(r"^\s+(idt\w+) = (\d+),", enums.split("enum TutorId {", 1)[1].split("};", 1)[0], re.M)}
+    tutor_ids = {row.name: row.id for row in rows}
     required = set()
     for assignment in re.findall(r"tutor\.idtBold\s*=\s*([^;]+);", task_source):
         for value in re.findall(r"(?:^|[?:])\s*(\w+)(?=\s*(?:$|:))", assignment):
@@ -201,7 +197,7 @@ def main():
                                           if args.continue_run else hashlib.sha256(executable.read_bytes()).hexdigest()),
                     "scenario": args.scenario, "until_year": args.until_year, "started": time.time(),
                     "continued_from": str(args.continue_run.resolve()) if args.continue_run else None,
-                    "strings_sha256": hashlib.sha256((ROOT / "strings_uncompressed.c").read_bytes()).hexdigest(),
+                    "tutorial_text_sha256": hashlib.sha256((ROOT / "text/tutorial.txt").read_bytes()).hexdigest(),
                     "resources_sha256": hashlib.sha256((ROOT / "res/stars.rc").read_bytes()).hexdigest()}
         (run / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
         process = subprocess.Popen(command, env=environment, stdout=log, stderr=log)

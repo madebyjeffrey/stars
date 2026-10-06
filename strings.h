@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-extern char    aSTRCmpr[28209];
-extern uint8_t acSTR[1414];
-extern int16_t aiSTRChunkOffset[23];
-extern char    rgSTRLookupTable[84];
+extern char    aSTRCmpr[];
+extern uint8_t acSTR[];
+extern int16_t aiSTRChunkOffset[];
+extern char    rgSTRLookupTable[];
 
 char *PszGetCompressedString(StringId ids);
 

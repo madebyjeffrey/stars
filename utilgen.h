@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-extern int16_t aiPNChunkOffset[16];
-extern uint8_t acPN[999];
+extern int16_t aiPNChunkOffset[];
+extern uint8_t acPN[];
 extern int16_t rgPrimes[128];
-extern char    aPNCmpr[4099];
-extern char    rgPNLookupTable[52];
+extern char    aPNCmpr[];
+extern char    rgPNLookupTable[];
 extern int32_t lFileSeed1;
 extern int32_t lFileSeed2;
 
