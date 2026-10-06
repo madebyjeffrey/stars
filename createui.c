@@ -76,7 +76,7 @@ void NewGameWizard(HWND hwnd, int16_t fReadOnly) {
             game.fNoRandom = FALSE;
             game.fAisBand = lvlAi == 3;
             game.fVisScores = FALSE;
-            CchGetString(5 * lvlAi + 459 + game.mdSize, game.szName);
+            CchGetString(idsShootingFishBarrel + 5 * lvlAi + game.mdSize, game.szName);
             if (mdRet == 1072) {
                 fEasy = TRUE;
                 goto Finish;
@@ -167,7 +167,7 @@ Finish:
                 c = vrgplrTypeNew[i] >> 2;
                 rgplr[i] = vrgplrDef[c];
             }
-            CchGetString(c + 1383, rgplr[i].szName);
+            CchGetString(idsHumanoid + c, rgplr[i].szName);
             wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
             break;
         case 2:
@@ -195,7 +195,7 @@ Finish:
             rgplr[i].fHacker = TRUE;
         }
         if (rgplr[i].szName[0] == 0) {
-            CchGetString(Random(24) + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + Random(24), rgplr[i].szName);
         }
         if (rgplr[i].szNames[0] == 0) {
             wsprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
@@ -207,7 +207,7 @@ Finish:
         if (j < i) {
             c = Random(24);
             while (1) {
-                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
+                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(idsBerserker + c)) != 0; j++) {
                 }
                 if (j == game.cPlayer)
                     break;
@@ -216,7 +216,7 @@ Finish:
                     c = 0;
                 }
             }
-            CchGetString(c + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + c, rgplr[i].szName);
             strcpy(rgplr[i].szNames, rgplr[i].szName);
             strcat(rgplr[i].szNames, "s");
         }
@@ -333,7 +333,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         hwndDD = GetDlgItem(hwnd, IDC_COMBOBOX);
         SendMessage(hwndDD, CB_RESETCONTENT, 0, 0);
         for (i = 0; i < 7; i++) {
-            SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i + 1383));
+            SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(idsHumanoid + i));
         }
         SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
         StickyDlgPos(hwnd, &ptStickyNewDlg, TRUE);
@@ -439,7 +439,7 @@ INT_PTR CALLBACK SimpleNewGameDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             game.turn = LOWORD(SendMessage(hwndDD, CB_GETCURSEL, 0, 0));
             if (game.turn < 7) {
                 vplr = vrgplrDef[game.turn];
-                CchGetString(game.turn + 1383, vplr.szName);
+                CchGetString(idsHumanoid + game.turn, vplr.szName);
                 wsprintf(vplr.szNames, "%ss", vplr.szName);
             } else {
                 vplr = *vrgplrNew;
@@ -700,7 +700,7 @@ INT_PTR CALLBACK NewGameDlg2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         rghmenuSubPopup[0] = CreatePopupMenu();
         for (i = 0; i < 6; i++) {
             iChecked = iCurVal == i * 4 + 1 ? 8 : 0;
-            psz = PszGetCompressedString(i + 1383);
+            psz = PszGetCompressedString(idsHumanoid + i);
             AppendMenu(rghmenuSubPopup[0], iChecked, i + 15016, psz);
         }
         AppendMenu(rghmenuSubPopup[0], iChecked, i + 15016, PszGetCompressedString(idsRandom));
@@ -910,7 +910,7 @@ void DrawNewGame2(HWND hwnd, HDC hdc, int16_t iDraw) {
                 break;
             }
             CchGetString(idsS, szT);
-            wsprintf(szWork, szT, PszGetCompressedString(iPlr + 1383));
+            wsprintf(szWork, szT, PszGetCompressedString(idsHumanoid + iPlr));
             break;
         case 2:
             if (!fRCWReadOnly && gd.fNoHostNames && vrgszFileNew[iPlr * 13] != 0) {
@@ -1148,7 +1148,7 @@ void SetNGWTitle(HWND hwnd, int16_t iStep) {
     int16_t cch;
     char    szBuf[50];
 
-    cch = CchGetString(fRCWReadOnly + 272, szBuf);
+    cch = CchGetString(idsAdvancedNewGameWizardStepD3 + fRCWReadOnly, szBuf);
     cch = wsprintf(szWork, szBuf, iStep);
     SetWindowText(hwnd, szWork);
     return;

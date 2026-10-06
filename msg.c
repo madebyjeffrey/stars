@@ -324,7 +324,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszCalcEnvVar((uint16_t)*pParams >> 8 & 0xff & 0xff, *pParams & 0xff);
                 goto FinishString;
             case 'I':
-                pchT = PszGetCompressedString(*pParams + 1348);
+                pchT = PszGetCompressedString(idsDecreased + *pParams);
                 goto FinishString;
             case 'i':
                 c = CchSprintf(pch, PCTD, *pParams);
@@ -414,7 +414,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 pchT = PszGetFleetName(w);
                 goto FinishString;
             case 'j':
-                pchT = PszGetCompressedString(*pParams + 84);
+                pchT = PszGetCompressedString(idsEnergy + *pParams);
                 goto FinishString;
             case 'k':
                 part.hs.grhst = *pParams;
@@ -432,7 +432,7 @@ char *PszFormatString(char *pszFormat, int16_t *pParamsReal) {
                 goto FinishString;
             case 'G':
                 w = *pParams;
-                c = CchGetString(w + 1250, pch);
+                c = CchGetString(idsMineField + w, pch);
                 pch += c;
                 pParams++;
                 break;

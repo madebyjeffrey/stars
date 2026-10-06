@@ -27,7 +27,7 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
                                             i == 2 ? 160 : 80, hwnd, NULL, hInst, NULL);
             SendMessage(rghwndOrderDD[i], WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
         }
-        for (i = 99; i < 109; i++) {
+        for (i = idsTaskHere; i <= idsTransferFleet; i++) {
             psz = PszGetCompressedString(i);
             SendMessage(rghwndOrderDD[0], CB_ADDSTRING, 0, (LPARAM)psz);
         }
@@ -55,7 +55,7 @@ LRESULT CALLBACK PlanetWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
                          100, 100, 200, 80, hwnd, NULL, hInst, NULL);
         SendMessage(hwndPlanetProdLB, WM_SETFONT, (WPARAM)rghfontArial8[0], 0);
         for (i = 0; i < 13; i++) {
-            psz = PszGetCompressedString(i + 415);
+            psz = PszGetCompressedString(idsCargo2 + i);
             rghwndBtn[i] = CreateWindow(szButton, psz, WS_CHILD, 100, 100, 100, dyArial8 * 2, hwnd, NULL, hInst, NULL);
             SendMessage(rghwndBtn[i], WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
         }

@@ -446,7 +446,7 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                         dyCur = dyArial8;
                     }
                     if (lppl->det <= detMinimal) {
-                        ids = 243;
+                        ids = idsPlanetaryDataAvailableEstimateMineralMiningRates;
                         goto ShowString;
                     }
                     EstMineralsMined(lppl, rgl, cMine, FALSE);
@@ -463,9 +463,9 @@ void DrawShipWayPtOrders(HDC hdc, TILE *ptile, OBJ obj) {
                     }
                     goto DoneMine;
                 }
-                ids = 229;
+                ids = idsNoteCanMineUninhabitedPlanets;
             } else {
-                ids = 226;
+                ids = idsWarningFleetContainsShipsRemoteMiningModules;
             }
             if (dyArial8 > 14) {
                 SelectObject(hdc, rghfontArial6[0]);
@@ -1741,7 +1741,7 @@ void DrawThingXferSide(HDC hdc, RECT *prc, THING *pth, MineralType iSupply) {
         SelectObject(hdc, rghfontArial8[1]);
         for (i = -1; i < 3; i++) {
             if (i != 4 && i != 4) {
-                RightTextOut(hdc, xLeft + dxLabels, yTop, PszGetCompressedString(i == -1 ? idsPacketShell : i + 430), 0, 0);
+                RightTextOut(hdc, xLeft + dxLabels, yTop, PszGetCompressedString(i == -1 ? idsPacketShell : idsIronium + i), 0, 0);
             }
             yTop += dyArial8 + 6;
         }
@@ -1802,7 +1802,7 @@ void DrawFleetCargoXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
         SelectObject(hdc, rghfontArial8[1]);
         for (i = 0; i < 6; i++) {
             if (i != 6 || !fOtherPlr) {
-                RightTextOut(hdc, xLeft + dxLabels, yTop, PszGetCompressedString(i + 428), 0, 0);
+                RightTextOut(hdc, xLeft + dxLabels, yTop, PszGetCompressedString(idsFuel + i), 0, 0);
             }
             yTop += dyArial8 + 6;
         }
@@ -1824,7 +1824,7 @@ void DrawFleetCargoXferSide(HDC hdc, RECT *prc, FLEET *pfl, MineralType iSupply)
                 }
                 if (iSupply == SupplyAll || iSupply == iMap) {
                     _Draw3dFrame(hdc, &rc, iSupply == iMap);
-                    c = wsprintf(szWork, PszGetCompressedString((iMap == 4) + 892), fl.rgwtMin[iMap]);
+                    c = wsprintf(szWork, PszGetCompressedString(idsLdkt + (iMap == 4)), fl.rgwtMin[iMap]);
                     RightTextOut(hdc, xRight, yTop, szWork, c, 0);
                     if (iSupply == i)
                         break;
@@ -1948,7 +1948,7 @@ void DrawPlanetXferSide(HDC hdc, RECT *prc, PLANET *ppl, MineralType iSupply) {
         SelectObject(hdc, rghfontArial8[1]);
         for (i = 0; i < 6; i++) {
             if (i > 1) {
-                RightTextOut(hdc, xLeft + 75, yTop, PszGetCompressedString(i + 428), 0, 0);
+                RightTextOut(hdc, xLeft + 75, yTop, PszGetCompressedString(idsFuel + i), 0, 0);
             }
             yTop += dyArial8 + 6;
         }
@@ -2574,8 +2574,8 @@ void UpdateOrdersDDs(int16_t iLevel) {
     if (iLevel <= 2) {
         SendMessage(rghwndOrderDD[2], CB_RESETCONTENT, 0, 0);
         if (rglSel[0] == 1) {
-            for (i = 109; i < 119; i++) {
-                if (i == 116 && rglSel[1] == 0) {
+            for (i = idsAction; i <= idsSetWaypoint; i++) {
+                if (i == idsLoadDunnage && rglSel[1] == 0) {
                     psz = PszGetCompressedString(idsLoadOptimal);
                 } else {
                     psz = PszGetCompressedString(i);

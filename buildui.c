@@ -57,7 +57,7 @@ int16_t FCheckQueuedShip(HWND hwnd, SHDEF *lpshdef, int16_t fEdit) {
         } else {
             wsprintf(szWork, PszGetCompressedString(ids + 2), LOWORD(lpshdef->cExist), lpshdef->hul.szClass, lpshdef->cExist == 1 ? "" : "s");
         }
-        id = MessageBox(GetFocus(), szWork, PszGetCompressedString(fEdit + 742), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
+        id = MessageBox(GetFocus(), szWork, PszGetCompressedString(idsDeleteDesign + fEdit), MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
         SetFocus(hwnd);
         if (id == 7) {
             return FALSE;
@@ -1329,7 +1329,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
             }
             cch = wsprintf(szWork, PszGetCompressedString(idsDS), i, &rgszSpeed[j * 3]);
             RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan);
-            cch = CchGetString((dyArial8 > 14) + 1196, szWork);
+            cch = CchGetString(idsInitiativeMoves + (dyArial8 > 14), szWork);
             TextOut(hdc, rc.left, rc.top, szWork, cch);
             rc.top += dyArial8;
             if (!fStarbaseMode) {
@@ -1346,14 +1346,14 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
                         cch = wsprintf(szWork, PszGetCompressedString(idsDDD), dRange, dPlanRange, pctDetect);
                     }
                     RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 40);
-                    cch = CchGetString((dyArial8 > 14) + 1199, szWork);
+                    cch = CchGetString(idsScannerRange2 + (dyArial8 > 14), szWork);
                     TextOut(hdc, rc.left, rc.top, szWork, cch);
                     rc.top += dyArial8;
                 }
             } else if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
                 cch = CommaFormatLong(szWork, (uint32_t)(rglPopMac[lpshdefBuild->hul.ihuldef - 32] * 100));
                 RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 16);
-                cch = CchGetString((dyArial8 > 14) + 1271, szWork);
+                cch = CchGetString(idsMaxPopulation + (dyArial8 > 14), szWork);
                 TextOut(hdc, rc.left, rc.top, szWork, cch);
                 rc.top += dyArial8;
             }

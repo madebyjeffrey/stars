@@ -1082,7 +1082,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                         if ((grbitScan & grbitScanViewMask) != 5) {
                             y = ptLegendB.y + yOff;
                             for (i = 0; i < 5; i++) {
-                                cch = CchGetString(i + 1314, szWork);
+                                cch = CchGetString(idsPlanet3 + i, szWork);
                                 TextOut(pd.hDC, ptLegendB.x + xOff, y, szWork, cch);
                                 y += dyPrint;
                             }
@@ -1894,7 +1894,7 @@ void DrawHostDialog2(HWND hwnd, HDC hdcIn) {
         cch = wsprintf(szWork, PszGetCompressedString(idsD2), i + 1);
         RightTextOut(hdc, x, yCur, szWork, cch, 0);
         SetTextColor(hdc, rgOut[i] <= 0 ? 32512 : 127);
-        CchGetString(rgOut[i] + 716, szStat);
+        CchGetString(idsTurned + rgOut[i], szStat);
         if (gd.fNoHostNames) {
             cch = wsprintf(szWork, " %s", szStat);
         } else {
@@ -2017,7 +2017,7 @@ INT_PTR CALLBACK HostModeDialog(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         hmenuPopup = CreatePopupMenu();
         iPopMenuSel = -1;
         for (i = 0; i < 3; i++) {
-            CchGetString(i + 527, szWork);
+            CchGetString(idsHumanControlled + i, szWork);
             mf = i == 1                                                         ? rgplr[iDiamond].fAi != 0 && rgplr[iDiamond].idAi != idAiMaid ? 0 : 3
                  : rgplr[iDiamond].fAi == 0 || rgplr[iDiamond].idAi == idAiMaid ? 0
                                                                                 : 3;
@@ -2667,7 +2667,7 @@ LRESULT CALLBACK TitleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         xCur = dxGap >> 1;
         dy = rc.bottom <= 500 ? dyArial8 * 2 : (int16_t)(5 * dyArial8) / 2;
         for (i = 0; i < 4; i++) {
-            psz = PszGetCompressedString(i + 479);
+            psz = PszGetCompressedString(idsNewGame + i);
             rghwndBtnSplash[i] = CreateWindow("BUTTON", psz, WS_CHILD | WS_VISIBLE, xCur, rc.bottom - dy - (int16_t)(5 * dyArial8) / 2, dx, dy, hwnd,
                                               (HMENU)(uintptr_t)i, hInst, NULL);
             if (i == 2 && (szBase[0] == 0 || !FFileExists(szBase))) {

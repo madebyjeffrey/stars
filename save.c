@@ -1070,22 +1070,22 @@ int16_t FMarkFile(DtFileType dt, int16_t iPlayer, MdMark mdMark, int16_t f) {
     ids = idsGameFileAppearsCorruptUnableLoadFile;
     ReadRt();
     if (hdrCur.rt != rtBOF) {
-        FileError(idmColonistsDroppedDestroyedSpiritedFighting);
+        FileError(idsFileDoesBelongVersionStars);
         goto LBadFile;
     }
     if (((RTBOF *)rgbCur)->verMajor < 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor < 49)) {
-        FileError(1235);
+        FileError(idsSorryFileCreatedOlderVersionStarsIncompatible);
         goto LBadFile;
     }
     if (((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 85)) {
-        FileError(714);
+        FileError(idsFileCreatedNewerVersionStarsMustUpgrade);
         goto LBadFile;
     }
     rtbof = *((RTBOF *)rgbCur);
     if (game.lid == 0)
         goto LBadFile;
     if (rtbof.lidGame != game.lid) {
-        FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
+        FileError(idsFileGame);
         goto LBadFile;
     }
     fChange = FALSE;

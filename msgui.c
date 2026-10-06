@@ -34,7 +34,7 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
     case WM_CREATE:
         for (i = 0; i < 4; i++) {
             hwndMessage = hwnd;
-            rghwndMsgBtn[i] = CreateWindow("BUTTON", PszGetCompressedString(i + 1356), WS_CHILD, 100, 100, i == 3 ? 50 : 44, (3 * dyArial8 >> 1) - 1, hwnd,
+            rghwndMsgBtn[i] = CreateWindow("BUTTON", PszGetCompressedString(idsPrev2 + i), WS_CHILD, 100, 100, i == 3 ? 50 : 44, (3 * dyArial8 >> 1) - 1, hwnd,
                                            NULL, hInst, NULL);
             SendMessage(rghwndMsgBtn[i], WM_SETFONT, (WPARAM)rghfontArial8[1], 0);
         }
@@ -607,7 +607,7 @@ void SetMsgTitle(HWND hwnd) {
             ShowWindow(hwndMsgScroll, SW_HIDE);
         }
         cMsgTot = cMsg + vcmsgplrIn;
-        i = gd.fSendMsgMode ? 738 : iMsgCur >= cMsg ? 1360 : gd.fGotoVCR ? 741 : 1357;
+        i = gd.fSendMsgMode ? idsDone : iMsgCur >= cMsg ? idsReply : gd.fGotoVCR ? idsView : idsGoto3;
         SetWindowText(rghwndMsgBtn[1], PszGetCompressedString(i));
         if (gd.fSendMsgMode) {
             wsprintf(szWork, PszGetCompressedString(idsSendMessagesDD), iMsgSendCur + 1, vcmsgplrOut);

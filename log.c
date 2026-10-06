@@ -1130,11 +1130,11 @@ int16_t FLoadLogFile(char *pszLog) {
         return TRUE;
     }
     if (((RTBOF *)rgbCur)->turn != game.turn) {
-        FileError(idmForcesDiedValiantlyTakingManyVerminThem);
+        FileError(idsLogFileRecentGameTryingLoadIgnoring);
         goto FailSuccess;
     }
     if (((RTBOF *)rgbCur)->wGen != game.wGen) {
-        FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
+        FileError(idsFileGame);
         goto FailSuccess;
     }
     wVersFile = ((RTBOF *)rgbCur)->wVersion;
@@ -1199,7 +1199,7 @@ int16_t FCheckLogFile(int16_t iplr, int16_t *pfError) {
     }
     idsFileError = 0;
     if (!FOpenFile(dtLog, iplr, 32)) {
-        if (idsFileError != 4) {
+        if (idsFileError != idsCantOpenFile) {
             *pfError = idsFileError;
         }
         return FALSE;

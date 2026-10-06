@@ -528,7 +528,7 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
         StreamOpen(szFile, mdRead);
         ReadRt();
         if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
-            idsError = 13;
+            idsError = idsFileDoesBelongVersionStars;
             fRet = -1;
             goto LBadFile;
         } else {
@@ -536,7 +536,7 @@ int16_t FWasRaceFile(char *szFile, int16_t fChkPass) {
             if (((RTBOF *)rgbCur)->dt == 5) {
                 ReadRt();
                 if (hdrCur.rt == rtPlr) {
-                    idsError = 3;
+                    idsError = idsGameFileAppearsCorruptUnableLoadFile;
                     ReadRtPlr(&plr, rgbCur);
                     ReadRt();
                     if (hdrCur.rt == rtEOF && RawLoad16(rgbCur) == IRaceChecksum(&plr)) {
@@ -667,7 +667,7 @@ void CreateRandomRace(PLAYER *pplr) {
         }
     }
     if (strcmp(pplr->szName, PszGetCompressedString(idsRandom2)) == 0) {
-        CchGetString(Random(24) + 1390, pplr->szName);
+        CchGetString(idsBerserker + Random(24), pplr->szName);
     }
     cPts = CAdvantagePoints(pplr);
     if (cPts < 0 || cPts > 50) {

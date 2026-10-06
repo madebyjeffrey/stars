@@ -87,7 +87,7 @@ INT_PTR CALLBACK ZipOrderDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                 RightTextOut(hdc, xCtr, rcGBox.top, rgszMinerals[i], 0, 0);
                 SetTextColor(hdc, 0);
                 iAction = vrgZip[iResTechNow].txp.rgia[i].iAction;
-                cch = CchGetString(iAction + 109, szWork);
+                cch = CchGetString(idsAction + iAction, szWork);
                 if (szWork[cch - 1] == '.') {
                     wsprintf(&szWork[cch - 3], " %dkT", vrgZip[iResTechNow].txp.rgia[i].cQuan);
                 }

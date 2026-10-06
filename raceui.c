@@ -153,7 +153,7 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         SendDlgItemMessage(hwnd, IDC_RACE_PLURAL_NAME, EM_LIMITTEXT, 0xf, 0);
         SendDlgItemMessage(hwnd, IDC_RACE_PASSWORD, EM_LIMITTEXT, 0x10, 0);
         hwndCB = GetDlgItem(hwnd, IDC_COMBOBOX);
-        for (i = 262; i <= 266; i++) {
+        for (i = idsSurfaceMinerals; i <= idsDefenses3; i++) {
             psz = PszGetCompressedString(i);
             SendMessage(hwndCB, CB_ADDSTRING, 0, (LPARAM)psz);
         }
@@ -306,11 +306,11 @@ INT_PTR CALLBACK RaceWizardDlg1(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             memset(vplr.szNames, 0, 32);
             GetDlgItemText(hwnd, IDC_RACE_PLURAL_NAME, vplr.szNames, 32);
             GetDlgItemText(hwnd, LOWORD(wParam), szBuf, 32);
-            for (i = 0; i < 7 && strcmp(vplr.szName, PszGetCompressedString(i + 1383)) != 0; i++) {
+            for (i = 0; i < 7 && strcmp(vplr.szName, PszGetCompressedString(idsHumanoid + i)) != 0; i++) {
             }
             if (i < 7 && LOWORD(wParam) < IDC_RACE_CUSTOM) {
                 memset(vplr.szName, 0, 32);
-                CchGetString(LOWORD(wParam) + 1112, vplr.szName);
+                CchGetString(idsHumanoid + LOWORD(wParam) - IDC_RACE_HUMANOID, vplr.szName);
                 SetDlgItemText(hwnd, IDC_RACE_NAME, vplr.szName);
                 memset(vplr.szNames, 0, 32);
                 psz = PszPlayerName(0, TRUE, TRUE, FALSE, 0, &vplr);
@@ -1040,7 +1040,7 @@ INT_PTR CALLBACK RaceWizardDlg4(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         _Draw3dFrame(hdc, &rc, -1);
         cch = CchGetString(idsDescriptionTrait, szWork);
         TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, cch);
-        ids = GetRaceStat(&vplr, rsMajorAdv) * 3 + 276;
+        ids = idsMustExpandSurviveGivenSmallCheapColony + GetRaceStat(&vplr, rsMajorAdv) * 3;
         cch = 0;
         i = 0;
         while (i < 3) {
@@ -1100,7 +1100,7 @@ INT_PTR CALLBACK RaceWizardDlg5(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         cColDrop = 0;
         for (i = 0; i <= 13; i++) {
             hwndCtl = GetDlgItem(hwnd, i + 291);
-            SetWindowText(hwndCtl, PszGetCompressedString(i + 306));
+            SetWindowText(hwndCtl, PszGetCompressedString(idsImprovedFuelEfficiency + i));
             SendMessage(hwndCtl, BM_SETCHECK, GetRaceGrbit(&vplr, i), 0);
             if (fRCWReadOnly) {
                 EnableWindow(hwndCtl, FALSE);
@@ -1144,9 +1144,9 @@ INT_PTR CALLBACK RaceWizardDlg5(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         _Draw3dFrame(hdc, &rc, -1);
         rcCargo = rc;
         rcCargo.top -= dyArial8 >> 1;
-        cch = CchGetString(cColDrop + 306, szWork);
+        cch = CchGetString(idsImprovedFuelEfficiency + cColDrop, szWork);
         TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, cch);
-        cch = CchGetString(cColDrop + 320, szWork);
+        cch = CchGetString(idsGivesFuelMizerGalaxyScoopEnginesIncreases + cColDrop, szWork);
         ExpandRc(&rc, -dyArial8 - 2, -(dyArial8 >> 1));
         rc.top += 4;
         DrawText(hdc, szWork, cch, &rc, DT_WORDBREAK);
@@ -1235,7 +1235,7 @@ INT_PTR CALLBACK RaceWizardDlg6(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             rcGBox.bottom = rc.bottom;
             ExpandRc(&rcGBox, dyArial8, dyArial8 >> 1);
             _Draw3dFrame(hdc, &rcGBox, -1);
-            cch = CchGetString(i + 84, szWork);
+            cch = CchGetString(idsEnergy + i, szWork);
             cch += CchGetString(idsResearch, &szWork[cch]);
             TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, cch);
         }
@@ -1405,7 +1405,7 @@ void SetRCWTitle(HWND hwnd, int16_t iStep) {
     char    szBuf[50];
     int16_t cch;
 
-    cch = CchGetString(fRCWReadOnly + 270, szBuf);
+    cch = CchGetString(idsCustomRaceWizardStepD6 + fRCWReadOnly, szBuf);
     cch = wsprintf(szWork, szBuf, iStep);
     SetWindowText(hwnd, szWork);
     return;

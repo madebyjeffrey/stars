@@ -148,7 +148,7 @@ LRESULT CALLBACK TbWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         vptTbLast = pt;
         itb = ItbFromPpt(&pt);
         if (itb >= tbNormalView) {
-            ids = itb + 362;
+            ids = idsNormalView + itb;
         LShowTip:
             rc.left = pt.x;
             rc.right = DxOfBtn(itb) + rc.left;
@@ -407,14 +407,14 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
         if (!(grbitScan & grbitScanMineFields)) {
             grbitScanMines = 0;
         }
-        for (i = 1278; i <= 1279; i++) {
-            if (i == 1278) {
+        for (i = idsMineFields; i <= idsMineFields2; i++) {
+            if (i == idsMineFields) {
                 rgid[c] = (uint32_t)(grbitScanMines == 15);
             } else {
                 rgid[c] = (uint32_t)(grbitScanMines == 0);
             }
-            CchGetString(i, &szWork[(i - 1278) * 30 + 160]);
-            rgszScan[c++] = &szWork[(i - 1278) * 30 + 160];
+            CchGetString(i, &szWork[(i - idsMineFields) * 30 + 160]);
+            rgszScan[c++] = &szWork[(i - idsMineFields) * 30 + 160];
         }
         rgid[c] = 0;
         szWork[250] = -1;
@@ -422,7 +422,7 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
         rgszScan[c++] = &szWork[250];
         for (i = 0; i < 4; i++) {
             rgid[c] = (uint32_t)((1 << i & grbitScanMines) != 0);
-            CchGetString(i + 1280, &szWork[i * 30]);
+            CchGetString(idsMineFields3 + i, &szWork[i * 30]);
             rgszScan[c++] = &szWork[i * 30];
         }
         GetCursorPos16(&pt);
@@ -447,10 +447,10 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
         break;
     case tbShipDesignFilterMenu:
         c = 0;
-        for (i = 1275; i <= 1277; i++) {
+        for (i = idsDesigns; i <= idsDesigns2; i++) {
             rgid[c] = 0;
-            CchGetString(i, &szWork[(i - 1275) * 20]);
-            rgszScan[c++] = &szWork[(i - 1275) * 20];
+            CchGetString(i, &szWork[(i - idsDesigns) * 20]);
+            rgszScan[c++] = &szWork[(i - idsDesigns) * 20];
         }
         rgid[c] = 0;
         szWork[200] = -1;
@@ -503,10 +503,10 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
     case tbEnemyClassFilterMenu:
         grbit = 1;
         c = 0;
-        for (i = 1275; i <= 1277; i++) {
+        for (i = idsDesigns; i <= idsDesigns2; i++) {
             rgid[c] = 0;
-            CchGetString(i, &szWork[(i - 1275) * 25 + 200]);
-            rgszScan[c++] = &szWork[(i - 1275) * 25 + 200];
+            CchGetString(i, &szWork[(i - idsDesigns) * 25 + 200]);
+            rgszScan[c++] = &szWork[(i - idsDesigns) * 25 + 200];
         }
         rgid[c] = 0;
         szWork[300] = -1;
@@ -514,7 +514,7 @@ void ExecuteButton(ToolbarButton itb, int16_t fDown) {
         rgszScan[c++] = &szWork[300];
         for (i = 0; i < 8; i++) {
             rgid[c] = (uint32_t)((1 << i & grbitScanEShip) != 0);
-            CchGetString(i + 381, &szWork[i * 25]);
+            CchGetString(idsColony + i, &szWork[i * 25]);
             rgszScan[c++] = &szWork[i * 25];
         }
         GetCursorPos16(&pt);

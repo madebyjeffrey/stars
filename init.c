@@ -167,7 +167,7 @@ int16_t FCreateFonts(HDC hdc) {
     plf = LocalAlloc(64, sizeof(LOGFONT));
     for (i = 0; i < 4; i++) {
         if (rgszArial[i][0] == 0) {
-            CchGetString(i + 1335, rgszArial[i]);
+            CchGetString(idsArial2 + i, rgszArial[i]);
         }
     }
     plf->lfHeight = -MulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72);
@@ -597,7 +597,7 @@ void ReadIniSettings() {
     gd.fTrialPeriodOver = uDateCur >= (uint16_t)(uDateInstalled + 21);
     CchGetString(idsFonts, szSection);
     for (i = 0; i < 4; i++) {
-        CchGetString(i + 197, szEntry);
+        CchGetString(idsArial + i, szEntry);
         GetPrivateProfileString(szSection, szEntry, "", szWork, 80, szIniFile);
         cch = strlen(szWork);
         if (cch >= 5 && cch <= 31) {

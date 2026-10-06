@@ -160,7 +160,7 @@ char *PszGetTaskName(FLEET *lpfl, int16_t *picr) {
     }
 LShowTask:
     if (ord.fValidTask) {
-        ids = ord.grTask + 99;
+        ids = idsTaskHere + ord.grTask;
         switch (ord.grTask) {
         case grTaskXfer:
             for (i = 0; i < 4; i++) {
@@ -195,8 +195,8 @@ LShowTask:
             }
             for (i = 4; i >= 0; i--) {
                 opOrd = ord.txp.rgia[i].iAction;
-                if (opOrd + 109 > (int16_t)ids) {
-                    ids = opOrd + 109;
+                if (idsAction + opOrd > (int16_t)ids) {
+                    ids = idsAction + opOrd;
                     icr = i;
                 }
             }
@@ -356,7 +356,7 @@ void DumpPlanets() {
             fOpen = TRUE;
             j = gd.fPerPlayerDumps + 2;
             for (i = 0; i < j; i++) {
-                cch = CchGetString(i + 1244, szForm);
+                cch = CchGetString(idsPlanetNameOwnerStarbaseTypeReportAge + i, szForm);
                 for (psz = szForm; *psz != 0; psz++) {
                     if (*psz == '*') {
                         *psz = '\t';
@@ -585,7 +585,7 @@ void DumpFleets() {
             fOpen = TRUE;
             j = gd.fPerPlayerDumps + 2;
             for (i = 0; i < j; i++) {
-                cch = CchGetString(i + 1247, szForm);
+                cch = CchGetString(idsFleetNameXYPlanetDestinationBattle + i, szForm);
                 for (psz = szForm; *psz != 0; psz++) {
                     if (*psz == '*') {
                         *psz = '\t';

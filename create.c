@@ -998,7 +998,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     StreamOpen(pszFile, mdRead);
     cb = LOWORD(CbFileSize(hf));
     if (cb >= 16000) {
-        FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
+        FileError(idsUniverseCreationFileAppearsInvalid);
         goto LError;
     }
     lpbDef = LpAlloc(cb + 1, htPerm);
@@ -1248,7 +1248,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             rgplr[i].fHacker = TRUE;
         }
         if (rgplr[i].szName[0] == 0) {
-            CchGetString(Random(24) + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + Random(24), rgplr[i].szName);
             CchSprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
         }
     }
@@ -1258,7 +1258,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
         if (j < i) {
             c = Random(24);
             while (1) {
-                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
+                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(idsBerserker + c)) != 0; j++) {
                 }
                 if (j == game.cPlayer)
                     break;
@@ -1267,7 +1267,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
                     c = 0;
                 }
             }
-            CchGetString(c + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + c, rgplr[i].szName);
             strcpy(rgplr[i].szNames, rgplr[i].szName);
             strcat(rgplr[i].szNames, "s");
         }
@@ -1311,7 +1311,7 @@ LError:
     penvMem = 0;
     StreamClose();
     lpbDefUni = NULL;
-    TurnLog(fSuccess + 1380);
+    TurnLog(idsFailed + fSuccess);
     return fSuccess;
 }
 

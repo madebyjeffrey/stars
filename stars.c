@@ -325,7 +325,7 @@ INT_PTR CALLBACK About(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         rc.bottom = rc.top + dyArial8;
         for (i = iAbout1st; i < iAbout1st + 10; i++) {
             if (i >= 0 && i < 77) {
-                RcCtrTextOut(hdc, &rc, PszGetCompressedString(i + 631), -1);
+                RcCtrTextOut(hdc, &rc, PszGetCompressedString(idsDesignProgramming + i), -1);
             } else if (i >= 77) {
                 break;
             }

@@ -293,7 +293,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             TextOut(hdc, prc->left + 86, yTop, szT, c);
             yTop += dyArial8 + 2;
             CchGetString(!gd.fSmallTileMode ? idsWaypointTaskS : idsTaskS, szT);
-            c = wsprintf(szWork, szT, PszGetCompressedString(lpord->grTask + 99));
+            c = wsprintf(szWork, szT, PszGetCompressedString(idsTaskHere + lpord->grTask));
             TextOut(hdc, prc->left + 86, yTop, szWork, c);
             yTop += dyArial8 + 2;
             if (lpfl->cord > 1) {
@@ -425,7 +425,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             yTop += (int16_t)(3 * dyArial8) / 2;
             c = CchGetString(idsStability, szWork);
             RightTextOut(hdc, xLeft - 4, yTop, szWork, c, 0);
-            c = CchGetString(PctWormholeMoves(lpth) + 967, szWork);
+            c = CchGetString(idsRockSolid + PctWormholeMoves(lpth), szWork);
             TextOut(hdc, xLeft, yTop, szWork, c);
             goto FinishUp;
         } else if (lpth->ith == ithMysteryTrader) {
@@ -527,7 +527,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
                 DeleteDC(hdcMem);
             }
             if (pl.det >= detSome) {
-                c = CchGetString((fShortLabels == 0) + 548, szWork);
+                c = CchGetString(idsVal + (fShortLabels == 0), szWork);
                 dx = LOWORD(GetTextExtent(hdc, szWork, c));
                 SetTextColor(hdc, crButtonText);
                 TextOut(hdc, xL, yCur, szWork, c);
@@ -549,7 +549,7 @@ void DrawMineSurvey(HDC hdc, RECT *prc) {
             }
             SetTextColor(hdc, crButtonText);
             if (pl.iPlayer != iplrNone) {
-                strcpy(szT, PszGetCompressedString((fShortLabels == 0) + 546));
+                strcpy(szT, PszGetCompressedString(idsPop + (fShortLabels == 0)));
             }
             if (pl.det == detAll) {
                 c = strlen(szT);
