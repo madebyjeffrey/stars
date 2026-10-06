@@ -1243,55 +1243,8 @@ enum GrfWeapon {
 };
 typedef uint16_t GrfWeapon;
 
-// AI part IDs select ordered component preference groups in vrgAiParts.
-enum AiPartPreference {
-    aiPartTorpedo = 0,
-    aiPartMissile = 1,
-    aiPartBeamPreferMultiContainedMunition = 2,
-    aiPartBeamPreferAntiMatterPulverizer = 3,
-    aiPartBeamPreferStreamingPulverizer = 4,
-    aiPartBeamPreferBlunderbuss = 5,
-    aiPartBeamPreferBigMuthaCannon = 6,
-    aiPartSapper = 7,
-    aiPartEnginePreferGalaxyScoop = 8,
-    aiPartArmorPreferSuperlatanium = 9,
-    aiPartShieldPreferCompletePhase = 10,
-    aiPartBattleComputer = 11,
-    aiPartSpecialPodJammerDeflectorThrust = 12,
-    aiPartSpecialPodThrustCloak = 13,
-    aiPartSpecialCapacitorFuel = 14,
-    aiPartSpecialDeflectorCapacitorFuel = 15,
-    aiPartCargoPod = 16,
-    aiPartArmorPreferMegaPolyShell = 17,
-    aiPartSpecialThrustDeflectorFuel = 18,
-    aiPartSpecialJammerComputer = 19,
-    aiPartSpecialCapacitorJammerPodComputer = 20,
-    aiPartBombHushThenNormal = 21,
-    aiPartBombHushThenRetroThenSmart = 22,
-    aiPartBombHushThenSmartThenNormalThenRetro = 23,
-    aiPartEngineGalaxyScoopOrHydroRamScoop = 24,
-    aiPartStandardMineDispenser = 25,
-    aiPartScannerPreferElephant = 26,
-    aiPartScannerPreferRobberBaron = 27,
-    aiPartMiningRobot = 28,
-    aiPartOrbitalAdjusterOnly = 29,
-    aiPartEnginePreferTransStar = 30,
-    aiPartColonyPreferOrbitalConstruction = 31,
-    aiPartSpeedTrapMineDispenser = 32,
-    aiPartMultiContainedMunitionOnly = 33,
-    aiPartMassDriverWithSpecialFallbacks = 34,
-    aiPartTorpedoMissilePreferArmageddon = 35,
-    aiPartBeamPreferEitherPulverizer = 36,
-    aiPartShieldPreferLangstonShell = 37,
-    aiPartBeamPreferMegaDisruptor = 38,
-    aiPartSpecialJammerPodCloak = 39,
-    aiPartOrbitalConstructionModuleOnly = 40,
-    aiPartMiningSupportPreferMegaPolyShell = 41,
-    aiPartMiningRobotMaxiOrBetter = 42,
-    aiPartMiningRobotUltraOrMidget = 43,
-    aiPartEngineScoopOrFuelMizer = 44,
-    aiPartPreferenceCount = 45,
-};
+// AI part IDs select ordered component preference groups in vrgAiParts;
+// generated from data/ai/parts.yaml (dataids.h).
 typedef uint16_t AiPartPreference;
 
 // A recipe in vrgTDAip, valued by its byte offset there; vrgTDIshAip lists

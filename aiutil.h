@@ -6,7 +6,7 @@
 extern int32_t vrgAiPacketDist[2];
 extern uint8_t vrgSBAip[];
 extern uint8_t vrgSBMacAisb[6];
-extern AIPART  vrgAiParts[150];
+extern AIPART  vrgAiParts[];
 
 int16_t  FCreateAiShdef(int16_t ishdef, HulDef ihul, uint8_t *rgaip);
 int16_t  FGetAIPart(AiPartPreference aip, PART *ppart);

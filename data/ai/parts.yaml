@@ -1,0 +1,278 @@
+# AI part preferences: what an AiPartPreference in a design recipe (data/ai/
+# *.yaml) means. FGetAIPart tries each preference's parts in order and takes
+# the first the player can build. A part with tries N also tries the N - 1
+# parts before it in its parts file, nearest first. data/datagen.py builds
+# vrgAiParts, vrgcAiParts and the AiPartPreference enum from this file.
+
+- name: aiPartTorpedo
+  parts:
+    - {part: itorpAntiMatterTorpedo, tries: 8}
+
+- name: aiPartMissile
+  parts:
+    - {part: itorpArmageddonMissile, tries: 4}
+
+- name: aiPartBeamPreferMultiContainedMunition
+  parts:
+    - ibeamMultiContainedMunition
+    - ibeamMegaDisruptor
+    - ibeamHeavyBlaster
+    - ibeamColloidalPhaser
+
+- name: aiPartBeamPreferAntiMatterPulverizer
+  parts:
+    - ibeamAntiMatterPulverizer
+    - ibeamDisruptor
+    - ibeamMarkIVBlaster
+    - ibeamPhaserBazooka
+
+- name: aiPartBeamPreferStreamingPulverizer
+  parts:
+    - ibeamStreamingPulverizer
+    - ibeamMyopicDisruptor
+    - ibeamMiniBlaster
+    - ibeamYakimoraLightPhaser
+    - ibeamXRayLaser
+    - ibeamLaser
+
+- name: aiPartBeamPreferBlunderbuss
+  parts:
+    - ibeamBlunderbuss
+    - ibeamBludgeon
+    - ibeamBlackjack
+
+- name: aiPartBeamPreferBigMuthaCannon
+  parts:
+    - ibeamBigMuthaCannon
+    - ibeamGatlingNeutrinoCannon
+    - ibeamGatlingGun
+    - ibeamMiniGun
+
+- name: aiPartSapper
+  parts:
+    - ibeamSyncroSapper
+    - ibeamPhasedSapper
+    - ibeamPulsedSapper
+
+- name: aiPartEnginePreferGalaxyScoop
+  parts:
+    - iengineGalaxyScoop
+    - iengineEnigmaPulsar
+    - {part: iengineTransGalacticMizerScoop, tries: 5}
+    - iengineFuelMizer
+
+- name: aiPartArmorPreferSuperlatanium
+  parts:
+    - iarmorSuperlatanium
+    - iarmorMegaPolyShell
+    - iarmorValanium
+    - iarmorDepletedNeutronium
+    - iarmorNeutronium
+    - {part: iarmorFieldedKelarium, tries: 7}
+
+- name: aiPartShieldPreferCompletePhase
+  parts:
+    - {part: ishieldCompletePhaseShield, tries: 2}
+    - ishieldLangstonShell
+    - ishieldGorillaDelagator
+    - ishieldCrobySharmor
+    - ishieldShadowShield
+    - ishieldBearNeutrinoBarrier
+    - {part: ishieldWolverineDiffuseShield, tries: 3}
+
+- name: aiPartBattleComputer
+  parts:
+    - {part: ispecialEBattleNexus, tries: 3}
+
+- name: aiPartSpecialPodJammerDeflectorThrust
+  parts:
+    - ispecialEMultiFunctionPod
+    - {part: ispecialEJammer50, tries: 4}
+    - ispecialMBeamDeflector
+    - {part: ispecialMOverthruster, tries: 2}
+
+- name: aiPartSpecialPodThrustCloak
+  parts:
+    - ispecialEMultiFunctionPod
+    - {part: ispecialMOverthruster, tries: 2}
+    - ispecialEUltraStealthCloak
+    - ispecialMBeamDeflector
+    - {part: ispecialESuperStealthCloak, tries: 2}
+
+- name: aiPartSpecialCapacitorFuel
+  parts:
+    - {part: ispecialEFluxCapacitor, tries: 6}
+    - {part: ispecialMSuperFuelTank, tries: 2}
+
+- name: aiPartSpecialDeflectorCapacitorFuel
+  parts:
+    - ispecialMBeamDeflector
+    - {part: ispecialEFluxCapacitor, tries: 6}
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialMSuperFuelTank, tries: 2}
+
+- name: aiPartCargoPod
+  parts:
+    - {part: ispecialMMultiCargoPod, tries: 3}
+
+- name: aiPartArmorPreferMegaPolyShell
+  parts:
+    - iarmorMegaPolyShell
+    - {part: iarmorSuperlatanium, tries: 12}
+
+- name: aiPartSpecialThrustDeflectorFuel
+  parts:
+    - {part: ispecialMOverthruster, tries: 2}
+    - ispecialMBeamDeflector
+    - {part: ispecialMSuperFuelTank, tries: 2}
+
+- name: aiPartSpecialJammerComputer
+  parts:
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialEBattleNexus, tries: 3}
+
+- name: aiPartSpecialCapacitorJammerPodComputer
+  parts:
+    - {part: ispecialEFluxCapacitor, tries: 6}
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialEMultiFunctionPod, tries: 4}
+    - {part: ispecialEBattleNexus, tries: 3}
+
+- name: aiPartBombHushThenNormal
+  parts:
+    - ibombHushABoom
+    - {part: ibombCherryBomb, tries: 5}
+
+- name: aiPartBombHushThenRetroThenSmart
+  parts:
+    - ibombHushABoom
+    - ibombRetroBomb
+    - {part: ibombAnnihilatorBomb, tries: 5}
+
+- name: aiPartBombHushThenSmartThenNormalThenRetro
+  parts:
+    - ibombHushABoom
+    - {part: ibombAnnihilatorBomb, tries: 5}
+    - {part: ibombCherryBomb, tries: 5}
+    - ibombRetroBomb
+
+- name: aiPartEngineGalaxyScoopOrHydroRamScoop
+  parts:
+    - iengineGalaxyScoop
+    - iengineRadiatingHydroRamScoop
+
+- name: aiPartStandardMineDispenser
+  parts:
+    - {part: iminesMineDispenser130, tries: 4}
+
+- name: aiPartScannerPreferElephant
+  parts:
+    - iscannerElephantScanner
+    - iscannerRobberBaronScanner
+    - iscannerDolphinScanner
+    - iscannerChameleonScanner
+    - iscannerFerretScanner
+    - iscannerGazelleScanner
+    - iscannerPossumScanner
+
+- name: aiPartScannerPreferRobberBaron
+  parts:
+    - iscannerRobberBaronScanner
+    - iscannerPickPocketScanner
+    - {part: iscannerChameleonScanner, tries: 7}
+
+- name: aiPartMiningRobot
+  parts:
+    - {part: iminingAlienMiner, tries: 7}
+
+- name: aiPartOrbitalAdjusterOnly
+  parts:
+    - iminingOrbitalAdjuster
+
+- name: aiPartEnginePreferTransStar
+  parts:
+    - {part: iengineTransStar10, tries: 2}
+    - iengineRadiatingHydroRamScoop
+    - {part: iengineTransGalacticSuperScoop, tries: 3}
+    - {part: iengineTransGalacticDrive, tries: 4}
+
+- name: aiPartColonyPreferOrbitalConstruction
+  parts:
+    - {part: ispecialMOrbitalConstructionModule, tries: 2}
+
+- name: aiPartSpeedTrapMineDispenser
+  parts:
+    - {part: iminesSpeedTrap50, tries: 3}
+
+- name: aiPartMultiContainedMunitionOnly
+  parts:
+    - ibeamMultiContainedMunition
+
+- name: aiPartMassDriverWithSpecialFallbacks
+  parts:
+    - {part: ispecialSBUltraDriver13, tries: 9}
+    - {part: ispecialEMultiFunctionPod, tries: 4}
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialEBattleNexus, tries: 3}
+
+- name: aiPartTorpedoMissilePreferArmageddon
+  parts:
+    - itorpArmageddonMissile
+    - itorpOmegaTorpedo
+    - itorpDoomsdayMissile
+    - {part: itorpUpsilonTorpedo, tries: 6}
+
+- name: aiPartBeamPreferEitherPulverizer
+  parts:
+    - {part: ibeamAntiMatterPulverizer, tries: 2}
+    - ibeamDisruptor
+    - ibeamMyopicDisruptor
+    - ibeamMarkIVBlaster
+    - ibeamMiniBlaster
+    - ibeamPhaserBazooka
+    - ibeamYakimoraLightPhaser
+    - {part: ibeamXRayLaser, tries: 2}
+
+- name: aiPartShieldPreferLangstonShell
+  parts:
+    - ishieldLangstonShell
+    - {part: ishieldCompletePhaseShield, tries: 10}
+
+- name: aiPartBeamPreferMegaDisruptor
+  parts:
+    - ibeamMegaDisruptor
+    - ibeamHeavyBlaster
+    - ibeamColloidalPhaser
+    - ibeamPhaserBazooka
+    - ibeamLaser
+
+- name: aiPartSpecialJammerPodCloak
+  parts:
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialEMultiFunctionPod, tries: 4}
+
+- name: aiPartOrbitalConstructionModuleOnly
+  parts:
+    - ispecialMOrbitalConstructionModule
+
+- name: aiPartMiningSupportPreferMegaPolyShell
+  parts:
+    - iarmorMegaPolyShell
+    - {part: ispecialEJammer50, tries: 4}
+    - {part: ispecialMOverthruster, tries: 2}
+    - ispecialMBeamDeflector
+    - {part: ispecialMSuperFuelTank, tries: 2}
+
+- name: aiPartMiningRobotMaxiOrBetter
+  parts:
+    - {part: iminingAlienMiner, tries: 4}
+
+- name: aiPartMiningRobotUltraOrMidget
+  parts:
+    - {part: iminingAlienMiner, tries: 2}
+    - iminingRoboMidgetMiner
+
+- name: aiPartEngineScoopOrFuelMizer
+  parts:
+    - {part: iengineGalaxyScoop, tries: 5}
+    - iengineFuelMizer

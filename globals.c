@@ -185,8 +185,6 @@ uint8_t   rgTechTrader[13] = {0};
 uint8_t   rgcbtlplan[16] = {0};
 uint8_t   vrgAiArmadaPotency[4] = {0};
 uint8_t   vrgAiCyberArmadaPotency[4] = {0};
-uint8_t   vrgcAiParts[45] = {1, 1, 4, 4, 6, 3, 4, 3, 4, 6, 7, 1, 4, 5, 2, 4, 1, 2, 3, 2, 4, 2, 3,
-                             4, 2, 1, 7, 3, 1, 1, 4, 1, 1, 1, 4, 4, 8, 2, 5, 2, 1, 5, 1, 2, 3};
 uint8_t   vrgplrTypeNew[16] = {0};
 int16_t   rgOut[16] = {0};
 char     *lpchBatch = 0;
