@@ -1,4 +1,4 @@
-# Turin Drone ship designs: vrgTDAip, read by DoTurinDroneAiTurn. data/datagen.py
+# Turindrone ship designs: vrgTDAip, read by DoTurinDroneAiTurn. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
 # its hull; its name becomes a TurinDroneRecipeOffset, the recipe's offset
 # in vrgTDAip. Code picks recipes by position through vrgTDIshAip, so

@@ -113,9 +113,9 @@
       rsMajorAdv: raCheapCol
     grbitAttr: [grbitRaceIFE, grbitRaceUltimateRecycling, grbitRaceMineralAlchemy, grbitRaceOBRM, grbitRaceCheapFact]
 
-# Turin Drone
+# Turindrone
 -
-  # Turin Drone, Easy
+  # Turindrone, Easy
   - iPlayer: iplrNone
     det: detAll
     lSalt: -1
@@ -141,7 +141,7 @@
       rsTechBonus6: 0
       rsMajorAdv: raStealth
     grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields]
-  # Turin Drone, Standard
+  # Turindrone, Standard
   - iPlayer: iplrNone
     det: detAll
     lSalt: -1
@@ -167,7 +167,7 @@
       rsTechBonus6: 1
       rsMajorAdv: raStealth
     grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields, grbitRaceCheapFact]
-  # Turin Drone, Tough
+  # Turindrone, Tough
   - iPlayer: iplrNone
     det: detAll
     lSalt: -1
@@ -193,7 +193,7 @@
       rsTechBonus6: 1
       rsMajorAdv: raStealth
     grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields, grbitRaceCheapFact]
-  # Turin Drone, Expert
+  # Turindrone, Expert
   - iPlayer: iplrNone
     det: detAll
     lSalt: -1

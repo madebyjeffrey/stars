@@ -90,7 +90,7 @@ TABLES = [
 # indexes by position. size keeps the original's zero padding after the last
 # recipe.
 RECIPES = [
-    dict(file="ai/turin-drone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipeOffset", prefix="tdOffset",
+    dict(file="ai/turindrone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipeOffset", prefix="tdOffset",
          ish="vrgTDIshAip", ishType="uint8_t"),
     dict(file="ai/robotoid.yaml", array="vrgRobAip", size=301, enum="RobotoidRecipeOffset", prefix="robOffset",
          ish="vrgRobIshAip", ishType="RobotoidRecipeOffset"),
