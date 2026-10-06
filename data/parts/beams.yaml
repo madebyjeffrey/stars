@@ -1,0 +1,272 @@
+# Beam weapons: rgbeam (BEAM). data/datagen.py describes the format.
+# An entry's position is its ibeam value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ibeamLaser
+  szName: "Laser"
+  cMass: 1
+  resCost: 5
+  rgwtOreCost: [0, 6]
+  ibmp: 28
+  dRangeMax: 1
+  dp: 10
+  init: 9
+
+- name: ibeamXRayLaser
+  rgTech: [0, 3]
+  szName: "X-Ray Laser"
+  cMass: 1
+  resCost: 6
+  rgwtOreCost: [0, 6]
+  ibmp: 29
+  dRangeMax: 1
+  dp: 16
+  init: 9
+
+- name: ibeamMiniGun
+  rgTech: [0, 5]
+  szName: "Mini Gun"
+  cMass: 3
+  resCost: 10
+  rgwtOreCost: [0, 16]
+  ibmp: 20
+  dRangeMax: 2
+  dp: 13
+  init: 12
+  grfAbilities: beamGatling
+
+- name: ibeamYakimoraLightPhaser
+  rgTech: [0, 6]
+  szName: "Yakimora Light Phaser"
+  cMass: 1
+  resCost: 7
+  rgwtOreCost: [0, 8]
+  ibmp: 19
+  dRangeMax: 1
+  dp: 26
+  init: 9
+
+- name: ibeamBlackjack
+  rgTech: [0, 7]
+  szName: "Blackjack"
+  cMass: 10
+  resCost: 7
+  rgwtOreCost: [0, 16]
+  ibmp: 14
+  dp: 90
+  init: 10
+
+- name: ibeamPhaserBazooka
+  rgTech: [0, 8]
+  szName: "Phaser Bazooka"
+  cMass: 2
+  resCost: 11
+  rgwtOreCost: [0, 8]
+  ibmp: 21
+  dRangeMax: 2
+  dp: 26
+  init: 7
+
+- name: ibeamPulsedSapper
+  rgTech: [5, 9]
+  szName: "Pulsed Sapper"
+  cMass: 1
+  resCost: 12
+  rgwtOreCost: [0, 0, 4]
+  ibmp: 17
+  dRangeMax: 3
+  dp: 82
+  init: 14
+  grfAbilities: beamSapper
+
+- name: ibeamColloidalPhaser
+  rgTech: [0, 10]
+  szName: "Colloidal Phaser"
+  cMass: 2
+  resCost: 18
+  rgwtOreCost: [0, 14]
+  ibmp: 192
+  dRangeMax: 3
+  dp: 26
+  init: 5
+
+- name: ibeamGatlingGun
+  rgTech: [0, 11]
+  szName: "Gatling Gun"
+  cMass: 3
+  resCost: 13
+  rgwtOreCost: [0, 20]
+  ibmp: 26
+  dRangeMax: 2
+  dp: 31
+  init: 12
+  grfAbilities: beamGatling
+
+- name: ibeamMiniBlaster
+  rgTech: [0, 12]
+  szName: "Mini Blaster"
+  cMass: 1
+  resCost: 9
+  rgwtOreCost: [0, 10]
+  ibmp: 24
+  dRangeMax: 1
+  dp: 66
+  init: 9
+
+- name: ibeamBludgeon
+  rgTech: [0, 13]
+  szName: "Bludgeon"
+  cMass: 10
+  resCost: 9
+  rgwtOreCost: [0, 22]
+  ibmp: 15
+  dp: 231
+  init: 10
+
+- name: ibeamMarkIVBlaster
+  rgTech: [0, 14]
+  szName: "Mark IV Blaster"
+  cMass: 2
+  resCost: 15
+  rgwtOreCost: [0, 12]
+  ibmp: 25
+  dRangeMax: 2
+  dp: 66
+  init: 7
+
+- name: ibeamPhasedSapper
+  rgTech: [8, 15]
+  szName: "Phased Sapper"
+  cMass: 1
+  resCost: 16
+  rgwtOreCost: [0, 0, 6]
+  ibmp: 18
+  dRangeMax: 3
+  dp: 211
+  init: 14
+  grfAbilities: beamSapper
+
+- name: ibeamHeavyBlaster
+  rgTech: [0, 16]
+  szName: "Heavy Blaster"
+  cMass: 2
+  resCost: 25
+  rgwtOreCost: [0, 20]
+  ibmp: 193
+  dRangeMax: 3
+  dp: 66
+  init: 5
+
+- name: ibeamGatlingNeutrinoCannon
+  rgTech: [0, 17]
+  szName: "Gatling Neutrino Cannon"
+  cMass: 3
+  resCost: 17
+  rgwtOreCost: [0, 28]
+  ibmp: 30
+  dRangeMax: 2
+  dp: 80
+  init: 13
+  grfAbilities: beamGatling
+
+- name: ibeamMyopicDisruptor
+  rgTech: [0, 18]
+  szName: "Myopic Disruptor"
+  cMass: 1
+  resCost: 12
+  rgwtOreCost: [0, 14]
+  ibmp: 194
+  dRangeMax: 1
+  dp: 169
+  init: 9
+
+- name: ibeamBlunderbuss
+  rgTech: [0, 19]
+  szName: "Blunderbuss"
+  cMass: 10
+  resCost: 13
+  rgwtOreCost: [0, 30]
+  ibmp: 13
+  dp: 592
+  init: 11
+
+- name: ibeamDisruptor
+  rgTech: [0, 20]
+  szName: "Disruptor"
+  cMass: 2
+  resCost: 20
+  rgwtOreCost: [0, 16]
+  ibmp: 27
+  dRangeMax: 2
+  dp: 169
+  init: 8
+
+- name: ibeamMultiContainedMunition
+  rgTech: [21, 21, 0, 0, 16, 12]
+  szName: "Multi Contained Munition"
+  cMass: 8
+  resCost: 40
+  rgwtOreCost: [6, 40, 6]
+  ibmp: 111
+  dRangeMax: 3
+  dp: 140
+  init: 6
+
+- name: ibeamSyncroSapper
+  rgTech: [11, 21]
+  szName: "Syncro Sapper"
+  cMass: 1
+  resCost: 21
+  rgwtOreCost: [0, 0, 8]
+  ibmp: 16
+  dRangeMax: 3
+  dp: 541
+  init: 14
+  grfAbilities: beamSapper
+
+- name: ibeamMegaDisruptor
+  rgTech: [0, 22]
+  szName: "Mega Disruptor"
+  cMass: 2
+  resCost: 33
+  rgwtOreCost: [0, 30]
+  ibmp: 195
+  dRangeMax: 3
+  dp: 169
+  init: 6
+
+- name: ibeamBigMuthaCannon
+  rgTech: [0, 23]
+  szName: "Big Mutha Cannon"
+  cMass: 3
+  resCost: 23
+  rgwtOreCost: [0, 36]
+  ibmp: 31
+  dRangeMax: 2
+  dp: 204
+  init: 13
+  grfAbilities: beamGatling
+
+- name: ibeamStreamingPulverizer
+  rgTech: [0, 24]
+  szName: "Streaming Pulverizer"
+  cMass: 1
+  resCost: 16
+  rgwtOreCost: [0, 20]
+  ibmp: 22
+  dRangeMax: 1
+  dp: 433
+  init: 9
+
+- name: ibeamAntiMatterPulverizer
+  rgTech: [0, 26]
+  szName: "Anti-Matter Pulverizer"
+  cMass: 2
+  resCost: 27
+  rgwtOreCost: [0, 22]
+  ibmp: 23
+  dRangeMax: 2
+  dp: 433
+  init: 8

@@ -36,7 +36,7 @@ The virtual Wine desktop is 1600×1200. The game occupies 1280×960, and the tut
 
 ## Coverage and pass conditions
 
-`run.py` extracts all 640 fragments (80 pages) from `strings_uncompressed.c`. It exports numeric IDs from `res/resource.h`, and checks that every highlighted instruction assigned by `FTutorTaskDone` (a `TutorId` name or number, resolved through `enums.h`) has a dispatcher action. Missing actions fail before launching Wine. `coverage.json` records that inventory.
+`run.py` reads all 640 fragments (80 pages) from `text/tutorial.txt`. It exports numeric IDs from `res/resource.h`, and checks that every highlighted instruction assigned by `FTutorTaskDone` (a `TutorId` name or number, resolved through `text/tutorial.txt`) has a dispatcher action. Missing actions fail before launching Wine. `coverage.json` records that inventory.
 
 `steps.ahk` maps highlighted instructions to actions for years 2400–2436: navigation, message filtering, exploration routes, production and templates, colonization and transport, research, ship and starbase design, fleet splitting/merging, reports, battle playback and the final score report. `actions.ahk` contains the reusable UI operations. It uses resource IDs and observed HWNDs for standard controls, and current layout rectangles for custom controls. No RC caption changes are needed. The source tutorial calls planet 7 “Moholdi”; the actual planet name is “Mohlodi”, which the action uses.
 

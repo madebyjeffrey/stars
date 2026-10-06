@@ -1976,7 +1976,7 @@ void DrawScannerSBar(HDC hdc, RECT *prc, SBAR *psbar, int16_t fFullRedraw) {
             strcpy(szBuf, PszGetDistance(pt.x, pt.y, pt2.x, pt2.y));
             for (psz = szBuf; *psz != ' '; psz++) {
             }
-            CchGetString((rc.right >= 350) + 1366, psz + 1);
+            CchGetString(idsLy + (rc.right >= 350), psz + 1);
             if (!psbar || !psbar->pscan) {
                 CchGetString(idsFrom, psz + strlen(psz));
                 strcat(psz + 8, PszGetLocName(sel.grobj, sel.id, pt2.x, pt2.y));

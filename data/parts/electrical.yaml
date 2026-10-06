@@ -1,0 +1,156 @@
+# Electrical parts: rgspecialE (SPECIAL). data/datagen.py describes the format.
+# An entry's position is its ispecialE value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ispecialETransportCloaking
+  szName: "Transport Cloaking"
+  cMass: 1
+  resCost: 3
+  rgwtOreCost: [2, 0, 2]
+  ibmp: 98
+  grAbility: 300
+
+- name: ispecialEStealthCloak
+  rgTech: [2, 0, 0, 0, 5]
+  szName: "Stealth Cloak"
+  cMass: 2
+  resCost: 5
+  rgwtOreCost: [2, 0, 2]
+  ibmp: 99
+  grAbility: 70
+
+- name: ispecialESuperStealthCloak
+  rgTech: [4, 0, 0, 0, 10]
+  szName: "Super-Stealth Cloak"
+  cMass: 3
+  resCost: 15
+  rgwtOreCost: [8, 0, 8]
+  ibmp: 100
+  grAbility: 140
+
+- name: ispecialEUltraStealthCloak
+  rgTech: [10, 0, 0, 0, 12]
+  szName: "Ultra-Stealth Cloak"
+  cMass: 5
+  resCost: 25
+  rgwtOreCost: [10, 0, 10]
+  ibmp: 101
+  grAbility: 540
+
+- name: ispecialEMultiFunctionPod
+  rgTech: [11, 0, 11, 0, 11]
+  szName: "Multi Function Pod"
+  cMass: 2
+  resCost: 15
+  rgwtOreCost: [5, 0, 5]
+  ibmp: 189
+  grAbility: 60
+
+- name: ispecialEBattleComputer
+  szName: "Battle Computer"
+  cMass: 1
+  resCost: 6
+  rgwtOreCost: [0, 0, 15]
+  ibmp: 165
+  grAbility: 20
+
+- name: ispecialEBattleSuperComputer
+  rgTech: [5, 0, 0, 0, 11]
+  szName: "Battle Super Computer"
+  cMass: 1
+  resCost: 14
+  rgwtOreCost: [0, 0, 25]
+  ibmp: 166
+  grAbility: 30
+
+- name: ispecialEBattleNexus
+  rgTech: [10, 0, 0, 0, 19]
+  szName: "Battle Nexus"
+  cMass: 1
+  resCost: 15
+  rgwtOreCost: [0, 0, 30]
+  ibmp: 167
+  grAbility: 50
+
+- name: ispecialEJammer10
+  rgTech: [2, 0, 0, 0, 6]
+  szName: "Jammer 10"
+  cMass: 1
+  resCost: 6
+  rgwtOreCost: [0, 0, 2]
+  ibmp: 120
+  grAbility: 10
+
+- name: ispecialEJammer20
+  rgTech: [4, 0, 0, 0, 10]
+  szName: "Jammer 20"
+  cMass: 1
+  resCost: 20
+  rgwtOreCost: [1, 0, 5]
+  ibmp: 121
+  grAbility: 20
+
+- name: ispecialEJammer30
+  rgTech: [8, 0, 0, 0, 16]
+  szName: "Jammer 30"
+  cMass: 1
+  resCost: 20
+  rgwtOreCost: [1, 0, 6]
+  ibmp: 122
+  grAbility: 30
+
+- name: ispecialEJammer50
+  rgTech: [16, 0, 0, 0, 22]
+  szName: "Jammer 50"
+  cMass: 1
+  resCost: 20
+  rgwtOreCost: [2, 0, 7]
+  ibmp: 123
+  grAbility: 50
+
+- name: ispecialEEnergyCapacitor
+  rgTech: [7, 0, 0, 0, 4]
+  szName: "Energy Capacitor"
+  cMass: 1
+  resCost: 5
+  rgwtOreCost: [0, 0, 8]
+  ibmp: 127
+  grAbility: 10
+
+- name: ispecialEFluxCapacitor
+  rgTech: [14, 0, 0, 0, 8]
+  szName: "Flux Capacitor"
+  cMass: 1
+  resCost: 5
+  rgwtOreCost: [0, 0, 8]
+  ibmp: 190
+  grAbility: 20
+
+- name: ispecialEEnergyDampener
+  rgTech: [14, 0, 8]
+  szName: "Energy Dampener"
+  cMass: 2
+  resCost: 50
+  rgwtOreCost: [5, 10]
+  ibmp: 124
+  grAbility: 1
+
+- name: ispecialETachyonDetector
+  rgTech: [8, 0, 0, 0, 14]
+  szName: "Tachyon Detector"
+  cMass: 1
+  resCost: 70
+  rgwtOreCost: [1, 5]
+  ibmp: 125
+  grAbility: 2
+
+- name: ispecialEAntiMatterGenerator
+  rgTech: [0, 12, 0, 0, 0, 7]
+  szName: "Anti-matter Generator"
+  cMass: 10
+  resCost: 10
+  rgwtOreCost: [8, 3, 3]
+  ibmp: 126
+  grAbility: 3

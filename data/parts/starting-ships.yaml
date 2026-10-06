@@ -1,0 +1,353 @@
+# Starting ship designs: rgshdefT (SHDEF). data/datagen.py describes the format.
+# An entry's position is its StartingShip value; add new entries at the end.
+
+- name: LilliputianFreighter
+  hul:
+    szClass: "Lilliputian Freighter"
+    wtCargoMax: 70
+    wtFuelMax: 200
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstShield, cItem: 1}
+  det: detAll
+  fInclude: true
+  turn: 1
+
+- name: ShadowTransport
+  hul:
+    szClass: "Shadow Transport"
+    ibmp: 2
+    wtCargoMax: 70
+    wtFuelMax: 200
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstSpecialE, cItem: 1}
+      - {grhst: hstShield, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 1
+  turn: 1
+
+- name: SmaugarianPeepingTom
+  hul:
+    ihuldef: ihuldefScout
+    szClass: "Smaugarian Peeping Tom"
+    ibmp: 16
+    wtFuelMax: 50
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 5, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 2
+  turn: 1
+
+- name: ArmedProbe
+  hul:
+    ihuldef: ihuldefScout
+    szClass: "Armed Probe"
+    ibmp: 17
+    wtFuelMax: 50
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstBeam, iItem: 1, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 3
+  turn: 1
+
+- name: LongRangeScout
+  hul:
+    ihuldef: ihuldefScout
+    szClass: "Long Range Scout"
+    ibmp: 18
+    wtFuelMax: 50
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 5, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 4
+  turn: 1
+
+- name: ShadowSleuth
+  hul:
+    ihuldef: ihuldefScout
+    szClass: "Shadow Sleuth"
+    ibmp: 19
+    wtFuelMax: 50
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstSpecialE, iItem: 1, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 5
+  turn: 1
+
+- name: Teamster
+  hul:
+    ihuldef: ihuldefMediumFreighter
+    szClass: "Teamster"
+    ibmp: 4
+    wtFuelMax: 50
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstArmor, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 6
+  turn: 1
+
+- name: StalwartDefender
+  hul:
+    ihuldef: ihuldefDestroyer
+    szClass: "Stalwart Defender"
+    ibmp: 24
+    wtCargoMax: 25
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstBeam, cItem: 1}
+      - {grhst: hstTorp, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstArmor, cItem: 2}
+      - {grhst: hstSpecialM, iItem: 5, cItem: 1}
+      - {grhst: hstSpecialE, iItem: 5, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 7
+  turn: 1
+
+- name: Swashbuckler
+  hul:
+    ihuldef: ihuldefPrivateer
+    szClass: "Swashbuckler"
+    ibmp: 44
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstArmor, iItem: 1, cItem: 2}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstBeam, cItem: 1}
+      - {grhst: hstTorp, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 8
+  turn: 1
+
+- name: SantaMaria
+  hul:
+    ihuldef: ihuldefColonyShip
+    szClass: "Santa Maria"
+    ibmp: 60
+    wtCargoMax: 25
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstSpecialM, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 9
+  turn: 1
+
+- name: Pinta
+  hul:
+    ihuldef: ihuldefColonyShip
+    szClass: "Pinta"
+    ibmp: 61
+    wtCargoMax: 25
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 1, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 10
+  turn: 1
+
+- name: Mayflower
+  hul:
+    ihuldef: ihuldefColonyShip
+    szClass: "Mayflower"
+    ibmp: 62
+    wtCargoMax: 25
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstSpecialM, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 11
+  turn: 1
+
+- name: SporeCloud
+  hul:
+    ihuldef: ihuldefMiniColonyShip
+    szClass: "Spore Cloud"
+    ibmp: 56
+    wtCargoMax: 10
+    wtFuelMax: 30
+    rghs:
+      - {grhst: hstEngine, cItem: 1}
+      - {grhst: hstSpecialM, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 12
+  turn: 1
+
+- name: Gadfly
+  hul:
+    ihuldef: ihuldefMiniBomber
+    szClass: "Gadfly"
+    ibmp: 65
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstBomb, cItem: 2}
+  det: detAll
+  fInclude: true
+  ishdef: 13
+  turn: 1
+
+- name: CottonPicker
+  hul:
+    ihuldef: ihuldefMiniMiner
+    szClass: "Cotton Picker"
+    ibmp: 85
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstMining, iItem: 1, cItem: 1}
+      - {grhst: hstMining, iItem: 1, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 14
+  turn: 1
+
+- name: PotatoBug
+  hul:
+    ihuldef: ihuldefMidgetMiner
+    szClass: "Potato Bug"
+    ibmp: 82
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstMining, cItem: 2}
+  det: detAll
+  fInclude: true
+  ishdef: 15
+  turn: 1
+
+- name: LittleHen
+  hul:
+    ihuldef: ihuldefMiniMineLayer
+    szClass: "Little Hen"
+    ibmp: 108
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstMines, cItem: 2}
+      - {grhst: hstMines, cItem: 2}
+      - {grhst: hstScanner, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 16
+  turn: 1
+
+- name: ChangeofHeart
+  hul:
+    ihuldef: ihuldefMiniMiner
+    szClass: "Change of Heart"
+    ibmp: 86
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstScanner, cItem: 1}
+      - {grhst: hstMining, iItem: 7, cItem: 1}
+      - {grhst: hstMining, iItem: 7, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 17
+  turn: 1
+
+- name: SpeedTurtle
+  hul:
+    ihuldef: ihuldefMiniMineLayer
+    szClass: "Speed Turtle"
+    ibmp: 108
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 1, cItem: 1}
+      - {grhst: hstMines, iItem: 7, cItem: 2}
+      - {grhst: hstMines, iItem: 7, cItem: 2}
+      - {grhst: hstScanner, cItem: 1}
+  det: detAll
+  fInclude: true
+  ishdef: 18
+  turn: 1
+
+- name: MTLifeboat
+  hul:
+    ihuldef: ihuldefNubian
+    szClass: "M.T. Lifeboat"
+    ibmp: 108
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 8, cItem: 3}
+      - {grhst: hstArmor, iItem: 9, cItem: 3}
+      - {grhst: hstArmor, iItem: 9, cItem: 3}
+      - {grhst: hstTorp, iItem: 7, cItem: 3}
+      - {grhst: hstTorp, iItem: 7, cItem: 3}
+      - {grhst: hstShield, iItem: 6, cItem: 3}
+      - {grhst: hstShield, iItem: 6, cItem: 3}
+      - {grhst: hstSpecialE, iItem: 4, cItem: 3}
+      - {grhst: hstSpecialE, iItem: 4, cItem: 3}
+      - {grhst: hstSpecialM, iItem: 4, cItem: 3}
+      - {grhst: hstBeam, iItem: 18, cItem: 3}
+      - {grhst: hstBeam, iItem: 18, cItem: 3}
+      - {grhst: hstBeam, iItem: 18, cItem: 3}
+  det: detAll
+  fInclude: true
+  ishdef: 19
+  turn: 1
+
+- name: MTScout
+  hul:
+    ihuldef: ihuldefMiniMorph
+    szClass: "M.T. Scout"
+    ibmp: 122
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 8, cItem: 2}
+      - {grhst: hstShield, iItem: 6, cItem: 3}
+      - {grhst: hstSpecialE, iItem: 4, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 4, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 9, cItem: 1}
+      - {grhst: hstTorp, iItem: 7, cItem: 2}
+      - {grhst: hstTorp, iItem: 7, cItem: 2}
+  det: detAll
+  fInclude: true
+  ishdef: 20
+  turn: 1
+
+- name: MTProbe
+  hul:
+    ihuldef: ihuldefMiniMorph
+    szClass: "M.T. Probe"
+    ibmp: 123
+    wtFuelMax: 100
+    rghs:
+      - {grhst: hstEngine, iItem: 8, cItem: 2}
+      - {grhst: hstArmor, iItem: 9, cItem: 3}
+      - {grhst: hstSpecialE, iItem: 4, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 4, cItem: 1}
+      - {grhst: hstSpecialM, iItem: 9, cItem: 1}
+      - {grhst: hstTorp, iItem: 7, cItem: 2}
+      - {grhst: hstTorp, iItem: 7, cItem: 2}
+  det: detAll
+  fInclude: true
+  ishdef: 21
+  turn: 1

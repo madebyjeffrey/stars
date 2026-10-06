@@ -1,0 +1,94 @@
+# Shields: rgshield (SHIELD). data/datagen.py describes the format.
+# An entry's position is its ishield value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: ishieldMoleSkinShield
+  szName: "Mole-skin Shield"
+  cMass: 1
+  resCost: 4
+  rgwtOreCost: [1, 0, 1]
+  ibmp: 42
+  dp: 25
+
+- name: ishieldCowHideShield
+  rgTech: [3]
+  szName: "Cow-hide Shield"
+  cMass: 1
+  resCost: 5
+  rgwtOreCost: [2, 0, 2]
+  ibmp: 43
+  dp: 40
+
+- name: ishieldWolverineDiffuseShield
+  rgTech: [6]
+  szName: "Wolverine Diffuse Shield"
+  cMass: 1
+  resCost: 6
+  rgwtOreCost: [3, 0, 3]
+  ibmp: 44
+  dp: 60
+
+- name: ishieldCrobySharmor
+  rgTech: [7, 0, 0, 4]
+  szName: "Croby Sharmor"
+  cMass: 10
+  resCost: 15
+  rgwtOreCost: [7, 0, 4]
+  ibmp: 40
+  dp: 60
+
+- name: ishieldShadowShield
+  rgTech: [7, 0, 0, 0, 3]
+  szName: "Shadow Shield"
+  cMass: 2
+  resCost: 7
+  rgwtOreCost: [3, 0, 3]
+  ibmp: 41
+  dp: 75
+
+- name: ishieldBearNeutrinoBarrier
+  rgTech: [10]
+  szName: "Bear Neutrino Barrier"
+  cMass: 1
+  resCost: 8
+  rgwtOreCost: [4, 0, 4]
+  ibmp: 45
+  dp: 100
+
+- name: ishieldLangstonShell
+  rgTech: [12, 0, 9, 0, 9]
+  szName: "Langston Shell"
+  cMass: 10
+  resCost: 20
+  rgwtOreCost: [10, 2, 6]
+  ibmp: 183
+  dp: 125
+
+- name: ishieldGorillaDelagator
+  rgTech: [14]
+  szName: "Gorilla Delagator"
+  cMass: 1
+  resCost: 11
+  rgwtOreCost: [5, 0, 6]
+  ibmp: 46
+  dp: 175
+
+- name: ishieldElephantHideFortress
+  rgTech: [18]
+  szName: "Elephant Hide Fortress"
+  cMass: 1
+  resCost: 15
+  rgwtOreCost: [8, 0, 10]
+  ibmp: 47
+  dp: 300
+
+- name: ishieldCompletePhaseShield
+  rgTech: [22]
+  szName: "Complete Phase Shield"
+  cMass: 1
+  resCost: 20
+  rgwtOreCost: [12, 0, 15]
+  ibmp: 119
+  dp: 500

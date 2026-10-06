@@ -1,0 +1,212 @@
+# Turindrone ship designs: vrgTDAip, read by DoTurinDroneAiTurn. data/datagen.py
+# describes the format. Each recipe gives an AiPartPreference per slot of
+# its hull; its name becomes a TurinDroneRecipe, the recipe's offset
+# in vrgTDAip. Code picks recipes by position through vrgTDIshAip, so
+# keep the order; recipes without a hull are unused.
+
+- name: tdRecipeColonizer
+  hull: ihuldefColonyShip
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartColonyPreferOrbitalConstruction
+
+- name: tdRecipeFrigateScout
+  hull: ihuldefFrigate
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartScannerPreferElephant
+    - aiPartTorpedo
+    - aiPartShieldPreferLangstonShell
+
+- name: tdRecipeDestroyerTorpedo
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: tdRecipeUnusedSevenSlotMissile
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: tdRecipeUnusedSevenSlotBeamA
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferLangstonShell
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSapper
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartArmorPreferSuperlatanium
+
+- name: tdRecipeUnusedSevenSlotTorpedo
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartSpecialPodThrustCloak
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+
+- name: tdRecipeUnusedSevenSlotBeamB
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferLangstonShell
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSapper
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartArmorPreferMegaPolyShell
+
+- name: tdRecipeUnusedSevenSlotMissileB
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartSpecialPodThrustCloak
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+
+- name: tdRecipeBattleshipBeamA
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferLangstonShell
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferBlunderbuss
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSapper
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: tdRecipeBattleshipTorpedo
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferLangstonShell
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+
+- name: tdRecipeBattleshipBeamB
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferLangstonShell
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartSapper
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: tdRecipeBattleshipMissile
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferLangstonShell
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+
+- name: tdRecipeRogueCargoScanner
+  hull: ihuldefRogue
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartCargoPod
+    - aiPartScannerPreferRobberBaron
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartTorpedo
+    - aiPartSpecialPodThrustCloak
+    - aiPartSpecialJammerPodCloak
+    - aiPartBattleComputer
+
+- name: tdRecipeStealthBomber
+  hull: ihuldefStealthBomber
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialJammerPodCloak
+
+- name: tdRecipePrivateerMineLayer
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartStandardMineDispenser
+    - aiPartStandardMineDispenser
+
+- name: tdRecipeGalleonCargoScanner
+  hull: ihuldefGalleon
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferLangstonShell
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartTorpedo
+    - aiPartSpecialPodThrustCloak
+    - aiPartBattleComputer
+    - aiPartCargoPod
+    - aiPartScannerPreferRobberBaron
+
+- name: tdRecipeUnusedFourSlotMiner
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartMiningRobot
+    - aiPartMiningRobot
+
+- name: tdRecipeMiner
+  hull: ihuldefMiner
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartMiningRobot
+    - aiPartMiningRobot
+    - aiPartMiningRobot
+    - aiPartMiningRobot
+
+- name: tdRecipeUnusedNineSlotUtility
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferLangstonShell
+    - aiPartCargoPod
+    - aiPartScannerPreferElephant
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialPodThrustCloak
+    - aiPartSpecialJammerComputer
+    - aiPartSpecialJammerPodCloak

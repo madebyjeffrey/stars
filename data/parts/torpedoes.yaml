@@ -1,0 +1,145 @@
+# Torpedoes: rgtorp (TORP). data/datagen.py describes the format.
+# An entry's position is its itorp value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: itorpAlphaTorpedo
+  szName: "Alpha Torpedo"
+  cMass: 25
+  resCost: 5
+  rgwtOreCost: [9, 3, 3]
+  ibmp: 87
+  dRangeMax: 4
+  dp: 5
+  dHitChance: 35
+
+- name: itorpBetaTorpedo
+  rgTech: [0, 5, 1]
+  szName: "Beta Torpedo"
+  cMass: 25
+  resCost: 6
+  rgwtOreCost: [18, 6, 4]
+  ibmp: 88
+  dRangeMax: 4
+  dp: 12
+  init: 1
+  dHitChance: 45
+
+- name: itorpDeltaTorpedo
+  rgTech: [0, 10, 2]
+  szName: "Delta Torpedo"
+  cMass: 25
+  resCost: 8
+  rgwtOreCost: [22, 8, 5]
+  ibmp: 89
+  dRangeMax: 4
+  dp: 26
+  init: 1
+  dHitChance: 60
+
+- name: itorpEpsilonTorpedo
+  rgTech: [0, 14, 3]
+  szName: "Epsilon Torpedo"
+  cMass: 25
+  resCost: 10
+  rgwtOreCost: [30, 10, 6]
+  ibmp: 92
+  dRangeMax: 5
+  dp: 48
+  init: 2
+  dHitChance: 65
+
+- name: itorpRhoTorpedo
+  rgTech: [0, 18, 4]
+  szName: "Rho Torpedo"
+  cMass: 25
+  resCost: 12
+  rgwtOreCost: [34, 12, 8]
+  ibmp: 93
+  dRangeMax: 5
+  dp: 90
+  init: 2
+  dHitChance: 75
+
+- name: itorpUpsilonTorpedo
+  rgTech: [0, 22, 5]
+  szName: "Upsilon Torpedo"
+  cMass: 25
+  resCost: 15
+  rgwtOreCost: [40, 14, 9]
+  ibmp: 94
+  dRangeMax: 5
+  dp: 169
+  init: 3
+  dHitChance: 75
+
+- name: itorpOmegaTorpedo
+  rgTech: [0, 26, 6]
+  szName: "Omega Torpedo"
+  cMass: 25
+  resCost: 18
+  rgwtOreCost: [52, 18, 12]
+  ibmp: 95
+  dRangeMax: 5
+  dp: 316
+  init: 4
+  dHitChance: 80
+
+- name: itorpAntiMatterTorpedo
+  rgTech: [0, 11, 12, 0, 0, 21]
+  szName: "Anti Matter Torpedo"
+  cMass: 8
+  resCost: 50
+  rgwtOreCost: [3, 8, 1]
+  ibmp: 108
+  dRangeMax: 6
+  dp: 60
+  dHitChance: 85
+
+- name: itorpJihadMissile
+  rgTech: [0, 12, 6]
+  szName: "Jihad Missile"
+  cMass: 35
+  resCost: 13
+  rgwtOreCost: [37, 13, 9]
+  ibmp: 200
+  dRangeMax: 5
+  dp: 85
+  dHitChance: 20
+
+- name: itorpJuggernautMissile
+  rgTech: [0, 16, 8]
+  szName: "Juggernaut Missile"
+  cMass: 35
+  resCost: 16
+  rgwtOreCost: [48, 16, 11]
+  ibmp: 201
+  dRangeMax: 5
+  dp: 150
+  init: 1
+  dHitChance: 20
+
+- name: itorpDoomsdayMissile
+  rgTech: [0, 20, 10]
+  szName: "Doomsday Missile"
+  cMass: 35
+  resCost: 20
+  rgwtOreCost: [60, 20, 13]
+  ibmp: 202
+  dRangeMax: 6
+  dp: 280
+  init: 2
+  dHitChance: 25
+
+- name: itorpArmageddonMissile
+  rgTech: [0, 24, 10]
+  szName: "Armageddon Missile"
+  cMass: 35
+  resCost: 24
+  rgwtOreCost: [67, 23, 16]
+  ibmp: 203
+  dRangeMax: 6
+  dp: 525
+  init: 3
+  dHitChance: 30

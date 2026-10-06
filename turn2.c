@@ -916,7 +916,7 @@ void DropColonists() {
                             }
                         }
                     } else {
-                        FSendPlrMsg2(iMax, (GetRaceStat(&rgplr[iMax], rsMajorAdv) == raMacintosh) + 10, pl.id, pl.id, 0);
+                        FSendPlrMsg2(iMax, idmColonistsControl + (GetRaceStat(&rgplr[iMax], rsMajorAdv) == raMacintosh), pl.id, pl.id, 0);
                     }
                     if (iMax != -1) {
                         cpq = rgplr[iMax].zpq1.cpq;
@@ -1176,7 +1176,8 @@ void RemoteTerraforming() {
                         cDone++;
                     }
                     pctNew = PctPlanetDesirability(lppl, lppl->iPlayer);
-                    FSendPlrMsg(lpfl->iPlayer, (!fHelp ? 346 : 300) + (pctCur == pctNew), lpfl->id | 0x8000, lpfl->id, lppl->id, pctCur, pctNew, 0, 0, 0);
+                    FSendPlrMsg(lpfl->iPlayer, (!fHelp ? idmHasDegradedValue : idmHasImprovedValue) + (pctCur == pctNew), lpfl->id | 0x8000, lpfl->id, lppl->id,
+                                pctCur, pctNew, 0, 0, 0);
                     if (lpfl->iPlayer != lppl->iPlayer && pctNew != pctCur) {
                         FSendPlrMsg(lppl->iPlayer, !fHelp ? idmHasDegradedValue : idmHasImprovedValue, lppl->id, lpfl->id, lppl->id, pctCur, pctNew, 0, 0, 0);
                     }
@@ -1240,7 +1241,8 @@ void UpdatePopulations() {
     NextPlanet:
         if (lppl->iPlayer != iplrNone && lppl->rgwtMin[3] == 0) {
             fMac = GetRaceStat(&rgplr[lppl->iPlayer], rsMajorAdv) == raMacintosh;
-            FSendPlrMsg2(lppl->iPlayer, (lPopChg < 0 ? 35 : 64) + fMac, lppl->id, lppl->id, 0);
+            FSendPlrMsg2(lppl->iPlayer, (lPopChg < 0 ? idmColonistsHaveDiedOffLongerControlPlanet : idmColonistsHaveJumpedShipLongerControlPlanet) + fMac,
+                         lppl->id, lppl->id, 0);
             UninhabitPlanet(lppl);
         }
         if (lppl->iPlayer == iplrNone) {
@@ -1707,14 +1709,14 @@ void UpdatePlayerScores() {
                     while (i < game.cPlayer) {
                         wWinners2 = wWinners;
                         if (rgplr[i].fDead) {
-                            imsg = 184;
+                            imsg = idmDeadPlanetsHaveOverrunSpaceshipsDefeated;
                         } else if (!(j & wWinners)) {
-                            imsg = 181;
+                            imsg = idmForcesHaveDeclaredWinnerGameAdvisedAccept;
                         } else if ((j ^ wWinners) != 0) {
-                            imsg = 183;
+                            imsg = idmAlongHaveDeclaredWinnersGameMayContinue;
                             wWinners2 &= ~j;
                         } else {
-                            imsg = 182;
+                            imsg = idmHaveDeclaredWinnerGameMayContinuePlay;
                         }
                         FSendPrependedPlrMsg(i, imsg, gotoScore, wWinners2, 0, 0, 0, 0, 0, 0);
                         i++;

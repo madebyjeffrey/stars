@@ -3,24 +3,24 @@
 
 #include <stdint.h>
 
-extern SHDEF     rgshdefSBT[4];
-extern BEAM      rgbeam[24];
-extern SCANNER   rgscanner[16];
-extern HULDEF    rghuldefSB[5];
-extern SHDEF     rgshdefT[22];
-extern ENGINE    rgengine[16];
-extern HULDEF    rghuldef[32];
-extern MINING    rgmining[8];
-extern SHIELD    rgshield[10];
-extern TORP      rgtorp[12];
-extern TERRA     rgterra[20];
-extern PLANETARY rgplanetary[15];
-extern BOMB      rgbomb[15];
-extern ARMOR     rgarmor[12];
-extern SPECIALSB rgspecialSB[16];
-extern SPECIAL   rgspecialM[11];
-extern SPECIAL   rgspecialE[17];
-extern MINES     rgmines[10];
+extern SHDEF     rgshdefSBT[];
+extern BEAM      rgbeam[];
+extern SCANNER   rgscanner[];
+extern HULDEF    rghuldefSB[];
+extern SHDEF     rgshdefT[];
+extern ENGINE    rgengine[];
+extern HULDEF    rghuldef[];
+extern MINING    rgmining[];
+extern SHIELD    rgshield[];
+extern TORP      rgtorp[];
+extern TERRA     rgterra[];
+extern PLANETARY rgplanetary[];
+extern BOMB      rgbomb[];
+extern ARMOR     rgarmor[];
+extern SPECIALSB rgspecialSB[];
+extern SPECIAL   rgspecialM[];
+extern SPECIAL   rgspecialE[];
+extern MINES     rgmines[];
 
 HULDEF    *LphuldefSBFromId(isbhull id);
 HULDEF    *LphuldefFromId(int16_t id);

@@ -2426,7 +2426,7 @@ int16_t FCanBuildShdef(SHDEF *lpshdef, int16_t iplr) {
     iplrSav = idPlayer;
     if ((int16_t)lpshdef->hul.ihuldef >= ihuldefOrbitalFort) {
         part.hs.grhst = hstSBHull;
-        part.hs.iItem = lpshdef->hul.ihuldef - 32;
+        part.hs.iItem = lpshdef->hul.ihuldef - ihuldefOrbitalFort;
     } else {
         part.hs.grhst = hstHull;
         part.hs.iItem = lpshdef->hul.ihuldef;

@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-extern char    rgcMsgArgs[387];
-extern uint8_t acMSG[387];
-extern char    aMSGCmpr[22836];
-extern char    rgMSGLookupTable[72];
-extern int16_t aiMSGChunkOffset[7];
+extern char    rgcMsgArgs[];
+extern uint8_t acMSG[];
+extern char    aMSGCmpr[];
+extern char    rgMSGLookupTable[];
+extern int16_t aiMSGChunkOffset[];
 
 int16_t IMsgNext(int16_t fFilteredOnly);
 int16_t IMsgPrev(int16_t fFilteredOnly);

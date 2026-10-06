@@ -709,7 +709,7 @@ INT_PTR CALLBACK ZipProdDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         TextOut(hdc, rcGBox.left + 8, rcGBox.top - (dyArial8 >> 1), szWork, cch);
         rcGBox.top = rcGBox.bottom + 8;
         if (vrgZipProd[iResTechNow].fValid) {
-            cch = CchGetString(vrgZipProd[iResTechNow].fNoResearch + 1222, szWork);
+            cch = CchGetString(idsContributeResearch + vrgZipProd[iResTechNow].fNoResearch, szWork);
             TextOut(hdc, rcGBox.left, vyZPDStatic, szWork, cch);
         }
         EndPaint(hwnd, &ps);
@@ -820,7 +820,7 @@ void FillZipProdLB(HWND hwndDlg, ZIPPRODQ *pzpq) {
     } else {
         CchGetString(idsSD2, szFormat);
         for (i = 0; i < pzpq->cpq; i++) {
-            CchGetString(pzpq->rgpq[i].mdIdle + 126, szAuto);
+            CchGetString(idsMines + pzpq->rgpq[i].mdIdle, szAuto);
             if (pzpq->rgpq[i].cQuan == 1 || pzpq->rgpq[i].mdIdle == iobjAlchemy) {
                 strcpy(szWork, szAuto);
             } else {

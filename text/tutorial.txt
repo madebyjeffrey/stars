@@ -1,0 +1,807 @@
+# The tutorial: CchTutorString(idt).
+#
+# Each row is ID NAME "TEXT"; NAME becomes a TutorId in textids.h. The
+# tutorial shows a page of eight fragments starting at tutor.idt, so each
+# page is an @range of 8. A fragment starting with a capital letter begins a
+# paragraph, and a fragment of one character ends the page early.
+# text/textgen.py describes the format, @range and the rules for IDs.
+
+@range 8 Page 1
+0 idtWelcomeStarsTutorialWillGuideThrough36 "Welcome to Stars! This tutorial will guide you through 36 years of a sample game. You start the game "
+1 idtHomePlanetCoupleScoutsDestroyerFreighterColony "with a home planet, a couple of scouts, a destroyer, a freighter, a colony ship and a remote miner."
+2 idtThereFiveMessagesMessagesPaneEachYear "There are five messages in the Messages pane. Each year, Stars! sends you messages "
+3 idtAboutPlanetsFleetsAboutEventsKnownPlayers "about your planets and fleets, and about events known to all players."
+4 idtYearMessagesPlayingTipsNoneThemRequire "This year, the messages are all playing tips. None of them require an action."
+5 idtReadMessages "Read all of your messages now."
+6 idtCanClickButtonUseArrowKey " You can click on the Next button, or use the down arrow key."
+7 idt0007Blank " "
+
+@range 8 Page 2
+8 idtExamineTilesCommandPaneUpperLeftPortion "Examine the tiles on the Command pane in the upper left portion of the screen."
+9 idtControlsTilesGiveFullInformationCommandPlanet " The controls on these tiles give you full information on and command of your planet."
+10 idtFleetsOrbitTileShowsFuelCargoBoard "The Fleets in Orbit tile shows the fuel and cargo on board Armed Probe #1."
+11 idtPressTilesGotoButtonCommandArmedProbe " Press the tile's Goto button to command Armed Probe #1."
+12 idtPaneGivesInformationCommandFleet "The pane now gives you information on and command of your fleet."
+13 idtLetsSendScoutOffExploringHasAutomatically " Let's send this scout off exploring. It has been automatically fueled by your starbase and is ready to go."
+14 idtScannerPaneShowsMapUniverse "The Scanner pane shows you a map of the universe."
+15 idtHoldShiftKeyClickLeftMouseButton " Hold down the shift key and click the left mouse button on the planet Prune."
+
+@range 8 Page 3
+16 idtAccordingFleetWaypointsTileWillTake2 "According to the Fleet Waypoints tile it will take 2 years to get to Prune. Notice in the Other Fleets Here tile that"
+17 idtLongRangeScout2HasSixTimes " Long Range Scout #2 has six times the amount of fuel on board as Armed Probe #1."
+18 idtHitNKeyLookFleet "Hit the n key to look at your next fleet."
+19 idtLongRangeScout2UnarmedWeLikely "Long Range Scout #2 is unarmed. We are less likely to run into other players if we send it"
+20 idtTowardsPlanetsAboveRight " towards the planets above and to the right."
+21 idtHoldShiftKeyLeftClickPlanet90210 "Hold down the shift key and left click on the planet 90210."
+22 idt0022Blank " "
+23 idt0023Blank " "
+
+@range 8 Page 4
+24 idtLetsMoveOurFleet "Let's move on to our next fleet."
+25 idtTimePressButtonTileShowingLongRange " This time press the Next button in the tile showing Long Range Scout #2."
+26 idtSantaMaria3ColonyFleetWeDont "Santa Maria #3 is your colony fleet. We don't have anywhere to send it yet so"
+27 idtPress " press Next again."
+28 idtTeamster4FreighterWeDontHaveAnything "Teamster #4 is your freighter. Again we don't have anything for it to do yet so"
+29 idtPress2 " Press Next again."
+30 idtStalwartDefender5DestroyerWillUsefulScout "Stalwart Defender #5 is a destroyer and will be useful as a scout now."
+31 idtHoldShiftKeySelectAlexander " Hold down the shift key and select Alexander."
+
+@range 8 Page 5
+32 idtHitNKey "Hit the n key."
+33 idtCottonPicker6RemoteMinerWellSend " Cotton Picker #6 is a remote miner. We'll send it out as soon as we find a suitable mining planet."
+34 idtHitNKey2 "Hit the n key again."
+35 idtBackArmedProbe1ThatsFleetsRight " We're back to Armed Probe #1. That's all your fleets right now."
+36 idtOtherThingWeShouldDoYearPick "The only other thing we should do this year is pick a field of research."
+37 idtChooseResearchCommandsMenu " Choose Research on the Commands menu."
+38 idtChangeFieldStudyWeaponsPressDone " Change the Field of Study to Weapons and press Done."
+39 idtThatsTurnHitF9GenerateYear "That's all for this turn. Hit F9 to generate the next year."
+
+@range 8 Page 6
+40 idtReadMessageMessagesPaneWeveGotPlenty "Read the message in the Messages pane. We've got plenty of minerals available for use in production so we should start"
+41 idtBuildingFactories " by building some more factories."
+42 idtPressChangeButtonProductionTile "Press the Change button on the Production tile."
+43 idtSelectFactoryLeftHandListboxHoldShift " Select Factory in the left hand listbox, hold down shift and hit the Add button twice to add a total of 20 factories, then hit OK."
+44 idtShiftKeyCausesAddButtonAdd10 " The shift key causes the Add button to add 10 items at a time instead of 1."
+45 idtMessageYearScannerPaneShowsFleetsHave "That was your only message this year. The Scanner pane shows that your fleets have not"
+46 idtYetArrivedSoThereNothingDoYear " yet arrived so there is nothing more to do this year."
+47 idtHitF9KeyGenerateYear "Hit the F9 key to generate the next year."
+
+@range 8 Page 7
+48 idtReadFirstMessagePressGotoMessagesPane "Read your first message and press Goto in the Messages pane."
+49 idtLetsGiveArmedProbe1BunchPlaces " Let's give Armed Probe #1 a bunch of places to go so we don't have to deal with it again for a while."
+50 idtHoldShiftKeyLeftClickHiho "Hold down the shift key and left click on Hiho,"
+51 idtVacancy " and then on No Vacancy,"
+52 idtSlime " Slime,"
+53 idtWallaby " Wallaby"
+54 idtOxygen " and Oxygen."
+55 idtReadMessagePressGotoCommandLongRange "Read your next message and press Goto to command Long Range Scout #2."
+
+@range 8 Page 8
+56 idtWeWantSendFleetExploreAreaAbove "We want to send this fleet to explore the area above and to the right of our home so"
+57 idtHoldShiftKeySelectDwarte " hold down the shift key and select Dwarte,"
+58 idtMobius " Mobius,"
+59 idtCastle " Castle"
+60 idtMoholdi " and Moholdi."
+61 idtReadMessage "Read your next message"
+62 idtAnd " and"
+63 idtGotoStalwartDefender5 " Goto Stalwart Defender #5."
+
+@range 8 Page 9
+64 idtHoldShiftKeySelectShaggyDog "Hold down the shift key and select Shaggy Dog,"
+65 idtSeaSquared " Sea Squared,"
+66 idtRedStorm " Red Storm,"
+67 idtBloop " Bloop"
+68 idtKalamazoo " and Kalamazoo."
+69 idtReadTwoMessages "Read your next two messages"
+70 idtAnd2 " and"
+71 idtPressGotoDisplayStatsPruneSummaryPane " press Goto to display the stats for Prune in the Summary pane."
+
+@range 8 Page 10
+72 idtTopGraphSummaryPaneShowsPruneHas "The top graph in the Summary pane shows that Prune has slightly too high of a temperature for you to terraform into range"
+73 idtCurrentTechnology " with your current technology."
+74 idtDiamondsBottomGraphShowMineralConcentrationsPrun "The diamonds in the bottom graph show that the mineral concentrations on Prune are fairly high. Let's send Cotton Picker #6"
+75 idtThereMinePlanet " there to mine the planet."
+76 idtClickRightMouseButtonStoveTopSelect "Click the right mouse button on Stove Top and select Cotton Picker #6."
+77 idtShiftClickPrune " Shift click on Prune."
+78 idtLookWaypointTaskTile "Now look at the Waypoint Task tile,"
+79 idtClickDropdownChangeTaskRemoteMining " click on the dropdown and change the task to Remote Mining."
+
+@range 8 Page 11
+80 idtMoveMessageGotoAlexander "Move on to your next message and Goto Alexander."
+81 idtDiamondsBottomGraphShowAlexandersMineralConcentr "  The diamonds in the bottom graph show that Alexander's mineral concentrations are much lower than Prune's."
+82 idtSendingCottonPicker6PruneRightThing "Sending Cotton Picker #6 to Prune was the right thing to do."
+83 idtClickVariousPlacesSummaryPaneGetPopup "Click in various places in the Summary pane to get popup explanations for the graphs and values displayed."
+84 idtReadMessage2 "Read your next message"
+85 idtAnd3 " and"
+86 idtGotoPlanet90210 " Goto planet 90210."
+87 idt0087Blank " "
+
+@range 8 Page 12
+88 idtSince90210FinePlanetHighMineralConcentrations "Since 90210 is a fine planet with high mineral concentrations, let's send Santa Maria #3 there to colonize it."
+89 idtRightClickStoveTopSelectSantaMaria " Right click on Stove Top and select Santa Maria #3."
+90 idtClickXferButtonTileLabeledOrbitingStove "Click on the Xfer button in the tile labeled Orbiting Stove Top."
+91 idtClickDragColonistsGaugeFillingHold25kt " Click and drag in the Colonists gauge filling the hold with 25kT of colonists and hit OK."
+92 idtShiftClick90210 "Shift click on 90210."
+93 idtSelectColonizeDropdownWaypointTaskTile " Select Colonize from the dropdown in the Waypoint Task tile."
+94 idtThatsYear "That's all for this year."
+95 idtHitF9GenerateYear "Hit F9 to generate the next year."
+
+@range 8 Page 13
+96 idtFirstMessageQuiteCommonWeDontNeed "Your first message is quite common and we don't need to look at it every year."
+97 idtFilterClickingBlueCheckMarkUpperLeft " Filter it out by clicking the blue check mark in the upper left hand corner of the Messages pane."
+98 idtMoveMessageGotoStoveTop "Move on to your next message and Goto Stove Top."
+99 idtWeDoWantHaveKeepAddingFactories " We do not want to have to keep adding factories to the queue over and over again, so let's set up the queue to automatically"
+100 idtBuild30FactoriesEveryYear " build up to 30 factories every year."
+101 idtPressChangeButtonProductionTile2 "Press the Change button in the Production tile."
+102 idtSelectFactoriesAutoBuildLeftHandListbox " Select Factories (Auto Build) in the left hand listbox, hold down the shift key and hit Add three times, then hit OK."
+103 idt0103Blank " "
+
+@range 8 Page 14
+104 idtReadTwoMessagesGoto90210 "Read your next two messages and Goto 90210."
+105 idtProductionQueueHereEmptyWeOughtDo " The production queue here is empty and we ought to do something about it."
+106 idtHitQKey " Hit the q key."
+107 idtDoubleClickFactory3TimesMine3 "Double click on Factory 3 times and then on Mine 3 times so the queue shows 3 factories followed by 3 mines. Check the 'Contribute only leftover...' box and hit OK."
+108 idtWillTake10YearsBuild3Factories "It will take 10 years to build the 3 factories and an additional couple of years to build the mines. 90210 needs more people."
+109 idtRightClickStoveTopSelectTeamster4 " Right click on Stove Top and select Teamster #4."
+110 idtClickXferButtonCommandPane "Click on the Xfer button in the Command pane,"
+111 idtFillHoldColonistsHitOk " fill the hold with colonists and hit OK."
+
+@range 8 Page 15
+112 idtShiftClick902102 "Shift click on 90210 and"
+113 idtChangeWaypointTaskTransport " change the waypoint task to Transport."
+114 idtRightClickBlueDiamondWaypointTaskTile " Then right click on the blue diamond in the Waypoint Task tile and select QuikDrop to empty the freighter's hold at 90210."
+115 idtReadMessageGotoHiho "Read your next message and Goto Hiho."
+116 idtNoticeArmedProbe1WhichBlueTriangle " Notice that Armed Probe #1, which is the blue triangle just to the right of Hiho, hasn't reached Hiho yet but we already see Hiho's stats."
+117 idtDarkYellowCircleSurroundingArmedProbe1 "The dark yellow circle surrounding Armed Probe #1 shows the range at which it can detect planetary values."
+118 idtDoubleClickArmedProbe1 " Double click on Armed Probe #1."
+119 idt0119Blank " "
+
+@range 8 Page 16
+120 idtArmedProbe1DoesntNeedGoWay "Armed Probe #1 doesn't need to go all the way to Hiho so let's get rid of that waypoint."
+121 idtClickHiho " Click on Hiho"
+122 idtAnd4 " and"
+123 idtHitDeleteKey " hit the Delete key."
+124 idtArmedProbe1WillGoVacancyWithout "Now Armed Probe #1 will go on to No Vacancy without wasting time at Hiho."
+125 idtThatsYear2 "That's all for this year."
+126 idtChangePaceInsteadHittingF9 "For a change of pace, instead of hitting F9,"
+127 idtSelectGenerateTurnMenu " select Generate from the Turn menu."
+
+@range 8 Page 17
+128 idtReadFirstMessageGotoShaggyDog "Read your first message and Goto Shaggy Dog."
+129 idtWellAddColonizerQueueBitFirstLets " We'll add a colonizer to the queue in a bit, but first let's clean up Stalwart Defender #5's path."
+130 idtDoubleClickStalwartDefender5JustAbove "Double click on Stalwart Defender #5 just above the planet,"
+131 idtSelectWaypointShaggyDog " select the waypoint at Shaggy Dog,"
+132 idtPressDeleteKey " and press the Delete key."
+133 idtReadMessageGotoDwarte "Read your next message and Goto Dwarte."
+134 idtWhatUnpleasantPlace " What an unpleasant place."
+135 idtDoubleClickStoveTop "Double click on Stove Top."
+
+@range 8 Page 18
+136 idtHitChangeButtonProductionTileOpenStove "Hit the Change button in the production tile to open Stove Top's production queue."
+137 idtDoubleClickSantaMariaLeftHandListbox " Double click on Santa Maria in the left hand listbox and hit OK."
+138 idtNoticeFactoryTopQueueSantaMariaDisplayed "Notice that the Factory at the top of the queue and the Santa Maria are displayed in green"
+139 idtProductionTileMeansWillFinishedYear " in the Production tile. That means they will be finished this year."
+140 idtBlueItemsProductionQueueWillMakePartial "Blue items in the production queue will make partial progress this year. Black items require more than one year."
+141 idtRedItemsMayNeverFinish " Red items may never finish."
+142 idtGoAhead "Go ahead and"
+143 idtGenerateWhenReady " generate when ready."
+
+@range 8 Page 19
+144 idtReadFirstMessageGotoNewSantaMaria "Read your first message and Goto your new Santa Maria."
+145 idtHasReplacedOldSantaMariaFleet3 " It has replaced the old Santa Maria as fleet #3. The old fleet #3 was recycled when you colonized 90210."
+146 idtClickCargoGaugeFuelCargoTile "Click in the cargo gauge of the Fuel and Cargo tile."
+147 idtDoesSameThingHittingXferButton " This does the same thing as hitting the Xfer button."
+148 idtFillHoldFullColonistsHitOk " Fill the hold full of colonists and hit OK."
+149 idtWhereWeWantedSendColonizer "Where was it that we wanted to send this colonizer?"
+150 idtClickButtonToolbarShowPlanetsHowHabitable " Click on the % button on the toolbar to show planets by how habitable they are."
+151 idtShiftClickBigGreenShaggyDogBelow "Shift click on the big green Shaggy Dog below Stove Top."
+
+@range 8 Page 20
+152 idtSetWaypointTaskColonize "Set the waypoint task to Colonize."
+153 idtSwitchScannerBackNormalViewClickingLeftmost "Switch the Scanner back to normal view by clicking the leftmost toolbar button."
+154 idtRead2MessagesGotoTeamster4 "Read your next 2 messages and Goto Teamster #4."
+155 idtShiftClickStoveTopSendHome " Shift click on Stove Top to send it home."
+156 idtSelect90210PressingGotoButtonTileLabeled "Select 90210 by pressing the Goto button in the tile labeled Orbiting 90210."
+157 idtNoticeFactoriesWillDone2YearsInstead " Notice that the factories will be done in 2 years now instead of 10."
+158 idtReadMessageDeleteArmedProbe1sWaypoint "Read your next message and Delete Armed Probe #1's waypoint at No Vacancy."
+159 idtThatsYearGenerateWhenReady " That's all for this year. Generate when ready."
+
+@range 8 Page 21
+160 idtReadFirstMessageGotoTeamster4 "Read your first message and Goto Teamster #4."
+161 idtCottonPicker6HasRemoteMiningPrune " Cotton Picker #6 has been remote mining Prune for a number of years now. Let's start shuttling the"
+162 idtMineralsBackStoveTop " minerals back to Stove Top."
+163 idtShiftClickPrune2 "Shift click on Prune."
+164 idtSetWaypointTaskTransport " Set the waypoint task to Transport,"
+165 idtRightClickBlueDiamondSelectQuikloadZip " right click on the blue diamond and select QuikLoad from the Zip menu."
+166 idtShiftClickBackStoveTop "Now shift click back on Stove Top."
+167 idt0167Blank " "
+
+@range 8 Page 22
+168 idtNoticeWaypointTaskHasCopiedPreviousWaypoint "Notice that the waypoint task has been copied from the previous waypoint. We need to unload the minerals"
+169 idtPruneStovetop " from Prune at StoveTop."
+170 idtRightClickBlueDiamondSelectQuikdropZip " Right click on the blue diamond and select QuikDrop from the Zip menu."
+171 idtClickRepeatOrdersCheckboxFleetWaypointsTile "Now click the Repeat Orders checkbox in the Fleet Waypoints tile."
+172 idtTeamster4WillContinueHaulMineralsPrune " Teamster #4 will continue to haul minerals from Prune to Stove Top until you tell it otherwise."
+173 idtSelectStoveTop "Select Stove Top"
+174 idtAddSantaMariaProductionQueue " and add a Santa Maria to the production queue."
+175 idtGoAheadGenerateIDare "Go ahead and generate. I dare you."
+
+@range 8 Page 23
+176 idtReadFirstMessageGotoNewSantaMaria2 "Read your first message, Goto your new Santa Maria and fill 'er up with colonists."
+177 idtClickToolbarButtonPutScannerPlanetValue "Click on the % toolbar button to put the Scanner in planet value view."
+178 idtRedStormClearlyBestPlanetAvailable " Red Storm is clearly the best planet available."
+179 idtGiveSantaMaria7ColonizeTaskRed " Give Santa Maria #7 a colonize task at Red Storm."
+180 idtThereLeastTwoColonizablePlanetsSeaSquared "There are at least two more colonizable planets, Sea Squared and Slime, and you may find another soon so"
+181 idtAddThreeSantaMariasStoveTopsProduction " add three more Santa Marias to Stove Top's production queue."
+182 idtPressLeftmostToolbarButtonPutScannerBack "Press the leftmost toolbar button to put the Scanner back in normal view."
+183 idt0183Blank " "
+
+@range 8 Page 24
+184 idtReadMessage3 "Read your next message."
+185 idtWellKeepGettingMineBuildingMessagesForever " We'll keep getting these mine building messages forever."
+186 idtFilterThemClickingBlueCheckMarkMessages " Filter them out by clicking the blue check mark in the Messages pane"
+187 idtGoMessage " then go on to your next message."
+188 idtGoto90210OpenProductionQueue "Goto 90210 and open the production queue."
+189 idtShiftDoubleClickFactoriesAutoBuildMines " Shift-double click on 'Factories (Auto Build)' and then on 'Mines (Auto Build)' in the left hand listbox queueing 10 of each, then hit OK."
+190 idtReadRestMessages "Read the rest of your messages."
+191 idt0191Blank " "
+
+@range 8 Page 25
+192 idtClickRedTriangleBetweenSlimeVacancy "Click on the red triangle between Slime and No Vacancy."
+193 idtEnemyScoutShipRightClickingFleetImage " This is an enemy scout ship. Right clicking on the fleet image in the Summary pane will show us what we know about its design. We can't tell at this time whether"
+194 idtArmedAccordingProjectedPathScannerHeadedVacancy " or not it's armed. According to the projected path in the scanner it is headed for No Vacancy and the tick marks show that it will arrive there in two years."
+195 idtArmedProbe1WontAbleCatchWe "Armed Probe #1 won't be able to catch it. We need more attack craft."
+196 idtAddTwoArmedProbesStoveTopsQueue " Add two Armed Probes to Stove Top's queue."
+197 idtThatsYear3 "That's all for this year."
+198 idtGenerateWhenReady2 " Generate when ready."
+199 idt0199Blank " "
+
+@range 8 Page 26
+200 idtReadFirstMessageGotoNewColonyShips "Read your first message and Goto your new colony ships."
+201 idtWeHavePlacesSendTwoThemSo "We only have places to send two of them so"
+202 idtHitSplitButtonFleetCompositionTile " hit the Split button in the Fleet Composition tile."
+203 idtMoveOneSantaMariasFleet10Hit " Move one of the Santa Marias over to Fleet #10 and hit OK."
+204 idtLeavesTwoSantaMariasFleetCurrentlyCommanding "That leaves two Santa Marias in the fleet you are currently commanding."
+205 idtLoadFleetColonistsGiveColonizeTaskSlime " Load the fleet up with colonists and give it a colonize task at Slime."
+206 idtWeDontWantBothColonizersGoSlime "We don't want both colonizers to go to Slime so hit the Split All button in the Fleet Composition tile."
+207 idt0207Blank " "
+
+@range 8 Page 27
+208 idtNoticeFleetHasOneSantaMariaOther "Notice that this fleet only has one Santa Maria in it now. The other one was moved to a new fleet."
+209 idtClickWaypointSlimeDragSeaSquared "Click on the waypoint at Slime and drag it to Sea Squared."
+210 idtNoticeThereWaypointLinesGoingStoveTop " Notice that there are waypoint lines going from Stove Top to both Slime and Sea Squared."
+211 idtSantaMaria8SantaMaria11Have " Santa Maria #8 and Santa Maria #11 now have colonize orders at Sea Squared and Slime which is what we wanted."
+212 idtReadMessageGotoNewArmedScouts "Read your next message and Goto your new Armed Scouts."
+213 idtIfHeadDirectlyVacancyEnemyScoutWill " If you head directly to No Vacancy that enemy scout will be long gone when you get there."
+214 idtLetsTryHeadThemOffPass "Let's try to head them off at the pass."
+215 idtShiftClickHiho " Shift click on Hiho."
+
+@range 8 Page 28
+216 idtReadMessageFilter "Read your next message and filter it out."
+217 idtReadLastMessageGotoWallaby "Read your last message and Goto Wallaby."
+218 idtWallabyOwnedBerserkersLightlyPopulatedNearlyTerr " Wallaby is owned by the Berserkers but is lightly populated and nearly terraformable."
+219 idtClickGreenRadiationBarSummaryPaneRead "Click on the green Radiation bar in the Summary pane and read the popup."
+220 idtReason7SoundsFamiliar " For some reason 7% sounds familiar."
+221 idtHitF5OpenResearchDialog " Hit F5 to open the Research dialog."
+222 idt0222Blank " "
+223 idt0223Blank " "
+
+@range 8 Page 29
+224 idtRightRadiationTerraform7OneExpectedBenefits "Right, Radiation Terraform 7% is one of the Expected Benefits of the Weapons research we are currently doing."
+225 idtBenefitsListedBlueWillTakeOneAdditional " Benefits listed in blue will take more than one additional level of research to learn."
+226 idtClickWordRadiationDialogSeeRequirements "Click on the word Radiation in the dialog to see the requirements."
+227 idtCurrentRateResearchWeaponsTech5Will " At your current rate of research Weapons tech 5 will take a long time to reach."
+228 idtIncreaseResourcesBudgetedResearch30HitDone "Increase the 'Resources budgeted to research' to 30% and hit Done."
+229 idtWellSendTroopShipWallabySoonThats "We'll send a troop ship down to Wallaby soon but that's all for now."
+230 idtGenerateWhenReady3 " Generate when ready."
+231 idt0231Blank " "
+
+@range 8 Page 30
+232 idtReadFirstMessageGotoResearchDialog "Read your first message and Goto the Research dialog."
+233 idtNoticeRadiation7ListedGreenIndicatingWill " Notice that Radiation 7 is now listed in green indicating that it will be available as soon as you complete"
+234 idtCurrentLevelStudyWeaponsEstimatedTimeCompletion " the current level of study in Weapons. The estimated time to completion is 4 years."
+235 idtNoticeFieldResearchCurrentlySetSameField "Notice that the 'Next field to research' is currently set to Same Field."
+236 idtChangeFieldResearchConstructionHitDone " Change the 'Next field to research' to Construction and hit Done."
+237 idtSoonReachTech5WeaponsResearchFocus " As soon as you reach tech 5 in Weapons your research focus will change to Construction."
+238 idtReadMessageFilter2 "Read your next message and filter it out."
+239 idt0239Blank " "
+
+@range 8 Page 31
+240 idtReadMessageGotoOxygen "Read your next message and Goto Oxygen."
+241 idtRightClickStoveTopSelectSantaMaria2 " Right click on Stove Top and select Santa Maria #10."
+242 idtLoadColonists " Load it up with colonists"
+243 idtSendColonizeOxygen " and send it to colonize Oxygen."
+244 idtSinceWeveSeenOxygenAlreadyWeCan "Since we've seen Oxygen already we can let Armed Probe #1 move on to other tasks."
+245 idtSelectArmedProbe1DragWaypointOxygen " Select Armed Probe #1 and drag its waypoint from Oxygen to Mozart."
+246 idtThatsYear4 "That's all for this year."
+247 idtGenerateWhenReady4 "Generate when ready."
+
+@range 8 Page 32
+248 idtFilterMessageAboutDismantlingColonizer "Filter out the message about dismantling the colonizer."
+249 idtReadMessageGotoShaggyDog " Read your next message and Goto Shaggy Dog."
+250 idtOpenShaggyDogsProductionQueue "Open Shaggy Dog's production queue."
+251 idtAdd3FactoriesAutoBuild3Mines " Add 3 'Factories (Auto build)' and 3 'Mines (Auto build)' to the queue, check the 'Contribute only leftover' checkbox and hit OK."
+252 idtWeShouldAlsoSetDefaultQueueSo "We should also set up a default queue so that we won't have to do this again for the other four"
+253 idtColonizersHaveEnRoute " colonizers you have en route."
+254 idtOpenProductionQueue "Open the production queue again."
+255 idtRightClickBlueDiamondSelectCustomize " Right click on the blue diamond and select Customize."
+
+@range 8 Page 33
+256 idtHitImportButtonCopyShaggyDogsQueue "Hit the Import button to copy Shaggy Dog's queue into the default template and hit OK."
+257 idtOkProductionDialog " Then OK the production dialog."
+258 idtEveryNewPlanetColonizeWillAutomaticallyGet " Every new planet you colonize will automatically get their production queue copied from the default template."
+259 idtReadMessageGotoBloopLooksLikeNice "Read your next message and goto Bloop. Looks like a nice place."
+260 idtAddSantaMariaStoveTopsQueue " Add a Santa Maria to Stove Top's queue."
+261 idtWeWantTakeWallabyTeamster4Busy "We want to take over Wallaby. Teamster #4 is busy shuttling minerals from Prune to Stove Top."
+262 idtAddNewTeamsterStoveTopsQueue " Add a new Teamster to Stove Top's queue."
+263 idtGenerateWhenReady5 "Generate when ready."
+
+@range 8 Page 34
+264 idtReadFirstMessageGotoArmedProbe1 "Read your first message and Goto Armed Probe #1."
+265 idtShiftClickHacker " Shift click on Hacker."
+266 idtReadMessageGotoLongRangeScout2 "Read your next message and Goto Long Range Scout #2."
+267 idtGuyIsntWorthMuchAnymoreHesToo " This guy isn't worth much anymore. He's too far away from the other unknown planets and isn't even armed."
+268 idtShiftClickStoveTopChangeWaypointTask " Shift click on Stove Top and change the waypoint task to Scrap Fleet."
+269 idtReadMessageSendStalwartDefender5Stove "Read your next message and send Stalwart Defender #5 to Stove Top."
+270 idtWillAutomaticallyRefueledStarbaseWhenArrives " It will be automatically refueled by your starbase when it arrives."
+271 idtReadMessageGotoArmedProbe9Shift "Read your next message, Goto Armed Probe #9 and shift click on the red triangle below Hiho."
+
+@range 8 Page 35
+272 idtReadMessageGotoNewSantaMaria "Read your next message and Goto your new Santa Maria."
+273 idtUseToolbarScannerSummaryPaneFigureWhich " Use the toolbar, Scanner and the Summary pane to figure out which available planet has the highest growth value"
+274 idtGiveSantaMaria3OrdersColonizeDont " and give Santa Maria #3 orders to colonize it. (Don't forget to load colonists!)"
+275 idtReadMessageGotoTeamster12 "Read your next message and Goto Teamster #12."
+276 idtLoadColonistsAssignWaypointWallaby " Load up with colonists and assign a waypoint at Wallaby."
+277 idtChangeWaypointTaskTransport2 "Change the waypoint task to Transport."
+278 idtSetSecondDropdownWaypointTaskTileColonists " Set the second dropdown in the Waypoint Task tile to Colonists"
+279 idtThirdUnload " and the third to Unload All."
+
+@range 8 Page 36
+280 idtReadMessageAdd70MinesTopStove "Read your next message and add 70 mines to the top of Stove Top's production queue."
+281 idtReadMessageGotoResearchDialog "Read your next message and Goto the Research dialog."
+282 idtLeaveFieldStudyConstructionChangeFieldResearch " Leave the Field of Study at Construction but change the Next field to research to Biotechnology."
+283 idtReadMessageHitGotoOpenTechnologyBrowser "Read your next message and hit Goto to open the Technology Browser."
+284 idtWhenDoneReadingAboutBetaTorpedoClose " When you are done reading about the Beta Torpedo close the Tech Browser."
+285 idtReadTwoMessagesLookingTechBrowserIf "Read your next two messages, looking at the Tech Browser if you wish."
+286 idtReadMessageGotoArmedProbe "Read your next message and Goto Armed Probe."
+287 idt0287Blank " "
+
+@range 8 Page 37
+288 idtGollyNailedOneThemNoticeButtonNormally "By golly you nailed one of them. Notice that the button normally labeled Goto now says View."
+289 idtPressViewOpenBattleVcr " Press View to open the Battle VCR."
+290 idtUseVcrControlsWatchPlaybackBattleHit " Use the VCR controls to watch a playback of the battle and then hit Done."
+291 idtReadRestMessages2 "Read the rest of your messages."
+292 idtStoveTopBusyBuildingMinesYearSo " Stove Top is busy building mines this year so we'll add some colonizers next year."
+293 idtGeneralWalkingThroughMessagesHandlingOnesSeem "In general walking through your messages and handling the ones that seem important is 90% of"
+294 idtWorkAnyParticularYear " the work for any particular year."
+295 idtGenerateWhenReady6 "Generate when ready."
+
+@range 8 Page 38
+296 idtReadFirstMessageGotoButtonDisabledI "Read your first message. The Goto button is disabled. I wonder why. Perhaps one of the other messages this year will enlighten us."
+297 idtReadMessageGotoArmedProbe9 "Read your next message and Goto Armed Probe #9."
+298 idtLooksLikeNailedAnotherOneThereYellow " It looks like you nailed another one. There is a yellow diamond at the same location as Armed Probe #9. This symbol represents"
+299 idtSalvageLeftBattle " salvage left from battle."
+300 idtRightClickArmedProbe9SelectSalvage "Right click on Armed Probe #9 and select Salvage."
+301 idtSummaryPaneShowsSalvageConsistsFewKt " The Summary pane shows that this salvage consists of a few kT of Ironium and Germanium. It isn't much but perhaps we should send"
+302 idtFreighterAfterAnyway " a freighter after it anyway."
+303 idtSelectViewFindTypeTeamster4Hit "Select View/Find, type Teamster #4 and hit OK."
+
+@range 8 Page 39
+304 idtIfCantFindWhereYellowSelectionArrow "If you can't find where the yellow selection arrow moved in the scanner hit the v key to pinpoint it for you."
+305 idtTeamster4StoveTopWillBackPrune " Teamster #4 is at Stove Top and will be back at Prune next year. We can divert it then if the salvage hasn't dissipated."
+306 idtReadMessage4 "Read your next message."
+307 idtWellExplainsWhatHappenedArmedProbe1 " Well, that explains what happened to Armed Probe #1."
+308 idtWatchSadBattleIfWantMoveMessage "Watch the sad battle if you want and then move on to your next message."
+309 idtThatsLikeOneMayWantWatch " That's more like it. This one you may want to watch."
+310 idtReadMessageGotoRedStorm "Read your next message and Goto Red Storm."
+311 idt0311Blank " "
+
+@range 8 Page 40
+312 idtOtherBitShortColonistsRedStormDoing "Other than being a bit short on colonists Red Storm is doing fine."
+313 idtReadMessageGotoSlime " Read your next message and Goto Slime."
+314 idtLookSummaryPaneSlimeOutsideHabitableRange "Look in the Summary pane. Slime is outside of your habitable range but you do have the technology to terraform it into range."
+315 idtWhatWeNeedDoAddTerraformingProduction " What we need to do is add some terraforming to the production queue."
+316 idtOpenSlimesProductionQueueAddTwoTerraform "Open Slime's production queue and add two Terraform Environments to the queue, and hit OK."
+317 idtLookProductionTileISuspectNeedFew " Look at the Production tile. I suspect you need a few more colonists here in order to get this done in a finite amount of time."
+318 idtAddTwoTeamstersStoveTopsProductionQueue "Add two Teamsters to Stove Top's production queue."
+319 idtGenerateWhenReady7 " Generate when ready."
+
+@range 8 Page 41
+320 idtReadFirstMessageLoadTeamster1Colonists "Read your first message, load Teamster #1 with colonists,"
+321 idtSendSlimeOrdersUnloadThem " and send it to Slime with orders to unload them all."
+322 idtReadMessage5 "Read your next message."
+323 idtLooksLikeLoadReinforcementsTeamster1Carrying " It looks like that load of reinforcements Teamster #1 is carrying are going to be critical."
+324 idtReadMessageOpenResearchDialogChangeField "Read your next message, open the Research dialog and change the 'Next field to research' to Propulsion."
+325 idtReadMessageCheckRoboMinerTechBrowser "Read your next message and check out the Robo-Miner in the Tech Browser."
+326 idtWeCouldUseMinersHelpStripPrune " We could use more miners to help strip Prune. Let's design a ship using these new robots."
+327 idtHitF4OpenShipDesigner "Hit F4 to open the Ship Designer."
+
+@range 8 Page 42
+328 idtSelectAvailableHullTypes "Select Available Hull Types,"
+329 idtChooseMiniMinerDropdown " Choose Mini-Miner from the dropdown"
+330 idtHitCopySelectedDesign " and hit Copy Selected Design."
+331 idtLeftSideDisplaysListEveryPartCapable "The left side displays a list of every part you are capable of putting on a ship."
+332 idtDragLongHump6EnginePartsList "Drag a Long Hump 6 engine out of the parts list to the ship schematic and drop it on the Engine slot."
+333 idtDragRhinoScannerScannerElectMechSlot "Drag a Rhino Scanner to the Scanner/Elect/Mech slot."
+334 idtSelectMiningRobotsPartsCategoryDropdown "Select Mining Robots in the parts category dropdown"
+335 idtDragRoboMinerEachMiningSlots " and drag a Robo-Miner to each of the Mining slots."
+
+@range 8 Page 43
+336 idtShipDesignNameImageJustFine "The ship design name and image are just fine."
+337 idtHitOkFinishEditingDesign " Hit OK to finish editing the design"
+338 idtDoneCloseDesigner " and then Done to close the designer."
+339 idtAddOneNewMiniMinersStoveTops "Add one of your new Mini-Miners to Stove Top's production queue."
+340 idtWillTake6YearsFinishShipJust " It will take 6 years to finish this ship. You just aren't mining fast enough. Let's add 100 mines to the top of the queue."
+341 idtOpenStoveTopsQueue "Open Stove Top's queue again."
+342 idtSelectMineLeftHandListboxTopQueue " Select Mine in the left hand listbox and the Top of the Queue in the right, hold down the Ctrl key and hit Add and then OK."
+343 idt0343Blank " "
+
+@range 8 Page 44
+344 idtClickEachItemsProductionTileMiniMiner "Click on each of the items in the Production tile. That Mini-Miner will only take 4 years to build now."
+345 idtReadFinalMessage "Read your final message."
+346 idtLowEnoughMineralsPointDesigningAdditionalShips " We're low enough on minerals at this point that designing additional ships just isn't that interesting. We'll look at your new Privateer hull later."
+347 idtWeLeftArmedProbe9HangingNear "We left Armed Probe #9 hanging out near Prune. It looks like that salvage dissipated, oh well."
+348 idtSendArmedProbe9BackStoveTop " Send Armed Probe #9 back to Stove Top."
+349 idtThatsEnoughYear "That's enough for this year."
+350 idtGenerateNewYear " Generate the new year."
+351 idt0351Blank " "
+
+@range 8 Page 45
+352 idtReadFirstMessageGotoSeaSquared "Read your first message and Goto Sea Squared."
+353 idtOtherNeedingPeopleDoingJustFine " Other than needing some more people it's doing just fine."
+354 idtReadFinalMessageGotoOxygen "Read your final message and Goto Oxygen."
+355 idtPlanetSlightlyHabitableRangeWeShouldAdd " This planet is slightly out of your habitable range. We should add terraforming to the default production template."
+356 idtAddMinTerraform2OxygensQueueRight "Add 'Min Terraform Up To 2%' to Oxygen's queue, right click on the blue diamond and select <Customize> and Import then OK both dialogs."
+357 idtThatsYearAutomationMakesYearsFlyFaster "That's all for this year. Automation makes some years fly by faster than others."
+358 idtGenerateWhenReady8 "Generate when ready."
+359 idt0359Blank " "
+
+@range 8 Page 46
+360 idtReadFirstMessageSendArmedProbe9 "Read your first message and send Armed Probe #9 to Neil."
+361 idtReadMessageGotoNewTeamsterFillColonists "Read your next message, Goto your new Teamster and fill it with colonists."
+362 idtWeWouldLikeSendColonistsWhereNeeded " We would like to send those colonists to where they are needed the most."
+363 idtChoosePlanetsReportMenu "Choose Planets... from the Report menu."
+364 idtClickTitleValueColumnSortValue " Click on the title of the Value column and Sort by Value."
+365 idtPlanetLargestNegativeValueWallabyColonistsWill " The planet with the largest negative value is Wallaby. Your colonists will die there faster then anywhere else."
+366 idtHitEscKeyClosePlanetSummaryReport "Hit the Esc key to close the Planet Summary Report."
+367 idtSendTeamster7WallabyUnloadColonists " Send Teamster #7 to Wallaby to Unload All Colonists."
+
+@range 8 Page 47
+368 idtReadTwoMessagesOpenResearchDialog "Read your next two messages and open the Research dialog."
+369 idtExpectedResearchBenefitsEitherBlueBlackWhich " All of the Expected Research Benefits are either blue or black which means we need at least two more levels in Propulsion before"
+370 idtWeLearnAnythingFieldResearchAlreadySet " we learn anything. The 'Next field to research' is already set to Same Field so go ahead and"
+371 idtCloseDialog " close the dialog."
+372 idtReadRemainingMessagesSendTeamster12Back "Read your remaining messages and send Teamster #12 back to Stove Top."
+373 idtMineDispenser50SoundedInterestingIsntGood "The Mine Dispenser 50 sounded interesting, but it isn't a good time to design a new ship."
+374 idtGenerateNewYear2 "Generate the new year."
+375 idt0375Blank " "
+
+@range 8 Page 48
+376 idtReadFirstMessageSendStalwartDefender5 "Read your first message and send Stalwart Defender #5 to Wallaby."
+377 idtReadMessageGotoNewMiniMiner "Read your next message and Goto your new Mini-Miner."
+378 idtShiftClickPruneSetWaypointTaskMerge " Shift click on Prune and set the Waypoint Task to Merge with Fleet."
+379 idtNoticeWaypointPruneHasChangedCottonPicker " Notice that the waypoint at Prune has changed to Cotton Picker #6."
+380 idtReadMessageOpenStoveTopsProductionQueue "Read your next message and open Stove Top's production queue."
+381 idtIncreaseNumberAutoBuildFactories60Add " Increase the number of Auto Build factories to 60. Add 60 Auto Build mines to the bottom of the queue and close it."
+382 idtReadTwoMessagesChangeFieldResearchConstruction "Read your next two messages and change your 'Next field to research' to Construction."
+383 idtReadFinalMessageGenerate " Read your final message and generate."
+
+@range 8 Page 49
+384 idtReadMessages2 "Read all of your messages"
+385 idtSendTeamster1BackStoveTop " and send Teamster #1 back to Stove Top."
+386 idtSureEasyTurn "This was sure an easy turn."
+387 idtGenerateNewYear3 "Generate the new year."
+388 idt0388Blank " "
+389 idt0389Blank " "
+390 idt0390Blank " "
+391 idt0391Blank " "
+
+@range 8 Page 50
+392 idtReadFirstMessageAddTeamsterStoveTops "Read your first message and add a Teamster to Stove Top's production queue."
+393 idtReadMessageGoto90210 "Read your next message and Goto 90210."
+394 idtWellWeCouldPlayProductionQueueLooks " Well, we could play with the production queue but it looks like it'll be OK for another year or two."
+395 idtReadTwoMessagesOpenResearchDialog2 "Read your next two messages and open the Research dialog."
+396 idtClickDifferentItemsListedExpectedBenefitsBox " Click on the different items listed in the Expected benefits box."
+397 idtStargateSoundsLikeFunFrigateAlsoLooks " The Stargate sounds like fun and the Frigate also looks interesting."
+398 idtCloseDialogWithoutMakingAnyChanges " Close the dialog without making any changes."
+399 idtReadRemainingMessagesGenerateYear "Read your remaining messages and generate the next year."
+
+@range 8 Page 51
+400 idtReadFirstMessageLoadTeamster12Colonists "Read your first message and load Teamster #12 with colonists."
+401 idtAddWaypointWallabyUnloadColonists " Add a waypoint at Wallaby to Unload All Colonists."
+402 idtShiftClickBackStoveTopChangeTask " Shift click back on Stove Top and change the task to Load All Available."
+403 idtClickRepeatOrdersCheckboxFleetWaypointsTile2 " Click the Repeat Orders checkbox in the Fleet Waypoints tile."
+404 idtEstFuelUsageClaimsWeWillNeed "The Est Fuel Usage claims we will need more fuel than we have but we know that after we unload the colonists at Wallaby"
+405 idtFleetWillLighterWillNeedMuchFuel " the fleet will be lighter and will need much less fuel to get back."
+406 idtReadMessageGotoNewTeamster "Read your next message. Goto your new Teamster"
+407 idtLoadColonists2 " and load it with colonists."
+
+@range 8 Page 52
+408 idtAddWaypointOxygenUnloadColonists "Add a waypoint at Oxygen to Unload All Colonists."
+409 idtShiftClickBackStoveTopChangeTask2 " Shift click back on Stove Top and change the task to Load All Available."
+410 idtClickRepeatOrdersCheckboxFleetWaypointsTile3 " Click the Repeat Orders checkbox in the Fleet Waypoints tile."
+411 idtBothFreightersWillContinueMovingColonistsAway "Both of these freighters will continue moving colonists away from Stove Top until we tell them otherwise."
+412 idtReadMessageAddMaxTerraformAutoBuild "Read your next message and add a Max Terraform (Auto Build) to the bottom of 90210's production queue."
+413 idtRead3MessagesSendTeamster7Back "Read your next 3 messages and send Teamster #7 back to Stove Top."
+414 idtReadLastMessageGenerateYear "Read your last message and generate the next year."
+415 idt0415Blank " "
+
+@range 8 Page 53
+416 idtReadFirstTwoMessagesSendArmedProbe "Read your first two messages and send Armed Probe #9 to La Te Da."
+417 idtRead3MessagesChangeFieldResearchWeapons " Read your next 3 messages and change your 'Next field to research' to Weapons."
+418 idtReadFinalMessageHitF4OpenShip "Read your final message and hit F4 to open the Ship Designer."
+419 idtSelectStarbasesCopySelectedDesign " Select Starbases and Copy Selected Design."
+420 idtSelectOrbitalPartsCategoryDragStargate100 " Select the Orbital parts category and drag a Stargate 100/250 to the 'Orbital or Elect' slot on the left side of the hull schematic."
+421 idtChangeDesignNameGaterClickRightArrow "Change the design name to Gater, click the right arrow button below the Starbase image once, OK the design and Close the dialog."
+422 idtAddGaterStoveTopsQueue "Add a Gater to Stove Top's queue"
+423 idtGenerate " and generate."
+
+@range 8 Page 54
+424 idtReadFirstMessageLoadTeamster1Colonists2 "Read your first message, load Teamster #1 with colonists"
+425 idtSendUnloadColonistsWallaby " and send it to Unload All Colonists at Wallaby."
+426 idtWeDoFrequentlyEnoughWeShouldSimplify "We do this frequently enough that we should simplify it somewhat."
+427 idtRightClickBlueDiamondWaypointTaskTile2 " Right click on the blue diamond in the Waypoint Task tile and select Customize."
+428 idtHitImportNameOrderDropcolOkBoth " Hit Import, name the order DropCol and OK both dialogs."
+429 idtFutureWeCanSetFleetsTaskUsing " In the future we can set up fleets with this task using fewer mouse clicks."
+430 idtShiftClickStoveTopChangeTransportOption "Shift click on Stove Top and change the transport option to Load All Available."
+431 idtClickRepeatOrders " Then click on Repeat Orders."
+
+@range 8 Page 55
+432 idtReadRestMessages3 "Read the rest of your messages."
+433 idtYouveUpgradedStarbaseStoveTopWeDont " You've upgraded your starbase at Stove Top but we don't have another planet with a starbase to use as a destination yet."
+434 idtHitF3OpenPlanetSummaryReport " Hit F3 to open the Planet Summary Report."
+435 idtFindMinConcColumnRightClickReverse "Find the Min Conc column, right click and Reverse Sort by Mineral Concentration - Weighted Average."
+436 idtOxygenSeaSquaredRedStormWallabyHave " Oxygen, Sea Squared, Red Storm and Wallaby all have excellent mineral concentrations but"
+437 idtWallabyHasHighestPopulationClosestBerserkersPlan " Wallaby has the highest population and is closest to the Berserker's planets."
+438 idtUnfortunatelyWallabyStillHasNegativeGrowthRate " Unfortunately Wallaby still has a negative growth rate. Let's keep the colonists flowing there for a while before adding a Gater to the queue."
+439 idtGenerateWhenReady9 "Generate when ready."
+
+@range 8 Page 56
+440 idtReadFirstMessageGotoTeamster42 "Read your first message and Goto Teamster #4."
+441 idtSeemsMiniMinerWeAddedPruneHas " It seems that the Mini Miner we added at Prune has increased our load per trip beyond the freighter's capacity on a full tank of fuel."
+442 idtWeCouldDecreaseSpeedEachLegTeamster "We could decrease the speed of each leg of Teamster #4's route or transfer some fuel from Cotton Picker #6."
+443 idtRemoteMinersProducing "As the remote miners are now producing more"
+444 idtMineralsWeCanCarryEachTripWe " minerals than we can carry each trip we should just build another freighter to merge with Teamster #4."
+445 idtClickDragFuelGaugeOtherFleetsHere "Click and drag in the fuel gauge in the Other Fleets Here tile until Teamster #4 has 383mg of fuel."
+446 idt0446Blank " "
+447 idt0447Blank " "
+
+@range 8 Page 57
+448 idtAddTeamsterStoveTopsQueue "Add a Teamster to Stove Top's queue."
+449 idtRead4MessagesChangeFieldResearchPropulsion "Read your next 4 messages and change your 'Next field to research' to Propulsion."
+450 idtReadRemainingMessagesOpenShipDesigner "Read your remaining messages and open the Ship Designer."
+451 idtViewAvailableHullTypesSelectFrigateDropdown " View Available Hull Types, select Frigate from the dropdown and hit Copy Selected Design."
+452 idtDragDaddyLongLegs7EngineSlot "Drag a Daddy Long Legs 7 to the Engine slot."
+453 idtSelectMineLayersDropdownDrag3Mine " Select Mine Layers from the dropdown, and drag 3 Mine Dispenser 50s to the General Purpose slot."
+454 idtChangeDesignNameMineLayerOkDesign "Change the design name to Mine Layer, OK the design and hit Done to close the dialog."
+455 idtAddMineLayerStoveTopsQueue " Add a Mine Layer to Stove Top's queue."
+
+@range 8 Page 58
+456 idtClickRedTriangleWallaby "Click on the red triangle next to Wallaby."
+457 idtBerserkerColonizerHeadedVacancyWarp6 " It's a Berserker colonizer headed for No Vacancy at warp 6."
+458 idtRightClickWallabySelectStalwartDefender5 "Right click on Wallaby and select Stalwart Defender #5."
+459 idtShiftClickEnemyFleet " Then shift click on the enemy fleet."
+460 idtShouldSufficientYear "That should be sufficient for this year."
+461 idtGenerateWhenReady10 "Generate when ready."
+462 idt0462Blank " "
+463 idt0463Blank " "
+
+@range 8 Page 59
+464 idtReadFirstMessageGotoStalwartDefender5 "Read your first message and Goto Stalwart Defender #5."
+465 idtFleetDisplayedPurpleScannerMeansThereEnemy " The fleet is displayed in purple in the Scanner. That means that there is an enemy at the same location."
+466 idtAlsoTellsUsAlthoughCaughtColonizerDidnt " It also tells us that although you caught up with their colonizer you didn't manage to destroy it."
+467 idtYoullSeeMessageAboutBattleLater " You'll see a message about the battle later."
+468 idtReadMessageGotoTeamster7 "For now, read your next message and Goto Teamster #7."
+469 idtOpenPlanetSummaryReportSortPopulation "Open the Planet Summary Report and sort by Population."
+470 idtOxygenHasLowestPopulationYouveAlreadyGot " Oxygen has the lowest population but you've already got a freighter headed there. Sea Squared has the next lowest population."
+471 idtHitEscCloseReport "Hit ESC to close the report."
+
+@range 8 Page 60
+472 idtLoadTeamster7ColonistsSendSeaSquared "Load Teamster #7 with colonists and send it to Sea Squared."
+473 idtSetWaypointTaskTransport2 " Set the waypoint task to Transport,"
+474 idtRightClickBlueDiamondChooseDropcol " right click on the blue diamond and choose DropCol."
+475 idtReadTwoMessagesGotoNewTeamster "Read your next two messages and Goto your new Teamster."
+476 idtFreighterWeBuiltMergeOneGoingBack " This is the freighter we built to merge with the one going back and forth to Prune."
+477 idtSelectTeamster4ListboxOtherFleetsHere "Select Teamster #4 in the listbox in the Other Fleets Here tile and hit Goto."
+478 idtPressMergeButtonFleetCompositionTile "Press the Merge button in the Fleet Composition tile."
+479 idtClickTeamster3MergeFleetsDialogHit "Click on Teamster #3 in the Merge Fleets dialog and hit OK."
+
+@range 8 Page 61
+480 idtReadMessageSetMineLayer8sTask "Read your next message and set Mine Layer #8's task at Stove Top to Lay Mine Field."
+481 idtReadMessageAddMiniMinerStoveTops "Read your next message and add a Mini Miner to Stove Top's queue."
+482 idtRead2MessagesWatchBattle "Read your next 2 messages and watch the battle."
+483 idtBerserkersSantaMaria80DamagedCanKill " The Berserker's Santa Maria is 80% damaged. You can kill it next year."
+484 idtRightClickBlueDiamondFleetWaypointsTile " Right click on the blue diamond in the Fleet Waypoints tile and select Berserker Santa Maria #5."
+485 idtReadLastMessageDoubleClickArmedProbe "Read your last message and double click on Armed Probe #9, which is just above La Te Da."
+486 idtDragWaypointLaTeDaSpeedBump " Drag the waypoint from La Te Da to Speed Bump,"
+487 idtShiftClickLeverGenerate " then Shift click on Lever and generate."
+
+@range 8 Page 62
+488 idtReadFirstMessageSendStalwartDefender52 "Read your first message and send Stalwart Defender #5 back to Wallaby."
+489 idtReadMessageGotoMiniMiner3Send "Read your next message, Goto Mini Miner #3 and send it to Prune with a waypoint task of Merge with Fleet."
+490 idtReadRemainingMessages "Read your remaining messages."
+491 idtThats "That's it,"
+492 idtGenerateWill " generate at will."
+493 idt0493Blank " "
+494 idt0494Blank " "
+495 idt0495Blank " "
+
+@range 8 Page 63
+496 idtReadFirstTwoMessages "Read your first two messages."
+497 idtClickButtonToolbar " Click on the % button on the toolbar."
+498 idtNoticeThereLotGreenWorldsWeNeed " Notice that there are a lot of green worlds that we need to colonize. First, however, let's upgrade our colonizer design."
+499 idtHitF4OpenShipDesigner2 "Hit F4 to open the Ship Designer."
+500 idtSelectSantaMariaDropdown "Select the Santa Maria from the dropdown"
+501 idtHitEditSelectedDesign " and hit Edit Selected Design."
+502 idtDragLongHump6EngineDesignParts "Drag the Long Hump 6 engine from the design to the parts list and replace it with the Daddy Long Legs 7."
+503 idtOkDesignHitDoneCloseDialog " OK the design and hit Done to close the dialog."
+
+@range 8 Page 64
+504 idtAdd3ImprovedSantaMariasStoveTops "Add 3 of the improved Santa Marias to Stove Top's production queue."
+505 idtReadMessageGotoSeaSquared "Read your next message and Goto Sea Squared."
+506 idtSeaSquaredHasBuiltManyFactoriesMines " Sea Squared has built as many factories and mines as you can operate."
+507 idtAddMaxTerraformAutoBuild2End " Add 'Max Terraform (Auto Build) Up To 2%' to the END of the production queue."
+508 idtRead2MessagesChangeFieldResearchConstruction "Read your next 2 messages and change your 'Next field to research' to Construction."
+509 idtReadRestMessages4 "Read the rest of your messages"
+510 idtAnd5 " and"
+511 idtGenerateWhenReady11 " generate when ready."
+
+@range 8 Page 65
+512 idtReadFirstThreeMessages "Read your first three messages"
+513 idtGoto3NewSantaMarias " and Goto your 3 new Santa Marias."
+514 idtLoadThemColonistsSendThemColonizeLever " Load them with colonists and send them to colonize Lever."
+515 idtHitSplitButtonFleetCompositionTile2 "Hit the Split All button in the Fleet Composition tile."
+516 idtDragSantaMaria10sWaypointSpeedBump " Drag Santa Maria #10's waypoint to Speed Bump"
+517 idtSantaMaria11sBloop " and Santa Maria #11's to Bloop."
+518 idtReadRestMessages5 "Read the rest of your messages."
+519 idt0519Blank " "
+
+@range 8 Page 66
+520 idtTeamster12WillArriveStoveTopYear "Teamster #12 will arrive at Stove Top next year."
+521 idtAdd3TeamstersStoveTopsQueue " Add 3 Teamsters to Stove Top's queue"
+522 idtAugmentOurTroopLiftEffort " to augment our troop lift effort."
+523 idtClickEnemyShipNearWallaby "Click on the enemy ship near Wallaby."
+524 idtBerserkersTryingColonizeVacancyFolksNeverLearn " The Berserkers are trying to colonize No Vacancy again.  Some folks never learn."
+525 idtSelectStalwartDefender5DragDestinationEnemy " Select Stalwart Defender #5 and drag its destination to the enemy colonizer."
+526 idtYearWellHaveDesignNewDestroyerGo "Next year we'll have to design a new destroyer to go after the source of those colonizers."
+527 idtGenerateWhenYoureReady "Generate when you're ready."
+
+@range 8 Page 67
+528 idtReadFirstMessageGotoStalwartDefender52 "Read your first message and Goto Stalwart Defender #5."
+529 idtOnceWeveWoundedFinishedOffColonizer " Once again we've wounded, but not finished off the colonizer."
+530 idtRightClickBlueDiamondFleetWaypointsTile2 "Right-click the blue diamond in the Fleet Waypoints tile and select Berserker Santa Maria #6."
+531 idtTellsDestroyerFollowDestroyEnemyColonizer " This tells your destroyer to follow and destroy the enemy colonizer."
+532 idtReadMessageGotoArmedProbe92 "Read your next message and Goto Armed Probe #9."
+533 idtWellLeaveFleetHereGuardLeverSince " We'll leave the fleet here to guard Lever since it's such a great world."
+534 idtReadMessageGotoNewFleet "Read your next message, Goto your new fleet"
+535 idtFillColonists " and fill it with colonists."
+
+@range 8 Page 68
+536 idtWeWantMergeNewTeamstersOtherFleet "We want to merge the new Teamsters into your other fleet hauling colonists to Wallaby."
+537 idtSelectTeamster12PressMergeButtonFleet " Select Teamster #12, press the Merge button in the Fleet Composition tile and merge it with Teamster #13."
+538 idtReadMessage6 "Read your next message."
+539 idtWellDealStoveTopAfterWeFinish " We'll deal with Stove Top after we finish reading all our messages."
+540 idtReadRestMessagesViewingBattleColonizerIf "Read the rest of your messages, viewing the battle with the colonizer if you wish."
+541 idtPromisedLastYearLetsDesignDestroyerTake "As promised last year, let's design a destroyer to take out the Berserker starbase at Hacker."
+542 idtHitF4OpenShipDesigner3 "Hit F4 to open the Ship Designer."
+543 idt0543Blank " "
+
+@range 8 Page 69
+544 idtWeWantPowerfulWeAlsoWantWeigh "We want it to be powerful, but we also want it to weigh at most 100kT so it can use our 100kT stargates, once we build them."
+545 idtSelectAvailableHullTypesChooseDestroyerDropdown "Select Available Hull Types, choose Destroyer from the dropdown and hit Copy Selected Design."
+546 idtAddRadiatingHydroRamScoop2Carbonic "Add a Radiating Hydro-Ram Scoop, 2 Carbonic armors and 3 Yakimora Light Phasers."
+547 idtAddFuelTankMechanicalSlotBattleComputer " Add a fuel tank to the Mechanical slot and a Battle Computer to the Electrical slot."
+548 idtTotalMassDesign97kt " The total mass of this design is 97kT."
+549 idtClickRightArrowButtonBelowShipImage " Click the right arrow button below the ship image, OK the design and close the dialog."
+550 idtPut10DestroyersStoveTopsQueue "Put 10 Destroyers in Stove Top's queue"
+551 idtGenerate2 " and generate."
+
+@range 8 Page 70
+552 idtReadFirstMessageGotoStalwartDefender53 "Read your first message and Goto Stalwart Defender #5."
+553 idtOnce " Once again,"
+554 idtSendWallaby " send it to Wallaby."
+555 idtRead4MessagesGotoNewDestroyerArmada "Read the next 4 messages and Goto your new Destroyer armada."
+556 idtSendWreakHavocBerserkerStarbaseHacker "Send it to wreak havoc at the Berserker Starbase at Hacker."
+557 idtReadRestMessages6 "Read the rest of your messages"
+558 idtAnd6 " and"
+559 idtGenerateTurn " generate the next turn."
+
+@range 8 Page 71
+560 idtReadFirstMessageGotoTeamster43 "Read your first message and Goto Teamster #4."
+561 idtWeNeedSlowFleetLegStoveTop " We need to slow the fleet down for its leg to Stove Top as we can't keep up with the minerals being mined at Prune."
+562 idtClickStoveTopFleetWaypointsTileDecrease "Click on Stove Top in the Fleet Waypoints tile and decrease the speed in the Warp Gauge to 5."
+563 idtOurReturnTripWillTakeExtraYear " Our return trip will only take an extra year."
+564 idtRead4Messages "Read the next 4 messages."
+565 idtSendNewDestroyerHackerWell " Send your new Destroyer to Hacker as well."
+566 idtAvoidRepeatWorkSendingEveryNewFleet " To avoid the repeat work of sending every new fleet to Hacker, let's set up a Route."
+567 idtSelectStoveTopControlClickHacker " Select Stove Top, then Control-Click on Hacker."
+
+@range 8 Page 72
+568 idtNoticeProductionTileNewShipsWillRouted "Notice in the Production tile that new ships will now be routed to Hacker."
+569 idtRead3Messages "Read the next 3 messages."
+570 idtOpenResearchDialogSetFieldResearchEnergy " Open the Research dialog and set the Next field to research to Energy."
+571 idtReadRestMessages7 "Read the rest of your messages"
+572 idtGotoTeamster7 " and Goto Teamster #7."
+573 idtDoesntHaveEnoughFuelGetBackStove " It doesn't have enough fuel to get back to Stove Top, so we may as well make use of its components."
+574 idtGiveTeamster7OrdersScrapFleet " Give Teamster #7 orders to Scrap Fleet."
+575 idt0575Blank " "
+
+@range 8 Page 73
+576 idtLetsFinishOffBerserkersOnceBuildingBombing "Let's finish off the Berserkers once and for all by building a bombing fleet."
+577 idtHitF4OpenShipDesigner4 "Hit F4 to open the Ship Designer."
+578 idtSelectAvailableHullTypesChooseB17 " Select Available Hull Types, choose B-17 Bomber from the dropdown and hit Copy Selected Design."
+579 idtAddRadiatingHydroRamScoopEngines " Add Radiating Hydro-Ram Scoop engines,"
+580 idtHoldShiftKeyDrag4BlackCat " hold down the shift key and drag 4 Black Cat Bombs to each of the bomb slots. Add a Fuel Tank to the remaining slot."
+581 idtOkDesignCloseShipDesigner " OK the design and close the ship designer."
+582 idtAdd10B17BombersStoveTops "Add 10 B-17 Bombers to Stove Top's production queue."
+583 idtGenerateWhenReady12 "Generate when ready."
+
+@range 8 Page 74
+584 idtCongratulationsYouveDeclaredWinner "Congratulations! You've been declared the winner."
+585 idtTutorialWillContinueFewYearsGiveAdditional " The tutorial will continue for a few more years to give you some additional pointers, then you're on your own to finish mopping up."
+586 idtReadFirst3MessagesGotoNewB "Read your first 3 messages and Goto your new B-17s."
+587 idtNoticeTheyveAlreadyRoutedHacker " Notice that they've already been routed to Hacker."
+588 idtReadRestMessages8 "Read the rest of your messages."
+589 idtEverythingElseAutomated " Everything else is automated."
+590 idtGenerateWhenYoureReady2 "Generate when you're ready."
+591 idt0591Blank " "
+
+@range 8 Page 75
+592 idtReadFirst4MessagesGotoWallaby "Read your first 4 messages and Goto Wallaby."
+593 idtTerraformingEffortHasFinallyPaidOffWed " Your terraforming effort has finally paid off. We'd like to build a starbase here, but don't have enough minerals."
+594 idtAdd100MinesWallabysQueue "Add 100 mines to the Wallaby's queue."
+595 idtControlClickAddButtonAdd100Item " (Control-Click on the Add button to add 100 of an item.)"
+596 idtReadRestMessages9 "Read the rest of your messages."
+597 idtThereIsntAnythingPressingDoYearOur " There isn't anything pressing to do.  Next year our armada should arrive at Hacker."
+598 idtGenerateWill2 "Generate at will."
+599 idt0599Blank " "
+
+@range 8 Page 76
+600 idtReadFirst3MessagesGotoDestroyer13 "Read your first 3 messages and Goto Destroyer #13."
+601 idtNotice9DestroyersShownRedBarAbout " Notice that your 9 Destroyers are shown with a red bar about half way across their text in the Fleet Composition tile. This means the ships are damaged."
+602 idtClickDestroyerFleetCompositionTile " Click on the Destroyer in the Fleet Composition tile."
+603 idtIfRunningLeast800x600ModeWillSee " If you are running in at least 800x600 mode you will see that your ships are 51% damaged."
+604 idtRead8MessagesViewAssaultEnemyStarbase "Read the next 8 messages and view your assault on the enemy starbase."
+605 idtWellBerserkersShouldntBuildingAnyColonizersNotic " Well, the Berserkers shouldn't be building any more colonizers... Notice the Berserker colonizer that escaped our trap heading for No Vacancy."
+606 idtReadRestMessagesGenerate "Read the rest of your messages and generate."
+607 idt0607Blank " "
+
+@range 8 Page 77
+608 idtReadFirst6MessagesGotoStoveTop "Read your first 6 messages and Goto Stove Top."
+609 idtAddAnother10B17BombersProduction "Add another 10 B-17 Bombers to the production queue."
+610 idtHoldingPatternWaitingOurBombersArriveHacker "We're in a holding pattern waiting for our bombers to arrive at Hacker."
+611 idtReadRestMessagesWatchBattles "Read the rest of your messages and watch the battles."
+612 idtGenerateWhenReady13 "Generate when ready."
+613 idt0613Blank " "
+614 idt0614Blank " "
+615 idt0615Blank " "
+
+@range 8 Page 78
+616 idtNothingMuchHappeningYearViewBattleHacker "Nothing much happening this year. View your battle at Hacker and you will see your destroyers aren't fast enough to get in range of the Berserker mine layers."
+617 idtWillHaveDesignFasterShipUsingFaster "You will have to design a faster ship by using faster engines or by including Maneuvering Jets in the design."
+618 idtFirstBombersArriveYear "The first of your bombers arrive next year."
+619 idtReadMessagesGenerateWhenReady "Read all your messages and generate when ready."
+620 idt0620Blank " "
+621 idt0621Blank " "
+622 idt0622Blank " "
+623 idt0623Blank " "
+
+@range 8 Page 79
+624 idtReadThroughMessages "Read through your messages."
+625 idtN2B17BombersKilledFewEnemy " Your 2 B-17 Bombers killed a few of the enemy, but haven't managed to make much of a dent."
+626 idtNewArrivalsSeveralYearsShouldMakeDifference " Your new arrivals over the next several years should make a difference."
+627 idtThereNumberThingsWeCouldDoOur "There are a number of things we could do to our planets, but we're so close to eradicating the Berserkers it isn't worth the time."
+628 idtGenerateWhenReady14 "Generate when ready."
+629 idt0629Blank " "
+630 idt0630Blank " "
+631 idt0631Blank " "
+
+@range 8 Page 80
+632 idtCongratulationsHaveReachedEndTutorial "Congratulations! You have reached the end of the tutorial."
+633 idtHitF10ViewScoreNoticeBerserkersHave "Hit F10 to view the score. Notice that the Berserkers have 3 planets and 3 ships."
+634 idtNeedFinishBombingBerserkerPlanetsBuildShip "You need to finish bombing the Berserker planets and build a ship capable of destroying those pesky Berserker Saguaros."
+635 idtWillTrulyRuleGalaxy "Only then will you truly rule the galaxy."
+636 idtReadMessages3 "Read all your messages,"
+637 idtWhenGenerateYoureOwn " then when you Generate, you're on your own!"
+638 idt0638Blank " "
+639 idt0639Blank " "

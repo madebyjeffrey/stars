@@ -22,89 +22,6 @@ PLANET **vrglpplAi = 0;
 PLANET  *lpPlanets = 0;
 PLAYER   rgplr[16] = {0};
 PLAYER   vplr = {0};
-PLAYER   vrgplrDef[7] = {{
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 1,
-                             .rgEnvVar = {50, 50, 50},
-                             .rgEnvVarMin = {15, 15, 15},
-                             .rgEnvVarMax = {85, 85, 85},
-                             .pctIdealGrowth = 15,
-                             .pctResearch = 15,
-                             .rgAttr = {10, 10, 10, 10, 10, 5, 10, 0, 1, 1, 1, 1, 1, 1, 9},
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 12,
-                             .rgEnvVar = {33, 58, 33},
-                             .rgEnvVarMin = {10, 35, 13},
-                             .rgEnvVarMax = {56, 81, 53},
-                             .pctIdealGrowth = 20,
-                             .pctResearch = 15,
-                             .rgAttr = {10, 10, 9, 17, 10, 9, 10, 4, 0, 0, 2, 1, 1, 2, 7},
-                             .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceCheapEngines | grbitRaceNoAdvScanner | grbitRaceCheapFact,
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 4,
-                             .rgEnvVar = {envImmune, 50, 85},
-                             .rgEnvVarMin = {envImmune, 0, 70},
-                             .rgEnvVarMax = {envImmune, 100, 100},
-                             .pctIdealGrowth = 10,
-                             .pctResearch = 15,
-                             .rgAttr = {10, 10, 10, 10, 9, 10, 6, 1, 2, 2, 2, 2, 1, 0, 2},
-                             .grbitAttr = grbitRaceISB | grbitRaceCheapEngines | grbitRaceRegeneratingShields,
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 25,
-                             .rgEnvVar = {envImmune, 50, 50},
-                             .rgEnvVarMin = {envImmune, 12},
-                             .rgEnvVarMax = {envImmune, 88, 100},
-                             .pctIdealGrowth = 10,
-                             .pctResearch = 15,
-                             .rgAttr = {9, 10, 10, 10, 10, 15, 5, 3, 0, 0, 0, 0, 0, 0, 1},
-                             .grbitAttr = grbitRaceARM | grbitRaceISB | grbitRaceTech3,
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 5,
-                             .rgEnvVar = {envImmune, envImmune, envImmune},
-                             .rgEnvVarMin = {envImmune, envImmune, envImmune},
-                             .rgEnvVarMax = {envImmune, envImmune, envImmune},
-                             .pctIdealGrowth = 6,
-                             .pctResearch = 15,
-                             .rgAttr = {8, 12, 12, 15, 10, 9, 10, 3, 1, 1, 2, 2, 1},
-                             .grbitAttr = grbitRaceIFE | grbitRaceUltimateRecycling | grbitRaceOBRM | grbitRaceBleedingEdgeTech,
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 18,
-                             .rgEnvVar = {15, 50, 85},
-                             .rgEnvVarMin = {0, 0, 70},
-                             .rgEnvVarMax = {30, 100, 100},
-                             .pctIdealGrowth = 7,
-                             .pctResearch = 15,
-                             .rgAttr = {7, 11, 10, 18, 10, 10, 10, 0, 2, 0, 2, 2, 2, 2, 5},
-                             .grbitAttr = grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceNoRamscoops | grbitRaceCheapEngines | grbitRaceNoAdvScanner,
-                       },
-                         {
-                             .iPlayer = iplrNone,
-                             .det = detAll,
-                             .iPlrBmp = 31,
-                             .rgEnvVar = {50, 50, 50},
-                             .rgEnvVarMin = {17, 17, 17},
-                             .rgEnvVarMax = {83, 83, 83},
-                             .pctIdealGrowth = 15,
-                             .pctResearch = 15,
-                             .rgAttr = {10, 10, 10, 10, 10, 3, 10, 0, 1, 1, 1, 1, 1, 1},
-                             .grbitAttr = grbitRaceAIPlayer,
-                       }};
 PLPROD  *lpplProdGlob = 0;
 POINT16  rgptPlan[999] = {0};
 PROD    *pProdGlob = 0;
@@ -268,8 +185,6 @@ uint8_t   rgTechTrader[13] = {0};
 uint8_t   rgcbtlplan[16] = {0};
 uint8_t   vrgAiArmadaPotency[4] = {0};
 uint8_t   vrgAiCyberArmadaPotency[4] = {0};
-uint8_t   vrgcAiParts[45] = {1, 1, 4, 4, 6, 3, 4, 3, 4, 6, 7, 1, 4, 5, 2, 4, 1, 2, 3, 2, 4, 2, 3,
-                             4, 2, 1, 7, 3, 1, 1, 4, 1, 1, 1, 4, 4, 8, 2, 5, 2, 1, 5, 1, 2, 3};
 uint8_t   vrgplrTypeNew[16] = {0};
 int16_t   rgOut[16] = {0};
 char     *lpchBatch = 0;

@@ -464,7 +464,7 @@ INT_PTR CALLBACK ScoreXDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
         for (i = 0; i < 8; i++) {
             strcpy(&szWork[i * 40], szT);
             psz = &szWork[i * 40 + cchHistory];
-            cch = CchGetString(i + 435, psz);
+            cch = CchGetString(idsPlanets + i, psz);
             psz[cch - 1] = 0;
             rgid[c] = (uint32_t)(gd.iCurGraph == i);
             rgszScan[c++] = &szWork[i * 40];
@@ -546,7 +546,7 @@ void InitScoreDlg(HWND hwnd, int16_t fVictory) {
     SetWindowPos(GetDlgItem(hwnd, IDC_SCORE_SWITCH), NULL, dx, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     SetWindowPos(GetDlgItem(hwnd, IDCANCEL), NULL, dx * 2 + (rc.right - rc.left), rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     SetWindowPos(GetDlgItem(hwnd, IDC_HELP), NULL, 3 * dx + (rc.right - rc.left) * 2, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-    SetWindowText(hwnd, PszGetCompressedString(fVictory + 1210));
+    SetWindowText(hwnd, PszGetCompressedString(idsPlayerScores + fVictory));
     return;
 }
 
@@ -841,7 +841,7 @@ void DrawHistoryReport(HDC hdc) {
     rc.bottom = rc.top + dyArial10;
     cch = CchGetString(idsHistory, szT);
     psz = &szT[cch];
-    cch = CchGetString(gd.iCurGraph + 435, psz);
+    cch = CchGetString(idsPlanets + gd.iCurGraph, psz);
     psz[cch - 1] = 0;
     SelectObject(hdc, rghfontArial10[1]);
     SetTextColor(hdc, crButtonText);
@@ -1015,7 +1015,7 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
         *psz = 0;
         return 0;
     case rptPlanets:
-        cch = CchGetString(iCol + 1113, psz);
+        cch = CchGetString(idsPlanetName + iCol, psz);
         dx = LOWORD(GetTextExtent(hdc, psz, cch));
         if ((uint16_t)iCol > colPlanetRoutingDest)
             break;
@@ -1062,7 +1062,7 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
         }
         break;
     case rptFleets:
-        cch = CchGetString(iCol + 1138, psz);
+        cch = CchGetString(idsFleetName + iCol, psz);
         dx = LOWORD(GetTextExtent(hdc, psz, cch));
         if ((uint16_t)iCol > colFleetMass)
             break;
@@ -1098,7 +1098,7 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
         }
         break;
     case rptEnemyFleets:
-        cch = CchGetString(iCol + 1150, psz);
+        cch = CchGetString(idsFleetName2 + iCol, psz);
         dx = LOWORD(GetTextExtent(hdc, psz, cch));
         switch (iCol) {
         case colEnemyFleetLocation:
@@ -1113,7 +1113,7 @@ int16_t DxReportColHdr(ReportType irpt, int16_t iCol, char *psz, HDC hdc) {
         }
         break;
     case rptBattles:
-        cch = CchGetString(iCol + 1162, psz);
+        cch = CchGetString(idsLocation4 + iCol, psz);
         dx = LOWORD(GetTextExtent(hdc, psz, cch));
         if (iCol == colBattleLocation) {
             dx = dx * 2 + dx / 2;

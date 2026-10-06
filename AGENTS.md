@@ -77,6 +77,17 @@ When goals conflict, apply them in this order:
   which include `win.h`); when a game file needs one, add a `ui.h` call.
 - A file split for 2.9 keeps its game logic under its original name, and
   its window code moves to `<name>ui.c`.
+- The game's text (strings, messages, tutorial, planet names) is in
+  `text/*.txt`; `text/textgen.py` builds the ID enums (`textids.h`) and the
+  compressed tables from it at build time. IDs never move: delete a row
+  instead of renumbering, and cover rows reached by arithmetic from a named
+  row with `@range`.
+- Static game data (hulls, parts, starting designs, predefined and AI
+  races, default battle plans, AI design recipes, part preferences and
+  research orders) is in `data/**/*.yaml`; `data/datagen.py` builds its
+  enums (`dataids.h`) and `data_tables.c`. Saved ship designs store hull
+  and part numbers, so the parts files are append-only: never reorder or
+  remove an entry.
 - Files, the clock and formatting go through `native.c` (`HfOpenFile`,
   `DwTickCount`, `CchSprintf`, `LMulDiv`, `chDirSep`), never Win32 or
   `wsprintf` directly.

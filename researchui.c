@@ -30,7 +30,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         dxCurrent = LOWORD(GetTextExtent(hdc, szWork, c));
         dxResRadio = 0;
         for (i = 1073; i <= 1078; i++) {
-            c = CchGetString(i - 989, szWork);
+            c = CchGetString(idsEnergy + i - IDC_RESEARCH_ENERGY, szWork);
             dx = LOWORD(GetTextExtent(hdc, szWork, c));
             if (dx > dxResRadio) {
                 dxResRadio = dx;
@@ -48,7 +48,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         }
         hwndRad = GetDlgItem(hwnd, IDC_RESEARCH_NEXT_FIELD);
         for (i = 0; i <= 7; i++) {
-            psz = PszGetCompressedString(i + 83);
+            psz = PszGetCompressedString(idsSameField + i);
             SendMessage(hwndRad, CB_ADDSTRING, 0, (LPARAM)psz);
         }
         i = rgplr[idPlayer].iTechNext;
@@ -60,7 +60,7 @@ INT_PTR CALLBACK ResearchDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         SendMessage(hwndRad, CB_SETCURSEL, i, 0);
         dxResLeft = dxResRadio + dxCurrent + 40;
         dxResRight = 0;
-        for (i = 76; i <= 81; i++) {
+        for (i = idsResourcesNeededComplete; i <= idsYearsProjectedResearchBudget; i++) {
             c = CchGetString(i, szWork);
             dx = LOWORD(GetTextExtent(hdc, szWork, c));
             if (dx > dxResRight) {
@@ -340,7 +340,7 @@ DrawRightSide:
         c = CchGetString(idsCurrentlyResearching, szWork);
         TextOut(hdc, rc.left + 8, rc.top - (dyArial8 >> 1), szWork, c);
         rc.top += dyArial8;
-        CchGetString(iResTechNow + 84, szTemp);
+        CchGetString(idsEnergy + iResTechNow, szTemp);
         CchGetString(idsSTechLevelD, szTemp2);
         c = wsprintf(szWork, szTemp2, szTemp, rgplr[idPlayer].rgTech[iResTechNow] + 1);
         RightTextOut(hdc, xCtr, rc.top, szWork, c, 0);
@@ -513,9 +513,9 @@ int16_t FTrackResearchDlg(HWND hwnd, int16_t x, int16_t y, int16_t fkb) {
         if (yTopTechNote != -1 && y >= yTopTechNote && y < 3 * dyArial8 + yTopTechNote && x > dxResLeft) {
             if (GetRaceGrbit(&rgplr[idPlayer], ibitRaceGeneralizedResearch) != 0 &&
                 (y < (int16_t)(3 * dyArial8) / 2 + yTopTechNote || GetRaceGrbit(&rgplr[idPlayer], ibitRaceBleedingEdgeTech) == 0)) {
-                i = 324;
+                i = idsRaceTakesHolisticApproachResearchHalfResources;
             } else {
-                i = 332;
+                i = idsNewTechsInitiallyCostTwiceMuchBuild;
             }
             GlobalPD.psz = PszGetCompressedString(i);
             GlobalPD.dxOut = dxResRight;
@@ -595,7 +595,7 @@ INT_PTR CALLBACK BrowserDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         FLookupPart(&vpartBrowser);
         hwndBrowserChild = CreateWindow(szBrowser, NULL, WS_CHILD | WS_VISIBLE, 6, (int16_t)(3 * dyArial8) / 2 + 12, (dyArial8 <= 14 ? 0 : 40) + 344,
                                         dyArial10 + 72 + 12 * dyArial8 + 6, hwnd, NULL, hInst, NULL);
-        for (i = 1087; i < 1104; i++) {
+        for (i = idsAll; i <= idsTorpedoes; i++) {
             SendMessage(hwndDD, CB_ADDSTRING, 0, (LPARAM)PszGetCompressedString(i));
         }
         SendMessage(hwndDD, CB_SETCURSEL, 0, 0);
@@ -863,7 +863,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
         TextOut(hdc, 5, yCur, szWork, c);
         dxStr = 0;
         for (i = 0; i < 6; i++) {
-            c = CchGetString(i + 91, szWork);
+            c = CchGetString(idsEner + i, szWork);
             dxT = LOWORD(GetTextExtent(hdc, szWork, c));
             if (dxT > dxStr) {
                 dxStr = dxT;
@@ -876,7 +876,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             if (ppart->pcom->rgTech[i] > 0) {
                 yCur += dyArial8;
                 SetTextColor(hdc, ppart->pcom->rgTech[i] <= rgplr[idPlayer].rgTech[i] ? 0 : 127);
-                c = CchGetString(i + 91, szWork);
+                c = CchGetString(idsEner + i, szWork);
                 RightTextOut(hdc, dxStr, yCur, szWork, c, 0);
                 SetTextColor(hdc, 0);
                 c = wsprintf(szWork, PCTD, ppart->pcom->rgTech[i]);
@@ -1129,7 +1129,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
         case hstHull:
             ExpandRc(&rcData, -4, -4);
             xText = (int16_t)(rcData.right - rcData.left) / 2 + rcData.left;
-            idsT = 72;
+            idsT = idsFuelCapacity;
             switch (ppart->hs.iItem) {
             case ihuldefMiniColonyShip:
             case ihuldefMetaMorph:
@@ -1278,7 +1278,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             DxStreamTextOut(hdc, &xText, rcData.top, szWork, c, TRUE);
             if (ppart->hs.iItem == ishieldShadowShield) {
                 ids = idsArmorShieldRequiresPrimaryRacialTraitSuper;
-                idsT = 60;
+                idsT = idsShieldDecreasesRangeWhichEnemyShipsCan;
             LShieldDisp:
                 c = CchGetString(idsT, szWork);
                 rcData.top += dyArial8 + 4;
@@ -1286,11 +1286,11 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
                 break;
             } else if (ppart->hs.iItem == ishieldCrobySharmor) {
                 ids = idsShieldRequiresPrimaryRacialTraitInnerStrength;
-                idsT = 63;
+                idsT = idsShieldAlsoContainsArmorComponentWhichWill;
                 goto LShieldDisp;
             } else if (ppart->hs.iItem == ishieldLangstonShell) {
                 ids = idsOriginPartUnknown;
-                idsT = 64;
+                idsT = idsShieldAlsoProvides65dpArmor5Jamming;
                 goto LShieldDisp;
             }
             break;
@@ -1695,7 +1695,7 @@ void DisplayComponentInfo(HDC hdc, int16_t dx, int16_t dy, PART *ppart) {
             rcData.top += 5 * dyArial8;
             for (i = 4; i >= 0; i--) {
                 rcData.top -= dyArial8;
-                c = CchGetString(i + 726, szWork);
+                c = CchGetString(idsMinesLaidPerYear + i, szWork);
                 if (dxLabel == -1) {
                     dxLabel = LOWORD(GetTextExtent(hdc, szWork, c));
                 }

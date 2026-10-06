@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 extern int32_t vrgAiPacketDist[2];
-extern uint8_t vrgSBAip[85];
+extern uint8_t vrgSBAip[];
 extern uint8_t vrgSBMacAisb[6];
-extern AIPART  vrgAiParts[150];
+extern AIPART  vrgAiParts[];
 
 int16_t  FCreateAiShdef(int16_t ishdef, HulDef ihul, uint8_t *rgaip);
 int16_t  FGetAIPart(AiPartPreference aip, PART *ppart);
@@ -55,7 +55,7 @@ int16_t  FMoveToNearestStarbase(FLEET *lpfl, int16_t fBigOnes);
 void     MoveToNearestPlanetOrEnemy(FLEET *lpfl, int16_t dEnemyRange);
 void     EnsureAiStarbaseDesigns();
 void     EnsureMacintiStarbaseDesigns(uint8_t *rgSB);
-int16_t  FCreateAiStarbase(int16_t ishdef, int16_t iLevel, AiStarbaseRecipeOffset aisb, isbhull isb);
+int16_t  FCreateAiStarbase(int16_t ishdef, int16_t iLevel, AiStarbaseRecipe aisb, isbhull isb);
 int16_t  FAIFling(PLANET *lppl, int32_t *rgResAvail);
 int16_t  IshdefAiSBLatestOF();
 int16_t  IshdefAiSBLatest();

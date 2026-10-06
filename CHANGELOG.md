@@ -32,6 +32,15 @@ produce different results from a 2.6j host for the same turn.
   Windows 10's "scroll inactive windows" setting. A drop-down list the player
   only points at ignores the wheel, so it can't change an order by accident.
 
+### Changed
+
+- The game's text and static data are now built from source files rather
+  than checked-in C tables: the strings, messages, tutorial and planet names
+  from `text/*.txt`, and the hulls, parts, starting designs, predefined and
+  AI races, default battle plans and the AI's designs, part preferences and
+  research orders from `data/**/*.yaml`. Building needs Python 3 and PyYAML.
+  The text, data, turns and files are unchanged.
+
 ### Fixed
 
 - The scanner no longer leaves a band drawn out of place when it scrolls

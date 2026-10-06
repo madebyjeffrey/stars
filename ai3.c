@@ -1,287 +1,5 @@
 #include "common.h"
 
-MacintiRecipeOffset vrgMacIshAip[31] = {macOffsetDestroyerBeamA,
-                                        macOffsetDestroyerBeamB,
-                                        macOffsetDestroyerBeamC,
-                                        macOffsetDestroyerBeamD,
-                                        macOffsetDestroyerTorpedoShield,
-                                        macOffsetDestroyerTorpedoComputer,
-                                        macOffsetDestroyerMissileJammer,
-                                        macOffsetDestroyerMissileComputer,
-                                        macOffsetB52SmartThenNormal,
-                                        macOffsetB52RetroThenSmart,
-                                        macOffsetFrigateScoutMineLayer,
-                                        macOffsetBattleshipMissileBeam,
-                                        macOffsetBattleshipMissileTorpedoA,
-                                        macOffsetBattleshipMissileTorpedoB,
-                                        macOffsetBattleshipTorpedoBeam,
-                                        macOffsetBattleshipBeamA,
-                                        macOffsetBattleshipBeamB,
-                                        macOffsetBattleshipBeamC,
-                                        macOffsetBattleshipBeamD,
-                                        macOffsetBattleshipMcm,
-                                        macOffsetOrbitalConstructionColonizer,
-                                        macOffsetMaxiMiner,
-                                        macOffsetUltraMinerOrMiner,
-                                        macOffsetMiniMiner,
-                                        macOffsetFreighter,
-                                        macOffsetCruiserAntiMatterMcm,
-                                        macOffsetCruiserMissile,
-                                        macOffsetCruiserStreamingSapper,
-                                        macOffsetCruiserTorpedo,
-                                        macOffsetNubianMixedBeamsMcm,
-                                        macOffsetNubianMixedBeams};
-uint8_t             vrgMacAip[248] = {aiPartEnginePreferGalaxyScoop,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartSpecialCapacitorFuel,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferBlunderbuss,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartBattleComputer,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartBattleComputer,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartBattleComputer,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialThrustDeflectorFuel,
-                                      aiPartBattleComputer,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartBombHushThenNormal,
-                                      aiPartBombHushThenSmartThenNormalThenRetro,
-                                      aiPartBombHushThenSmartThenNormalThenRetro,
-                                      aiPartBombHushThenSmartThenNormalThenRetro,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartBombHushThenNormal,
-                                      aiPartBombHushThenRetroThenSmart,
-                                      aiPartBombHushThenRetroThenSmart,
-                                      aiPartBombHushThenRetroThenSmart,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartScannerPreferElephant,
-                                      aiPartStandardMineDispenser,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartBattleComputer,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartBattleComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartBattleComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartTorpedo,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartBattleComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartBattleComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartSapper,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartSapper,
-                                      aiPartSapper,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferBlunderbuss,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialCapacitorFuel,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartOrbitalConstructionModuleOnly,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartMiningSupportPreferMegaPolyShell,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartMiningSupportPreferMegaPolyShell,
-                                      aiPartMiningRobotUltraOrMidget,
-                                      aiPartMiningRobotUltraOrMidget,
-                                      aiPartMiningRobotUltraOrMidget,
-                                      aiPartMiningRobotUltraOrMidget,
-                                      aiPartEngineGalaxyScoopOrHydroRamScoop,
-                                      aiPartMiningSupportPreferMegaPolyShell,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartMiningRobotMaxiOrBetter,
-                                      aiPartEngineScoopOrFuelMizer,
-                                      aiPartCargoPod,
-                                      aiPartShieldPreferLangstonShell,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartShieldPreferLangstonShell,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartMissile,
-                                      aiPartMissile,
-                                      aiPartBattleComputer,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartSpecialPodThrustCloak,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartSapper,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartBattleComputer,
-                                      aiPartSpecialPodJammerDeflectorThrust,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartTorpedo,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartArmorPreferSuperlatanium,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartBeamPreferAntiMatterPulverizer,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartMultiContainedMunitionOnly,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartArmorPreferMegaPolyShell,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartBeamPreferBigMuthaCannon,
-                                      aiPartSapper,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartEnginePreferGalaxyScoop,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartShieldPreferCompletePhase,
-                                      aiPartSapper,
-                                      aiPartBeamPreferBlunderbuss,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartSpecialCapacitorJammerPodComputer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartSpecialJammerComputer,
-                                      aiPartBeamPreferStreamingPulverizer,
-                                      aiPartBeamPreferMultiContainedMunition,
-                                      aiPartBeamPreferAntiMatterPulverizer};
-uint8_t             vrgAiMacintiResOrder[8] = {aiResearchEnergy3,      aiResearchPropulsion2, aiResearchEnergy20,       aiResearchConstruction17,
-                                               aiResearchPropulsion20, aiResearchWeapons20,   aiResearchConstruction23, aiResearchWeapons23};
-
 void DoMacintiAiTurn(PROD *rgprod) {
     int16_t  iLatestCargo;
     int16_t  cColFleet;
@@ -348,7 +66,7 @@ void DoMacintiAiTurn(PROD *rgprod) {
 
     iAiLvl = rgplr[idPlayer].lvlAi;
     iPlanet = rgplr[idPlayer].idPlanetHome;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiMacintiResOrder, 8, NULL, 15);
+    iroCur = IroEnsureAi(vrgAiMacintiResOrder, cAiMacintiResOrder, NULL, 15);
     if (game.turn < 40 || (!rgshdef[7].fFree && rgshdef[7].hul.ihuldef == ihuldefColonyShip)) {
         fUsingTempColonizer = TRUE;
         if (FLookupPartX(&part, hstEngine, iengineGalaxyScoop) == mdPartAvailAvailable && rgshdef[7].cExist == 0) {
@@ -1010,30 +728,31 @@ void EnsureMacintiShdefs() {
         if (rgshdef[ish].fFree) {
             fAdvanced = rgplr[idPlayer].lvlAi >= lvlAiTough;
             if ((!fAdvanced || ish != 15 || rgplr[idPlayer].rgTech[3] >= 15) &&
-                !FCreateAiShdef(ish, 24 - (fAdvanced == 0), (uint8_t *)&vrgMacAip[vrgMacIshAip[fAdvanced + 0x15]]) && ish == 14) {
+                !FCreateAiShdef(ish, ihuldefUltraMiner - (fAdvanced == 0), (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeMaxiMiner + fAdvanced]]) && ish == 14) {
                 if (fAdvanced) {
-                    FCreateAiShdef(ish, ihuldefMiner, (uint8_t *)&vrgMacAip[vrgMacIshAip[22]]);
+                    FCreateAiShdef(ish, ihuldefMiner, (uint8_t *)&vrgMacAip[macRecipeUltraMinerOrMiner]);
                 } else {
-                    FCreateAiShdef(ish, ihuldefMiniMiner, (uint8_t *)&vrgMacAip[vrgMacIshAip[23]]);
+                    FCreateAiShdef(ish, ihuldefMiniMiner, (uint8_t *)&vrgMacAip[macRecipeMiniMiner]);
                 }
             }
         }
     }
     if (rgshdef[12].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[2] >= 6 &&
-        !FCreateAiShdef(12, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[30]])) {
-        for (i = 0; i < 5 && FCreateAiShdef(12, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4)]]) == 0; i++) {
+        !FCreateAiShdef(12, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeams])) {
+        for (i = 0; i < 5 && FCreateAiShdef(12, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeDestroyerBeamA + Random(4)]]) == 0; i++) {
         }
     }
     if (rgshdef[13].fFree && rgplr[idPlayer].rgTech[1] >= 10 && rgplr[idPlayer].rgTech[2] >= 9 &&
-        !FCreateAiShdef(13, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[30]])) {
-        for (i = 0; i < 5 && FCreateAiShdef(13, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + 4]]) == 0; i++) {
+        !FCreateAiShdef(13, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeams])) {
+        for (i = 0; i < 5 && FCreateAiShdef(13, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeDestroyerTorpedoShield + Random(4)]]) == 0;
+             i++) {
         }
     }
-    if (rgshdef[10].fFree && !FCreateAiShdef(10, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]])) {
-        FCreateAiShdef(10, ihuldefMediumFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]]);
+    if (rgshdef[10].fFree && !FCreateAiShdef(10, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter])) {
+        FCreateAiShdef(10, ihuldefMediumFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter]);
     }
     if (rgshdef[11].fFree) {
-        FCreateAiShdef(11, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]]);
+        FCreateAiShdef(11, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter]);
     }
     if (game.turn < 20 && !rgshdef[2].fFree && rgshdef[2].cExist == 0) {
         shdef = rgshdef[2];
@@ -1042,27 +761,28 @@ void EnsureMacintiShdefs() {
     }
     for (ish = 2; ish <= 4; ish++) {
         if (rgshdef[ish].fFree && (ish == 2 || (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 20)) {
-            for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefCruiser, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + 0x19]]) == 0; i++) {
+            for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefCruiser, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeCruiserAntiMatterMcm + Random(4)]]) == 0;
+                 i++) {
             }
         }
     }
     if (game.turn < 40 && rgshdef[7].fFree) {
-        FCreateAiShdef(7, ihuldefColonyShip, (uint8_t *)&vrgMacAip[vrgMacIshAip[20]]);
+        FCreateAiShdef(7, ihuldefColonyShip, (uint8_t *)&vrgMacAip[macRecipeOrbitalConstructionColonizer]);
     }
     if (FLookupPartX(&part, hstEngine, iengineGalaxyScoop) == mdPartAvailAvailable && !rgshdef[1].fFree && rgshdef[1].cExist == 0 &&
         rgshdef[1].hul.rghs[0].iItem != iengineGalaxyScoop) {
         shdef = rgshdef[1];
         shdef.fFree = TRUE;
         FChangeAiShdef(&shdef, 1);
-        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgMacAip[vrgMacIshAip[20]]);
+        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgMacAip[macRecipeOrbitalConstructionColonizer]);
     }
     for (ish = 5; ish <= 7; ish++) {
         if (rgshdef[ish].fFree && (ish == 5 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 20))) {
-            shBase = ish == 5 ? 11 : 15;
+            shBase = ish == 5 ? imacRecipeBattleshipMissileBeam : imacRecipeBattleshipBeamA;
             if (ish == 7) {
-                shBase = Random(2) == 0 ? 15 : 11;
+                shBase = Random(2) == 0 ? imacRecipeBattleshipBeamA : imacRecipeBattleshipMissileBeam;
             }
-            if (Random(3) == 0 || !FCreateAiShdef(ish, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[29]])) {
+            if (Random(3) == 0 || !FCreateAiShdef(ish, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeamsMcm])) {
                 for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + shBase]]) == 0; i++) {
                 }
             }
@@ -1071,8 +791,8 @@ void EnsureMacintiShdefs() {
     for (ish = 8; ish <= 9; ish++) {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[1] >= 14 &&
             ((ish == 8 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 15)) &&
-             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[vrgMacIshAip[19]]))) {
-            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgMacAip[vrgMacIshAip[ish == 8 ? 8 : 9]]);
+             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[macRecipeBattleshipMcm]))) {
+            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgMacAip[ish == 8 ? macRecipeB52SmartThenNormal : macRecipeB52RetroThenSmart]);
         }
     }
     if (rgshdef[0].hul.ihuldef != ihuldefFrigate && rgplr[idPlayer].lvlAi > lvlAiStandard && rgshdef[0].cExist == 0 && rgplr[idPlayer].rgTech[5] >= 4 &&
@@ -1080,7 +800,7 @@ void EnsureMacintiShdefs() {
         shdef = rgshdef[0];
         shdef.fFree = TRUE;
         FChangeAiShdef(&shdef, 0);
-        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgMacAip[vrgMacIshAip[10]]);
+        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgMacAip[macRecipeFrigateScoutMineLayer]);
     }
     return;
 }

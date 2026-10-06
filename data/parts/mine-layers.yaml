@@ -1,0 +1,94 @@
+# Mine layers: rgmines (MINES). data/datagen.py describes the format.
+# An entry's position is its imines value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iminesMineDispenser40
+  szName: "Mine Dispenser 40"
+  cMass: 25
+  resCost: 45
+  rgwtOreCost: [2, 10, 8]
+  ibmp: 128
+  grAbility: 4
+
+- name: iminesMineDispenser50
+  rgTech: [2, 0, 0, 0, 0, 4]
+  szName: "Mine Dispenser 50"
+  cMass: 30
+  resCost: 55
+  rgwtOreCost: [2, 12, 10]
+  ibmp: 129
+  grAbility: 5
+
+- name: iminesMineDispenser80
+  rgTech: [3, 0, 0, 0, 0, 7]
+  szName: "Mine Dispenser 80"
+  cMass: 30
+  resCost: 65
+  rgwtOreCost: [2, 14, 10]
+  ibmp: 130
+  grAbility: 8
+
+- name: iminesMineDispenser130
+  rgTech: [6, 0, 0, 0, 0, 12]
+  szName: "Mine Dispenser 130"
+  cMass: 30
+  resCost: 80
+  rgwtOreCost: [2, 18, 10]
+  ibmp: 131
+  grAbility: 13
+
+- name: iminesHeavyDispenser50
+  rgTech: [5, 0, 0, 0, 0, 3]
+  szName: "Heavy Dispenser 50"
+  cMass: 10
+  resCost: 50
+  rgwtOreCost: [2, 20, 5]
+  ibmp: 135
+  grAbility: 5
+
+- name: iminesHeavyDispenser110
+  rgTech: [9, 0, 0, 0, 0, 5]
+  szName: "Heavy Dispenser 110"
+  cMass: 15
+  resCost: 70
+  rgwtOreCost: [2, 30, 5]
+  ibmp: 136
+  grAbility: 11
+
+- name: iminesHeavyDispenser200
+  rgTech: [14, 0, 0, 0, 0, 7]
+  szName: "Heavy Dispenser 200"
+  cMass: 20
+  resCost: 90
+  rgwtOreCost: [2, 45, 5]
+  ibmp: 137
+  grAbility: 20
+
+- name: iminesSpeedTrap20
+  rgTech: [0, 0, 2, 0, 0, 2]
+  szName: "Speed Trap 20"
+  cMass: 100
+  resCost: 60
+  rgwtOreCost: [30, 0, 12]
+  ibmp: 132
+  grAbility: 2
+
+- name: iminesSpeedTrap30
+  rgTech: [0, 0, 3, 0, 0, 6]
+  szName: "Speed Trap 30"
+  cMass: 135
+  resCost: 72
+  rgwtOreCost: [32, 0, 14]
+  ibmp: 133
+  grAbility: 3
+
+- name: iminesSpeedTrap50
+  rgTech: [0, 0, 5, 0, 0, 11]
+  szName: "Speed Trap 50"
+  cMass: 140
+  resCost: 80
+  rgwtOreCost: [40, 0, 15]
+  ibmp: 134
+  grAbility: 5

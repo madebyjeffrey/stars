@@ -3,337 +3,6 @@
 int16_t vrgvcMax[10] = {16, 18, 4, 19, 28, 49, 29, 87, 7, 47};
 char    rgNG3Width[9][2] = {{-3}, {2, 1}, {5}, {-3}, {3}, {3}, {3}, {1}, {3}};
 uint8_t vrgWormholeMin[5] = {0, 1, 1, 3, 4};
-BTLPLAN rgbtlplanT[5] = {{
-                             .mdTactic = mdTacticMaxDamageRatio,
-                             .mdTarget1 = mdTargetArmedShips,
-                             .mdTarget2 = mdTargetAny,
-                             .iplrAttack = iplrAttackNeutralsEnemies,
-                             .szName = "Default",
-                         },
-                         {
-                             .iplan = 1,
-                             .mdTactic = mdTacticMaxDamageRatio,
-                             .mdTarget1 = mdTargetStarbase,
-                             .mdTarget2 = mdTargetArmedShips,
-                             .iplrAttack = iplrAttackNeutralsEnemies,
-                             .szName = "Kill Starbase",
-                         },
-                         {
-                             .iplan = 2,
-                             .mdTactic = mdTacticMaxNetDamage,
-                             .mdTarget1 = mdTargetArmedShips,
-                             .mdTarget2 = mdTargetBombersFreighters,
-                             .iplrAttack = iplrAttackNeutralsEnemies,
-                             .szName = "Max-Defense",
-                         },
-                         {
-                             .iplan = 3,
-                             .mdTactic = mdTacticDisengageIfChallenged,
-                             .mdTarget1 = mdTargetUnarmedShips,
-                             .iplrAttack = iplrAttackNeutralsEnemies,
-                             .szName = "Sniper",
-                         },
-                         {
-                             .iplan = 4,
-                             .mdTarget1 = mdTargetAny,
-                             .iplrAttack = iplrAttackNeutralsEnemies,
-                             .szName = "Chicken",
-                         }};
-PLAYER  vrgplrComp[6][4] = {
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {envImmune, envImmune, envImmune},
-          .rgEnvVarMin = {envImmune, envImmune, envImmune},
-          .rgEnvVarMax = {envImmune, envImmune, envImmune},
-          .pctIdealGrowth = 5,
-          .pctResearch = 15,
-          .rgAttr = {10, 12, 10, 16, 10, 5, 10, 0, 1, 1, 2, 1, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceMineralAlchemy | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceBleedingEdgeTech,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {envImmune, envImmune, envImmune},
-          .rgEnvVarMin = {envImmune, envImmune, envImmune},
-          .rgEnvVarMax = {envImmune, envImmune, envImmune},
-          .pctIdealGrowth = 6,
-          .pctResearch = 15,
-          .rgAttr = {9, 13, 9, 16, 10, 4, 11, 0, 1, 1, 2, 1, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceMineralAlchemy | grbitRaceCheapEngines | grbitRaceOBRM,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {envImmune, envImmune, envImmune},
-          .rgEnvVarMin = {envImmune, envImmune, envImmune},
-          .rgEnvVarMax = {envImmune, envImmune, envImmune},
-          .pctIdealGrowth = 6,
-          .pctResearch = 15,
-          .rgAttr = {8, 13, 9, 18, 10, 4, 12, 0, 1, 2, 2, 2, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {envImmune, envImmune, envImmune},
-          .rgEnvVarMin = {envImmune, envImmune, envImmune},
-          .rgEnvVarMax = {envImmune, envImmune, envImmune},
-          .pctIdealGrowth = 7,
-          .pctResearch = 15,
-          .rgAttr = {8, 13, 9, 16, 10, 4, 8, 0, 1, 2, 1, 2, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceCheapFact,
-     }},
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {58, 35, 65},
-          .rgEnvVarMin = {27, 7, 35},
-          .rgEnvVarMax = {89, 63, 95},
-          .pctIdealGrowth = 14,
-          .pctResearch = 15,
-          .rgAttr = {10, 9, 10, 9, 9, 5, 8, 0, 1, 0, 1, 1, 1, 0, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {62, 33, 61},
-          .rgEnvVarMin = {32, 6, 26},
-          .rgEnvVarMax = {92, 60, 96},
-          .pctIdealGrowth = 14,
-          .pctResearch = 15,
-          .rgAttr = {10, 10, 10, 10, 10, 5, 9, 0, 1, 1, 1, 1, 1, 1, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {63, 28, 62},
-          .rgEnvVarMin = {31, 4, 30},
-          .rgEnvVarMax = {95, 52, 94},
-          .pctIdealGrowth = 14,
-          .pctResearch = 15,
-          .rgAttr = {9, 11, 10, 10, 10, 5, 9, 0, 0, 1, 0, 1, 1, 1, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {62, 29, envImmune},
-          .rgEnvVarMin = {31, 5, envImmune},
-          .rgEnvVarMax = {93, 53, envImmune},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 15, 10, 25, 10, 5, 9, 0, 0, 0, 0, 0, 0, 0, 1},
-          .grbitAttr = grbitRaceIFE | grbitRaceARM | grbitRaceMineralAlchemy | grbitRaceRegeneratingShields | grbitRaceTech3 | grbitRaceCheapFact,
-     }},
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {35, 60, 38},
-          .rgEnvVarMin = {7, 26, 5},
-          .rgEnvVarMax = {63, 94, 71},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {9, 11, 10, 14, 11, 6, 14, 1, 0, 0, 0, 0, 0, 0, 4},
-          .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {35, 60, 38},
-          .rgEnvVarMin = {7, 26, 5},
-          .rgEnvVarMax = {63, 94, 71},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 13, 9, 14, 10, 6, 14, 1, 0, 0, 0, 0, 0, 0, 4},
-          .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 |
-                      grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {35, 60, 38},
-          .rgEnvVarMin = {7, 26, 5},
-          .rgEnvVarMax = {63, 94, 71},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 14, 9, 15, 14, 5, 15, 1, 0, 0, 0, 0, 0, 0, 4},
-          .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 | grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {35, envImmune, 50},
-          .rgEnvVarMin = {7, envImmune},
-          .rgEnvVarMax = {63, envImmune, 100},
-          .pctIdealGrowth = 16,
-          .pctResearch = 15,
-          .rgAttr = {8, 14, 9, 14, 14, 5, 14, 1, 0, 0, 0, 0, 0, 0, 4},
-          .grbitAttr = grbitRaceGeneralizedResearch | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 | grbitRaceCheapFact,
-     }},
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {32, 31, 31},
-          .rgEnvVarMax = {68, 69, 69},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {10, 10, 10, 10, 10, 5, 10, 1, 0, 0, 0, 0, 0, 2, 3},
-          .grbitAttr =
-             grbitRaceTT | grbitRaceCheapEngines | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {32, 31, 31},
-          .rgEnvVarMax = {68, 69, 69},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 12, 10, 12, 14, 5, 12, 1, 0, 0, 0, 0, 0, 2, 3},
-          .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {23, 24, 25},
-          .rgEnvVarMax = {77, 76, 75},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 12, 10, 12, 14, 5, 12, 1, 0, 0, 0, 0, 0, 2, 3},
-          .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {envImmune, 50, 50},
-          .rgEnvVarMin = {envImmune, 24, 25},
-          .rgEnvVarMax = {envImmune, 76, 75},
-          .pctIdealGrowth = 15,
-          .pctResearch = 15,
-          .rgAttr = {8, 15, 10, 15, 15, 5, 15, 1, 0, 0, 0, 0, 0, 2, 3},
-          .grbitAttr = grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceBleedingEdgeTech | grbitRaceTech3,
-     }},
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {22, 22, 22},
-          .rgEnvVarMax = {78, 78, 78},
-          .pctIdealGrowth = 12,
-          .pctResearch = 15,
-          .rgAttr = {10, 9, 18, 9, 9, 10, 8, 1, 1, 0, 0, 1, 0, 0, 6},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceOBRM | grbitRaceLowStartingPop | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {19, 19, 19},
-          .rgEnvVarMax = {81, 81, 81},
-          .pctIdealGrowth = 17,
-          .pctResearch = 15,
-          .rgAttr = {10, 10, 13, 19, 10, 10, 7, 1, 1, 0, 0, 1, 1, 1, 6},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {18, 18, 18},
-          .rgEnvVarMax = {82, 82, 82},
-          .pctIdealGrowth = 17,
-          .pctResearch = 15,
-          .rgAttr = {10, 14, 10, 20, 10, 10, 6, 1, 1, 1, 0, 1, 1, 2, 6},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 |
-                      grbitRaceCheapFact,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {17, 17, 17},
-          .rgEnvVarMax = {83, 83, 83},
-          .pctIdealGrowth = 19,
-          .pctResearch = 15,
-          .rgAttr = {10, 15, 9, 25, 10, 10, 5, 1, 2, 2, 0, 2, 1, 1, 6},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceMineralAlchemy | grbitRaceOBRM | grbitRaceNoAdvScanner | grbitRaceLowStartingPop | grbitRaceTech3 |
-                      grbitRaceCheapFact,
-     }},
-    {{
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {20, 20, 20},
-          .rgEnvVarMax = {80, 80, 80},
-          .pctIdealGrowth = 10,
-          .pctResearch = 15,
-          .rgAttr = {16, 10, 10, 10, 10, 5, 10, 0, 1, 1, 1, 1, 0, 1, 8},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceISB | grbitRaceGeneralizedResearch | grbitRaceCheapEngines,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {15, 15, 15},
-          .rgEnvVarMax = {85, 85, 85},
-          .pctIdealGrowth = 14,
-          .pctResearch = 15,
-          .rgAttr = {12, 10, 10, 10, 10, 5, 10, 0, 2, 1, 1, 1, 0, 1, 8},
-          .grbitAttr = grbitRaceIFE | grbitRaceTT | grbitRaceISB | grbitRaceGeneralizedResearch,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {15, 15, 15},
-          .rgEnvVarMax = {85, 85, 85},
-          .pctIdealGrowth = 17,
-          .pctResearch = 15,
-          .rgAttr = {10, 10, 10, 10, 10, 5, 10, 0, 2, 1, 1, 1, 1, 1, 8},
-          .grbitAttr =
-             grbitRaceIFE | grbitRaceTT | grbitRaceARM | grbitRaceISB | grbitRaceGeneralizedResearch | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy,
-     },
-      {
-          .iPlayer = iplrNone,
-          .det = detAll,
-          .lSalt = -1,
-          .rgEnvVar = {50, 50, 50},
-          .rgEnvVarMin = {15, 15, 15},
-          .rgEnvVarMax = {85, 85, 85},
-          .pctIdealGrowth = 20,
-          .pctResearch = 15,
-          .rgAttr = {10, 10, 10, 10, 10, 5, 10, 0, 2, 1, 1, 2, 1, 1, 8},
-          .grbitAttr =
-             grbitRaceIFE | grbitRaceTT | grbitRaceARM | grbitRaceISB | grbitRaceGeneralizedResearch | grbitRaceUltimateRecycling | grbitRaceMineralAlchemy,
-     }}};
 uint8_t vrgWormholeVar[5] = {3, 3, 5, 4, 5};
 
 void InitBattlePlan(BTLPLAN *lpbtlplan, int16_t iplan, int16_t iplr) {
@@ -494,10 +163,10 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     }
     memset(grUsed, 0, 128);
     for (i = 0; i < cPlanMax; i++) {
-        dx = Random(999);
+        dx = Random(cPlanetName);
         while (grUsed[dx >> 3] & bitTbl[dx & 7]) {
             dx++;
-            if (dx >= game.fTutorial + 999) {
+            if (dx >= game.fTutorial + cPlanetName) {
                 dx = 0;
             }
         }
@@ -758,7 +427,7 @@ RetryAll:
             rgplr[i].rgTech[2]++;
         }
         for (j = 0; j < 4; j++) {
-            FSendPlrMsg(i, j + 127, gotoNone, 0, 0, 0, 0, 0, 0, 0);
+            FSendPlrMsg(i, idmTipCanHideUnimportantMessagesClickingCheckmark + j, gotoNone, 0, 0, 0, 0, 0, 0, 0);
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
@@ -1329,7 +998,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
     StreamOpen(pszFile, mdRead);
     cb = LOWORD(CbFileSize(hf));
     if (cb >= 16000) {
-        FileError(idmMultitudeEnemiesHaveMountedProngAttackResulting);
+        FileError(idsUniverseCreationFileAppearsInvalid);
         goto LError;
     }
     lpbDef = LpAlloc(cb + 1, htPerm);
@@ -1579,7 +1248,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
             rgplr[i].fHacker = TRUE;
         }
         if (rgplr[i].szName[0] == 0) {
-            CchGetString(Random(24) + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + Random(24), rgplr[i].szName);
             CchSprintf(rgplr[i].szNames, "%ss", rgplr[i].szName);
         }
     }
@@ -1589,7 +1258,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
         if (j < i) {
             c = Random(24);
             while (1) {
-                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(c + 1390)) != 0; j++) {
+                for (j = 0; j < game.cPlayer && strcmp(rgplr[j].szName, PszGetCompressedString(idsBerserker + c)) != 0; j++) {
                 }
                 if (j == game.cPlayer)
                     break;
@@ -1598,7 +1267,7 @@ int16_t GenNewGameFromFile(char *pszFile) {
                     c = 0;
                 }
             }
-            CchGetString(c + 1390, rgplr[i].szName);
+            CchGetString(idsBerserker + c, rgplr[i].szName);
             strcpy(rgplr[i].szNames, rgplr[i].szName);
             strcat(rgplr[i].szNames, "s");
         }
@@ -1642,7 +1311,7 @@ LError:
     penvMem = 0;
     StreamClose();
     lpbDefUni = NULL;
-    TurnLog(fSuccess + 1380);
+    TurnLog(idsFailed + fSuccess);
     return fSuccess;
 }
 

@@ -25,7 +25,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(STARS_CORE_SOURCES
     ai.c ai2.c ai3.c ai4.c aiutil.c battle.c build.c create.c file.c globals.c
     log.c memory.c mine.c msg.c native.c parts.c planet.c produce.c race.c
-    report.c research.c save.c ship.c ship2.c strings.c strings_uncompressed.c
+    report.c research.c save.c ship.c ship2.c strings.c
     thing.c turn.c turn2.c turn3.c util.c utilgen.c
 )
 
@@ -93,6 +93,50 @@ add_custom_target(stars_version
 )
 add_dependencies(stars_core stars_version)
 
+# The game's text: text/textgen.py builds the ID enums (textids.h) and the
+# compressed string tables from the rows in text/*.txt.
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(STARS_TEXT_SOURCES text/strings.txt text/messages.txt text/tutorial.txt text/planets.txt)
+list(TRANSFORM STARS_TEXT_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(STARS_TEXT_OUTPUTS textids.h text_strings.c text_messages.c text_planets.c text_tutorial.c)
+list(TRANSFORM STARS_TEXT_OUTPUTS PREPEND "${STARS_GENERATED_DIR}/")
+add_custom_command(
+    OUTPUT ${STARS_TEXT_OUTPUTS}
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/text/textgen.py" "${STARS_GENERATED_DIR}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/text/textgen.py" ${STARS_TEXT_SOURCES}
+    COMMENT "Building the text tables"
+    VERBATIM
+)
+add_custom_target(stars_text DEPENDS ${STARS_TEXT_OUTPUTS})
+
+# The data tables: data/datagen.py builds dataids.h (the hull, part,
+# starting design and AI recipe enums) and data_tables.c (the parts, races,
+# default battle plans and AI recipes) from data/**/*.yaml. It needs PyYAML.
+execute_process(COMMAND "${Python3_EXECUTABLE}" -c "import yaml" RESULT_VARIABLE STARS_PYYAML_MISSING OUTPUT_QUIET ERROR_QUIET)
+if(STARS_PYYAML_MISSING)
+    message(FATAL_ERROR "The build needs PyYAML for ${Python3_EXECUTABLE}. Install it (python3 -m pip install pyyaml), "
+                        "or configure with -DPython3_EXECUTABLE=<a python that has it>.")
+endif()
+file(GLOB_RECURSE STARS_DATA_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/*.yaml")
+set(STARS_DATA_OUTPUTS "${STARS_GENERATED_DIR}/dataids.h" "${STARS_GENERATED_DIR}/data_tables.c")
+add_custom_command(
+    OUTPUT ${STARS_DATA_OUTPUTS}
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/data/datagen.py" "${STARS_GENERATED_DIR}"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/datagen.py" ${STARS_DATA_SOURCES}
+    COMMENT "Building the data tables"
+    VERBATIM
+)
+add_custom_target(stars_data DEPENDS ${STARS_DATA_OUTPUTS})
+
+# Everything that includes enums.h needs textids.h and dataids.h first.
+add_dependencies(stars_options stars_text stars_data)
+target_sources(stars_core PRIVATE
+    "${STARS_GENERATED_DIR}/text_strings.c"
+    "${STARS_GENERATED_DIR}/text_messages.c"
+    "${STARS_GENERATED_DIR}/text_planets.c"
+    "${STARS_GENERATED_DIR}/data_tables.c"
+)
+
 # The game's headers are found for #include "..." only (-iquote): strings.h
 # is the game's string table, and glibc's <string.h> includes the system
 # <strings.h>. The resource compiler takes them as include directories.
@@ -152,7 +196,7 @@ if(NOT WIN32)
     return()
 endif()
 
-add_library(stars_ui OBJECT ${STARS_UI_SOURCES})
+add_library(stars_ui OBJECT ${STARS_UI_SOURCES} "${STARS_GENERATED_DIR}/text_tutorial.c")
 target_link_libraries(stars_ui PUBLIC stars_options)
 target_link_libraries(stars_ui PUBLIC user32 gdi32 comdlg32)
 add_dependencies(stars_ui stars_version)

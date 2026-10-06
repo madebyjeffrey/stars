@@ -363,7 +363,7 @@ FreeStuffUp:
     if (fSuccess && ini.fGen) {
         vretExitValue = 1;
     }
-    TurnLog(fSuccess + 1380);
+    TurnLog(idsFailed + fSuccess);
     return fSuccess;
 }
 
@@ -453,10 +453,10 @@ void VerifyTurns() {
             }
         } else if (idsError != 0) {
             switch (idsError) {
-            case 29:
+            case idsFileGame:
                 rgOut[i] = 5;
                 break;
-            case 28:
+            case idsFileDate:
                 rgOut[i] = 4;
                 break;
             default:
@@ -529,10 +529,10 @@ int16_t CFindTurnsOutstanding() {
             rgOut[i] = 0;
         } else if (idsError != 0) {
             switch (idsError) {
-            case 29:
+            case idsFileGame:
                 rgOut[i] = 5;
                 break;
-            case 28:
+            case idsFileDate:
                 rgOut[i] = 4;
                 break;
             default:
@@ -766,7 +766,7 @@ int16_t FRunCmdLine() {
                 if (!gd.fNoHostNames) {
                     ich += CchSprintf(&szTemp[ich], "\"%s\" ", PszPlayerName(i, TRUE, TRUE, TRUE, 0, NULL));
                 }
-                strcat(szTemp, PszGetCompressedString(rgOut[i] + 716));
+                strcat(szTemp, PszGetCompressedString(idsTurned + rgOut[i]));
                 if (rgplr[i].fHacker) {
                     strcat(szTemp, " - HACKER");
                 }

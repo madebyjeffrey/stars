@@ -31,7 +31,7 @@ jobs:
       - name: Install build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends cmake ninja-build gcc-mingw-w64-x86-64
+          sudo apt-get install -y --no-install-recommends cmake ninja-build python3-yaml gcc-mingw-w64-x86-64
 
       - name: Build stars.exe and stage help
         run: |

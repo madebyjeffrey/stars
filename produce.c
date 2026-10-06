@@ -211,7 +211,7 @@ char *PszNameProdItem(PROD *lpprod) {
     } else if (iItem == iobjPlanetaryScanner) {
         CchGetString(idsPlanetaryScanner, szWork);
     } else {
-        CchGetString(LOWORD(iItem) + 126, szWork);
+        CchGetString(idsMines + LOWORD(iItem), szWork);
     }
     return szWork;
 }

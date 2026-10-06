@@ -210,7 +210,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
         rgptPlan[i].x = x;
         rgptPlan[i].y = sp.y;
         rgidPlan[i] = sp.id;
-        if (x >= dGal + 1000 || rgptPlan[i].y >= dGal + 1000 || rgidPlan[i] > 999)
+        if (x >= dGal + 1000 || rgptPlan[i].y >= dGal + 1000 || rgidPlan[i] > cPlanetName)
             goto XYCorrupt;
     }
     ReadRt();
@@ -802,7 +802,7 @@ LNextTurn:
             }
             i = CBattles();
             if (i > 0) {
-                FSendPlrMsg2XGen(TRUE, (i > 1) + 339, gotoBattleReport, i, 0);
+                FSendPlrMsg2XGen(TRUE, idmHaveReceivedOneBattleRecordingYear + (i > 1), gotoBattleReport, i, 0);
             }
         }
     }
@@ -1301,7 +1301,7 @@ void DestroyCurGame() {
     return;
 }
 
-void FileError(MessageId ids) {
+void FileError(StringId ids) {
     idsFileError = ids;
     if (!fFileErrSilent && !gd.fGeneratingTurn) {
         AlertSz(PszFormatIds(ids, NULL), MB_ICONHAND);
@@ -1347,10 +1347,12 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
     ReadRt();
     if (hdrCur.rt != rtBOF || ((RTBOF *)rgbCur)->verMajor != 2 || ((RTBOF *)rgbCur)->verMinor < 49 || ((RTBOF *)rgbCur)->verMinor >= 85) {
         if (hdrCur.rt == rtBOF) {
-            /* The original refused 2.84 but called it older (1235). */
-            FileError(((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 85) ? 714 : 1235);
+            /* The original refused 2.84 but reported it as an older version. */
+            FileError(((RTBOF *)rgbCur)->verMajor > 2 || (((RTBOF *)rgbCur)->verMajor == 2 && ((RTBOF *)rgbCur)->verMinor >= 85)
+                          ? idsFileCreatedNewerVersionStarsMustUpgrade
+                          : idsSorryFileCreatedOlderVersionStarsIncompatible);
         } else {
-            FileError(idmColonistsDroppedDestroyedSpiritedFighting);
+            FileError(idsFileDoesBelongVersionStars);
         }
     LBadFile:
         StreamClose();
@@ -1359,12 +1361,12 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
     }
     rtbof = *((RTBOF *)rgbCur);
     if (rtbof.iPlayer != iPlayer) {
-        FileError(idmGroundTroopsValiantlyDestroyedAttackingBarbarian);
+        FileError(idsGameFileAppearsCorruptUnableLoadFile);
         goto LBadFile;
     }
     if (game.lid != 0) {
         if (rtbof.lidGame != game.lid) {
-            FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
+            FileError(idsFileGame);
             goto LBadFile;
         }
         if (dt != dtHist) {
@@ -1381,7 +1383,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
                 game.wGen = rtbof.wGen;
             } else {
                 if (rtbof.turn != game.turn) {
-                    FileError(idmVigilantFleetsManagedDefeatSavageVerminWithout);
+                    FileError(idsFileDate);
                     goto LBadFile;
                 }
                 if (dt == dtHost && !gd.fHostMode && rtbof.fInUse) {
@@ -1393,7 +1395,7 @@ int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md) {
                         goto LBadFile;
                     }
                     if (dt == dtLog && !game.fTutorial && rtbof.wGen != game.wGen) {
-                        FileError(idmBraveForcesObliteratedVastlyGreaterForcesCowardl);
+                        FileError(idsFileGame);
                         goto LBadFile;
                     }
                 }
@@ -1543,7 +1545,7 @@ Retry:
             }
         }
         if (!fNoErr) {
-            FileError(idmPlanetaryDefensesGroundTroopsDestroyedInvadingTr);
+            FileError(idsCantOpenFile);
         }
         StarsLongJump(penvMem, -1);
     }
@@ -1563,7 +1565,7 @@ void RgFromStream(void *rg, uint16_t cb) {
             memcpy(rg, vlpMemStream, cb);
             vlpMemStream += cb;
         } else if (CbReadFile(hf, rg, cb) != cb) {
-            FileError(idmGroundTroopsValiantlyDestroyedAttackingBarbarian);
+            FileError(idsGameFileAppearsCorruptUnableLoadFile);
             StarsLongJump(penvMem, -1);
         }
     }

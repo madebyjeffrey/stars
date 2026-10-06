@@ -809,11 +809,11 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                     }
                     if (vrgtok[viVCRFocus].grobj != grobjPlanet) {
                         if (vbrcVCRFocus != 0xff) {
-                            i = vrgtok[viVCRFocus].mdTactic + 408;
+                            i = idsDisengage + vrgtok[viVCRFocus].mdTactic;
                         } else {
-                            i = 414;
+                            i = idsDisengage2;
                         }
-                        if (i == 408) {
+                        if (i == idsDisengage) {
                             CchGetString(idsTacticSDMoves, szT);
                             c = wsprintf(szWork, szT, PszGetCompressedString(i), vrgtok[viVCRFocus].dzDis);
                         } else {
@@ -823,14 +823,14 @@ void DrawVCR(HDC hdc, int16_t iStart, int16_t iEnd) {
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
                     }
-                    if (i != 414) {
+                    if (i != idsDisengage2) {
                         CchGetString(idsPrimayTargetS, szT);
-                        i = vrgtok[viVCRFocus].mdTarget1 + 400;
+                        i = idsNoneDisengage + vrgtok[viVCRFocus].mdTarget1;
                         c = wsprintf(szWork, szT, PszGetCompressedString(i));
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;
                         CchGetString(idsSecondaryTargetS, szT);
-                        i = vrgtok[viVCRFocus].mdTarget2 + 400;
+                        i = idsNoneDisengage + vrgtok[viVCRFocus].mdTarget2;
                         c = wsprintf(szWork, szT, PszGetCompressedString(i));
                         TextOut(hdc, x, y, szWork, c);
                         y += dyArial8;

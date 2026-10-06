@@ -428,7 +428,7 @@ int32_t CalcPlanetMaxPop(int16_t idpl, int16_t iplr) {
         if (pl.iPlayer != iplr || !pl.fStarbase) {
             return 0;
         }
-        ihuldef = rglpshdefSB[iplr][pl.isb].hul.ihuldef - 32;
+        ihuldef = rglpshdefSB[iplr][pl.isb].hul.ihuldef - ihuldefOrbitalFort;
         lMaxPop = rglPopMac[ihuldef];
     } else {
         pctDesire = PctPlanetDesirability(&pl, iplr);

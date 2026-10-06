@@ -1,0 +1,75 @@
+# Mining robots: rgmining (MINING). data/datagen.py describes the format.
+# An entry's position is its imining value, which saved ship designs store:
+# add new entries at the end; never reorder or remove one.
+# rgTech: tech levels needed, in the order Energy, Weapons, Propulsion, Construction,
+# Electronics, Biotechnology. rgwtOreCost: Ironium, Boranium, Germanium.
+
+- name: iminingRoboMidgetMiner
+  szName: "Robo-Midget Miner"
+  cMass: 80
+  resCost: 50
+  rgwtOreCost: [14, 0, 4]
+  ibmp: 138
+  grAbility: 5
+
+- name: iminingRoboMiniMiner
+  rgTech: [0, 0, 0, 2, 1]
+  szName: "Robo-Mini-Miner"
+  cMass: 240
+  resCost: 100
+  rgwtOreCost: [30, 0, 7]
+  ibmp: 139
+  grAbility: 4
+
+- name: iminingRoboMiner
+  rgTech: [0, 0, 0, 4, 2]
+  szName: "Robo-Miner"
+  cMass: 240
+  resCost: 100
+  rgwtOreCost: [30, 0, 7]
+  ibmp: 140
+  grAbility: 12
+
+- name: iminingRoboMaxiMiner
+  rgTech: [0, 0, 0, 7, 4]
+  szName: "Robo-Maxi-Miner"
+  cMass: 240
+  resCost: 100
+  rgwtOreCost: [30, 0, 7]
+  ibmp: 141
+  grAbility: 18
+
+- name: iminingRoboSuperMiner
+  rgTech: [0, 0, 0, 12, 6]
+  szName: "Robo-Super-Miner"
+  cMass: 240
+  resCost: 100
+  rgwtOreCost: [30, 0, 7]
+  ibmp: 142
+  grAbility: 27
+
+- name: iminingRoboUltraMiner
+  rgTech: [0, 0, 0, 15, 8]
+  szName: "Robo-Ultra-Miner"
+  cMass: 80
+  resCost: 50
+  rgwtOreCost: [14, 0, 4]
+  ibmp: 143
+  grAbility: 25
+
+- name: iminingAlienMiner
+  rgTech: [5, 0, 0, 10, 5, 5]
+  szName: "Alien Miner"
+  cMass: 20
+  resCost: 20
+  rgwtOreCost: [8, 0, 2]
+  ibmp: 181
+  grAbility: 10
+
+- name: iminingOrbitalAdjuster
+  rgTech: [0, 0, 0, 0, 0, 6]
+  szName: "Orbital Adjuster"
+  cMass: 80
+  resCost: 50
+  rgwtOreCost: [25, 25, 25]
+  ibmp: 173

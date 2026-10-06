@@ -1,0 +1,194 @@
+# The predefined races: vrgplrDef (PLAYER). data/datagen.py describes the
+# format. Their names are the strings from idsHumanoid on, in this order.
+# rgEnvVar, rgEnvVarMin and rgEnvVarMax: gravity, temperature, radiation
+# (envImmune for an immune race). rgAttr is indexed by RaceStat; rsMajorAdv
+# is the primary racial trait, a RaceAttribute. grbitAttr lists the lesser
+# racial traits.
+
+# Humanoid (idsHumanoid); also the defaults for a new race
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 1
+  rgEnvVar: [50, 50, 50]
+  rgEnvVarMin: [15, 15, 15]
+  rgEnvVarMax: [85, 85, 85]
+  pctIdealGrowth: 15
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 10
+    rsFactProd: 10
+    rsFactBuild: 10
+    rsFactOperate: 10
+    rsMineProd: 10
+    rsMineBuild: 5
+    rsMineOperate: 10
+    rsUseLeftover: 0
+    rsTechBonus1: 1
+    rsTechBonus2: 1
+    rsTechBonus3: 1
+    rsTechBonus4: 1
+    rsTechBonus5: 1
+    rsTechBonus6: 1
+    rsMajorAdv: raNone
+
+# Rabbitoid
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 12
+  rgEnvVar: [33, 58, 33]
+  rgEnvVarMin: [10, 35, 13]
+  rgEnvVarMax: [56, 81, 53]
+  pctIdealGrowth: 20
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 10
+    rsFactProd: 10
+    rsFactBuild: 9
+    rsFactOperate: 17
+    rsMineProd: 10
+    rsMineBuild: 9
+    rsMineOperate: 10
+    rsUseLeftover: 4
+    rsTechBonus1: 0
+    rsTechBonus2: 0
+    rsTechBonus3: 2
+    rsTechBonus4: 1
+    rsTechBonus5: 1
+    rsTechBonus6: 2
+    rsMajorAdv: raStargate
+  grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceCheapEngines, grbitRaceNoAdvScanner, grbitRaceCheapFact]
+
+# Insectoid
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 4
+  rgEnvVar: [envImmune, 50, 85]
+  rgEnvVarMin: [envImmune, 0, 70]
+  rgEnvVarMax: [envImmune, 100, 100]
+  pctIdealGrowth: 10
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 10
+    rsFactProd: 10
+    rsFactBuild: 10
+    rsFactOperate: 10
+    rsMineProd: 9
+    rsMineBuild: 10
+    rsMineOperate: 6
+    rsUseLeftover: 1
+    rsTechBonus1: 2
+    rsTechBonus2: 2
+    rsTechBonus3: 2
+    rsTechBonus4: 2
+    rsTechBonus5: 1
+    rsTechBonus6: 0
+    rsMajorAdv: raAttack
+  grbitAttr: [grbitRaceISB, grbitRaceCheapEngines, grbitRaceRegeneratingShields]
+
+# Nucleotid
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 25
+  rgEnvVar: [envImmune, 50, 50]
+  rgEnvVarMin: [envImmune, 12]
+  rgEnvVarMax: [envImmune, 88, 100]
+  pctIdealGrowth: 10
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 9
+    rsFactProd: 10
+    rsFactBuild: 10
+    rsFactOperate: 10
+    rsMineProd: 10
+    rsMineBuild: 15
+    rsMineOperate: 5
+    rsUseLeftover: 3
+    rsTechBonus1: 0
+    rsTechBonus2: 0
+    rsTechBonus3: 0
+    rsTechBonus4: 0
+    rsTechBonus5: 0
+    rsTechBonus6: 0
+    rsMajorAdv: raStealth
+  grbitAttr: [grbitRaceARM, grbitRaceISB, grbitRaceTech3]
+
+# Silicanoid
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 5
+  rgEnvVar: [envImmune, envImmune, envImmune]
+  rgEnvVarMin: [envImmune, envImmune, envImmune]
+  rgEnvVarMax: [envImmune, envImmune, envImmune]
+  pctIdealGrowth: 6
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 8
+    rsFactProd: 12
+    rsFactBuild: 12
+    rsFactOperate: 15
+    rsMineProd: 10
+    rsMineBuild: 9
+    rsMineOperate: 10
+    rsUseLeftover: 3
+    rsTechBonus1: 1
+    rsTechBonus2: 1
+    rsTechBonus3: 2
+    rsTechBonus4: 2
+    rsTechBonus5: 1
+    rsTechBonus6: 0
+    rsMajorAdv: raCheapCol
+  grbitAttr: [grbitRaceIFE, grbitRaceUltimateRecycling, grbitRaceOBRM, grbitRaceBleedingEdgeTech]
+
+# Antetheral
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 18
+  rgEnvVar: [15, 50, 85]
+  rgEnvVarMin: [0, 0, 70]
+  rgEnvVarMax: [30, 100, 100]
+  pctIdealGrowth: 7
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 7
+    rsFactProd: 11
+    rsFactBuild: 10
+    rsFactOperate: 18
+    rsMineProd: 10
+    rsMineBuild: 10
+    rsMineOperate: 10
+    rsUseLeftover: 0
+    rsTechBonus1: 2
+    rsTechBonus2: 0
+    rsTechBonus3: 2
+    rsTechBonus4: 2
+    rsTechBonus5: 2
+    rsTechBonus6: 2
+    rsMajorAdv: raMines
+  grbitAttr: [grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceNoRamscoops, grbitRaceCheapEngines, grbitRaceNoAdvScanner]
+
+# Random
+- iPlayer: iplrNone
+  det: detAll
+  iPlrBmp: 31
+  rgEnvVar: [50, 50, 50]
+  rgEnvVarMin: [17, 17, 17]
+  rgEnvVarMax: [83, 83, 83]
+  pctIdealGrowth: 15
+  pctResearch: 15
+  rgAttr:
+    rsResGen: 10
+    rsFactProd: 10
+    rsFactBuild: 10
+    rsFactOperate: 10
+    rsMineProd: 10
+    rsMineBuild: 3
+    rsMineOperate: 10
+    rsUseLeftover: 0
+    rsTechBonus1: 1
+    rsTechBonus2: 1
+    rsTechBonus3: 1
+    rsTechBonus4: 1
+    rsTechBonus5: 1
+    rsTechBonus6: 1
+    rsMajorAdv: raCheapCol
+  grbitAttr: [grbitRaceAIPlayer]

@@ -1,0 +1,649 @@
+# The AI races: vrgplrComp (PLAYER), one list per AiRace (idAiRobotoid ...
+# idAiMacinti), each with an entry per AiLevel (lvlAiEasy ... lvlAiExpert).
+# data/datagen.py describes the format.
+# rgEnvVar, rgEnvVarMin and rgEnvVarMax: gravity, temperature, radiation
+# (envImmune for an immune race). rgAttr is indexed by RaceStat; rsMajorAdv
+# is the primary racial trait, a RaceAttribute. grbitAttr lists the lesser
+# racial traits.
+
+# Robotoid
+-
+  # Robotoid, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [envImmune, envImmune, envImmune]
+    rgEnvVarMin: [envImmune, envImmune, envImmune]
+    rgEnvVarMax: [envImmune, envImmune, envImmune]
+    pctIdealGrowth: 5
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 12
+      rsFactBuild: 10
+      rsFactOperate: 16
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 1
+      rsTechBonus3: 2
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 0
+      rsMajorAdv: raCheapCol
+    grbitAttr: [grbitRaceIFE, grbitRaceMineralAlchemy, grbitRaceCheapEngines, grbitRaceOBRM, grbitRaceBleedingEdgeTech]
+  # Robotoid, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [envImmune, envImmune, envImmune]
+    rgEnvVarMin: [envImmune, envImmune, envImmune]
+    rgEnvVarMax: [envImmune, envImmune, envImmune]
+    pctIdealGrowth: 6
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 9
+      rsFactProd: 13
+      rsFactBuild: 9
+      rsFactOperate: 16
+      rsMineProd: 10
+      rsMineBuild: 4
+      rsMineOperate: 11
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 1
+      rsTechBonus3: 2
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 0
+      rsMajorAdv: raCheapCol
+    grbitAttr: [grbitRaceIFE, grbitRaceMineralAlchemy, grbitRaceCheapEngines, grbitRaceOBRM]
+  # Robotoid, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [envImmune, envImmune, envImmune]
+    rgEnvVarMin: [envImmune, envImmune, envImmune]
+    rgEnvVarMax: [envImmune, envImmune, envImmune]
+    pctIdealGrowth: 6
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 13
+      rsFactBuild: 9
+      rsFactOperate: 18
+      rsMineProd: 10
+      rsMineBuild: 4
+      rsMineOperate: 12
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 2
+      rsTechBonus3: 2
+      rsTechBonus4: 2
+      rsTechBonus5: 1
+      rsTechBonus6: 0
+      rsMajorAdv: raCheapCol
+    grbitAttr: [grbitRaceIFE, grbitRaceUltimateRecycling, grbitRaceMineralAlchemy, grbitRaceOBRM, grbitRaceCheapFact]
+  # Robotoid, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [envImmune, envImmune, envImmune]
+    rgEnvVarMin: [envImmune, envImmune, envImmune]
+    rgEnvVarMax: [envImmune, envImmune, envImmune]
+    pctIdealGrowth: 7
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 13
+      rsFactBuild: 9
+      rsFactOperate: 16
+      rsMineProd: 10
+      rsMineBuild: 4
+      rsMineOperate: 8
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 2
+      rsTechBonus3: 1
+      rsTechBonus4: 2
+      rsTechBonus5: 1
+      rsTechBonus6: 0
+      rsMajorAdv: raCheapCol
+    grbitAttr: [grbitRaceIFE, grbitRaceUltimateRecycling, grbitRaceMineralAlchemy, grbitRaceOBRM, grbitRaceCheapFact]
+
+# Turindrone
+-
+  # Turindrone, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [58, 35, 65]
+    rgEnvVarMin: [27, 7, 35]
+    rgEnvVarMax: [89, 63, 95]
+    pctIdealGrowth: 14
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 9
+      rsFactBuild: 10
+      rsFactOperate: 9
+      rsMineProd: 9
+      rsMineBuild: 5
+      rsMineOperate: 8
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 0
+      rsTechBonus3: 1
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 0
+      rsMajorAdv: raStealth
+    grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields]
+  # Turindrone, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [62, 33, 61]
+    rgEnvVarMin: [32, 6, 26]
+    rgEnvVarMax: [92, 60, 96]
+    pctIdealGrowth: 14
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 9
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 1
+      rsTechBonus3: 1
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raStealth
+    grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields, grbitRaceCheapFact]
+  # Turindrone, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [63, 28, 62]
+    rgEnvVarMin: [31, 4, 30]
+    rgEnvVarMax: [95, 52, 94]
+    pctIdealGrowth: 14
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 9
+      rsFactProd: 11
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 9
+      rsUseLeftover: 0
+      rsTechBonus1: 0
+      rsTechBonus2: 1
+      rsTechBonus3: 0
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raStealth
+    grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields, grbitRaceCheapFact]
+  # Turindrone, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [62, 29, envImmune]
+    rgEnvVarMin: [31, 5, envImmune]
+    rgEnvVarMax: [93, 53, envImmune]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 15
+      rsFactBuild: 10
+      rsFactOperate: 25
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 9
+      rsUseLeftover: 0
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raStealth
+    grbitAttr: [grbitRaceIFE, grbitRaceARM, grbitRaceMineralAlchemy, grbitRaceRegeneratingShields, grbitRaceTech3, grbitRaceCheapFact]
+
+# Automitron
+-
+  # Automitron, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [35, 60, 38]
+    rgEnvVarMin: [7, 26, 5]
+    rgEnvVarMax: [63, 94, 71]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 9
+      rsFactProd: 11
+      rsFactBuild: 10
+      rsFactOperate: 14
+      rsMineProd: 11
+      rsMineBuild: 6
+      rsMineOperate: 14
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raDefend
+    grbitAttr: [grbitRaceGeneralizedResearch, grbitRaceCheapEngines, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3]
+  # Automitron, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [35, 60, 38]
+    rgEnvVarMin: [7, 26, 5]
+    rgEnvVarMax: [63, 94, 71]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 13
+      rsFactBuild: 9
+      rsFactOperate: 14
+      rsMineProd: 10
+      rsMineBuild: 6
+      rsMineOperate: 14
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raDefend
+    grbitAttr: [grbitRaceGeneralizedResearch, grbitRaceCheapEngines, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3, grbitRaceCheapFact]
+  # Automitron, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [35, 60, 38]
+    rgEnvVarMin: [7, 26, 5]
+    rgEnvVarMax: [63, 94, 71]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 14
+      rsFactBuild: 9
+      rsFactOperate: 15
+      rsMineProd: 14
+      rsMineBuild: 5
+      rsMineOperate: 15
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raDefend
+    grbitAttr: [grbitRaceGeneralizedResearch, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3, grbitRaceCheapFact]
+  # Automitron, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [35, envImmune, 50]
+    rgEnvVarMin: [7, envImmune]
+    rgEnvVarMax: [63, envImmune, 100]
+    pctIdealGrowth: 16
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 14
+      rsFactBuild: 9
+      rsFactOperate: 14
+      rsMineProd: 14
+      rsMineBuild: 5
+      rsMineOperate: 14
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raDefend
+    grbitAttr: [grbitRaceGeneralizedResearch, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3, grbitRaceCheapFact]
+
+# Rototill
+-
+  # Rototill, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [32, 31, 31]
+    rgEnvVarMax: [68, 69, 69]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 2
+      rsMajorAdv: raTerra
+    grbitAttr: [grbitRaceTT, grbitRaceCheapEngines, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceBleedingEdgeTech, grbitRaceTech3]
+  # Rototill, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [32, 31, 31]
+    rgEnvVarMax: [68, 69, 69]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 12
+      rsFactBuild: 10
+      rsFactOperate: 12
+      rsMineProd: 14
+      rsMineBuild: 5
+      rsMineOperate: 12
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 2
+      rsMajorAdv: raTerra
+    grbitAttr: [grbitRaceTT, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceBleedingEdgeTech, grbitRaceTech3]
+  # Rototill, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [23, 24, 25]
+    rgEnvVarMax: [77, 76, 75]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 12
+      rsFactBuild: 10
+      rsFactOperate: 12
+      rsMineProd: 14
+      rsMineBuild: 5
+      rsMineOperate: 12
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 2
+      rsMajorAdv: raTerra
+    grbitAttr: [grbitRaceTT, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceBleedingEdgeTech, grbitRaceTech3]
+  # Rototill, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [envImmune, 50, 50]
+    rgEnvVarMin: [envImmune, 24, 25]
+    rgEnvVarMax: [envImmune, 76, 75]
+    pctIdealGrowth: 15
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 8
+      rsFactProd: 15
+      rsFactBuild: 10
+      rsFactOperate: 15
+      rsMineProd: 15
+      rsMineBuild: 5
+      rsMineOperate: 15
+      rsUseLeftover: 1
+      rsTechBonus1: 0
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 0
+      rsTechBonus5: 0
+      rsTechBonus6: 2
+      rsMajorAdv: raTerra
+    grbitAttr: [grbitRaceTT, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceBleedingEdgeTech, grbitRaceTech3]
+
+# Cybertron
+-
+  # Cybertron, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [22, 22, 22]
+    rgEnvVarMax: [78, 78, 78]
+    pctIdealGrowth: 12
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 9
+      rsFactBuild: 18
+      rsFactOperate: 9
+      rsMineProd: 9
+      rsMineBuild: 10
+      rsMineOperate: 8
+      rsUseLeftover: 1
+      rsTechBonus1: 1
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 1
+      rsTechBonus5: 0
+      rsTechBonus6: 0
+      rsMajorAdv: raMassAccel
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceOBRM, grbitRaceLowStartingPop, grbitRaceTech3]
+  # Cybertron, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [19, 19, 19]
+    rgEnvVarMax: [81, 81, 81]
+    pctIdealGrowth: 17
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 10
+      rsFactBuild: 13
+      rsFactOperate: 19
+      rsMineProd: 10
+      rsMineBuild: 10
+      rsMineOperate: 7
+      rsUseLeftover: 1
+      rsTechBonus1: 1
+      rsTechBonus2: 0
+      rsTechBonus3: 0
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raMassAccel
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3]
+  # Cybertron, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [18, 18, 18]
+    rgEnvVarMax: [82, 82, 82]
+    pctIdealGrowth: 17
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 14
+      rsFactBuild: 10
+      rsFactOperate: 20
+      rsMineProd: 10
+      rsMineBuild: 10
+      rsMineOperate: 6
+      rsUseLeftover: 1
+      rsTechBonus1: 1
+      rsTechBonus2: 1
+      rsTechBonus3: 0
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 2
+      rsMajorAdv: raMassAccel
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceMineralAlchemy, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3, grbitRaceCheapFact]
+  # Cybertron, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [17, 17, 17]
+    rgEnvVarMax: [83, 83, 83]
+    pctIdealGrowth: 19
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 15
+      rsFactBuild: 9
+      rsFactOperate: 25
+      rsMineProd: 10
+      rsMineBuild: 10
+      rsMineOperate: 5
+      rsUseLeftover: 1
+      rsTechBonus1: 2
+      rsTechBonus2: 2
+      rsTechBonus3: 0
+      rsTechBonus4: 2
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raMassAccel
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceMineralAlchemy, grbitRaceOBRM, grbitRaceNoAdvScanner, grbitRaceLowStartingPop, grbitRaceTech3, grbitRaceCheapFact]
+
+# Macinti
+-
+  # Macinti, Easy
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [20, 20, 20]
+    rgEnvVarMax: [80, 80, 80]
+    pctIdealGrowth: 10
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 16
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 0
+      rsTechBonus1: 1
+      rsTechBonus2: 1
+      rsTechBonus3: 1
+      rsTechBonus4: 1
+      rsTechBonus5: 0
+      rsTechBonus6: 1
+      rsMajorAdv: raMacintosh
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceISB, grbitRaceGeneralizedResearch, grbitRaceCheapEngines]
+  # Macinti, Standard
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [15, 15, 15]
+    rgEnvVarMax: [85, 85, 85]
+    pctIdealGrowth: 14
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 12
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 0
+      rsTechBonus1: 2
+      rsTechBonus2: 1
+      rsTechBonus3: 1
+      rsTechBonus4: 1
+      rsTechBonus5: 0
+      rsTechBonus6: 1
+      rsMajorAdv: raMacintosh
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceISB, grbitRaceGeneralizedResearch]
+  # Macinti, Tough
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [15, 15, 15]
+    rgEnvVarMax: [85, 85, 85]
+    pctIdealGrowth: 17
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 0
+      rsTechBonus1: 2
+      rsTechBonus2: 1
+      rsTechBonus3: 1
+      rsTechBonus4: 1
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raMacintosh
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceARM, grbitRaceISB, grbitRaceGeneralizedResearch, grbitRaceUltimateRecycling, grbitRaceMineralAlchemy]
+  # Macinti, Expert
+  - iPlayer: iplrNone
+    det: detAll
+    lSalt: -1
+    rgEnvVar: [50, 50, 50]
+    rgEnvVarMin: [15, 15, 15]
+    rgEnvVarMax: [85, 85, 85]
+    pctIdealGrowth: 20
+    pctResearch: 15
+    rgAttr:
+      rsResGen: 10
+      rsFactProd: 10
+      rsFactBuild: 10
+      rsFactOperate: 10
+      rsMineProd: 10
+      rsMineBuild: 5
+      rsMineOperate: 10
+      rsUseLeftover: 0
+      rsTechBonus1: 2
+      rsTechBonus2: 1
+      rsTechBonus3: 1
+      rsTechBonus4: 2
+      rsTechBonus5: 1
+      rsTechBonus6: 1
+      rsMajorAdv: raMacintosh
+    grbitAttr: [grbitRaceIFE, grbitRaceTT, grbitRaceARM, grbitRaceISB, grbitRaceGeneralizedResearch, grbitRaceUltimateRecycling, grbitRaceMineralAlchemy]

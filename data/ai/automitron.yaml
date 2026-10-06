@@ -1,0 +1,195 @@
+# Automitron ship designs: vrgISAip, read by DoAutomitronAiTurn. data/datagen.py
+# describes the format. Each recipe gives an AiPartPreference per slot of
+# its hull; its name becomes a ISRecipe, the recipe's offset
+# in vrgISAip. Code picks recipes by position through vrgISIshAip, so
+# keep the order; recipes without a hull are unused.
+
+- name: isRecipeColonizingMediumFreighter
+  hull: ihuldefMediumFreighter
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartColonyPreferOrbitalConstruction
+    - aiPartShieldPreferCompletePhase
+
+- name: isRecipeScoutStreamingBeam
+  hull: ihuldefScout
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartScannerPreferElephant
+    - aiPartBeamPreferStreamingPulverizer
+
+- name: isRecipeUnusedThreeSlotAntiMatterBeam
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartScannerPreferElephant
+    - aiPartBeamPreferAntiMatterPulverizer
+
+- name: isRecipeUnusedThreeSlotMcmBeam
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartScannerPreferElephant
+    - aiPartBeamPreferMultiContainedMunition
+
+- name: isRecipeDestroyerTorpedo
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartSpecialPodThrustCloak
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: isRecipeUnusedSevenSlotMissile
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: isRecipeUnusedSevenSlotBeamA
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSapper
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartArmorPreferSuperlatanium
+
+- name: isRecipeUnusedSevenSlotTorpedo
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartSpecialPodThrustCloak
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+
+- name: isRecipeUnusedSevenSlotBeamB
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSapper
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartArmorPreferMegaPolyShell
+
+- name: isRecipeUnusedSevenSlotMissileB
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartSpecialPodThrustCloak
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+
+- name: isRecipeBattleshipBeamA
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferBlunderbuss
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSapper
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: isRecipeBattleshipTorpedo
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+
+- name: isRecipeBattleshipBeamB
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferBigMuthaCannon
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartSapper
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: isRecipeBattleshipMissile
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+
+- name: isRecipeMediumFreighter
+  hull: ihuldefMediumFreighter
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartCargoPod
+    - aiPartShieldPreferCompletePhase
+
+- name: isRecipeB17Bomber
+  hull: ihuldefB17Bomber
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartSpecialPodJammerDeflectorThrust
+
+- name: isRecipeB52Bomber
+  hull: ihuldefB52Bomber
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+
+- name: isRecipePrivateerMineLayer
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEnginePreferTransStar
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartStandardMineDispenser
+    - aiPartSpeedTrapMineDispenser
+
+- name: isRecipeSuperFreighter
+  hull: ihuldefSuperFreighter
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartCargoPod
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialJammerComputer

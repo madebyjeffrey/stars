@@ -1,0 +1,450 @@
+# Cybertron ship designs: vrgCyberAip, read by DoCyberAiTurn. data/datagen.py
+# describes the format. Each recipe gives an AiPartPreference per slot of
+# its hull; its name becomes a CybertronRecipe, the recipe's offset
+# in vrgCyberAip. Code picks recipes by position through vrgCyberIshAip, so
+# keep the order; recipes without a hull are unused.
+
+- name: cyberRecipeDestroyerBeamThrust
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: cyberRecipeDestroyerBeamBlunderbuss
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferBlunderbuss
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: cyberRecipeDestroyerStreamingBeams
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerAntiMatterBeams
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialCapacitorFuel
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerMixedBeams
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: cyberRecipeDestroyerTorpedoThrust
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerTorpedoShield
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerTorpedoComputer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerMissileJammer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeDestroyerMissileComputer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: cyberRecipePrivateerBeam
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEngineScoopOrFuelMizer
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+
+- name: cyberRecipePrivateerTorpedo
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEngineScoopOrFuelMizer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+
+- name: cyberRecipeFrigateScoutMineLayer
+  hull: ihuldefFrigate
+  parts:
+    - aiPartEngineGalaxyScoopOrHydroRamScoop
+    - aiPartScannerPreferElephant
+    - aiPartStandardMineDispenser
+    - aiPartShieldPreferCompletePhase
+
+- name: cyberRecipeB52SmartThenNormal
+  hull: ihuldefB52Bomber
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+
+- name: cyberRecipeB52RetroThenSmart
+  hull: ihuldefB52Bomber
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+
+- name: cyberRecipeBattleshipMcm
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorFuel
+    - aiPartShieldPreferCompletePhase
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeNubianMcm
+  hull: ihuldefNubian
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+
+- name: cyberRecipeCruiserStreamingBeams
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartSpecialPodThrustCloak
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserMixedBeamsA
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserMixedBeamsB
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserTorpedo
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserTorpedoThrust
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserTorpedoShield
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserMissileComputer
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserMissileTorpedo
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartTorpedo
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeCruiserMissileShield
+  hull: ihuldefCruiser
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialJammerComputer
+    - aiPartBattleComputer
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+
+- name: cyberRecipeBattleshipMixedBeamsThrust
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: cyberRecipeBattleshipMixedBeamsCapacitor
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: cyberRecipeBattleshipTorpedoBeam
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartShieldPreferCompletePhase
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBattleComputer
+
+- name: cyberRecipeBattleshipMissileTorpedoThrust
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+
+- name: cyberRecipeBattleshipMissileTorpedoComputer
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+
+- name: cyberRecipeBattleshipMissileBeam
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+
+- name: cyberRecipeBattleshipMissile
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+
+- name: cyberRecipeNubianMissileBeam
+  hull: ihuldefNubian
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeNubianMissile
+  hull: ihuldefNubian
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartSpecialJammerComputer
+    - aiPartSpecialJammerComputer
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSpecialJammerComputer
+
+- name: cyberRecipeNubianBeam
+  hull: ihuldefNubian
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialJammerComputer
+    - aiPartSpecialJammerComputer
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartSpecialJammerComputer

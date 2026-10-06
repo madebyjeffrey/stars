@@ -13,7 +13,7 @@ int16_t FReadFleet(FLEET *lpfl);
 void    UnpackBattlePlan(uint8_t *lpb, BTLPLAN *lpbtlplan, int16_t iplan);
 void    UpdateBattleRecords();
 void    DestroyCurGame();
-void    FileError(MessageId ids);
+void    FileError(StringId ids);
 void    GetFileStatus(int16_t dt, int16_t iPlayer);
 int16_t FOpenFile(DtFileType dt, int16_t iPlayer, int16_t md);
 int16_t FNewTurnAvail(int16_t idPlayer);
