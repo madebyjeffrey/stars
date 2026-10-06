@@ -20,7 +20,7 @@ extern PLANET  **vrglpplAi;
 extern PLANET   *lpPlanets;
 extern PLAYER    rgplr[16];
 extern PLAYER    vplr;
-extern PLAYER    vrgplrDef[7];
+extern PLAYER    vrgplrDef[];
 extern PLPROD   *lpplProdGlob;
 extern POINT16   rgptPlan[999];
 extern PROD     *pProdGlob;

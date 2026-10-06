@@ -1,0 +1,29 @@
+# The default battle plans: rgbtlplanT (BTLPLAN), which each player starts
+# with. data/datagen.py describes the format.
+
+- mdTactic: mdTacticMaxDamageRatio
+  mdTarget1: mdTargetArmedShips
+  mdTarget2: mdTargetAny
+  iplrAttack: iplrAttackNeutralsEnemies
+  szName: "Default"
+
+- mdTactic: mdTacticMaxDamageRatio
+  mdTarget1: mdTargetStarbase
+  mdTarget2: mdTargetArmedShips
+  iplrAttack: iplrAttackNeutralsEnemies
+  szName: "Kill Starbase"
+
+- mdTactic: mdTacticMaxNetDamage
+  mdTarget1: mdTargetArmedShips
+  mdTarget2: mdTargetBombersFreighters
+  iplrAttack: iplrAttackNeutralsEnemies
+  szName: "Max-Defense"
+
+- mdTactic: mdTacticDisengageIfChallenged
+  mdTarget1: mdTargetUnarmedShips
+  iplrAttack: iplrAttackNeutralsEnemies
+  szName: "Sniper"
+
+- mdTarget1: mdTargetAny
+  iplrAttack: iplrAttackNeutralsEnemies
+  szName: "Chicken"

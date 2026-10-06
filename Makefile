@@ -88,7 +88,7 @@ run-wine:
 fmt:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)
 
-# Direct compiles need the generated version.h, text and parts tables that
+# Direct compiles need the generated version.h, text and data tables that
 # CMake builds normally make.
 VERSION_DIR := $(abspath $(DIST_DIR))/generated
 text-header:

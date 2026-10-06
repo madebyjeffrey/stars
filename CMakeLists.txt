@@ -109,21 +109,21 @@ add_custom_command(
 )
 add_custom_target(stars_text DEPENDS ${STARS_TEXT_OUTPUTS})
 
-# The parts tables: data/datagen.py builds partids.h (the hull, part and
-# starting design enums) and parts_tables.c from data/parts/*.yaml. It needs
-# PyYAML.
+# The data tables: data/datagen.py builds partids.h (the hull, part and
+# starting design enums) and data_tables.c (the parts, races and default
+# battle plans) from data/**/*.yaml. It needs PyYAML.
 execute_process(COMMAND "${Python3_EXECUTABLE}" -c "import yaml" RESULT_VARIABLE STARS_PYYAML_MISSING OUTPUT_QUIET ERROR_QUIET)
 if(STARS_PYYAML_MISSING)
     message(FATAL_ERROR "The build needs PyYAML for ${Python3_EXECUTABLE}. Install it (python3 -m pip install pyyaml), "
                         "or configure with -DPython3_EXECUTABLE=<a python that has it>.")
 endif()
-file(GLOB STARS_DATA_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/parts/*.yaml")
-set(STARS_DATA_OUTPUTS "${STARS_GENERATED_DIR}/partids.h" "${STARS_GENERATED_DIR}/parts_tables.c")
+file(GLOB_RECURSE STARS_DATA_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/*.yaml")
+set(STARS_DATA_OUTPUTS "${STARS_GENERATED_DIR}/partids.h" "${STARS_GENERATED_DIR}/data_tables.c")
 add_custom_command(
     OUTPUT ${STARS_DATA_OUTPUTS}
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/data/datagen.py" "${STARS_GENERATED_DIR}"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/datagen.py" ${STARS_DATA_SOURCES}
-    COMMENT "Building the parts tables"
+    COMMENT "Building the data tables"
     VERBATIM
 )
 add_custom_target(stars_data DEPENDS ${STARS_DATA_OUTPUTS})
@@ -134,7 +134,7 @@ target_sources(stars_core PRIVATE
     "${STARS_GENERATED_DIR}/text_strings.c"
     "${STARS_GENERATED_DIR}/text_messages.c"
     "${STARS_GENERATED_DIR}/text_planets.c"
-    "${STARS_GENERATED_DIR}/parts_tables.c"
+    "${STARS_GENERATED_DIR}/data_tables.c"
 )
 
 # The game's headers are found for #include "..." only (-iquote): strings.h

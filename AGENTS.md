@@ -82,10 +82,11 @@ When goals conflict, apply them in this order:
   compressed tables from it at build time. IDs never move: delete a row
   instead of renumbering, and cover rows reached by arithmetic from a named
   row with `@range`.
-- The parts tables (hulls, parts, starting designs) are in
-  `data/parts/*.yaml`; `data/datagen.py` builds their enums (`partids.h`)
-  and `parts_tables.c`. Saved ship designs store hull and part numbers, so
-  entries are append-only: never reorder or remove one.
+- Static game data (hulls, parts, starting designs, predefined and AI
+  races, default battle plans) is in `data/**/*.yaml`; `data/datagen.py`
+  builds the part enums (`partids.h`) and `data_tables.c`. Saved ship
+  designs store hull and part numbers, so the parts files are append-only:
+  never reorder or remove an entry.
 - Files, the clock and formatting go through `native.c` (`HfOpenFile`,
   `DwTickCount`, `CchSprintf`, `LMulDiv`, `chDirSep`), never Win32 or
   `wsprintf` directly.

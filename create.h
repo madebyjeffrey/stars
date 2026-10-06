@@ -6,7 +6,7 @@
 extern int16_t vrgvcMax[10];
 extern char    rgNG3Width[9][2];
 extern uint8_t vrgWormholeMin[5];
-extern BTLPLAN rgbtlplanT[5];
+extern BTLPLAN rgbtlplanT[];
 extern PLAYER  vrgplrComp[6][4];
 extern uint8_t vrgWormholeVar[5];
 
