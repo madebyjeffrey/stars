@@ -1,0 +1,155 @@
+# The AI research orders, read by IroEnsureAi: each turn the AI researches
+# the first entry whose level it has not reached, and works on its lowest
+# field once it has them all. Each entry is a tech field (TechFieldType) and
+# a level. data/datagen.py packs them as (field << 5) | level and generates
+# each list's length, cAi...ResOrder, which code passes with the list.
+
+# Robotoid
+vrgAiRobotoidResOrder:
+  - Propulsion 2
+  - Construction 3
+  - Weapons 3
+  - Construction 4
+  - Energy 2
+  - Electronics 3
+  - Propulsion 6
+  - Weapons 5
+  - Construction 6
+  - Biotechnology 4
+  - Electronics 5
+  - Energy 6
+  - Weapons 7
+  - Construction 10
+  - Energy 6
+  - Electronics 7
+  - Weapons 10
+  - Propulsion 9
+  - Propulsion 12
+  - Construction 13
+  - Weapons 14
+  - Construction 16
+  - Energy 9
+  - Electronics 10
+  - Propulsion 16
+  - Biotechnology 10
+  - Energy 15
+  - Weapons 20
+  - Propulsion 20
+  - Electronics 16
+  - Biotechnology 12
+  - Weapons 24
+  - Electronics 19
+  - Construction 24
+  - Energy 22
+  - Construction 26
+
+# Turindrone
+vrgAiTurinDroneResOrder:
+  - Propulsion 2
+  - Construction 4
+  - Biotechnology 4
+  - Energy 4
+  - Weapons 5
+  - Propulsion 6
+  - Construction 6
+  - Weapons 8
+  - Energy 6
+  - Electronics 6
+  - Propulsion 9
+  - Biotechnology 7
+  - Construction 8
+  - Electronics 8
+  - Biotechnology 5
+  - Construction 9
+  - Energy 7
+  - Electronics 10
+  - Weapons 10
+  - Propulsion 12
+  - Construction 11
+  - Energy 10
+  - Weapons 12
+  - Electronics 13
+  - Propulsion 16
+  - Weapons 14
+  - Construction 15
+  - Electronics 14
+  - Biotechnology 10
+  - Weapons 16
+  - Energy 14
+
+# Automitron
+vrgAiISResOrder:
+  - Electronics 6
+  - Construction 4
+  - Propulsion 5
+  - Weapons 5
+  - Biotechnology 4
+  - Energy 4
+  - Electronics 7
+  - Construction 6
+  - Propulsion 7
+  - Weapons 8
+  - Biotechnology 6
+  - Energy 7
+  - Electronics 12
+  - Construction 13
+  - Propulsion 9
+  - Weapons 11
+  - Biotechnology 7
+  - Energy 10
+
+# Macinti
+vrgAiMacintiResOrder:
+  - Energy 3
+  - Propulsion 2
+  - Energy 20
+  - Construction 17
+  - Propulsion 20
+  - Weapons 20
+  - Construction 23
+  - Weapons 23
+
+# Cybertron
+vrgAiCybertronResOrder:
+  - Construction 4
+  - Propulsion 2
+  - Electronics 3
+  - Biotechnology 3
+  - Weapons 3
+  - Propulsion 6
+  - Construction 6
+  - Electronics 6
+  - Energy 10
+  - Construction 10
+  - Propulsion 8
+  - Construction 13
+  - Weapons 6
+  - Biotechnology 9
+  - Electronics 9
+  - Weapons 7
+  - Propulsion 9
+  - Construction 16
+  - Energy 14
+  - Weapons 11
+  - Electronics 12
+  - Biotechnology 11
+  - Propulsion 13
+  - Construction 18
+  - Weapons 15
+  - Energy 18
+  - Electronics 17
+  - Weapons 17
+  - Construction 20
+  - Propulsion 17
+  - Biotechnology 18
+  - Electronics 21
+  - Energy 23
+  - Propulsion 22
+  - Construction 21
+  - Weapons 23
+  - Propulsion 26
+  - Electronics 26
+  - Energy 26
+  - Weapons 26
+  - Construction 26
+  - Biotechnology 26

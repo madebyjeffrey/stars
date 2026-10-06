@@ -5,7 +5,7 @@
 
 extern uint8_t vrgISIshAip[];
 extern uint8_t vrgISAip[];
-extern uint8_t vrgAiISResOrder[18];
+extern uint8_t vrgAiISResOrder[];
 
 void    DoMaidAiTurn(PROD *rgprod);
 int16_t FPotentISWarFleet(FLEET *lpfl, int16_t iPotency);

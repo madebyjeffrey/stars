@@ -5,7 +5,7 @@
 
 extern MacintiRecipe vrgMacIshAip[];
 extern uint8_t       vrgMacAip[];
-extern uint8_t       vrgAiMacintiResOrder[8];
+extern uint8_t       vrgAiMacintiResOrder[];
 
 void    DoMacintiAiTurn(PROD *rgprod);
 void    EnsureMacintiShdefs();

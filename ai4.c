@@ -1,16 +1,5 @@
 #include "common.h"
 
-uint8_t               vrgAiCybertronResOrder[42] = {
-    aiResearchConstruction4,   aiResearchPropulsion2,     aiResearchElectronics3,   aiResearchBiotechnology3, aiResearchWeapons3,
-    aiResearchPropulsion6,     aiResearchConstruction6,   aiResearchElectronics6,   aiResearchEnergy10,       aiResearchConstruction10,
-    aiResearchPropulsion8,     aiResearchConstruction13,  aiResearchWeapons6,       aiResearchBiotechnology9, aiResearchElectronics9,
-    aiResearchWeapons7,        aiResearchPropulsion9,     aiResearchConstruction16, aiResearchEnergy14,       aiResearchWeapons11,
-    aiResearchElectronics12,   aiResearchBiotechnology11, aiResearchPropulsion13,   aiResearchConstruction18, aiResearchWeapons15,
-    aiResearchEnergy18,        aiResearchElectronics17,   aiResearchWeapons17,      aiResearchConstruction20, aiResearchPropulsion17,
-    aiResearchBiotechnology18, aiResearchElectronics21,   aiResearchEnergy23,       aiResearchPropulsion22,   aiResearchConstruction21,
-    aiResearchWeapons23,       aiResearchPropulsion26,    aiResearchElectronics26,  aiResearchEnergy26,       aiResearchWeapons26,
-    aiResearchConstruction26,  aiResearchBiotechnology26};
-
 void DoCyberAiTurn(PROD *rgprod) {
     int32_t        rgResCost[4];
     int16_t        cSBDefenderFleets;
@@ -72,7 +61,7 @@ void DoCyberAiTurn(PROD *rgprod) {
         *lpiHistSize = game.cPlanMax * 2 + 2;
     }
     fMarkedPlanets = FALSE;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiCybertronResOrder, 42, &ishdefLatestSB, 17);
+    iroCur = IroEnsureAi(vrgAiCybertronResOrder, cAiCybertronResOrder, &ishdefLatestSB, 17);
     EnsureCyberAiShdefs(iroCur);
     MergeAllShdefs(1);
     MergeAllShdefs(48);

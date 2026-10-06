@@ -1,8 +1,5 @@
 #include "common.h"
 
-uint8_t             vrgAiMacintiResOrder[8] = {aiResearchEnergy3,      aiResearchPropulsion2, aiResearchEnergy20,       aiResearchConstruction17,
-                                               aiResearchPropulsion20, aiResearchWeapons20,   aiResearchConstruction23, aiResearchWeapons23};
-
 void DoMacintiAiTurn(PROD *rgprod) {
     int16_t  iLatestCargo;
     int16_t  cColFleet;
@@ -69,7 +66,7 @@ void DoMacintiAiTurn(PROD *rgprod) {
 
     iAiLvl = rgplr[idPlayer].lvlAi;
     iPlanet = rgplr[idPlayer].idPlanetHome;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiMacintiResOrder, 8, NULL, 15);
+    iroCur = IroEnsureAi(vrgAiMacintiResOrder, cAiMacintiResOrder, NULL, 15);
     if (game.turn < 40 || (!rgshdef[7].fFree && rgshdef[7].hul.ihuldef == ihuldefColonyShip)) {
         fUsingTempColonizer = TRUE;
         if (FLookupPartX(&part, hstEngine, iengineGalaxyScoop) == mdPartAvailAvailable && rgshdef[7].cExist == 0) {

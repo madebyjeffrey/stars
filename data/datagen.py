@@ -91,6 +91,12 @@ TABLES = [
 PREFERENCES = dict(file="ai/parts.yaml", enum="AiPartPreference", count="aiPartPreferenceCount", prefix="aiPart",
                    array="vrgAiParts", counts="vrgcAiParts", size=150)
 
+# The AI research orders: one list per array, each entry "Field level",
+# packed as (TechFieldType << 5) | level. count names each list's length.
+RESEARCH = dict(file="ai/research.yaml", enum="AiResearchOrderCount", arrays=[
+    "vrgAiRobotoidResOrder", "vrgAiTurinDroneResOrder", "vrgAiISResOrder", "vrgAiMacintiResOrder", "vrgAiCybertronResOrder"])
+TECH_FIELDS = ["Energy", "Weapons", "Propulsion", "Construction", "Electronics", "Biotechnology"]
+
 # The AI design recipes. Each recipe is an AiPartPreference per slot of its
 # hull, stored back to back in array; its name becomes an enum value, its
 # offset there. ish, if any, lists the offsets in recipe order, which code
@@ -261,6 +267,24 @@ def LoadPreferences(table, rgpart):
     return prefs
 
 
+def LoadResearch(table):
+    """Return {array: [(field, level)]} for the research orders."""
+    file = table["file"]
+    with open(os.path.join(HERE, file), encoding="utf-8") as f:
+        orders = yaml.safe_load(f)
+    if not isinstance(orders, dict) or set(orders) != set(table["arrays"]):
+        raise DataError("data/{}: expected the lists {}".format(file, ", ".join(table["arrays"])))
+    for array, entries in orders.items():
+        if not isinstance(entries, list) or not entries:
+            raise DataError("data/{}: {} must be a list".format(file, array))
+        for i, entry in enumerate(entries):
+            m = re.fullmatch(r"(\w+) (\d+)", entry) if isinstance(entry, str) else None
+            if not m or m.group(1) not in TECH_FIELDS or not 1 <= int(m.group(2)) <= 26:
+                raise DataError("data/{}: {}[{}] is {!r}, not a tech field and level 1-26".format(file, array, i, entry))
+            entries[i] = (m.group(1), int(m.group(2)))
+    return orders
+
+
 def LoadRecipes(table, chs, rgaip):
     """Return a recipe file's (name, parts) list, checking each against its hull."""
     file = table["file"]
@@ -366,6 +390,13 @@ def Generate(outdir):
     body.append("uint8_t {}[{}] = {{{}}};\n".format(PREFERENCES["counts"], len(prefs), ", ".join(str(len(t)) for _, t in prefs)))
     body.append("AIPART {}[{}] = {{\n{}\n}};\n".format(PREFERENCES["array"], max(len(lines), PREFERENCES["size"]), "\n".join(lines)))
     rgaip = {name for name, _ in prefs}
+    orders = LoadResearch(RESEARCH)
+    header.append("enum {} {{".format(RESEARCH["enum"]))
+    for array in RESEARCH["arrays"]:
+        header.append("    c{} = {},".format(array[len("vrg"):], len(orders[array])))
+        items = ", ".join("({} << 5) | {}".format(field, level) for field, level in orders[array])
+        body.append("uint8_t {}[{}] = {{{}}};\n".format(array, len(orders[array]), items))
+    header += ["};", ""]
     for table in RECIPES:
         recipes = LoadRecipes(table, chs, rgaip)
         header.append("enum {} {{".format(table["enum"]))

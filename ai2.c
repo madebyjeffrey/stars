@@ -1,10 +1,5 @@
 #include "common.h"
 
-uint8_t vrgAiISResOrder[18] = {aiResearchElectronics6,   aiResearchConstruction4,  aiResearchPropulsion5,   aiResearchWeapons5,       aiResearchBiotechnology4,
-                               aiResearchEnergy4,        aiResearchElectronics7,   aiResearchConstruction6, aiResearchPropulsion7,    aiResearchWeapons8,
-                               aiResearchBiotechnology6, aiResearchEnergy7,        aiResearchElectronics12, aiResearchConstruction13, aiResearchPropulsion9,
-                               aiResearchWeapons11,      aiResearchBiotechnology7, aiResearchEnergy10};
-
 void DoMaidAiTurn(PROD *rgprod) {
     int32_t rgResCost[4];
     int32_t rgResAvail[4];
@@ -80,7 +75,7 @@ void DoAutomitronAiTurn(PROD *rgprod) {
     cplBadGuy = 0;
     cplNegative = 0;
     cplanCol = 0;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiISResOrder, 18, &ishdefSBLatest, game.turn >= 10 ? 20 : 0);
+    iroCur = IroEnsureAi(vrgAiISResOrder, cAiISResOrder, &ishdefSBLatest, game.turn >= 10 ? 20 : 0);
     if (game.turn > 50) {
         MergeAllShdefs(7692);
         MergeAllShdefs(64);

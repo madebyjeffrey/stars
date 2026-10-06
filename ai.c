@@ -1,20 +1,5 @@
 #include "common.h"
 
-uint8_t vrgAiRobotoidResOrder[36] = {
-    aiResearchPropulsion2,     aiResearchConstruction3,   aiResearchWeapons3,      aiResearchConstruction4,  aiResearchEnergy2,      aiResearchElectronics3,
-    aiResearchPropulsion6,     aiResearchWeapons5,        aiResearchConstruction6, aiResearchBiotechnology4, aiResearchElectronics5, aiResearchEnergy6,
-    aiResearchWeapons7,        aiResearchConstruction10,  aiResearchEnergy6,       aiResearchElectronics7,   aiResearchWeapons10,    aiResearchPropulsion9,
-    aiResearchPropulsion12,    aiResearchConstruction13,  aiResearchWeapons14,     aiResearchConstruction16, aiResearchEnergy9,      aiResearchElectronics10,
-    aiResearchPropulsion16,    aiResearchBiotechnology10, aiResearchEnergy15,      aiResearchWeapons20,      aiResearchPropulsion20, aiResearchElectronics16,
-    aiResearchBiotechnology12, aiResearchWeapons24,       aiResearchElectronics19, aiResearchConstruction24, aiResearchEnergy22,     aiResearchConstruction26};
-uint8_t vrgAiTurinDroneResOrder[31] = {
-    aiResearchPropulsion2,   aiResearchConstruction4, aiResearchBiotechnology4, aiResearchEnergy4,       aiResearchWeapons5,        aiResearchPropulsion6,
-    aiResearchConstruction6, aiResearchWeapons8,      aiResearchEnergy6,        aiResearchElectronics6,  aiResearchPropulsion9,     aiResearchBiotechnology7,
-    aiResearchConstruction8, aiResearchElectronics8,  aiResearchBiotechnology5, aiResearchConstruction9, aiResearchEnergy7,         aiResearchElectronics10,
-    aiResearchWeapons10,     aiResearchPropulsion12,  aiResearchConstruction11, aiResearchEnergy10,      aiResearchWeapons12,       aiResearchElectronics13,
-    aiResearchPropulsion16,  aiResearchWeapons14,     aiResearchConstruction15, aiResearchElectronics14, aiResearchBiotechnology10, aiResearchWeapons16,
-    aiResearchEnergy14};
-
 void DoAiTurn(int16_t iPlayer, uint16_t wMdPlr) {
     char    szExt[4];
     PROD    rgprod[64];
@@ -139,7 +124,7 @@ void DoRobotoidAiTurn(PROD *rgprod) {
 
     iAiLvl = rgplr[idPlayer].lvlAi;
     iPlanet = rgplr[idPlayer].idPlanetHome;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiRobotoidResOrder, 36, &ishdefSBLatest, game.turn >= 10 ? 15 : 0);
+    iroCur = IroEnsureAi(vrgAiRobotoidResOrder, cAiRobotoidResOrder, &ishdefSBLatest, game.turn >= 10 ? 15 : 0);
     if (game.turn > 50) {
         MergeAllShdefs(1788);
         MergeAllShdefs(1);
@@ -887,7 +872,7 @@ void DoTurinDroneAiTurn(PROD *rgprod) {
     cplNegative = 0;
     cplanCol = 0;
     cplMiners = 0;
-    iroCur = IroEnsureAi((uint8_t *)vrgAiTurinDroneResOrder, 31, &ishdefSBLatest, 15);
+    iroCur = IroEnsureAi(vrgAiTurinDroneResOrder, cAiTurinDroneResOrder, &ishdefSBLatest, 15);
     if (!rgshdef[13].fFree) {
         MergeAllShdefs(-7952);
     }

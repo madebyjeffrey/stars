@@ -38,7 +38,7 @@ the x86_64 MinGW-w64 toolchain on PATH. The host alone (`stars-host`, below)
 builds with the native compiler. The build runs `text/textgen.py` to compile
 the game's strings, messages, tutorial and planet names from `text/*.txt`,
 and `data/datagen.py` to compile the parts, races, default battle plans, AI
-design recipes and AI part preferences from `data/**/*.yaml`.
+design recipes, part preferences and research orders from `data/**/*.yaml`.
 On macOS these build dependencies can be installed with Homebrew:
 
 ```sh

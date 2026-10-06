@@ -5,7 +5,7 @@
 
 extern CybertronRecipe vrgCyberIshAip[];
 extern uint8_t         vrgCyberAip[];
-extern uint8_t         vrgAiCybertronResOrder[42];
+extern uint8_t         vrgAiCybertronResOrder[];
 
 void    DoCyberAiTurn(PROD *rgprod);
 void    DoCyberPackets();
