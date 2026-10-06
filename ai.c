@@ -541,29 +541,31 @@ void EnsureRobotoidShdefs() {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[2] >= 2 && rgplr[idPlayer].rgTech[3] >= (ish - 11) * 3 + 4 &&
             (ish == 11 || (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 14)) {
             if (rgplr[idPlayer].rgTech[3] < 10) {
-                FCreateAiShdef(ish, ihuldefPrivateer, (uint8_t *)&vrgRobAip[vrgRobIshAip[ish == 11 ? 0xe : 0xf]]);
+                FCreateAiShdef(ish, ihuldefPrivateer, (uint8_t *)&vrgRobAip[ish == 11 ? robRecipePrivateerBeam : robRecipePrivateerTorpedo]);
             } else {
-                for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefMetaMorph, (uint8_t *)&vrgRobAip[vrgRobIshAip[Random(6) + 8]]) == 0; i++) {
+                for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefMetaMorph, (uint8_t *)&vrgRobAip[vrgRobIshAip[irobRecipeMetaMorphCargoBeamA + Random(6)]]) == 0;
+                     i++) {
                 }
             }
         }
     }
     if (rgshdef[14].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 6 && rgplr[idPlayer].rgTech[3] >= 6 &&
         rgplr[idPlayer].rgTech[2] >= 6 && rgplr[idPlayer].rgTech[0] >= 2) {
-        for (i = 0; i < 5 && (FCreateAiShdef(14, ihuldefNubian, (uint8_t *)&vrgRobAip[vrgRobIshAip[37]]) ||
-                              !FCreateAiShdef(14, ihuldefDestroyer, (uint8_t *)&vrgRobAip[vrgRobIshAip[Random(4) + 0x10]]));
+        for (i = 0; i < 5 && (FCreateAiShdef(14, ihuldefNubian, (uint8_t *)&vrgRobAip[robRecipeNubianMixedBeams]) ||
+                              !FCreateAiShdef(14, ihuldefDestroyer, (uint8_t *)&vrgRobAip[vrgRobIshAip[irobRecipeDestroyerBeamA + Random(4)]]));
              i++) {
         }
     }
     if (rgshdef[15].fFree && rgplr[idPlayer].rgTech[4] >= 10 && rgplr[idPlayer].rgTech[3] >= 8 && rgplr[idPlayer].rgTech[2] >= 9 &&
-        rgplr[idPlayer].rgTech[1] >= 14 && !FCreateAiShdef(15, ihuldefNubian, (uint8_t *)&vrgRobAip[vrgRobIshAip[37]])) {
-        for (i = 0; i < 5 && FCreateAiShdef(15, ihuldefDestroyer, (uint8_t *)&vrgRobAip[vrgRobIshAip[Random(4) + 0x14]]) == 0; i++) {
+        rgplr[idPlayer].rgTech[1] >= 14 && !FCreateAiShdef(15, ihuldefNubian, (uint8_t *)&vrgRobAip[robRecipeNubianMixedBeams])) {
+        for (i = 0; i < 5 && FCreateAiShdef(15, ihuldefDestroyer, (uint8_t *)&vrgRobAip[vrgRobIshAip[irobRecipeDestroyerTorpedoShield + Random(4)]]) == 0;
+             i++) {
         }
     }
     for (ish = 2; ish <= 5; ish++) {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[1] >= 10 && rgplr[idPlayer].rgTech[3] >= 10 && rgplr[idPlayer].rgTech[2] >= 9 &&
             rgplr[idPlayer].rgTech[0] >= 6 && (ish == 2 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 12))) {
-            shBase = !((ish - 2) & 1) ? 0 : 4;
+            shBase = !((ish - 2) & 1) ? irobRecipeMetaMorphBeamDefense : irobRecipeMetaMorphMissileA;
             for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefMetaMorph, (uint8_t *)&vrgRobAip[vrgRobIshAip[Random(4) + shBase]]) == 0; i++) {
             }
         }
@@ -572,7 +574,7 @@ void EnsureRobotoidShdefs() {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[5] >= 4 && rgplr[idPlayer].rgTech[4] >= 10 && rgplr[idPlayer].rgTech[3] >= 12 &&
             rgplr[idPlayer].rgTech[2] >= 12 && rgplr[idPlayer].rgTech[0] >= 6 && rgplr[idPlayer].rgTech[1] >= 15 &&
             (ish == 6 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 20))) {
-            shBase = ish == 6 ? 27 : 31;
+            shBase = ish == 6 ? irobRecipeBattleshipMissileBeam : irobRecipeBattleshipBeamA;
             for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgRobAip[vrgRobIshAip[Random(4) + shBase]]) == 0; i++) {
             }
         }
@@ -580,8 +582,8 @@ void EnsureRobotoidShdefs() {
     for (ish = 9; ish <= 10; ish++) {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[1] >= 14 &&
             ((ish == 9 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 15)) &&
-             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgRobAip[vrgRobIshAip[36]]))) {
-            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgRobAip[vrgRobIshAip[ish == 9 ? 0x18 : 0x19]]);
+             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgRobAip[robRecipeBattleshipMcm]))) {
+            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgRobAip[ish == 9 ? robRecipeB52SmartThenNormal : robRecipeB52RetroThenSmart]);
         }
     }
     if (rgshdef[0].hul.ihuldef != ihuldefFrigate && rgplr[idPlayer].lvlAi > lvlAiStandard && rgshdef[0].cExist == 0 && rgplr[idPlayer].rgTech[5] >= 4 &&
@@ -589,7 +591,7 @@ void EnsureRobotoidShdefs() {
         shdef = rgshdef[0];
         shdef.fFree = TRUE;
         FChangeAiShdef(&shdef, 0);
-        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgRobAip[vrgRobIshAip[26]]);
+        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgRobAip[robRecipeFrigateScoutMineLayer]);
     }
     return;
 }
@@ -1410,14 +1412,14 @@ void EnsureTurinDroneShdefs(int16_t iroCur) {
     int16_t i;
 
     if (rgshdef[8].fFree && rgplr[idPlayer].rgTech[2] >= 5 && rgplr[idPlayer].rgTech[3] >= 8) {
-        FCreateAiShdef(8, ihuldefRogue, (uint8_t *)&vrgTDAip[vrgTDIshAip[12]]);
+        FCreateAiShdef(8, ihuldefRogue, (uint8_t *)&vrgTDAip[tdRecipeRogueCargoScanner]);
     }
     if (rgshdef[9].fFree && rgplr[idPlayer].rgTech[2] >= 7 && rgplr[idPlayer].rgTech[3] >= 11) {
-        FCreateAiShdef(9, ihuldefGalleon, (uint8_t *)&vrgTDAip[vrgTDIshAip[15]]);
+        FCreateAiShdef(9, ihuldefGalleon, (uint8_t *)&vrgTDAip[tdRecipeGalleonCargoScanner]);
     }
     if (rgshdef[10].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 5 && rgplr[idPlayer].rgTech[3] >= 4 &&
         rgplr[idPlayer].rgTech[2] >= 5) {
-        for (i = 0; i < 4 && FCreateAiShdef(10, ihuldefDestroyer, (uint8_t *)&vrgTDAip[vrgTDIshAip[Random(1) + 2]]) == 0; i++) {
+        for (i = 0; i < 4 && FCreateAiShdef(10, ihuldefDestroyer, (uint8_t *)&vrgTDAip[vrgTDIshAip[itdRecipeDestroyerTorpedo + Random(1)]]) == 0; i++) {
         }
     }
     if (rgshdef[1].fFree || rgshdef[1].cExist == 0) {
@@ -1426,7 +1428,7 @@ void EnsureTurinDroneShdefs(int16_t iroCur) {
             shdef.fFree = TRUE;
             FChangeAiShdef(&shdef, 1);
         }
-        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgTDAip[vrgTDIshAip[0]]);
+        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgTDAip[tdRecipeColonizer]);
     }
     if (rgshdef[0].fFree || rgshdef[0].cExist == 0) {
         if (!rgshdef[0].fFree) {
@@ -1434,7 +1436,7 @@ void EnsureTurinDroneShdefs(int16_t iroCur) {
             shdef.fFree = TRUE;
             FChangeAiShdef(&shdef, 0);
         }
-        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgTDAip[vrgTDIshAip[1]]);
+        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgTDAip[tdRecipeFrigateScout]);
     }
     if ((rgshdef[2].fFree || rgshdef[2].cExist == 0) && rgplr[idPlayer].rgTech[3] >= 7 && rgplr[idPlayer].rgTech[4] >= 4) {
         if (!rgshdef[2].fFree) {
@@ -1442,26 +1444,26 @@ void EnsureTurinDroneShdefs(int16_t iroCur) {
             shdef.fFree = TRUE;
             FChangeAiShdef(&shdef, 2);
         }
-        FCreateAiShdef(2, ihuldefMiner, (uint8_t *)&vrgTDAip[vrgTDIshAip[17]]);
+        FCreateAiShdef(2, ihuldefMiner, (uint8_t *)&vrgTDAip[tdRecipeMiner]);
     }
     if ((rgshdef[12].fFree || rgshdef[12].cExist == 0) && rgplr[idPlayer].rgTech[3] >= 4 && rgplr[idPlayer].rgTech[5] >= 4) {
-        FCreateAiShdef(12, ihuldefPrivateer, (uint8_t *)&vrgTDAip[vrgTDIshAip[14]]);
+        FCreateAiShdef(12, ihuldefPrivateer, (uint8_t *)&vrgTDAip[tdRecipePrivateerMineLayer]);
     }
     if (rgshdef[13].fFree && rgplr[idPlayer].rgTech[1] >= 8 && rgplr[idPlayer].rgTech[4] >= 7 && rgplr[idPlayer].rgTech[3] >= 6) {
-        FCreateAiShdef(13, ihuldefStealthBomber, (uint8_t *)&vrgTDAip[vrgTDIshAip[13]]);
+        FCreateAiShdef(13, ihuldefStealthBomber, (uint8_t *)&vrgTDAip[tdRecipeStealthBomber]);
     }
     if (rgshdef[14].fFree && rgplr[idPlayer].rgTech[1] >= 11 && rgplr[idPlayer].rgTech[4] >= 12 && rgplr[idPlayer].rgTech[3] >= 15 &&
         rgplr[idPlayer].rgTech[2] >= 9) {
-        FCreateAiShdef(14, ihuldefStealthBomber, (uint8_t *)&vrgTDAip[vrgTDIshAip[13]]);
+        FCreateAiShdef(14, ihuldefStealthBomber, (uint8_t *)&vrgTDAip[tdRecipeStealthBomber]);
     }
     if (rgshdef[4].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 6 && rgplr[idPlayer].rgTech[3] >= 13 &&
         rgplr[idPlayer].rgTech[2] >= 7) {
-        for (i = 0; i < 5 && FCreateAiShdef(4, ihuldefBattleship, (uint8_t *)&vrgTDAip[vrgTDIshAip[Random(4) + 8]]) == 0; i++) {
+        for (i = 0; i < 5 && FCreateAiShdef(4, ihuldefBattleship, (uint8_t *)&vrgTDAip[vrgTDIshAip[itdRecipeBattleshipBeamA + Random(4)]]) == 0; i++) {
         }
     }
     if (rgshdef[15].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 6 && rgplr[idPlayer].rgTech[3] >= 13 &&
         rgplr[idPlayer].rgTech[2] >= 7) {
-        for (i = 0; i < 5 && FCreateAiShdef(15, ihuldefRogue, (uint8_t *)&vrgTDAip[vrgTDIshAip[12]]) == 0; i++) {
+        for (i = 0; i < 5 && FCreateAiShdef(15, ihuldefRogue, (uint8_t *)&vrgTDAip[tdRecipeRogueCargoScanner]) == 0; i++) {
         }
     }
     return;

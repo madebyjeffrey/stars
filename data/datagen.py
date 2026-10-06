@@ -99,9 +99,10 @@ TECH_FIELDS = ["Energy", "Weapons", "Propulsion", "Construction", "Electronics",
 
 # The AI design recipes. Each recipe is an AiPartPreference per slot of its
 # hull, stored back to back in array; its name becomes an enum value, its
-# offset there. ish, if any, lists the offsets in recipe order, which code
-# indexes by position. size keeps the original's zero padding after the last
-# recipe.
+# offset there. ish, if any, lists the offsets in recipe order, and i plus
+# the name (irobRecipe...) is a recipe's position in it, for code that picks
+# among neighboring recipes at random. size keeps the original's zero
+# padding after the last recipe.
 RECIPES = [
     dict(file="ai/turindrone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipe", prefix="tdRecipe",
          ish="vrgTDIshAip", ishType="uint8_t"),
@@ -409,6 +410,11 @@ def Generate(outdir):
             rgib.append(ib)
             ib += len(parts)
         header += ["};", ""]
+        if table.get("ish"):
+            # Each recipe's position in the ish table, for code that picks one at random.
+            header.append("enum {}Index {{".format(table["enum"]))
+            header += ["    i{} = {},".format(name, i) for i, (name, _) in enumerate(recipes)]
+            header += ["};", ""]
         body.append("uint8_t {}[{}] = {{\n{}\n}};\n".format(table["array"], max(ib, table["size"]), "\n".join(lines)))
         if table.get("ish"):
             if table["ishType"] == "uint8_t" and rgib[-1] > 255:

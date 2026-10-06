@@ -449,14 +449,14 @@ void EnsureISShdefs(int16_t iroCur) {
     int16_t i;
 
     if (rgshdef[4].fFree && rgplr[idPlayer].rgTech[2] >= 5) {
-        FCreateAiShdef(4, ihuldefMediumFreighter, (uint8_t *)&vrgISAip[vrgISIshAip[14]]);
+        FCreateAiShdef(4, ihuldefMediumFreighter, (uint8_t *)&vrgISAip[isRecipeMediumFreighter]);
     }
     if (rgshdef[5].fFree && rgplr[idPlayer].rgTech[2] >= 7) {
-        FCreateAiShdef(5, ihuldefSuperFreighter, (uint8_t *)&vrgISAip[vrgISIshAip[18]]);
+        FCreateAiShdef(5, ihuldefSuperFreighter, (uint8_t *)&vrgISAip[isRecipeSuperFreighter]);
     }
     if (rgshdef[14].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 6 && rgplr[idPlayer].rgTech[3] >= 4 &&
         rgplr[idPlayer].rgTech[2] >= 5) {
-        for (i = 0; i < 4 && FCreateAiShdef(14, ihuldefDestroyer, (uint8_t *)&vrgISAip[vrgISIshAip[Random(1) + 4]]) == 0; i++) {
+        for (i = 0; i < 4 && FCreateAiShdef(14, ihuldefDestroyer, (uint8_t *)&vrgISAip[vrgISIshAip[iisRecipeDestroyerTorpedo + Random(1)]]) == 0; i++) {
         }
     }
     if (rgshdef[1].fFree || rgshdef[1].cExist == 0) {
@@ -465,7 +465,7 @@ void EnsureISShdefs(int16_t iroCur) {
             shdef.fFree = TRUE;
             FChangeAiShdef(&shdef, 1);
         }
-        FCreateAiShdef(1, ihuldefMediumFreighter, (uint8_t *)&vrgISAip[vrgISIshAip[0]]);
+        FCreateAiShdef(1, ihuldefMediumFreighter, (uint8_t *)&vrgISAip[isRecipeColonizingMediumFreighter]);
     }
     if (rgshdef[0].fFree || rgshdef[0].cExist == 0) {
         if (!rgshdef[0].fFree) {
@@ -473,22 +473,22 @@ void EnsureISShdefs(int16_t iroCur) {
             shdef.fFree = TRUE;
             FChangeAiShdef(&shdef, 0);
         }
-        FCreateAiShdef(0, ihuldefScout, (uint8_t *)&vrgISAip[vrgISIshAip[1]]);
+        FCreateAiShdef(0, ihuldefScout, (uint8_t *)&vrgISAip[isRecipeScoutStreamingBeam]);
     }
     if (rgshdef[6].fFree && rgplr[idPlayer].rgTech[3] >= 4 && rgplr[idPlayer].rgTech[2] >= 5 && rgplr[idPlayer].rgTech[5] >= 6) {
-        FCreateAiShdef(6, ihuldefPrivateer, (uint8_t *)&vrgISAip[vrgISIshAip[17]]);
+        FCreateAiShdef(6, ihuldefPrivateer, (uint8_t *)&vrgISAip[isRecipePrivateerMineLayer]);
     }
     if (rgshdef[2].fFree && rgplr[idPlayer].rgTech[1] >= 8 && rgplr[idPlayer].rgTech[4] >= 7 && rgplr[idPlayer].rgTech[3] >= 6 &&
         rgplr[idPlayer].rgTech[2] >= 7) {
-        FCreateAiShdef(2, ihuldefB17Bomber, (uint8_t *)&vrgISAip[vrgISIshAip[15]]);
+        FCreateAiShdef(2, ihuldefB17Bomber, (uint8_t *)&vrgISAip[isRecipeB17Bomber]);
     }
     if (rgshdef[3].fFree && rgplr[idPlayer].rgTech[1] >= 11 && rgplr[idPlayer].rgTech[4] >= 12 && rgplr[idPlayer].rgTech[3] >= 15 &&
         rgplr[idPlayer].rgTech[2] >= 9) {
-        FCreateAiShdef(3, ihuldefB52Bomber, (uint8_t *)&vrgISAip[vrgISIshAip[16]]);
+        FCreateAiShdef(3, ihuldefB52Bomber, (uint8_t *)&vrgISAip[isRecipeB52Bomber]);
     }
     if (rgshdef[9].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[4] >= 6 && rgplr[idPlayer].rgTech[3] >= 13 &&
         rgplr[idPlayer].rgTech[2] >= 7) {
-        for (i = 0; i < 5 && FCreateAiShdef(9, ihuldefBattleship, (uint8_t *)&vrgISAip[vrgISIshAip[Random(4) + 0xa]]) == 0; i++) {
+        for (i = 0; i < 5 && FCreateAiShdef(9, ihuldefBattleship, (uint8_t *)&vrgISAip[vrgISIshAip[iisRecipeBattleshipBeamA + Random(4)]]) == 0; i++) {
         }
     }
     return;

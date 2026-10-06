@@ -728,30 +728,31 @@ void EnsureMacintiShdefs() {
         if (rgshdef[ish].fFree) {
             fAdvanced = rgplr[idPlayer].lvlAi >= lvlAiTough;
             if ((!fAdvanced || ish != 15 || rgplr[idPlayer].rgTech[3] >= 15) &&
-                !FCreateAiShdef(ish, 24 - (fAdvanced == 0), (uint8_t *)&vrgMacAip[vrgMacIshAip[fAdvanced + 0x15]]) && ish == 14) {
+                !FCreateAiShdef(ish, ihuldefUltraMiner - (fAdvanced == 0), (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeMaxiMiner + fAdvanced]]) && ish == 14) {
                 if (fAdvanced) {
-                    FCreateAiShdef(ish, ihuldefMiner, (uint8_t *)&vrgMacAip[vrgMacIshAip[22]]);
+                    FCreateAiShdef(ish, ihuldefMiner, (uint8_t *)&vrgMacAip[macRecipeUltraMinerOrMiner]);
                 } else {
-                    FCreateAiShdef(ish, ihuldefMiniMiner, (uint8_t *)&vrgMacAip[vrgMacIshAip[23]]);
+                    FCreateAiShdef(ish, ihuldefMiniMiner, (uint8_t *)&vrgMacAip[macRecipeMiniMiner]);
                 }
             }
         }
     }
     if (rgshdef[12].fFree && rgplr[idPlayer].rgTech[1] >= 5 && rgplr[idPlayer].rgTech[2] >= 6 &&
-        !FCreateAiShdef(12, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[30]])) {
-        for (i = 0; i < 5 && FCreateAiShdef(12, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4)]]) == 0; i++) {
+        !FCreateAiShdef(12, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeams])) {
+        for (i = 0; i < 5 && FCreateAiShdef(12, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeDestroyerBeamA + Random(4)]]) == 0; i++) {
         }
     }
     if (rgshdef[13].fFree && rgplr[idPlayer].rgTech[1] >= 10 && rgplr[idPlayer].rgTech[2] >= 9 &&
-        !FCreateAiShdef(13, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[30]])) {
-        for (i = 0; i < 5 && FCreateAiShdef(13, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + 4]]) == 0; i++) {
+        !FCreateAiShdef(13, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeams])) {
+        for (i = 0; i < 5 && FCreateAiShdef(13, ihuldefDestroyer, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeDestroyerTorpedoShield + Random(4)]]) == 0;
+             i++) {
         }
     }
-    if (rgshdef[10].fFree && !FCreateAiShdef(10, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]])) {
-        FCreateAiShdef(10, ihuldefMediumFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]]);
+    if (rgshdef[10].fFree && !FCreateAiShdef(10, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter])) {
+        FCreateAiShdef(10, ihuldefMediumFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter]);
     }
     if (rgshdef[11].fFree) {
-        FCreateAiShdef(11, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[vrgMacIshAip[24]]);
+        FCreateAiShdef(11, ihuldefLargeFreighter, (uint8_t *)&vrgMacAip[macRecipeFreighter]);
     }
     if (game.turn < 20 && !rgshdef[2].fFree && rgshdef[2].cExist == 0) {
         shdef = rgshdef[2];
@@ -760,27 +761,28 @@ void EnsureMacintiShdefs() {
     }
     for (ish = 2; ish <= 4; ish++) {
         if (rgshdef[ish].fFree && (ish == 2 || (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 20)) {
-            for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefCruiser, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + 0x19]]) == 0; i++) {
+            for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefCruiser, (uint8_t *)&vrgMacAip[vrgMacIshAip[imacRecipeCruiserAntiMatterMcm + Random(4)]]) == 0;
+                 i++) {
             }
         }
     }
     if (game.turn < 40 && rgshdef[7].fFree) {
-        FCreateAiShdef(7, ihuldefColonyShip, (uint8_t *)&vrgMacAip[vrgMacIshAip[20]]);
+        FCreateAiShdef(7, ihuldefColonyShip, (uint8_t *)&vrgMacAip[macRecipeOrbitalConstructionColonizer]);
     }
     if (FLookupPartX(&part, hstEngine, iengineGalaxyScoop) == mdPartAvailAvailable && !rgshdef[1].fFree && rgshdef[1].cExist == 0 &&
         rgshdef[1].hul.rghs[0].iItem != iengineGalaxyScoop) {
         shdef = rgshdef[1];
         shdef.fFree = TRUE;
         FChangeAiShdef(&shdef, 1);
-        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgMacAip[vrgMacIshAip[20]]);
+        FCreateAiShdef(1, ihuldefColonyShip, (uint8_t *)&vrgMacAip[macRecipeOrbitalConstructionColonizer]);
     }
     for (ish = 5; ish <= 7; ish++) {
         if (rgshdef[ish].fFree && (ish == 5 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 20))) {
-            shBase = ish == 5 ? 11 : 15;
+            shBase = ish == 5 ? imacRecipeBattleshipMissileBeam : imacRecipeBattleshipBeamA;
             if (ish == 7) {
-                shBase = Random(2) == 0 ? 15 : 11;
+                shBase = Random(2) == 0 ? imacRecipeBattleshipBeamA : imacRecipeBattleshipMissileBeam;
             }
-            if (Random(3) == 0 || !FCreateAiShdef(ish, ihuldefNubian, (uint8_t *)&vrgMacAip[vrgMacIshAip[29]])) {
+            if (Random(3) == 0 || !FCreateAiShdef(ish, ihuldefNubian, (uint8_t *)&vrgMacAip[macRecipeNubianMixedBeamsMcm])) {
                 for (i = 0; i < 5 && FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[vrgMacIshAip[Random(4) + shBase]]) == 0; i++) {
                 }
             }
@@ -789,8 +791,8 @@ void EnsureMacintiShdefs() {
     for (ish = 8; ish <= 9; ish++) {
         if (rgshdef[ish].fFree && rgplr[idPlayer].rgTech[1] >= 14 &&
             ((ish == 8 || (!rgshdef[ish - 1].fFree && (uint16_t)(game.turn - rgshdef[ish - 1].turn) > 15)) &&
-             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[vrgMacIshAip[19]]))) {
-            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgMacAip[vrgMacIshAip[ish == 8 ? 8 : 9]]);
+             !FCreateAiShdef(ish, ihuldefBattleship, (uint8_t *)&vrgMacAip[macRecipeBattleshipMcm]))) {
+            FCreateAiShdef(ish, ihuldefB52Bomber, (uint8_t *)&vrgMacAip[ish == 8 ? macRecipeB52SmartThenNormal : macRecipeB52RetroThenSmart]);
         }
     }
     if (rgshdef[0].hul.ihuldef != ihuldefFrigate && rgplr[idPlayer].lvlAi > lvlAiStandard && rgshdef[0].cExist == 0 && rgplr[idPlayer].rgTech[5] >= 4 &&
@@ -798,7 +800,7 @@ void EnsureMacintiShdefs() {
         shdef = rgshdef[0];
         shdef.fFree = TRUE;
         FChangeAiShdef(&shdef, 0);
-        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgMacAip[vrgMacIshAip[10]]);
+        FCreateAiShdef(0, ihuldefFrigate, (uint8_t *)&vrgMacAip[macRecipeFrigateScoutMineLayer]);
     }
     return;
 }
