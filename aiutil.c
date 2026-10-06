@@ -2258,7 +2258,7 @@ void EnsureMacintiStarbaseDesigns(uint8_t *rgSB) {
     for (i = iOld; i < iOld + 3; i++) {
         rgSB[i] = j;
     }
-    i = rglpshdefSB[idPlayer][iNew].hul.ihuldef - 32;
+    i = rglpshdefSB[idPlayer][iNew].hul.ihuldef - ihuldefOrbitalFort;
     if (i < 4) {
         rgSB[3] = 2;
         if (i < 3) {

@@ -210,7 +210,7 @@ int16_t FLoadGame(char *pszFileName, char *pszExt) {
         rgptPlan[i].x = x;
         rgptPlan[i].y = sp.y;
         rgidPlan[i] = sp.id;
-        if (x >= dGal + 1000 || rgptPlan[i].y >= dGal + 1000 || rgidPlan[i] > 999)
+        if (x >= dGal + 1000 || rgptPlan[i].y >= dGal + 1000 || rgidPlan[i] > cPlanetName)
             goto XYCorrupt;
     }
     ReadRt();

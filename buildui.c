@@ -411,7 +411,7 @@ INT_PTR CALLBACK SlotDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
                     LStripDown:
                         if (fStarbaseMode) {
                             part.hs.grhst = hstSBHull;
-                            part.hs.iItem = lpshdef->hul.ihuldef - 32;
+                            part.hs.iItem = lpshdef->hul.ihuldef - ihuldefOrbitalFort;
                         } else {
                             part.hs.grhst = hstHull;
                             part.hs.iItem = lpshdef->hul.ihuldef;
@@ -1351,7 +1351,7 @@ void DrawBuildSelHull(HWND hwnd, HDC hdc, int16_t iDraw, RECT *prc) {
                     rc.top += dyArial8;
                 }
             } else if (GetRaceStat(&rgplr[idPlayer], rsMajorAdv) == raMacintosh) {
-                cch = CommaFormatLong(szWork, (uint32_t)(rglPopMac[lpshdefBuild->hul.ihuldef - 32] * 100));
+                cch = CommaFormatLong(szWork, (uint32_t)(rglPopMac[lpshdefBuild->hul.ihuldef - ihuldefOrbitalFort] * 100));
                 RightTextOut(hdc, rc.right - 8, rc.top, szWork, cch, dxMaxMineralQuan + 16);
                 cch = CchGetString(idsMaxPopulation + (dyArial8 > 14), szWork);
                 TextOut(hdc, rc.left, rc.top, szWork, cch);

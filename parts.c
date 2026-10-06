@@ -3,8 +3,8 @@
 HULDEF *LphuldefSBFromId(isbhull id) { return &rghuldefSB[id]; }
 
 HULDEF *LphuldefFromId(int16_t id) {
-    if (id >= 32) {
-        return LphuldefSBFromId(id - 32);
+    if (id >= ihuldefOrbitalFort) {
+        return LphuldefSBFromId(id - ihuldefOrbitalFort);
     }
     return &rghuldef[id];
 }

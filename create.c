@@ -163,10 +163,10 @@ int16_t GenerateWorld(int16_t fBatchMode) {
     }
     memset(grUsed, 0, 128);
     for (i = 0; i < cPlanMax; i++) {
-        dx = Random(999);
+        dx = Random(cPlanetName);
         while (grUsed[dx >> 3] & bitTbl[dx & 7]) {
             dx++;
-            if (dx >= game.fTutorial + 999) {
+            if (dx >= game.fTutorial + cPlanetName) {
                 dx = 0;
             }
         }

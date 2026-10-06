@@ -230,6 +230,9 @@ def Generate(outdir):
             header.append("enum {} {{".format(enum))
             header += ["    {} = {},".format(row.name, fmtId.format(row.id)) for row in rows]
             header += ["};", ""]
+        else:
+            # Planet names have no IDs; code needs only how many there are.
+            header += ["enum PlanetNameCount {", "    cPlanetName = {},".format(cTable), "};", ""]
         body = ["// " + GENERATED.format(file), '#include "{}"'.format(include), ""]
         if fArgs:
             rgcArgs = [0] * cTable

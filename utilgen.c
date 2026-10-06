@@ -179,8 +179,8 @@ char *PszGetCompressedPlanet(int16_t id) {
     int16_t  iLen;
 
     iNibble = 0;
-    if (id >= 999) {
-        id %= 999;
+    if (id >= cPlanetName) {
+        id %= cPlanetName;
     }
     if (id == iLastGet) {
         return szLastGet;
