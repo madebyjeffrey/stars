@@ -2301,7 +2301,7 @@ HCURSOR ClickInShipOrders(POINT16 pt, int16_t sks, int16_t fCursor, int16_t fRig
             if (lNew != lCur) {
                 switch (irc) {
                 case 0:
-                    sel.fl.lpplord->rgord[sel.iwpAct].iWarp = LOWORD(lNew);
+                    SetScanPathWarp(sel.iwpAct, LOWORD(lNew));
                     DrawPlanShip(NULL, tileFleetOrders | tileMinimized);
                     break;
                 case 18:

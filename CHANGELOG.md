@@ -6,6 +6,32 @@ produce different results from a 2.6j host for the same turn.
 
 ## Unreleased
 
+### Added
+
+- The mouse wheel zooms the scanner at the cursor, one zoom level a notch;
+  Ctrl+wheel (a touchpad pinch) zooms too. The tilt wheel and Shift+wheel
+  scroll the scanner sideways.
+- The mouse wheel scrolls the report tables by rows, as many a notch as the
+  mouse settings say; the tilt wheel and Shift+wheel scroll a column a
+  notch.
+- Alt+click (Cmd+click on a Mac) with a fleet selected adds a waypoint at
+  the fastest useful speed: the speed a fleet with a colonize task gets,
+  the fastest up to warp 9 whose fuel fits, slowed to the lowest that
+  arrives as soon. Alt held while dropping a dragged waypoint does the
+  same. Players set colonize tasks on scouts to get this speed, at the cost
+  of a warning every turn. Turn generation is unchanged.
+- The selected fleet's path in the scanner has a tick where each year of
+  travel ends: a fleet moves its warp squared in light years a year, each
+  leg at its own warp, and stops at every waypoint.
+- Dragging the scanner with the left button pans it. A press still selects
+  what is under it, as a click does; the view moves once the mouse moves
+  past the system's drag distance. Dragging a waypoint, Shift and Ctrl
+  clicks and the measuring tape (Shift+right-drag) are unchanged.
+- The wheel goes to the window under the cursor rather than the window with
+  the focus, so the panes and lists scroll where the player points, as with
+  Windows 10's "scroll inactive windows" setting. A drop-down list the player
+  only points at ignores the wheel, so it can't change an order by accident.
+
 ### Changed
 
 - The game's text and static data are now built from source files rather
@@ -14,6 +40,13 @@ produce different results from a 2.6j host for the same turn.
   AI races, default battle plans and the AI's designs, part preferences and
   research orders from `data/**/*.yaml`. Building needs Python 3 and PyYAML.
   The text, data, turns and files are unchanged.
+
+### Fixed
+
+- The scanner no longer leaves a band drawn out of place when it scrolls
+  while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
+  followed at once by a trackpad scroll. The original drew the pending
+  area at the new position and then scrolled it with the rest.
 
 ## 2.9.0 (2026-10-05)
 

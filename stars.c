@@ -34,6 +34,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     Randomize2(fSeed ? lSeed : GetTickCount());
     PostMessage(hwndFrame, WM_STARS_STARTUP, 0, 0);
     while (GetMessage(&msg, NULL, 0, 0) != 0) {
+        if ((msg.message == WM_MOUSEWHEEL || msg.message == WM_MOUSEHWHEEL) && !FRouteMouseWheel(&msg))
+            continue;
         if (hwndTitle) {
             if (TranslateAccelerator(hwndFrame, hAccelTitle, &msg) == 0) {
                 TranslateMessage(&msg);
@@ -512,7 +514,7 @@ int16_t FHandleKey(HWND hwnd, int16_t iMsg, int16_t iKey, uint32_t dw) {
                     iWarp++;
                 }
                 if (iWarp >= 0 && iWarp <= 11) {
-                    sel.fl.lpplord->rgord[iwp].iWarp = iWarp;
+                    SetScanPathWarp(iwp, iWarp);
                     FLookupFleet(idWriteBack, &sel.fl);
                     DrawPlanShip(NULL, tileFleetOrders | tileFleetComp | tileMinimized);
                 }

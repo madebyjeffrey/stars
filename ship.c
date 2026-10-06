@@ -525,7 +525,9 @@ int16_t IFindIdealWarp(FLEET *lpfl, int16_t fIgnoreScoops) {
     return iWorst;
 }
 
-int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
+// IWarpForWaypoint is IWarpBestForWaypoint's body. fFastest asks for the
+// speed colonizers get, as IWarpFastestForWaypoint does.
+static int16_t IWarpForWaypoint(FLEET *lpfl, ORDER *lpord, int16_t fFastest) {
     int32_t lFuel;
     int16_t iWarp;
     int16_t cTravel;
@@ -552,7 +554,7 @@ int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) {
     if (iwp <= 0) {
         return iWarp;
     }
-    if (lpord->grTask == grTaskColonize || lpord->grTask == grTaskScrap) {
+    if (fFastest || lpord->grTask == grTaskColonize || lpord->grTask == grTaskScrap) {
         fGoFlatOut = TRUE;
     } else {
         fGoFlatOut = FALSE;
@@ -636,6 +638,16 @@ LOptimizeSpeed:
     }
     return iWarp;
 }
+
+// IWarpBestForWaypoint picks the warp for the leg to lpord, a waypoint of
+// lpfl's orders.
+int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord) { return IWarpForWaypoint(lpfl, lpord, FALSE); }
+
+// IWarpFastestForWaypoint picks the warp a colonizing fleet gets for the
+// leg to lpord: the fastest up to warp 9 whose fuel to lpord fits the
+// tank, then the slowest that arrives as soon. Players set colonize tasks
+// on scouts to get it; the scanner gives it to Alt+clicked waypoints.
+int16_t IWarpFastestForWaypoint(FLEET *lpfl, ORDER *lpord) { return IWarpForWaypoint(lpfl, lpord, TRUE); }
 
 int32_t LFuelUseToWaypoint(FLEET *lpfl, int16_t iwp, int16_t fMaxCargo) {
     int32_t lCur;

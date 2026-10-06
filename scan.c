@@ -3,6 +3,23 @@
 uint32_t rgcrScanMine[3] = {16711680, 65535, 255};
 int16_t  vrgPopRad[19] = {25, 50, 100, 200, 400, 800, 1000, 1500, 2250, 3000, 4000, 5000, 6000, 7500, 9000, 11000, 14000, 18000, 25000};
 
+// Wheel deltas short of a notch, for zooming and sideways scrolling.
+static int16_t dWheelZoom;
+static int16_t dWheelScroll;
+
+// Dragging the scanner with the left button pans it. fPanDown is set while
+// a plain left press may still become a pan, fPanning once it has. The
+// drag is measured from ptPan, where the scanner's top was xPanTop, yPanTop.
+static int16_t fPanDown;
+static int16_t fPanning;
+static POINT16 ptPan;
+static int16_t xPanTop;
+static int16_t yPanTop;
+
+// FAltDown tells whether Alt is down; Wine's Mac driver sends Alt for Cmd.
+// Alt+click (Cmd+click) adds a waypoint at the fastest useful speed.
+static int16_t FAltDown(void) { return GetKeyState(VK_MENU) < 0; }
+
 LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;
     POINT16     pt;
@@ -96,7 +113,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         rc.bottom -= dySBar;
         if (PtInRect(&rc, PointFrom16(pt)) == 0) {
             SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(32512)));
-        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) || (grbitScan & grbitScanAddWaypoints))) {
+        } else if (sel.grobj == grobjFleet && ((GetAsyncKeyState(VK_SHIFT) & 0xfffe) || (grbitScan & grbitScanAddWaypoints) || FAltDown())) {
             SetCursor(hcurScanAdd);
         } else if (FNearAWayPoint(pt, FALSE)) {
             SetCursor(hcurOpenGrab);
@@ -128,6 +145,13 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             Popup(hwnd, pt.x, pt.y);
             break;
         }
+        // A plain left press acts as a click and, if the mouse then moves,
+        // pans. Shift, Ctrl and the waypoint, mass driver and route modes
+        // keep the press for themselves; a waypoint drag ends with the
+        // button up, which WM_MOUSEMOVE notices.
+        fPanDown = msg == WM_LBUTTONDOWN && !(wParam & (MK_SHIFT | MK_CONTROL)) && !gd.fSetMassMode && !gd.fSetRouteMode &&
+                   !(sel.grobj == grobjFleet && ((grbitScan & grbitScanAddWaypoints) || FAltDown()));
+        ptPan = pt;
         ScanToLogical(&pt);
         FFindNearestObject(pt, gd.fSetMassMode != 0 || gd.fSetRouteMode ? grobjPlanet : grobjPlanet | grobjFleet | grobjOther | grobjThing, &scan);
         if ((gd.fSetMassMode || (sel.grobj == grobjPlanet && (wParam & 4) && IWarpMAFromLppl(&sel.pl, NULL) > 0)) && msg == WM_LBUTTONDOWN) {
@@ -233,7 +257,7 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                 break;
             goto DblClick;
         } else {
-            if (sel.grobj == grobjFleet && ((wParam & 4) || (grbitScan & grbitScanAddWaypoints))) {
+            if (sel.grobj == grobjFleet && ((wParam & 4) || (grbitScan & grbitScanAddWaypoints) || FAltDown())) {
                 FAddWayPoint(pt, &scan);
                 break;
             }
@@ -268,6 +292,82 @@ LRESULT CALLBACK ScannerWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             break;
         scan.grobj = grobjPlanet;
         ChangeScanSel(&scan, 1);
+        break;
+    case WM_MOUSEMOVE:
+        if (!fPanDown)
+            goto Default;
+        if (!(wParam & MK_LBUTTON)) {
+            fPanDown = FALSE;
+            goto Default;
+        }
+        pt.x = (short)LOWORD(lParam);
+        pt.y = (short)HIWORD(lParam);
+        if (!fPanning) {
+            if (abs(pt.x - ptPan.x) < GetSystemMetrics(SM_CXDRAG) && abs(pt.y - ptPan.y) < GetSystemMetrics(SM_CYDRAG))
+                break;
+            fPanning = TRUE;
+            xPanTop = xScanTop;
+            yPanTop = yScanTop;
+            SetCapture(hwnd);
+            SetCursor(hcurCloseGrab);
+        }
+        // The galaxy follows the mouse. Scanner tops are multiples of 4, so
+        // the new tops are rounded to them from where the drag began.
+        d = ((xPanTop - ScanToPt(pt.x - ptPan.x)) + 2) & 0xfffc;
+        if (d != xScanTop) {
+            SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)d), 0);
+        }
+        d = ((yPanTop - ScanToPt(pt.y - ptPan.y)) + 2) & 0xfffc;
+        if (d != yScanTop) {
+            SendMessage(hwnd, WM_VSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)d), 0);
+        }
+        break;
+    case WM_LBUTTONUP:
+        fPanDown = FALSE;
+        if (fPanning) {
+            ReleaseCapture();
+        }
+        goto Default;
+    case WM_CAPTURECHANGED:
+        if (fPanning) {
+            fPanning = FALSE;
+            fPanDown = FALSE;
+        }
+        goto Default;
+    case WM_MOUSEWHEEL:
+    case WM_MOUSEHWHEEL:
+        // The wheel zooms at the cursor, as map viewers do; Ctrl+wheel, a
+        // touchpad pinch, zooms too. The tilt wheel and Shift+wheel scroll
+        // sideways, wheel down to the right.
+        d = GET_WHEEL_DELTA_WPARAM(wParam);
+        if (msg == WM_MOUSEWHEEL && !(GET_KEYSTATE_WPARAM(wParam) & MK_SHIFT)) {
+            c = CWheelNotches(&dWheelZoom, d);
+            if (c == 0)
+                break;
+            iScanNew = iScanZoom + c;
+            if (iScanNew < zoom25) {
+                iScanNew = zoom25;
+            } else if (iScanNew > zoom400) {
+                iScanNew = zoom400;
+            }
+            if (iScanNew != iScanZoom) {
+                // A pan in progress is measured at the old zoom.
+                if (fPanning) {
+                    ReleaseCapture();
+                }
+                fPanDown = FALSE;
+                pt.x = (short)LOWORD(lParam);
+                pt.y = (short)HIWORD(lParam);
+                ScreenToClient16(hwnd, &pt);
+                ZoomScanAt(iScanNew, pt);
+            }
+            break;
+        }
+        c = CWheelNotches(&dWheelScroll, msg == WM_MOUSEWHEEL ? -d : d);
+        if (c == 0)
+            break;
+        d = c * CWheelLines(dScanPage / dScanInc) * dScanInc;
+        SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)(xScanTop + d)), 0);
         break;
     case WM_SIZE:
         SetScanScrollBars(hwnd);
@@ -1415,6 +1515,66 @@ void DrawRadarCircle(DRAWCIR *pdc, RECT *prc) {
     return;
 }
 
+// DrawPathYearTicks draws a tick across the selected fleet's leg from
+// ptFrom to ptTo, logical points, where each year at iWarp ends: a fleet
+// moves iWarp squared light years a year and stops at each waypoint. Ticks
+// closer than 6 pixels are left out. It leaves the pen at ptTo. The path is
+// drawn with R2_XORPEN, so drawing it again erases the ticks too; each tick
+// is two halves that skip the path's own pixel, which XOR would clear.
+static void DrawPathYearTicks(HDC hdc, POINT16 ptFrom, POINT16 ptTo, int16_t iWarp) {
+    POINT16 ptA;
+    POINT16 ptB;
+    POINT16 pt;
+    double  dLeg;
+    double  dScan;
+    double  dxTick;
+    double  dyTick;
+    int16_t dYear;
+    int16_t i;
+    int16_t iSide;
+
+    ptA = ptFrom;
+    LogicalToScan(&ptA);
+    ptB = ptTo;
+    LogicalToScan(&ptB);
+    if (iWarp >= 1 && iWarp <= 10) {
+        dYear = iWarp * iWarp;
+        dLeg = hypot(ptTo.x - ptFrom.x, ptTo.y - ptFrom.y);
+        dScan = hypot(ptB.x - ptA.x, ptB.y - ptA.y);
+        if (dLeg > dYear && dScan * dYear / dLeg >= 6) {
+            // A unit step across the leg on screen.
+            dxTick = -(ptB.y - ptA.y) / dScan;
+            dyTick = (ptB.x - ptA.x) / dScan;
+            for (i = 1; i * dYear < dLeg; i++) {
+                pt.x = (int16_t)floor(ptA.x + (ptB.x - ptA.x) * i * dYear / dLeg + 0.5);
+                pt.y = (int16_t)floor(ptA.y + (ptB.y - ptA.y) * i * dYear / dLeg + 0.5);
+                for (iSide = -1; iSide <= 1; iSide += 2) {
+                    MoveToEx(hdc, pt.x + (int16_t)floor(iSide * dxTick + 0.5), pt.y + (int16_t)floor(iSide * dyTick + 0.5), NULL);
+                    LineTo(hdc, pt.x + (int16_t)floor(iSide * 4 * dxTick + 0.5), pt.y + (int16_t)floor(iSide * 4 * dyTick + 0.5));
+                }
+            }
+        }
+    }
+    MoveToEx(hdc, ptB.x, ptB.y, NULL);
+}
+
+// SetScanPathWarp sets the warp of the selected fleet's waypoint iwp. Its
+// path's year ticks depend on the warp, so a path on screen is erased
+// first and drawn again after.
+void SetScanPathWarp(int16_t iwp, int16_t iWarp) {
+    int16_t fVis;
+
+    fVis = fOrdersVis;
+    if (fVis) {
+        DrawShipScanPath(NULL, FALSE);
+    }
+    sel.fl.lpplord->rgord[iwp].iWarp = iWarp;
+    if (fVis) {
+        DrawShipScanPath(NULL, TRUE);
+    }
+    return;
+}
+
 void DrawShipScanPath(HDC hdc, int16_t fShow) {
     ORDER  *lpord2;
     int16_t rgDup[87];
@@ -1638,6 +1798,7 @@ void DrawShipScanPath(HDC hdc, int16_t fShow) {
                     if (rgDup[i] == 1) {
                         SelectObject(hdc, hpenShip);
                     }
+                    DrawPathYearTicks(hdc, sel.fl.lpplord->rgord[i - 1].pt, sel.fl.lpplord->rgord[i].pt, sel.fl.lpplord->rgord[i].iWarp);
                 }
                 pt = pt2;
             }
@@ -1882,16 +2043,27 @@ void SetScanScrollBars(HWND hwnd) {
 }
 
 void ScrollScanner(int16_t dx, int16_t dy) {
-    HDC  hdc;
-    RECT rcUpd;
-    RECT rcUpd2;
-    RECT rc;
+    HDC     hdc;
+    RECT    rcUpd;
+    RECT    rcUpd2;
+    RECT    rc;
+    int16_t fPending;
 
     if ((dx != 0 || dy != 0) && IsWindowVisible(hwndScanner) != 0 && !gd.fNoScannerDraw) {
         hdc = GetDC(hwndScanner);
         GetClientRect(hwndScanner, &rc);
-        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp || hwndBrowser) {
+        // The scroll handlers move the scanner's top before calling here, so
+        // a repaint still pending would be drawn at the new position and
+        // then scrolled with the rest, leaving a band drawn out of place.
+        // A wheel zoom invalidates the whole scanner, and a trackpad's next
+        // scroll comes before its WM_PAINT. Redraw the map instead.
+        fPending = GetUpdateRect(hwndScanner, NULL, FALSE) != 0;
+        if (abs(dx) > rc.right >> 1 || abs(dy) > rc.bottom >> 1 || fDlgUp || hwndBrowser || fPending) {
             DrawScanner(hdc, &rc);
+            if (fPending) {
+                rc.bottom -= dySBar;
+                ValidateRect(hwndScanner, &rc);
+            }
             goto RelDC;
         }
         rc.bottom -= dySBar;
@@ -2071,6 +2243,29 @@ void CtrPointScan(POINT16 pt, int16_t fScroll) {
     return;
 }
 
+// ZoomScanAt sets the scanner zoom to iScanNew and keeps the galaxy point
+// under ptScan, a scanner client point, where it is on screen. The menu's
+// zoom command centers on the selection instead.
+void ZoomScanAt(ScanZoom iScanNew, POINT16 ptScan) {
+    POINT16 pt;
+    RECT    rc;
+
+    GetClientRect(hwndScanner, &rc);
+    rc.bottom -= dySBar;
+    if (ptScan.y >= rc.bottom) {
+        ptScan.y = rc.bottom - 1;
+    }
+    pt = ptScan;
+    ScanToLogical(&pt);
+    SendMessage(hwndFrame, WM_COMMAND, iScanNew + 3905, 0);
+    if (iScanZoom != iScanNew)
+        return;
+    pt.x += (ScanToPt(rc.right) >> 1) - ScanToPt(ptScan.x);
+    pt.y += ScanToPt(ptScan.y) - (ScanToPt(rc.bottom) >> 1);
+    CtrPointScan(pt, FALSE);
+    return;
+}
+
 void LogicalToScan(POINT16 *ppt) {
     ppt->x = PtToScan(ppt->x - xScanTop);
     ppt->y = PtToScan(dGalInv - ppt->y - yScanTop);
@@ -2165,7 +2360,7 @@ int16_t FAddWayPoint(POINT16 ptIn, SCAN *pscan) {
     lpord->grobj = pscan->grobj;
     sel.fl.cord++;
     sel.fl.lpplord->iordMac++;
-    lpord->iWarp = IWarpBestForWaypoint(&sel.fl, lpord);
+    lpord->iWarp = FAltDown() ? IWarpFastestForWaypoint(&sel.fl, lpord) : IWarpBestForWaypoint(&sel.fl, lpord);
     pscan->grobj = grobjOther;
     pscan->grobjFull |= grobjOther;
     pscan->iwp = sel.iwpAct + 1;
@@ -2402,7 +2597,7 @@ int16_t FHandleWayPointDrag(POINT16 pt) {
         lpord->grobj = scan.grobj;
         lpord->id = i;
         lpord->pt = scan.pt;
-        lpord->iWarp = IWarpBestForWaypoint(&sel.fl, lpord);
+        lpord->iWarp = FAltDown() ? IWarpFastestForWaypoint(&sel.fl, lpord) : IWarpBestForWaypoint(&sel.fl, lpord);
         FLookupFleet(idWriteBack, &sel.fl);
         scan.iwp = sel.iwpAct;
         scan.grobjFull |= grobjOther;

@@ -1,5 +1,9 @@
 #include "win.h"
 
+// Wheel deltas short of a notch, for rows and for columns.
+static int16_t dWheelRows;
+static int16_t dWheelCols;
+
 LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC         hdc;
     HMENU       hmenu;
@@ -112,6 +116,27 @@ LRESULT CALLBACK ReportDlg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             AdvanceTutor();
         }
         break;
+    case WM_MOUSEWHEEL:
+    case WM_MOUSEHWHEEL:
+        // The wheel scrolls rows, as many a notch as the player's mouse
+        // settings say. The tilt wheel and Shift+wheel scroll a column a
+        // notch, wheel down to the right. Both go through the scroll bars'
+        // paths, which clamp and redraw.
+        i = GET_WHEEL_DELTA_WPARAM(wParam);
+        if (msg == WM_MOUSEWHEEL && !(GET_KEYSTATE_WPARAM(wParam) & MK_SHIFT)) {
+            cRow = CWheelNotches(&dWheelRows, i);
+            if (cRow != 0) {
+                iNew = GetScrollPos(vprptCur->hwndVScroll, SB_CTL) - cRow * CWheelLines(vprptCur->cRowsVis - 1);
+                SendMessage(hwnd, WM_VSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)iNew), (LPARAM)vprptCur->hwndVScroll);
+            }
+            return 0;
+        }
+        iCol = CWheelNotches(&dWheelCols, msg == WM_MOUSEWHEEL ? -i : i);
+        if (iCol != 0) {
+            iNew = GetScrollPos(vprptCur->hwndHScroll, SB_CTL) + iCol;
+            SendMessage(hwnd, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, (WORD)iNew), (LPARAM)vprptCur->hwndHScroll);
+        }
+        return 0;
     case WM_VSCROLL:
         iCur = GetScrollPos((HWND)lParam, SB_CTL);
         iNew = iCur;
