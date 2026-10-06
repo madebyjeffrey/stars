@@ -4,6 +4,17 @@ Changes from the original Stars! 2.6jrc3 (tag `2.6jrc3`, branch `2.6j`).
 Entries marked **host results** change turn generation, so a 2.8 host can
 produce different results from a 2.6j host for the same turn.
 
+## Unreleased
+
+### Changed
+
+- The game's text and static data are now built from source files rather
+  than checked-in C tables: the strings, messages, tutorial and planet names
+  from `text/*.txt`, and the hulls, parts, starting designs, predefined and
+  AI races, default battle plans and the AI's designs, part preferences and
+  research orders from `data/**/*.yaml`. Building needs Python 3 and PyYAML.
+  The text, data, turns and files are unchanged.
+
 ## 2.9.0 (2026-10-05)
 
 ### Added
