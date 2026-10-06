@@ -2506,7 +2506,8 @@ int16_t ITechLearnATech(int16_t iplr, int16_t x, int16_t y, MessageId idm, uint1
             if (Random(100) < rgTechTrader[iTech]) {
                 idm = IdmGiveTraderPart(1 << iTech, iplr, &iGoto);
                 if (fBattle) {
-                    idm += 47;
+                    // The battle wreckage versions of the part and hull messages.
+                    idm += idmExaminationWreckageBattleUncoveredPlansNewPart - idmHasAbsorbedMysteryTraderHaveGivenPlans;
                     FSendPlrMsg2(iplr, idm, iGoto, x, y);
                 } else if (piGoto) {
                     *piGoto = iGoto;

@@ -628,10 +628,10 @@ void SatisfyOrders(int16_t iPass) {
                                 lAmt = CResourcesAtPlanet(&pl, pl.iPlayer);
                                 lResUltimate = (int32_t)((int32_t)(lResUltimate * lAmt) / (lResUltimate + lAmt));
                             }
-                            idm = pl.fStarbase + 92;
+                            idm = idmHasDismantledKtMineralsWhichHaveDeposited2 + pl.fStarbase;
                             FSendPlrMsg(lpfl->iPlayer, idm, iGoto, WFromLpfl(lpfl), LOWORD(lXferMinerals), HIWORD(lXferMinerals), pl.id, LOWORD(lResUltimate),
                                         HIWORD(lResUltimate), 0);
-                            idm = pl.fStarbase + 322;
+                            idm = idmHasDismantledKtMineralsWhichHaveDeposited5 + pl.fStarbase;
                             if (pl.fStarbase) {
                                 i = ITechLearnATech(pl.iPlayer, 0, 0, idmNone, &iGoto);
                                 if (i != 0) {
@@ -655,9 +655,9 @@ void SatisfyOrders(int16_t iPass) {
                             DropSalvage(&lpthWP, pl.rgwtMin, lpfl->iplr, &ord.pt);
                             FSendPlrMsg2(lpfl->iPlayer, idmHasDismantledScrapLeftDeepSpace, gotoThing, lpthWP->idFull, WFromLpfl(lpfl));
                         } else {
-                            idm = pl.fStarbase + 89;
+                            idm = idmHasDismantledKtMineralsWhichHaveDeposited + pl.fStarbase;
                             FSendPlrMsg(lpfl->iPlayer, idm, iGoto, WFromLpfl(lpfl), LOWORD(lXferMinerals), HIWORD(lXferMinerals), pl.id, 0, 0, 0);
-                            idm = pl.fStarbase + 320;
+                            idm = idmHasDismantledKtMineralsWhichHaveDeposited4 + pl.fStarbase;
                             if (pl.fStarbase) {
                                 i = ITechLearnATech(pl.iPlayer, 0, 0, idmNone, &iGoto);
                                 if (i != 0) {

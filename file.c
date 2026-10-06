@@ -802,7 +802,7 @@ LNextTurn:
             }
             i = CBattles();
             if (i > 0) {
-                FSendPlrMsg2XGen(TRUE, (i > 1) + 339, gotoBattleReport, i, 0);
+                FSendPlrMsg2XGen(TRUE, idmHaveReceivedOneBattleRecordingYear + (i > 1), gotoBattleReport, i, 0);
             }
         }
     }

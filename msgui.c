@@ -328,7 +328,8 @@ LRESULT CALLBACK MessageWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                     UpdateWindow(hwndScanner);
                     SendMessage(hwndScanner, WM_CHAR, 'v', 0);
                     idm = IdmGetMessageN(iMsgCur);
-                    if (idm != 62 && idm != 63 && (idm < 175 || idm > 180))
+                    if (idm != idmHasCompletedOrdersProductionQueueEmpty && idm != idmProductionQueueEmpty &&
+                        (idm < idmHasBuiltManyMinesCurrentPopulationCan || idm > idmHasBuiltManyDefensesPlanetCanSupport))
                         break;
                     if (!gd.fGotoVCR) {
                         gd.fGotoVCR = TRUE;

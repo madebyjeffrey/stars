@@ -427,7 +427,7 @@ RetryAll:
             rgplr[i].rgTech[2]++;
         }
         for (j = 0; j < 4; j++) {
-            FSendPlrMsg(i, j + 127, gotoNone, 0, 0, 0, 0, 0, 0, 0);
+            FSendPlrMsg(i, idmTipCanHideUnimportantMessagesClickingCheckmark + j, gotoNone, 0, 0, 0, 0, 0, 0, 0);
         }
     }
     for (i = 0; i < game.cPlayer; i++) {
