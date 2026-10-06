@@ -27,5 +27,6 @@ void    Merge2Fleets(FLEET *lpflDst, FLEET *lpflDel, int16_t fNoDelete);
 void    FleetOrdersChangeTarget(FLEET *lpflOld);
 void    GetTruePartCost(int16_t iPlayer, PART *ppart, uint16_t *rgCost);
 int16_t IWarpBestForWaypoint(FLEET *lpfl, ORDER *lpord);
+int16_t IWarpFastestForWaypoint(FLEET *lpfl, ORDER *lpord);
 
 #endif
