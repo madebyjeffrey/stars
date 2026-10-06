@@ -75,10 +75,12 @@
 0x0045 idsExpectedResearchBenefits "Expected Research Benefits"
 0x0046 idsCurrentlyResearching "Currently Researching"
 0x0047 idsResourceAllocation "Resource Allocation"
+@range 4 ship hull stats, idsT++ (researchui.c)
 0x0048 idsFuelCapacity "Fuel Capacity:  "
 0x0049 idsCargoCapacity "Cargo Capacity:  "
 0x004a idsArmorStrength "Armor Strength:  "
 0x004b idsInitiative "Initiative:  "
+@range 6 research estimates (researchui.c)
 0x004c idsResourcesNeededComplete "Resources needed to complete:  "
 0x004d idsEstimatedTimeCompletion "Estimated time to completion:  "
 0x004e idsAnnualResourcesPlanets "Annual resources from all planets:  "
@@ -86,6 +88,7 @@
 0x0050 idsResourcesBudgetedResearch "Resources budgeted for research:  "
 0x0051 idsYearsProjectedResearchBudget "Next year's projected research budget:  "
 0x0052 idsFieldResearch "Next field to research:  "
+@range 8 next research field choices, idsSameField + i (researchui.c)
 0x0053 idsSameField "<Same field>"
 0x0054 idsEnergy "Energy"
 0x0055 idsWeapons "Weapons"
@@ -94,6 +97,7 @@
 0x0058 idsElectronics "Electronics"
 0x0059 idsBiotechnology "Biotechnology"
 0x005a idsLowestField "<Lowest field>"
+@range 6 tech field abbreviations, idsEner + i (researchui.c)
 0x005b idsEner "Ener:  "
 0x005c idsWeap "Weap:  "
 0x005d idsProp "Prop:  "
@@ -102,6 +106,7 @@
 0x0060 idsBio "Bio:  "
 0x0061 idsSureWantDeleteCurrentWaypoint "Are you sure you want to delete the current waypoint?"
 0x0062 idsGameAlreadyHostedAnotherInstanceStarsWould "This game is already being hosted by another instance of Stars! Would you like to wait for a new turn?"
+@range 10 fleet tasks by grTask (planetui.c, mineui.c, report.c)
 0x0063 idsTaskHere "(no task here)"
 0x0064 idsTransport "Transport"
 0x0065 idsColonize "Colonize"
@@ -112,6 +117,7 @@
 0x006a idsPatrol "Patrol"
 0x006b idsRoute "Route"
 0x006c idsTransferFleet "Transfer Fleet"
+@range 10 transport actions by iAction (shipui.c, ship2ui.c, report.c)
 0x006d idsAction "(no action)"
 0x006e idsLoadAvailable "Load All Available"
 0x006f idsUnload "Unload All"
@@ -123,12 +129,14 @@
 0x0075 idsSetAmount "Set Amount to..."
 0x0076 idsSetWaypoint "Set Waypoint to..."
 0x0077 idsLoadOptimal "Load Optimal"
+@range 4 battle plan attack-who choices (battleui.c)
 0x0078 idsNobody "Nobody"
 0x0079 idsEnemies "Enemies"
 0x007a idsNeutralsEnemies "Neutrals & Enemies"
 0x007b idsEveryone "Everyone"
 0x007c idsImprovePlanet " Improve Planet"
 0x007d idsUndoTerraforming " Undo Terraforming"
+@range 18 production items by ProdItemType (produce.c, produceui.c)
 0x007e idsMines "Mines"
 0x007f idsFactories "Factories"
 0x0080 idsDefenses "Defenses"
@@ -200,6 +208,7 @@
 0x00c2 idsTracks "Tracks"
 0x00c3 idsTrack "Track"
 0x00c4 idsFonts "Fonts"
+@range 4 font settings entries, idsArial + i (init.c)
 0x00c5 idsArial "Arial"
 0x00c6 idsArialbold "ArialBold"
 0x00c7 idsArialitalic "ArialItalic"
@@ -208,6 +217,7 @@
 0x00ca idsNohostnames "NoHostNames"
 0x00cb idsMessage "Message"
 0x00cc idsLogging "Logging"
+@range 5 production popup text, ids++ (popup.c)
 0x00cd idsHave "You have "
 0x00ce idsOn " on "
 0x00cf idsMayBuild ".  You may build up to "
@@ -240,6 +250,7 @@
 0x00ea idsPasswordHaveEnteredIncorrectPleaseTry "The password you have entered is incorrect, please try again."
 0x00eb idsPasswordsTypedTwoFieldsSamePleaseReenter "The passwords you typed in the two fields are not the same, please reenter them."
 0x00ec idsHaveUsingDemoVersionStars20Days "You have been using this demo version of Stars! for more than 20 days. To continue using this game, see the ordering information available from the Help menu."
+@range 6 resource popup text, ids++ (popup.c)
 0x00ed idsGenerates " generates "
 0x00ee idsResourcesEachYear " resources each year.  "
 0x00ef idsResourcesHaveAllocatedResearch " of these resources have been allocated to research."
@@ -249,6 +260,7 @@
 0x00f3 idsPlanetaryDataAvailableEstimateMineralMiningRates "Planetary data not available to estimate mineral mining rates."
 0x00f4 idsShipDesignDoesHaveAnyEnginesMust "This ship design does not have any engines. You must add engines before the design will be accepted."
 0x00f5 idsMaximumColonistGrowthRatePerYear "Maximum colonist growth rate per year:  "
+@range 16 race wizard production text, ids++ (raceui.c)
 0x00f6 idsOneResourceGeneratedEachYearEvery "One resource is generated each year for every "
 0x00f7 idsColonists " colonists."
 0x00f8 idsEvery10FactoriesProduce "Every 10 factories produce "
@@ -265,6 +277,7 @@
 0x0103 idsMines2 " mines."
 0x0104 idsAnnualResourcesPlanetValueSqrtPopulationEnergy "Annual Resources = Planet Value * sqrt(Population * Energy Tech / "
 0x0105 idsMsg0261 ")."
+@range 5 race dialog combo box (raceui.c)
 0x0106 idsSurfaceMinerals "Surface minerals"
 0x0107 idsMineralConcentrations "Mineral concentrations"
 0x0108 idsMines3 "Mines"
@@ -273,12 +286,15 @@
 0x010b idsStarsUnableSaveRaceDataFilePlease "Stars! was unable to save your race data file. Please try again."
 0x010c idsSettlersDelightEngineMayMountedDesignsBased "The Settler's Delight engine may only be mounted on designs based on the Mini-Colonizer hull."
 0x010d idsOrbitalConstructionModuleMayMountedDesignsBased "The Orbital Construction Module may only be mounted on designs based on the Colonizer hull."
+@range 2 race wizard title, + fRCWReadOnly (raceui.c)
 0x010e idsCustomRaceWizardStepD6 "Custom Race Wizard - Step %d of 6"
 0x010f idsViewRacePageD6 "View Race - Page %d of 6"
+@range 2 new game wizard title, + fRCWReadOnly (createui.c)
 0x0110 idsAdvancedNewGameWizardStepD3 "Advanced New Game Wizard - Step %d of 3"
 0x0111 idsViewGameParametersPageD3 "View Game Parameters - Page %d of 3"
 0x0112 idsPrimaryRacialTrait "Primary Racial Trait"
 0x0113 idsDescriptionTrait "Description of Trait"
+@range 30 primary trait descriptions, three per RaceAttribute (raceui.c)
 0x0114 idsMustExpandSurviveGivenSmallCheapColony "You must expand to survive. You are given a small and cheap colony hull and an engine which travels at Warp 6 using no fuel. "
 0x0115 idsRaceWillGrowTwiceGrowthRateSelect "Your race will grow at twice the growth rate you select in step four; however, the maximum population for a given planet is cut in half. "
 0x0116 idsCompletelyFlexibleMetaMorphHullWillAvailable "The completely flexible Meta Morph hull will be available only to your race."
@@ -309,6 +325,7 @@
 0x012f idsRaceDoesSpecializeSingleAreaStartGame "Your race does not specialize in a single area. You start the game with Tech 3 in all areas and an assortment of ships. "
 0x0130 idsScoutDestroyerFrigateHullsHaveBuiltPenetrating "Your Scout, Destroyer, and Frigate hulls have a built-in penetrating scanner which grows more powerful as your Electronics tech increases. Your maximum planetary population is 20% greater than other races."
 0x0131 ids0305Blank " "
+@range 14 lesser racial traits (raceui.c)
 0x0132 idsImprovedFuelEfficiency "Improved Fuel Efficiency"
 0x0133 idsTotalTerraforming "Total Terraforming"
 0x0134 idsAdvancedRemoteMining "Advanced Remote Mining"
@@ -323,6 +340,7 @@
 0x013d idsLowStartingPopulation "Low Starting Population"
 0x013e idsBleedingEdgeTechnology "Bleeding Edge Technology"
 0x013f idsRegeneratingShields "Regenerating Shields"
+@range 14 lesser racial trait descriptions (raceui.c)
 0x0140 idsGivesFuelMizerGalaxyScoopEnginesIncreases "This gives you the Fuel Mizer and Galaxy Scoop engines and increases your starting Propulsion tech by 1 level. All engines use 15% less fuel."
 0x0141 idsAllowsTerraformInvestingSolelyBiotechnologyMayTe "Allows you to terraform by investing solely in Biotechnology. You may terraform a variable up to 30%. Terraforming costs 30% less."
 0x0142 idsGivesThreeAdditionalMiningHullsTwoNew "Gives you three additional mining hulls and two new robots. You will start the game with two Midget-Miners. Don't pick 'Only Basic Remote Mining' with this option."
@@ -365,6 +383,7 @@
 0x0167 idsPlanetsValueWouldImprove ", the planet's value would improve to "
 0x0168 idsValueDOutsideHabitableRangeRace "This value is %d%% outside the habitable range for your race."
 0x0169 idsValueDAwayIdealValueRace "This value is %d%% away from the ideal value for your race."
+@range 18 toolbar tooltips by ToolbarButton (tb.c)
 0x016a idsNormalView "Normal View"
 0x016b idsSurfaceMineralView "Surface Mineral View"
 0x016c idsMineralConcentrationView "Mineral Concentration View"
@@ -384,6 +403,7 @@
 0x017a idsZoomMenu "Zoom Menu"
 0x017b idsShipCountsOverlay "Ship Counts Overlay"
 0x017c idsScannerEffective "Scanner Effective %"
+@range 8 enemy ship class filter (tb.c)
 0x017d idsColony "Colony"
 0x017e idsFreighter "Freighter"
 0x017f idsScout "Scout"
@@ -403,6 +423,7 @@
 0x018d idsRightClickBlueDiamondBringPopupMenu "Right-click on the blue diamond to bring up a popup menu listing all the objects you see at the selected waypoint. Select an item to change the waypoint target."
 0x018e idsTurnHasSubmittedChangesMadeAfterTurn "Your turn has been submitted. Changes made after your turn has been submitted may be lost. Would you like to unsubmit your turn?"
 0x018f idsNewTurnCurrentlyGeneratedHostNewTurn "The new turn is currently being generated by the host. The new turn will be loaded."
+@range 8 battle plan targets by mdTarget (battleui.c, vcr.c)
 0x0190 idsNoneDisengage "None/Disengage"
 0x0191 idsAny "Any"
 0x0192 idsStarbase "Starbase"
@@ -411,6 +432,7 @@
 0x0195 idsUnarmedShips "Unarmed Ships"
 0x0196 idsFuelTransports "Fuel Transports"
 0x0197 idsFreighters "Freighters"
+@range 6 battle plan tactics by mdTactic (battleui.c, vcr.c)
 0x0198 idsDisengage "Disengage"
 0x0199 idsDisengageIfChallenged "Disengage if challenged"
 0x019a idsMinimizeDamageSelf "Minimize damage to self"
@@ -418,6 +440,7 @@
 0x019c idsMaximizeDamageRatio "Maximize damage ratio"
 0x019d idsMaximizeDamage "Maximize damage"
 0x019e idsDisengage2 "Disengage"
+@range 13 planet production list (planetui.c)
 0x019f idsCargo2 "Cargo"
 0x01a0 idsGoto "Goto"
 0x01a1 idsMerge "Merge"
@@ -431,6 +454,7 @@
 0x01a9 idsMerge2 "Merge"
 0x01aa idsChange "Change"
 0x01ab idsClear "Clear"
+@range 6 fleet cargo labels, idsFuel + i (shipui.c)
 0x01ac idsFuel "Fuel"
 0x01ad idsCargoHold "Cargo Hold"
 0x01ae idsIronium "Ironium"
@@ -438,6 +462,7 @@
 0x01b0 idsGermanium "Germanium"
 0x01b1 idsColonists2 "Colonists"
 0x01b2 idsPacketShell "Packet Shell"
+@range 9 score and history labels (reportui.c)
 0x01b3 idsPlanets "Planets:"
 0x01b4 idsStarbases "Starbases:"
 0x01b5 idsUnarmedShips2 "Unarmed Ships:"
@@ -462,6 +487,7 @@
 0x01c8 idsPlayerPositions "Player Positions"
 0x01c9 idsAdvancedGame "Advanced Game"
 0x01ca idsButtonAllowsConfigureMultiPlayerGamesCustom "This button allows you to configure multi-player games and custom tailor advanced game options. You do not need to press this button for standard single player games."
+@range 20 game names by AI level and universe size (createui.c)
 0x01cb idsShootingFishBarrel "Shooting Fish in a Barrel"
 0x01cc idsWalkPark "A Walk in the Park"
 0x01cd idsSleepwalkingParadise "Sleepwalking in Paradise"
@@ -482,6 +508,7 @@
 0x01dc idsDDay "D-Day"
 0x01dd idsWorldWarIii "World War III"
 0x01de idsEternityHell "Eternity in Hell"
+@range 4 title screen buttons (mdi.c)
 0x01df idsNewGame "&New Game..."
 0x01e0 idsOpenGame "&Open Game..."
 0x01e1 idsContinueGame "&Continue Game"
@@ -530,6 +557,7 @@
 0x020c idsUnknownPlayer "??? Unknown Player ???"
 0x020d idsExpansionPlayer "Expansion player"
 0x020e idsSorryCantFindPlanetFleetName "Sorry, can't find a planet or fleet by that name."
+@range 3 player control popup (mdi.c)
 0x020f idsHumanControlled "Human controlled"
 0x0210 idsAiControlled "AI controlled"
 0x0211 idsHumanCurrentlyInactive "Human (currently inactive)"
@@ -549,8 +577,10 @@
 0x021f idsFuel2 "Fuel:"
 0x0220 idsShipCountLd "Ship Count: %ld"
 0x0221 idsCLd00 "%c%ld00"
+@range 2 population label, short or long (mineui.c)
 0x0222 idsPop "Pop:  "
 0x0223 idsPopulation2 "Population:  "
+@range 2 value label, short or long (mineui.c)
 0x0224 idsVal "Val: "
 0x0225 idsValue "Value: "
 0x0226 idsUninhabited "Uninhabited"
@@ -622,9 +652,11 @@
 0x0268 idsTutorialHaveGivenIncorrectTransferOrderPlease "Tutorial: You have given an incorrect transfer order. Please reread the tutorial text and try again."
 0x0269 idsTutorialHaveGivenIncorrectQuantityTransferOrder "Tutorial: You have given an incorrect quantity in a transfer order. Please reread the tutorial text and try again."
 0x026a idsSureWishGenerateOptionDoesGuaranteePlayers "Are you sure you wish to generate now?  This option does NOT guarantee that all players have turned in their turns."
+@range 3 design in use warnings, ids + 1, ids + 2 (buildui.c)
 0x026b idsCurrentlyHaveDSSDProduction "You currently have %d %s%s and %d in production%s. If you delete this design, these ships will be destroyed and/or removed from the queues. Are you sure?"
 0x026c idsCurrentlyHaveDSSProductionQueues "You currently have %d %s%s in production queues%s. If you delete this design, these ships will be removed from the queues. Are you sure?"
 0x026d idsCurrentlyHaveDSSIfDelete "You currently have %d %s%s. If you delete this design, these ships will be destroyed. Are you sure?"
+@range 4 starbase design in use warnings, ids + 1, ids + 2; the edit warning is idsCurrentlyHaveDSSIfDelete2 + 1 (buildui.c)
 0x026e idsCurrentlyHaveDSSDProduction2 "You currently have %d %s%s and %d in production%s. If you delete this design, these starbases will be destroyed and/or removed from the queues. Are you sure?"
 0x026f idsCurrentlyHaveDSSProductionQueues2 "You currently have %d %s%s in production queues%s. If you delete this design, these starbases will be removed from the queues. Are you sure?"
 0x0270 idsCurrentlyHaveDSSIfDelete2 "You currently have %d %s%s. If you delete this design, these starbases will be destroyed. Are you sure?"
@@ -634,6 +666,7 @@
 0x0274 idsWarpD "Warp: %d"
 0x0275 idsWarpStopped "Warp: (stopped)"
 0x0276 idsMassLdkt "Mass: %ldkT"
+@range 77 about box credits (stars.c)
 0x0277 idsDesignProgramming "Design and Programming"
 0x0278 ids0632Blank ""
 0x0279 idsJeffJohnson "Jeff Johnson"
@@ -718,6 +751,7 @@
 0x02c8 idsAutoGenerateDisabledBecauseHumanPlayersDead "Auto Generate is disabled because all of the human players are dead or inactive."
 0x02c9 idsNoteStarsPrefersScreenResolutionLeast800x600 "Note: Stars! prefers a screen resolution of at least 800x600 with 256 colors. Some visual elements may appear less than optimal in your current video mode."
 0x02ca idsFileCreatedNewerVersionStarsMustUpgrade "The file \w was created with a newer version of Stars! You must upgrade to be able to read this file."
+@range 7 turn status by rgOut, from -1 (turn.c, mdi.c)
 0x02cb idsDead "dead"
 0x02cc idsTurned "turned in"
 0x02cd idsStill "still out"
@@ -729,6 +763,7 @@
 0x02d3 idsFieldTypeS "Field Type:  %s"
 0x02d4 idsFieldRadiusDLYLdMines "Field Radius:  %d l.y. (%ld mines)"
 0x02d5 idsDecayRateLdYear "Decay rate:  %ld / year"
+@range 5 mine layer stats (researchui.c)
 0x02d6 idsMinesLaidPerYear "Mines laid per year: "
 0x02d7 idsMaximumSafeSpeed "Maximum safe speed: "
 0x02d8 idsChanceLYHit "Chance / l.y. of a hit: "
@@ -745,6 +780,7 @@
 0x02e3 idsCancel "Cancel"
 0x02e4 idsDesign "Design"
 0x02e5 idsView "View"
+@range 2 delete or edit design title, + fEdit (buildui.c)
 0x02e6 idsDeleteDesign "Delete Design"
 0x02e7 idsEditDesign "Edit Design"
 0x02e8 idsWorkDone " with some work done"
@@ -895,6 +931,7 @@
 0x0379 idsN99999Kt " 99999 kT"
 0x037a idsWaypointTask "Waypoint Task"
 0x037b idsEstFuelUsage "Est Fuel Usage"
+@range 2 cargo or fuel amount format (shipui.c)
 0x037c idsLdkt "%ldkT"
 0x037d idsLdmg "%ldmg"
 0x037e idsWarpFactor "Warp Factor"
@@ -941,6 +978,7 @@
 0x03a7 idsPartAlsoActs10CloakIncreasesTorpedo "This part also acts as a 10% cloak, increases torpedo accuracy up to 10%, AND a 150/75 l.y. scanner."
 0x03a8 idsWeaponCanAlsoBombPlanets2Colonists "This weapon can also bomb planets (2% colonists killed, 5 installations destroyed) and lay 40 standard mines/year."
 0x03a9 idsProcessGivesPlanetNewBirthTracesCivilization "This process gives a planet a new birth. All traces of civilization (aside from the people) are eliminated as the planet revitalizes itself into an entirely new world."
+@range 27 victory conditions, three per condition, ids++ (createui.c, reportui.c)
 0x03aa idsOwns "Owns "
 0x03ab idsPlanets2 "of all planets."
 0x03ac ids0940Blank " "
@@ -970,6 +1008,7 @@
 0x03c4 ids0964Blank " "
 0x03c5 idsPlanets3 " planets."
 0x03c6 idsHistory "History of "
+@range 7 wormhole stability by PctWormholeMoves (mineui.c)
 0x03c7 idsRockSolid "Rock Solid"
 0x03c8 idsStable "Stable"
 0x03c9 idsMostlyStable "Mostly Stable"
@@ -983,6 +1022,7 @@
 0x03d1 idsDD5 "(%d, %d)"
 0x03d2 idsTraderRequestsInterestedPartiesSendFleetLeast "The trader requests interested parties to send it a fleet with at least 5000kT of minerals on board to be absorbed into the trader. It offers technological assistance in return."
 0x03d3 idsTraderTravelingWarpD "Trader is traveling at Warp %d."
+@range 10 AI ship names (FCreateAiShdef)
 0x03d4 idsEasterBunny "Easter Bunny"
 0x03d5 idsKilljoy "Killjoy"
 0x03d6 idsMommasHelper "Momma's helper"
@@ -993,6 +1033,7 @@
 0x03db idsRobin "Robin"
 0x03dc idsOstrich "Ostrich"
 0x03dd idsGoose "Goose"
+@range 16 AI ship names (FCreateAiShdef)
 0x03de idsLyingBastard "Lying Bastard"
 0x03df idsPitBull "Pit Bull"
 0x03e0 idsToothlessTiger "Toothless Tiger"
@@ -1009,6 +1050,7 @@
 0x03eb idsLash "Lash"
 0x03ec idsTerror "Terror"
 0x03ed idsDogWar "Dog of War"
+@range 12 AI ship names (FCreateAiShdef)
 0x03ee idsPidgeon "Pidgeon"
 0x03ef idsRagingRukh "Raging Rukh"
 0x03f0 idsManifestDestiny "Manifest Destiny"
@@ -1021,6 +1063,7 @@
 0x03f7 idsStrangeLove "Strange Love"
 0x03f8 idsDrDeath "Dr. Death"
 0x03f9 idsScorch "Scorch"
+@range 8 AI ship names (FCreateAiShdef)
 0x03fa idsGroundHog "Ground Hog"
 0x03fb idsNakedMoleRat "Naked Mole Rat"
 0x03fc idsTerrier "Terrier"
@@ -1029,6 +1072,7 @@
 0x03ff idsGorge "Gorge"
 0x0400 idsGut "Gut"
 0x0401 idsAirdale "Airdale"
+@range 8 AI ship names (FCreateAiShdef)
 0x0402 idsEgg "Egg"
 0x0403 idsBusyBee "Busy Bee"
 0x0404 idsSeeder "Seeder"
@@ -1037,6 +1081,7 @@
 0x0407 idsPlymouth "Plymouth"
 0x0408 idsDuty "Duty"
 0x0409 idsVassal "Vassal"
+@range 8 AI ship names (FCreateAiShdef)
 0x040a idsGlovebox "Glovebox"
 0x040b idsPerfectLogic "Perfect Logic"
 0x040c idsBoxcar "Boxcar"
@@ -1045,6 +1090,7 @@
 0x040f idsC74 "C74"
 0x0410 idsLor "Lor"
 0x0411 idsBlackHold "Black Hold"
+@range 8 AI ship names (FCreateAiShdef)
 0x0412 idsPricklyPear "Prickly Pear"
 0x0413 idsBristlyLlama "Bristly Llama"
 0x0414 idsSilentMule "Silent Mule"
@@ -1053,6 +1099,7 @@
 0x0417 idsLongJohnSilver "Long John Silver"
 0x0418 idsBlackbeard "Blackbeard"
 0x0419 idsThistle "Thistle"
+@range 8 AI ship names (FCreateAiShdef)
 0x041a idsZombie "Zombie"
 0x041b idsTyphoid "Typhoid"
 0x041c idsZeppo "Zeppo"
@@ -1061,6 +1108,7 @@
 0x041f idsPoly "Poly"
 0x0420 idsMog "Mog"
 0x0421 idsRanger "Ranger"
+@range 16 AI ship names (FCreateAiShdef)
 0x0422 idsScrapper "Scrapper"
 0x0423 idsBogey "Bogey"
 0x0424 idsHorseFly "Horse Fly"
@@ -1077,6 +1125,7 @@
 0x042f idsCattleProd "Cattle Prod"
 0x0430 idsAsunder "Asunder"
 0x0431 idsBlade "Blade"
+@range 13 AI starbase names (aiutil.c)
 0x0432 idsGuardianAngel "Guardian Angel"
 0x0433 idsSkyFort "Sky Fort"
 0x0434 idsSilverTower "Silver Tower"
@@ -1090,6 +1139,7 @@
 0x043c idsSphereDoom "Sphere of Doom"
 0x043d idsGatewayHell "Gateway to Hell"
 0x043e idsEvilSpawn "Evil Spawn"
+@range 17 part categories (researchui.c)
 0x043f idsAll "All"
 0x0440 idsArmor3 "Armor"
 0x0441 idsBeamWeapons "Beam Weapons"
@@ -1114,8 +1164,10 @@
 0x0454 idsWarningShipsDktMightSuccessfullyGatedD "Warning: Ships up to %dkT might be successfully gated up to %d l.y. but exceeding the stated limits will cause damage to the fleet."
 0x0455 idsWarningShipsCanSuccessfullyGatedDL "Warning: Ships can be successfully gated up to %d l.y. but exceeding the stated limits may cause damage to the fleet."
 0x0456 idsWarningShipsDktCanSuccessfullyGatedExceeding "Warning: Ships up to %dkT can be successfully gated but exceeding the stated limits may cause damage to the fleet."
+@range 2 mass driver warning, idsT++ (researchui.c)
 0x0457 idsWarningReceivingPlanetMustHaveMassDriver "Warning: The receiving planet must have a mass driver or it will take damage."
 0x0458 idsWarningReceivingPlanetMustHaveMassDriver2 "Warning: The receiving planet must have a mass driver at least as capable or it will take damage."
+@range 15 planet report columns by PlanetReportColumn (reportui.c)
 0x0459 idsPlanetName "Planet Name"
 0x045a idsStarbase3 "Starbase"
 0x045b idsPopulation5 "Population"
@@ -1141,6 +1193,7 @@
 0x046f idsHide "Hide the "
 0x0470 idsColumn " column"
 0x0471 idsShow "Show the "
+@range 12 fleet report columns by FleetReportColumn (reportui.c)
 0x0472 idsFleetName "Fleet Name"
 0x0473 idsId2 "ID"
 0x0474 idsLocation2 "Location"
@@ -1153,6 +1206,7 @@
 0x047b idsCloak "Cloak"
 0x047c idsBattlePlan "Battle Plan"
 0x047d idsMass "Mass"
+@range 12 enemy fleet report columns by EnemyFleetReportColumn (reportui.c)
 0x047e idsFleetName2 "Fleet Name"
 0x047f idsId3 "ID"
 0x0480 idsLocation3 "Location"
@@ -1165,6 +1219,7 @@
 0x0487 idsWarship2 "Warship"
 0x0488 idsBomber2 "Bomber"
 0x0489 idsUtility2 "Utility"
+@range 15 battle report columns by BattleReportColumn (reportui.c)
 0x048a idsLocation4 "Location"
 0x048b idsSb "SB"
 0x048c idsSides "Sides"
@@ -1199,9 +1254,11 @@
 0x04a9 idsDamageNone "Damage: (none)"
 0x04aa idsArmorLd "Armor: %ld"
 0x04ab idsMovementS "Movement: %s"
+@range 2 long or short label, + (dyArial8 > 14) (buildui.c)
 0x04ac idsInitiativeMoves "Initiative/Moves:"
 0x04ad idsInitMove "Init/Move:"
 0x04ae idsCloakJam "Cloak/Jam:"
+@range 2 long or short label, + (dyArial8 > 14) (buildui.c)
 0x04af idsScannerRange2 "Scanner Range:"
 0x04b0 idsScanner "Scanner:"
 0x04b1 idsDD6 "%d / %d"
@@ -1213,6 +1270,7 @@
 0x04b7 idsHullWillManufacture200UnitsFuelEach "This hull will manufacture 200 units of fuel each year. Ships in the same fleet will heal %d%% faster."
 0x04b8 idsHullWillDoubleEfficiencyMineLayingPods "This hull will double the efficiency of the all mine laying pods placed in it."
 0x04b9 idsDead3 "<Dead>"
+@range 3 score dialog title, + fVictory, which is 0 to 2 (reportui.c)
 0x04ba idsPlayerScores "Player Scores"
 0x04bb idsVictoryConditions "Victory Conditions"
 0x04bc idsProgressTimeline "Progress Timeline"
@@ -1225,6 +1283,7 @@
 0x04c3 idsRenameProductionTemplate "Rename Production Template"
 0x04c4 idsAutoBuildOrders "<No Auto Build Orders>"
 0x04c5 idsSD2 "%s (%d)"
+@range 2 research contribution, + fNoResearch (produceui.c)
 0x04c6 idsContributeResearch "Contribute to research"
 0x04c7 idsDontContributeResearch "Don't contribute to research"
 0x04c8 idsEmptyCustomSlot "Empty Custom Slot"
@@ -1243,12 +1302,15 @@
 0x04d9 idsUnableWritePlanetInformationSOperationTerminated "Unable to write planet information to '%s'. Operation terminated."
 0x04da idsKnownFleetInformationHasSuccessfullyWrittenS "Known fleet information has been successfully written to '%s'."
 0x04db idsUnableWriteFleetInformationSOperationTerminated "Unable to write fleet information to '%s'. Operation terminated."
+@range 3 planet dump header (report.c)
 0x04dc idsPlanetNameOwnerStarbaseTypeReportAge "Planet Name*Owner*Starbase Type*Report Age*Population*Value*Production Queue*Mines*Factories*Def %*S Iron*S Bora*S Germ"
 0x04dd idsIronMrBoraMrGermMrIron "*Iron MR*Bora MR*Germ MR*Iron MC*Bora MC*Germ MC*Resources"
 0x04de idsGravTempRadGravorigTemporigRadorigTerra "*Grav*Temp*Rad*GravOrig*TempOrig*RadOrig*Terra*Cap*Scan*Pen*Driver*Warp*Route*GateRange*GateMass*PctDmg"
+@range 3 fleet dump header (report.c)
 0x04df idsFleetNameXYPlanetDestinationBattle "Fleet Name*X*Y*Planet*Destination*Battle Plan"
 0x04e0 idsShipCntIronBoraGermColFuel "*Ship Cnt*Iron*Bora*Germ*Col*Fuel"
 0x04e1 idsOwnerEtaWarpMassCloakScanPen "*Owner*ETA*Warp*Mass*Cloak*Scan*Pen*Task*Mining*Sweep*Laying*Terra*Unarmed*Scout*Warship*Utility*Bomber"
+@range 4 object kinds by ThingType, message \G (msg.c)
 0x04e2 idsMineField "Mine Field"
 0x04e3 idsMineralPacket "Mineral Packet"
 0x04e4 idsWormhole "Wormhole"
@@ -1270,13 +1332,16 @@
 0x04f4 idsWeaponWillDamageShieldsHasEffectArmor "This weapon will only damage shields. It has no effect on armor."
 0x04f5 idsWeaponHitsTargetsRangeEachTimeFired "This weapon hits all targets in range each time it is fired."
 0x04f6 idsWeaponAlsoMakesExcellentMineSweeperCapable "This weapon also makes an excellent mine sweeper capable of sweeping %d mines per year."
+@range 2 long or short label, + (dyArial8 > 14) (buildui.c)
 0x04f7 idsMaxPopulation "Max Population:"
 0x04f8 idsMaxPop "Max Pop:"
 0x04f9 idsBattlePlan2 "Battle Plan: "
 0x04fa idsIntercept "Intercept"
+@range 3 design filter menu (tb.c)
 0x04fb idsDesigns "All Designs"
 0x04fc idsInvertFilter "Invert Filter"
 0x04fd idsDesigns2 "No Designs"
+@range 6 mine field filter menu (tb.c)
 0x04fe idsMineFields "All Mine Fields"
 0x04ff idsMineFields2 "No Mine Fields"
 0x0500 idsMineFields3 "Mine Fields of Yours"
@@ -1313,6 +1378,7 @@
 0x051f idsN30 " (30)"
 0x0520 idsStarsUniverseMap "Stars! Universe Map"
 0x0521 idsYearD "Year: %d"
+@range 5 printed map legend (mdi.c)
 0x0522 idsPlanet3 "   = Your Planet"
 0x0523 idsOrbitalFort "   = Orbital Fort"
 0x0524 idsStarbase4 "   = Starbase"
@@ -1334,6 +1400,7 @@
 0x0534 idsN2 "N/A"
 0x0535 idsTo2 "to"
 0x0536 idsTo3 "To:"
+@range 4 font names, idsArial2 + i (init.c)
 0x0537 idsArial2 "Arial"
 0x0538 idsArialBold "Arial Bold"
 0x0539 idsArialItalic "Arial Italic"
@@ -1347,6 +1414,7 @@
 0x0541 idsNum "Num"
 0x0542 idsStandard "Standard"
 0x0543 idsSmart "Smart"
+@range 2 message \I (msg.c)
 0x0544 idsDecreased "decreased"
 0x0545 idsIncreased "increased"
 0x0546 idsOf2 " of "
@@ -1355,6 +1423,7 @@
 0x0549 idsEverybody "Everybody"
 0x054a idsSCC "From:  %s%c%c"
 0x054b idsSCC2 "To:  %s%c%c"
+@range 4 message pane buttons (msgui.c)
 0x054c idsPrev2 "Prev"
 0x054d idsGoto3 "Goto"
 0x054e idsNext2 "Next"
@@ -1365,6 +1434,7 @@
 0x0553 idsOld2 " old"
 0x0554 idsSummary " Summary"
 0x0555 idsDeepSpaceWaypoint "Deep Space Waypoint"
+@range 2 short or long distance unit (scan.c)
 0x0556 idsLy "ly"
 0x0557 idsLightYears "light years"
 0x0558 idsFrom " from "
@@ -1379,9 +1449,11 @@
 0x0561 idsFieldDD "Field: %d of %d"
 0x0562 idsSureWantForceGenerateDTurnsRow "Are you sure you want to force generate %d turns in a row?"
 0x0563 idsGeneratingYearD "Generating year %d"
+@range 2 turn log result, + fSuccess (create.c, turn.c)
 0x0564 idsFailed "Failed"
 0x0565 idsSucceeded "Succeeded"
 0x0566 idsCantFindHostFile "Can't find host file"
+@range 7 predefined race names, by vrgplrDef index
 0x0567 idsHumanoid "Humanoid"
 0x0568 idsRabbitoid "Rabbitoid"
 0x0569 idsInsectoid "Insectoid"
@@ -1389,6 +1461,7 @@
 0x056b idsSilicanoid "Silicanoid"
 0x056c idsAntetheral "Antetheral"
 0x056d idsRandom3 "Random"
+@range 24 random race names (create.c, createui.c, race.c)
 0x056e idsBerserker "Berserker"
 0x056f idsBulushi "Bulushi"
 0x0570 idsGolem "Golem"
