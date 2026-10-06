@@ -1,0 +1,457 @@
+# Robotoid ship designs: vrgRobAip, read by DoRobotoidAiTurn. data/datagen.py
+# describes the format. Each recipe gives an AiPartPreference per slot of
+# its hull; its name becomes a RobotoidRecipeOffset, the recipe's offset
+# in vrgRobAip. Code picks recipes by position through vrgRobIshAip, so
+# keep the order; recipes without a hull are unused.
+
+- name: robOffsetMetaMorphBeamDefense
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartShieldPreferCompletePhase
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialPodThrustCloak
+    - aiPartArmorPreferSuperlatanium
+    - aiPartArmorPreferSuperlatanium
+
+- name: robOffsetMetaMorphBeamBlunderbuss
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferBlunderbuss
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartSpecialPodThrustCloak
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialDeflectorCapacitorFuel
+
+- name: robOffsetMetaMorphBeamSapper
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartSapper
+    - aiPartSpecialPodThrustCloak
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialCapacitorFuel
+
+- name: robOffsetMetaMorphBeamAntiMatter
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialPodThrustCloak
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialCapacitorFuel
+
+- name: robOffsetMetaMorphMissileA
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartArmorPreferSuperlatanium
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+    - aiPartSpecialPodJammerDeflectorThrust
+
+- name: robOffsetMetaMorphTorpedoA
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialPodThrustCloak
+    - aiPartBattleComputer
+    - aiPartSpecialPodJammerDeflectorThrust
+
+- name: robOffsetMetaMorphTorpedoB
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartArmorPreferSuperlatanium
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartShieldPreferCompletePhase
+    - aiPartBattleComputer
+    - aiPartSpecialPodJammerDeflectorThrust
+
+- name: robOffsetMetaMorphMissileB
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+
+- name: robOffsetMetaMorphCargoBeamA
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartCargoPod
+    - aiPartCargoPod
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartBeamPreferMultiContainedMunition
+
+- name: robOffsetMetaMorphCargoBeamB
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartCargoPod
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialCapacitorFuel
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialPodThrustCloak
+
+- name: robOffsetMetaMorphCargoBeamC
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartCargoPod
+    - aiPartShieldPreferCompletePhase
+    - aiPartCargoPod
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartSpecialCapacitorFuel
+
+- name: robOffsetMetaMorphCargoMissile
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartCargoPod
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+    - aiPartShieldPreferCompletePhase
+
+- name: robOffsetMetaMorphCargoMixedWeapons
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartCargoPod
+    - aiPartBattleComputer
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartCargoPod
+    - aiPartMissile
+    - aiPartTorpedo
+
+- name: robOffsetMetaMorphCargoTorpedo
+  hull: ihuldefMetaMorph
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartCargoPod
+    - aiPartCargoPod
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+
+- name: robOffsetPrivateerBeam
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialDeflectorCapacitorFuel
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+
+- name: robOffsetPrivateerTorpedo
+  hull: ihuldefPrivateer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartTorpedo
+
+- name: robOffsetDestroyerBeamA
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetDestroyerBeamB
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSpecialCapacitorFuel
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetDestroyerBeamC
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: robOffsetDestroyerBeamD
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferBlunderbuss
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialCapacitorJammerPodComputer
+
+- name: robOffsetDestroyerTorpedoShield
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetDestroyerTorpedoComputer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetDestroyerMissileJammer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetDestroyerMissileComputer
+  hull: ihuldefDestroyer
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBattleComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialThrustDeflectorFuel
+    - aiPartBattleComputer
+
+- name: robOffsetB52SmartThenNormal
+  hull: ihuldefB52Bomber
+  parts:
+    - aiPartEngineGalaxyScoopOrHydroRamScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartBombHushThenSmartThenNormalThenRetro
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+
+- name: robOffsetB52RetroThenSmart
+  hull: ihuldefB52Bomber
+  parts:
+    - aiPartEngineGalaxyScoopOrHydroRamScoop
+    - aiPartBombHushThenNormal
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartBombHushThenRetroThenSmart
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartShieldPreferCompletePhase
+
+- name: robOffsetFrigateScoutMineLayer
+  hull: ihuldefFrigate
+  parts:
+    - aiPartEngineGalaxyScoopOrHydroRamScoop
+    - aiPartScannerPreferElephant
+    - aiPartStandardMineDispenser
+    - aiPartShieldPreferCompletePhase
+
+- name: robOffsetBattleshipMissileBeam
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartBattleComputer
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBattleComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipMissileTorpedoA
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBattleComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipMissileTorpedoB
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartMissile
+    - aiPartMissile
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBattleComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipTorpedoBeam
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartTorpedo
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBattleComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipBeamA
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipBeamB
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSapper
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipBeamC
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartSapper
+    - aiPartSapper
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetBattleshipBeamD
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferAntiMatterPulverizer
+    - aiPartBeamPreferBlunderbuss
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetUnusedSevenSlotMcm
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartMultiContainedMunitionOnly
+    - aiPartShieldPreferCompletePhase
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialPodJammerDeflectorThrust
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+
+- name: robOffsetBattleshipMcm
+  hull: ihuldefBattleship
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartSpecialPodThrustCloak
+    - aiPartShieldPreferCompletePhase
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartMultiContainedMunitionOnly
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialJammerComputer
+
+- name: robOffsetNubianMixedBeams
+  hull: ihuldefNubian
+  parts:
+    - aiPartEnginePreferGalaxyScoop
+    - aiPartShieldPreferCompletePhase
+    - aiPartShieldPreferCompletePhase
+    - aiPartSapper
+    - aiPartBeamPreferBlunderbuss
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartBeamPreferMultiContainedMunition
+    - aiPartBeamPreferAntiMatterPulverizer

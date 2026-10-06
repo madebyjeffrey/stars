@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-extern uint8_t vrgISIshAip[19];
-extern uint8_t vrgISAip[182];
+extern uint8_t vrgISIshAip[];
+extern uint8_t vrgISAip[];
 extern uint8_t vrgAiISResOrder[18];
 
 void    DoMaidAiTurn(PROD *rgprod);

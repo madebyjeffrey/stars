@@ -2,14 +2,14 @@
 """Build the game's static data tables from the YAML files in data/.
 
 Usage:
-    datagen.py OUTDIR       write partids.h and data_tables.c into OUTDIR
+    datagen.py OUTDIR       write dataids.h and data_tables.c into OUTDIR
 
 Each YAML file is a list of entries, one per element of a C array (a list
 of lists for a two-dimensional one). An entry is written out as a C
 designated initializer: its keys are the struct's field names and its
 values are C values.
 
-    - name: iengineFuelMizer        # its enum value in partids.h
+    - name: iengineFuelMizer        # its enum value in dataids.h
       szName: "Fuel Mizer"          # sz keys are strings (Windows-1252)
       rgwtOreCost: [8]              # lists become {8}
       grfAbilities: engineFuelMizer # other strings are C expressions
@@ -57,7 +57,7 @@ def Parts(file, ctype, array, enum, count, prefix, derive=None):
     return dict(file="parts/" + file, ctype=ctype, array=array, enum=enum, count=count, prefix=prefix, derive=derive)
 
 
-# The tables, with their enums in the order they appear in partids.h.
+# The tables, with their enums in the order they appear in dataids.h.
 # Starbase hulls continue HulDef after the ship hulls: each has an isbhull
 # name and a HulDef name (huldef). shape gives a two-dimensional table's size.
 TABLES = [
@@ -82,6 +82,25 @@ TABLES = [
     dict(file="battle-plans.yaml", ctype="BTLPLAN", array="rgbtlplanT", derive="iplan"),
     dict(file="races/predefined.yaml", ctype="PLAYER", array="vrgplrDef"),
     dict(file="races/ai.yaml", ctype="PLAYER", array="vrgplrComp", shape=(6, 4)),
+]
+
+# The AI design recipes. Each recipe is an AiPartPreference per slot of its
+# hull, stored back to back in array; its name becomes an enum value, its
+# offset there. ish, if any, lists the offsets in recipe order, which code
+# indexes by position. size keeps the original's zero padding after the last
+# recipe.
+RECIPES = [
+    dict(file="ai/turin-drone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipeOffset", prefix="tdOffset",
+         ish="vrgTDIshAip", ishType="uint8_t"),
+    dict(file="ai/robotoid.yaml", array="vrgRobAip", size=301, enum="RobotoidRecipeOffset", prefix="robOffset",
+         ish="vrgRobIshAip", ishType="RobotoidRecipeOffset"),
+    dict(file="ai/automitron.yaml", array="vrgISAip", size=182, enum="ISRecipeOffset", prefix="isOffset",
+         ish="vrgISIshAip", ishType="uint8_t"),
+    dict(file="ai/macinti.yaml", array="vrgMacAip", size=248, enum="MacintiRecipeOffset", prefix="macOffset",
+         ish="vrgMacIshAip", ishType="MacintiRecipeOffset"),
+    dict(file="ai/cybertron.yaml", array="vrgCyberAip", size=301, enum="CybertronRecipeOffset", prefix="cyberOffset",
+         ish="vrgCyberIshAip", ishType="CybertronRecipeOffset"),
+    dict(file="ai/starbases.yaml", array="vrgSBAip", size=85, enum="AiStarbaseRecipeOffset", prefix="aiSbRecipe"),
 ]
 
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
@@ -199,12 +218,41 @@ def LoadTable(table):
     return entries
 
 
+def LoadRecipes(table, chs):
+    """Return a recipe file's (name, parts) list, checking each against its hull."""
+    file = table["file"]
+    with open(os.path.join(HERE, file), encoding="utf-8") as f:
+        entries = yaml.safe_load(f)
+    if not isinstance(entries, list) or not entries:
+        raise DataError("data/{}: expected a list of recipes".format(file))
+    recipes = []
+    for i, entry in enumerate(entries):
+        where = "data/{}: recipe {}".format(file, i)
+        if not isinstance(entry, dict) or set(entry) - {"name", "hull", "parts"}:
+            raise DataError("{}: expected a map of name, hull and parts".format(where))
+        name = entry.get("name")
+        if not isinstance(name, str) or not IDENT.match(name) or not name.startswith(table["prefix"]):
+            raise DataError("{}: name {!r} must be a C name starting with {!r}".format(where, name, table["prefix"]))
+        where = "data/{}: {}".format(file, name)
+        parts = entry.get("parts")
+        if not isinstance(parts, list) or not parts or not all(isinstance(p, str) and p.startswith("aiPart") and IDENT.match(p) for p in parts):
+            raise DataError("{}: parts must be a list of aiPart names".format(where))
+        hulls = entry.get("hull") or []
+        for hull in [hulls] if isinstance(hulls, str) else hulls:
+            if hull not in chs:
+                raise DataError("{}: {!r} is not a hull".format(where, hull))
+            if chs[hull] != len(parts):
+                raise DataError("{}: {} has {} slots but the recipe has {} parts".format(where, hull, chs[hull], len(parts)))
+        recipes.append((name, parts))
+    return recipes
+
+
 def Generate(outdir):
     header = [
-        "// " + GENERATED.format("parts/*.yaml"),
-        "// The part, hull and starting design indexes, included by enums.h.",
-        "#ifndef STARS_PARTIDS_H",
-        "#define STARS_PARTIDS_H",
+        "// " + GENERATED.format("*.yaml"),
+        "// The part, hull, starting design and AI recipe enums, included by enums.h.",
+        "#ifndef STARS_DATAIDS_H",
+        "#define STARS_DATAIDS_H",
         "",
     ]
     body = ["// " + GENERATED.format("*.yaml"), '#include "common.h"', ""]
@@ -252,10 +300,31 @@ def Generate(outdir):
             init = ",\n".join(rgsz)
         dims = "".join("[{}]".format(n) for n in shape)
         body.append("{} {}{} = {{\n{}\n}};\n".format(table["ctype"], array, dims, init))
+    chs = {}
+    for array, key in (("rghuldef", "name"), ("rghuldefSB", "name"), ("rghuldefSB", "huldef")):
+        for entry in tables[array]:
+            chs[entry[key]] = len(entry["hul"].get("rghs", []))
+    for table in RECIPES:
+        recipes = LoadRecipes(table, chs)
+        header.append("enum {} {{".format(table["enum"]))
+        lines = []
+        rgib = []
+        ib = 0
+        for name, parts in recipes:
+            header.append("    {} = {},".format(name, ib))
+            lines.append("    /* {} */ {},".format(name, ", ".join(parts)))
+            rgib.append(ib)
+            ib += len(parts)
+        header += ["};", ""]
+        body.append("uint8_t {}[{}] = {{\n{}\n}};\n".format(table["array"], max(ib, table["size"]), "\n".join(lines)))
+        if table.get("ish"):
+            if table["ishType"] == "uint8_t" and rgib[-1] > 255:
+                raise DataError("data/{}: offsets pass 255, beyond {}'s uint8_t".format(table["file"], table["ish"]))
+            body.append("{} {}[{}] = {{{}}};\n".format(table["ishType"], table["ish"], len(recipes), ", ".join(name for name, _ in recipes)))
     header += ["#endif", ""]
     body += asserts + [""]
     os.makedirs(outdir, exist_ok=True)
-    for name, text in (("partids.h", "\n".join(header)), ("data_tables.c", "\n".join(body))):
+    for name, text in (("dataids.h", "\n".join(header)), ("data_tables.c", "\n".join(body))):
         WriteIfChanged(os.path.join(outdir, name), text)
 
 

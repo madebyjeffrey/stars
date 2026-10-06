@@ -1,0 +1,117 @@
+# AI starbase designs: vrgSBAip, read by FCreateAiStarbase. data/datagen.py
+# describes the format. Each recipe gives an AiPartPreference per slot of
+# its starbase hull; its name becomes an AiStarbaseRecipeOffset, the
+# recipe's offset in vrgSBAip, which code passes by name.
+
+- name: aiSbRecipeSpaceStation
+  hull: isbhullSpaceStation
+  parts:
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartTorpedoMissilePreferArmageddon
+    - aiPartShieldPreferLangstonShell
+    - aiPartTorpedo
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartBattleComputer
+    - aiPartBeamPreferMegaDisruptor
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartArmorPreferSuperlatanium
+
+- name: aiSbRecipeOrbitalFort
+  hull: isbhullOrbitalFort
+  parts:
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartTorpedo
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartShieldPreferLangstonShell
+
+- name: aiSbRecipeMacSpaceDock
+  hull: isbhullSpaceDock
+  parts:
+    - aiPartSpecialJammerComputer
+    - aiPartTorpedo
+    - aiPartArmorPreferSuperlatanium
+    - aiPartBeamPreferStreamingPulverizer
+    - aiPartShieldPreferCompletePhase
+    - aiPartBattleComputer
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferMegaDisruptor
+
+- name: aiSbRecipeMacUltraStationEarly
+  hull: isbhullUltraStation
+  parts:
+    - aiPartSpecialJammerComputer
+    - aiPartTorpedoMissilePreferArmageddon
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartShieldPreferLangstonShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferMegaDisruptor
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartShieldPreferLangstonShell
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferAntiMatterPulverizer
+
+- name: aiSbRecipeMacDeathStar
+  hull: isbhullDeathStar
+  parts:
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartTorpedoMissilePreferArmageddon
+    - aiPartBattleComputer
+    - aiPartBattleComputer
+    - aiPartShieldPreferLangstonShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialJammerComputer
+    - aiPartTorpedo
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferMegaDisruptor
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartSpecialJammerComputer
+    - aiPartArmorPreferSuperlatanium
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferEitherPulverizer
+
+- name: aiSbRecipeMacSpaceStation
+  hull: isbhullSpaceStation
+  parts:
+    - aiPartSpecialJammerComputer
+    - aiPartTorpedoMissilePreferArmageddon
+    - aiPartShieldPreferLangstonShell
+    - aiPartTorpedo
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartBattleComputer
+    - aiPartBeamPreferMegaDisruptor
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartSpecialJammerComputer
+    - aiPartArmorPreferSuperlatanium
+
+- name: aiSbRecipeMacUltraStationLate
+  hull: isbhullUltraStation
+  parts:
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartTorpedoMissilePreferArmageddon
+    - aiPartBattleComputer
+    - aiPartTorpedo
+    - aiPartShieldPreferLangstonShell
+    - aiPartShieldPreferCompletePhase
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferMegaDisruptor
+    - aiPartSpecialCapacitorJammerPodComputer
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartMassDriverWithSpecialFallbacks
+    - aiPartArmorPreferMegaPolyShell
+    - aiPartBeamPreferEitherPulverizer
+    - aiPartShieldPreferLangstonShell
+    - aiPartSpecialJammerComputer
+    - aiPartBeamPreferAntiMatterPulverizer

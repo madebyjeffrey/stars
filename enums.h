@@ -279,10 +279,10 @@ enum HullSlotType {
 };
 typedef uint16_t HullSlotType;
 
-// HulDef, StartingStarbase, StartingShip and the part indexes (isbhull,
-// iengine ... ispecialSB) come from the parts tables in data/parts/; see
-// data/datagen.py.
-#include "partids.h"
+// HulDef, StartingStarbase, StartingShip, the part indexes (isbhull,
+// iengine ... ispecialSB) and the AI recipe offsets come from the YAML in
+// data/; see data/datagen.py.
+#include "dataids.h"
 
 typedef uint16_t HulDef;
 typedef uint16_t StartingStarbase;
@@ -1294,184 +1294,30 @@ enum AiPartPreference {
 };
 typedef uint16_t AiPartPreference;
 
-// Byte offsets stored in vrgTDIshAip, not indices into that table.
-enum TurinDroneRecipeOffset {
-    tdOffsetColonizer = 0,
-    tdOffsetFrigateScout = 2,
-    tdOffsetDestroyerTorpedo = 6,
-    tdOffsetUnusedSevenSlotMissile = 13,
-    tdOffsetUnusedSevenSlotBeamA = 20,
-    tdOffsetUnusedSevenSlotTorpedo = 27,
-    tdOffsetUnusedSevenSlotBeamB = 34,
-    tdOffsetUnusedSevenSlotMissileB = 41,
-    tdOffsetBattleshipBeamA = 48,
-    tdOffsetBattleshipTorpedo = 59,
-    tdOffsetBattleshipBeamB = 70,
-    tdOffsetBattleshipMissile = 81,
-    tdOffsetRogueCargoScanner = 92,
-    tdOffsetStealthBomber = 101,
-    tdOffsetPrivateerMineLayer = 106,
-    tdOffsetGalleonCargoScanner = 111,
-    tdOffsetUnusedFourSlotMiner = 119,
-    tdOffsetMiner = 123,
-    tdOffsetUnusedNineSlotUtility = 129,
-};
+// Byte offsets stored in vrgTDIshAip, not indices into that table; generated
+// from data/ai/ (dataids.h).
 typedef uint16_t TurinDroneRecipeOffset;
 
-// Byte offsets stored in vrgRobIshAip, not indices into that table.
-enum RobotoidRecipeOffset {
-    robOffsetMetaMorphBeamDefense = 0,
-    robOffsetMetaMorphBeamBlunderbuss = 7,
-    robOffsetMetaMorphBeamSapper = 14,
-    robOffsetMetaMorphBeamAntiMatter = 21,
-    robOffsetMetaMorphMissileA = 28,
-    robOffsetMetaMorphTorpedoA = 35,
-    robOffsetMetaMorphTorpedoB = 42,
-    robOffsetMetaMorphMissileB = 49,
-    robOffsetMetaMorphCargoBeamA = 56,
-    robOffsetMetaMorphCargoBeamB = 63,
-    robOffsetMetaMorphCargoBeamC = 70,
-    robOffsetMetaMorphCargoMissile = 77,
-    robOffsetMetaMorphCargoMixedWeapons = 84,
-    robOffsetMetaMorphCargoTorpedo = 91,
-    robOffsetPrivateerBeam = 98,
-    robOffsetPrivateerTorpedo = 103,
-    robOffsetDestroyerBeamA = 108,
-    robOffsetDestroyerBeamB = 115,
-    robOffsetDestroyerBeamC = 122,
-    robOffsetDestroyerBeamD = 129,
-    robOffsetDestroyerTorpedoShield = 136,
-    robOffsetDestroyerTorpedoComputer = 143,
-    robOffsetDestroyerMissileJammer = 150,
-    robOffsetDestroyerMissileComputer = 157,
-    robOffsetB52SmartThenNormal = 164,
-    robOffsetB52RetroThenSmart = 171,
-    robOffsetFrigateScoutMineLayer = 178,
-    robOffsetBattleshipMissileBeam = 182,
-    robOffsetBattleshipMissileTorpedoA = 193,
-    robOffsetBattleshipMissileTorpedoB = 204,
-    robOffsetBattleshipTorpedoBeam = 215,
-    robOffsetBattleshipBeamA = 226,
-    robOffsetBattleshipBeamB = 237,
-    robOffsetBattleshipBeamC = 248,
-    robOffsetBattleshipBeamD = 259,
-    robOffsetUnusedSevenSlotMcm = 270,
-    robOffsetBattleshipMcm = 277,
-    robOffsetNubianMixedBeams = 288,
-};
+// Byte offsets stored in vrgRobIshAip, not indices into that table; generated
+// from data/ai/ (dataids.h).
 typedef uint16_t RobotoidRecipeOffset;
 
-// Byte offsets stored in vrgISIshAip, not indices into that table.
-enum ISRecipeOffset {
-    isOffsetColonizingMediumFreighter = 0,
-    isOffsetScoutStreamingBeam = 3,
-    isOffsetUnusedThreeSlotAntiMatterBeam = 6,
-    isOffsetUnusedThreeSlotMcmBeam = 9,
-    isOffsetDestroyerTorpedo = 12,
-    isOffsetUnusedSevenSlotMissile = 19,
-    isOffsetUnusedSevenSlotBeamA = 26,
-    isOffsetUnusedSevenSlotTorpedo = 33,
-    isOffsetUnusedSevenSlotBeamB = 40,
-    isOffsetUnusedSevenSlotMissileB = 47,
-    isOffsetBattleshipBeamA = 54,
-    isOffsetBattleshipTorpedo = 65,
-    isOffsetBattleshipBeamB = 76,
-    isOffsetBattleshipMissile = 87,
-    isOffsetMediumFreighter = 98,
-    isOffsetB17Bomber = 101,
-    isOffsetB52Bomber = 105,
-    isOffsetPrivateerMineLayer = 112,
-    isOffsetSuperFreighter = 117,
-};
+// Byte offsets stored in vrgISIshAip, not indices into that table; generated
+// from data/ai/ (dataids.h).
 typedef uint16_t ISRecipeOffset;
 
-// Byte offsets stored in vrgMacIshAip, not indices into that table.
-enum MacintiRecipeOffset {
-    macOffsetDestroyerBeamA = 0,
-    macOffsetDestroyerBeamB = 7,
-    macOffsetDestroyerBeamC = 14,
-    macOffsetDestroyerBeamD = 21,
-    macOffsetDestroyerTorpedoShield = 28,
-    macOffsetDestroyerTorpedoComputer = 35,
-    macOffsetDestroyerMissileJammer = 42,
-    macOffsetDestroyerMissileComputer = 49,
-    macOffsetB52SmartThenNormal = 56,
-    macOffsetB52RetroThenSmart = 63,
-    macOffsetFrigateScoutMineLayer = 70,
-    macOffsetBattleshipMissileBeam = 74,
-    macOffsetBattleshipMissileTorpedoA = 85,
-    macOffsetBattleshipMissileTorpedoB = 96,
-    macOffsetBattleshipTorpedoBeam = 107,
-    macOffsetBattleshipBeamA = 118,
-    macOffsetBattleshipBeamB = 129,
-    macOffsetBattleshipBeamC = 140,
-    macOffsetBattleshipBeamD = 151,
-    macOffsetBattleshipMcm = 162,
-    macOffsetOrbitalConstructionColonizer = 173,
-    macOffsetMaxiMiner = 175,
-    macOffsetUltraMinerOrMiner = 181,
-    macOffsetMiniMiner = 187,
-    macOffsetFreighter = 191,
-    macOffsetCruiserAntiMatterMcm = 194,
-    macOffsetCruiserMissile = 201,
-    macOffsetCruiserStreamingSapper = 208,
-    macOffsetCruiserTorpedo = 215,
-    macOffsetNubianMixedBeamsMcm = 222,
-    macOffsetNubianMixedBeams = 235,
-};
+// Byte offsets stored in vrgMacIshAip, not indices into that table; generated
+// from data/ai/ (dataids.h).
 typedef uint16_t MacintiRecipeOffset;
 
-// Byte offsets stored in vrgCyberIshAip, not indices into that table.
-enum CybertronRecipeOffset {
-    cyberOffsetDestroyerBeamThrust = 0,
-    cyberOffsetDestroyerBeamBlunderbuss = 7,
-    cyberOffsetDestroyerStreamingBeams = 14,
-    cyberOffsetDestroyerAntiMatterBeams = 21,
-    cyberOffsetDestroyerMixedBeams = 28,
-    cyberOffsetDestroyerTorpedoThrust = 35,
-    cyberOffsetDestroyerTorpedoShield = 42,
-    cyberOffsetDestroyerTorpedoComputer = 49,
-    cyberOffsetDestroyerMissileJammer = 56,
-    cyberOffsetDestroyerMissileComputer = 63,
-    cyberOffsetPrivateerBeam = 70,
-    cyberOffsetPrivateerTorpedo = 75,
-    cyberOffsetFrigateScoutMineLayer = 80,
-    cyberOffsetB52SmartThenNormal = 84,
-    cyberOffsetB52RetroThenSmart = 91,
-    cyberOffsetBattleshipMcm = 98,
-    cyberOffsetNubianMcm = 109,
-    cyberOffsetCruiserStreamingBeams = 122,
-    cyberOffsetCruiserMixedBeamsA = 129,
-    cyberOffsetCruiserMixedBeamsB = 136,
-    cyberOffsetCruiserTorpedo = 143,
-    cyberOffsetCruiserTorpedoThrust = 150,
-    cyberOffsetCruiserTorpedoShield = 157,
-    cyberOffsetCruiserMissileComputer = 164,
-    cyberOffsetCruiserMissileTorpedo = 171,
-    cyberOffsetCruiserMissileShield = 178,
-    cyberOffsetBattleshipMixedBeamsThrust = 185,
-    cyberOffsetBattleshipMixedBeamsCapacitor = 196,
-    cyberOffsetBattleshipTorpedoBeam = 207,
-    cyberOffsetBattleshipMissileTorpedoThrust = 218,
-    cyberOffsetBattleshipMissileTorpedoComputer = 229,
-    cyberOffsetBattleshipMissileBeam = 240,
-    cyberOffsetBattleshipMissile = 251,
-    cyberOffsetNubianMissileBeam = 262,
-    cyberOffsetNubianMissile = 275,
-    cyberOffsetNubianBeam = 288,
-};
+// Byte offsets stored in vrgCyberIshAip, not indices into that table; generated
+// from data/ai/ (dataids.h).
 typedef uint16_t CybertronRecipeOffset;
 
-// Direct byte offsets into vrgSBAip; -1 asks FCreateAiStarbase to choose.
-enum AiStarbaseRecipeOffset {
+// Direct byte offsets into vrgSBAip, generated from data/ai/starbases.yaml
+// (dataids.h); aiSbRecipeAuto asks FCreateAiStarbase to choose.
+enum AiStarbaseRecipeSentinel {
     aiSbRecipeAuto = -1,
-    aiSbRecipeSpaceStation = 0,
-    aiSbRecipeOrbitalFort = 12,
-    aiSbRecipeMacSpaceDock = 17,
-    aiSbRecipeMacUltraStationEarly = 25,
-    aiSbRecipeMacDeathStar = 41,
-    aiSbRecipeMacSpaceStation = 57,
-    aiSbRecipeMacUltraStationLate = 69,
 };
 typedef int16_t AiStarbaseRecipeOffset;
 

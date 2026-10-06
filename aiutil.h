@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 extern int32_t vrgAiPacketDist[2];
-extern uint8_t vrgSBAip[85];
+extern uint8_t vrgSBAip[];
 extern uint8_t vrgSBMacAisb[6];
 extern AIPART  vrgAiParts[150];
 
