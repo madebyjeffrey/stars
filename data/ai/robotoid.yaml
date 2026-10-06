@@ -1,10 +1,10 @@
 # Robotoid ship designs: vrgRobAip, read by DoRobotoidAiTurn. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
-# its hull; its name becomes a RobotoidRecipeOffset, the recipe's offset
+# its hull; its name becomes a RobotoidRecipe, the recipe's offset
 # in vrgRobAip. Code picks recipes by position through vrgRobIshAip, so
 # keep the order; recipes without a hull are unused.
 
-- name: robOffsetMetaMorphBeamDefense
+- name: robRecipeMetaMorphBeamDefense
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -15,7 +15,7 @@
     - aiPartArmorPreferSuperlatanium
     - aiPartArmorPreferSuperlatanium
 
-- name: robOffsetMetaMorphBeamBlunderbuss
+- name: robRecipeMetaMorphBeamBlunderbuss
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -26,7 +26,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialDeflectorCapacitorFuel
 
-- name: robOffsetMetaMorphBeamSapper
+- name: robRecipeMetaMorphBeamSapper
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -37,7 +37,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialCapacitorFuel
 
-- name: robOffsetMetaMorphBeamAntiMatter
+- name: robRecipeMetaMorphBeamAntiMatter
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -48,7 +48,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialCapacitorFuel
 
-- name: robOffsetMetaMorphMissileA
+- name: robRecipeMetaMorphMissileA
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -59,7 +59,7 @@
     - aiPartBattleComputer
     - aiPartSpecialPodJammerDeflectorThrust
 
-- name: robOffsetMetaMorphTorpedoA
+- name: robRecipeMetaMorphTorpedoA
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -70,7 +70,7 @@
     - aiPartBattleComputer
     - aiPartSpecialPodJammerDeflectorThrust
 
-- name: robOffsetMetaMorphTorpedoB
+- name: robRecipeMetaMorphTorpedoB
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -81,7 +81,7 @@
     - aiPartBattleComputer
     - aiPartSpecialPodJammerDeflectorThrust
 
-- name: robOffsetMetaMorphMissileB
+- name: robRecipeMetaMorphMissileB
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -92,7 +92,7 @@
     - aiPartBattleComputer
     - aiPartBattleComputer
 
-- name: robOffsetMetaMorphCargoBeamA
+- name: robRecipeMetaMorphCargoBeamA
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -103,7 +103,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartBeamPreferMultiContainedMunition
 
-- name: robOffsetMetaMorphCargoBeamB
+- name: robRecipeMetaMorphCargoBeamB
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -114,7 +114,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialPodThrustCloak
 
-- name: robOffsetMetaMorphCargoBeamC
+- name: robRecipeMetaMorphCargoBeamC
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -125,7 +125,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialCapacitorFuel
 
-- name: robOffsetMetaMorphCargoMissile
+- name: robRecipeMetaMorphCargoMissile
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -136,7 +136,7 @@
     - aiPartShieldPreferCompletePhase
     - aiPartShieldPreferCompletePhase
 
-- name: robOffsetMetaMorphCargoMixedWeapons
+- name: robRecipeMetaMorphCargoMixedWeapons
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -147,7 +147,7 @@
     - aiPartMissile
     - aiPartTorpedo
 
-- name: robOffsetMetaMorphCargoTorpedo
+- name: robRecipeMetaMorphCargoTorpedo
   hull: ihuldefMetaMorph
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -158,7 +158,7 @@
     - aiPartTorpedo
     - aiPartTorpedo
 
-- name: robOffsetPrivateerBeam
+- name: robRecipePrivateerBeam
   hull: ihuldefPrivateer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -167,7 +167,7 @@
     - aiPartBeamPreferStreamingPulverizer
     - aiPartBeamPreferStreamingPulverizer
 
-- name: robOffsetPrivateerTorpedo
+- name: robRecipePrivateerTorpedo
   hull: ihuldefPrivateer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -176,7 +176,7 @@
     - aiPartTorpedo
     - aiPartTorpedo
 
-- name: robOffsetDestroyerBeamA
+- name: robRecipeDestroyerBeamA
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -187,7 +187,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: robOffsetDestroyerBeamB
+- name: robRecipeDestroyerBeamB
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -198,7 +198,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: robOffsetDestroyerBeamC
+- name: robRecipeDestroyerBeamC
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -209,7 +209,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: robOffsetDestroyerBeamD
+- name: robRecipeDestroyerBeamD
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -220,7 +220,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: robOffsetDestroyerTorpedoShield
+- name: robRecipeDestroyerTorpedoShield
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -231,7 +231,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: robOffsetDestroyerTorpedoComputer
+- name: robRecipeDestroyerTorpedoComputer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -242,7 +242,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: robOffsetDestroyerMissileJammer
+- name: robRecipeDestroyerMissileJammer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -253,7 +253,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: robOffsetDestroyerMissileComputer
+- name: robRecipeDestroyerMissileComputer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -264,7 +264,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: robOffsetB52SmartThenNormal
+- name: robRecipeB52SmartThenNormal
   hull: ihuldefB52Bomber
   parts:
     - aiPartEngineGalaxyScoopOrHydroRamScoop
@@ -275,7 +275,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartShieldPreferCompletePhase
 
-- name: robOffsetB52RetroThenSmart
+- name: robRecipeB52RetroThenSmart
   hull: ihuldefB52Bomber
   parts:
     - aiPartEngineGalaxyScoopOrHydroRamScoop
@@ -286,7 +286,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartShieldPreferCompletePhase
 
-- name: robOffsetFrigateScoutMineLayer
+- name: robRecipeFrigateScoutMineLayer
   hull: ihuldefFrigate
   parts:
     - aiPartEngineGalaxyScoopOrHydroRamScoop
@@ -294,7 +294,7 @@
     - aiPartStandardMineDispenser
     - aiPartShieldPreferCompletePhase
 
-- name: robOffsetBattleshipMissileBeam
+- name: robRecipeBattleshipMissileBeam
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -309,7 +309,7 @@
     - aiPartBattleComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipMissileTorpedoA
+- name: robRecipeBattleshipMissileTorpedoA
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -324,7 +324,7 @@
     - aiPartBattleComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipMissileTorpedoB
+- name: robRecipeBattleshipMissileTorpedoB
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -339,7 +339,7 @@
     - aiPartBattleComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipTorpedoBeam
+- name: robRecipeBattleshipTorpedoBeam
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -354,7 +354,7 @@
     - aiPartBattleComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipBeamA
+- name: robRecipeBattleshipBeamA
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -369,7 +369,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipBeamB
+- name: robRecipeBattleshipBeamB
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -384,7 +384,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipBeamC
+- name: robRecipeBattleshipBeamC
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -399,7 +399,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetBattleshipBeamD
+- name: robRecipeBattleshipBeamD
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -414,7 +414,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetUnusedSevenSlotMcm
+- name: robRecipeUnusedSevenSlotMcm
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartMultiContainedMunitionOnly
@@ -424,7 +424,7 @@
     - aiPartMultiContainedMunitionOnly
     - aiPartMultiContainedMunitionOnly
 
-- name: robOffsetBattleshipMcm
+- name: robRecipeBattleshipMcm
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -439,7 +439,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: robOffsetNubianMixedBeams
+- name: robRecipeNubianMixedBeams
   hull: ihuldefNubian
   parts:
     - aiPartEnginePreferGalaxyScoop

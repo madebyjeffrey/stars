@@ -1,36 +1,36 @@
 # Automitron ship designs: vrgISAip, read by DoAutomitronAiTurn. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
-# its hull; its name becomes a ISRecipeOffset, the recipe's offset
+# its hull; its name becomes a ISRecipe, the recipe's offset
 # in vrgISAip. Code picks recipes by position through vrgISIshAip, so
 # keep the order; recipes without a hull are unused.
 
-- name: isOffsetColonizingMediumFreighter
+- name: isRecipeColonizingMediumFreighter
   hull: ihuldefMediumFreighter
   parts:
     - aiPartEnginePreferTransStar
     - aiPartColonyPreferOrbitalConstruction
     - aiPartShieldPreferCompletePhase
 
-- name: isOffsetScoutStreamingBeam
+- name: isRecipeScoutStreamingBeam
   hull: ihuldefScout
   parts:
     - aiPartEnginePreferTransStar
     - aiPartScannerPreferElephant
     - aiPartBeamPreferStreamingPulverizer
 
-- name: isOffsetUnusedThreeSlotAntiMatterBeam
+- name: isRecipeUnusedThreeSlotAntiMatterBeam
   parts:
     - aiPartEnginePreferTransStar
     - aiPartScannerPreferElephant
     - aiPartBeamPreferAntiMatterPulverizer
 
-- name: isOffsetUnusedThreeSlotMcmBeam
+- name: isRecipeUnusedThreeSlotMcmBeam
   parts:
     - aiPartEnginePreferTransStar
     - aiPartScannerPreferElephant
     - aiPartBeamPreferMultiContainedMunition
 
-- name: isOffsetDestroyerTorpedo
+- name: isRecipeDestroyerTorpedo
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferTransStar
@@ -41,7 +41,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: isOffsetUnusedSevenSlotMissile
+- name: isRecipeUnusedSevenSlotMissile
   parts:
     - aiPartEnginePreferTransStar
     - aiPartMissile
@@ -51,7 +51,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: isOffsetUnusedSevenSlotBeamA
+- name: isRecipeUnusedSevenSlotBeamA
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartShieldPreferCompletePhase
@@ -61,7 +61,7 @@
     - aiPartBeamPreferBigMuthaCannon
     - aiPartArmorPreferSuperlatanium
 
-- name: isOffsetUnusedSevenSlotTorpedo
+- name: isRecipeUnusedSevenSlotTorpedo
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartBattleComputer
@@ -71,7 +71,7 @@
     - aiPartTorpedo
     - aiPartArmorPreferSuperlatanium
 
-- name: isOffsetUnusedSevenSlotBeamB
+- name: isRecipeUnusedSevenSlotBeamB
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartShieldPreferCompletePhase
@@ -81,7 +81,7 @@
     - aiPartBeamPreferBigMuthaCannon
     - aiPartArmorPreferMegaPolyShell
 
-- name: isOffsetUnusedSevenSlotMissileB
+- name: isRecipeUnusedSevenSlotMissileB
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartBattleComputer
@@ -91,7 +91,7 @@
     - aiPartMissile
     - aiPartArmorPreferMegaPolyShell
 
-- name: isOffsetBattleshipBeamA
+- name: isRecipeBattleshipBeamA
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -106,7 +106,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: isOffsetBattleshipTorpedo
+- name: isRecipeBattleshipTorpedo
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -121,7 +121,7 @@
     - aiPartSpecialJammerComputer
     - aiPartBattleComputer
 
-- name: isOffsetBattleshipBeamB
+- name: isRecipeBattleshipBeamB
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -136,7 +136,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: isOffsetBattleshipMissile
+- name: isRecipeBattleshipMissile
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -151,14 +151,14 @@
     - aiPartSpecialJammerComputer
     - aiPartBattleComputer
 
-- name: isOffsetMediumFreighter
+- name: isRecipeMediumFreighter
   hull: ihuldefMediumFreighter
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartCargoPod
     - aiPartShieldPreferCompletePhase
 
-- name: isOffsetB17Bomber
+- name: isRecipeB17Bomber
   hull: ihuldefB17Bomber
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -166,7 +166,7 @@
     - aiPartBombHushThenSmartThenNormalThenRetro
     - aiPartSpecialPodJammerDeflectorThrust
 
-- name: isOffsetB52Bomber
+- name: isRecipeB52Bomber
   hull: ihuldefB52Bomber
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -177,7 +177,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartShieldPreferCompletePhase
 
-- name: isOffsetPrivateerMineLayer
+- name: isRecipePrivateerMineLayer
   hull: ihuldefPrivateer
   parts:
     - aiPartEnginePreferTransStar
@@ -186,7 +186,7 @@
     - aiPartStandardMineDispenser
     - aiPartSpeedTrapMineDispenser
 
-- name: isOffsetSuperFreighter
+- name: isRecipeSuperFreighter
   hull: ihuldefSuperFreighter
   parts:
     - aiPartEnginePreferGalaxyScoop

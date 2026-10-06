@@ -1,10 +1,10 @@
 # Cybertron ship designs: vrgCyberAip, read by DoCyberAiTurn. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
-# its hull; its name becomes a CybertronRecipeOffset, the recipe's offset
+# its hull; its name becomes a CybertronRecipe, the recipe's offset
 # in vrgCyberAip. Code picks recipes by position through vrgCyberIshAip, so
 # keep the order; recipes without a hull are unused.
 
-- name: cyberOffsetDestroyerBeamThrust
+- name: cyberRecipeDestroyerBeamThrust
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -15,7 +15,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: cyberOffsetDestroyerBeamBlunderbuss
+- name: cyberRecipeDestroyerBeamBlunderbuss
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -26,7 +26,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: cyberOffsetDestroyerStreamingBeams
+- name: cyberRecipeDestroyerStreamingBeams
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -37,7 +37,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerAntiMatterBeams
+- name: cyberRecipeDestroyerAntiMatterBeams
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -48,7 +48,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerMixedBeams
+- name: cyberRecipeDestroyerMixedBeams
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -59,7 +59,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: cyberOffsetDestroyerTorpedoThrust
+- name: cyberRecipeDestroyerTorpedoThrust
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -70,7 +70,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerTorpedoShield
+- name: cyberRecipeDestroyerTorpedoShield
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -81,7 +81,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerTorpedoComputer
+- name: cyberRecipeDestroyerTorpedoComputer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -92,7 +92,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerMissileJammer
+- name: cyberRecipeDestroyerMissileJammer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -103,7 +103,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetDestroyerMissileComputer
+- name: cyberRecipeDestroyerMissileComputer
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -114,7 +114,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: cyberOffsetPrivateerBeam
+- name: cyberRecipePrivateerBeam
   hull: ihuldefPrivateer
   parts:
     - aiPartEngineScoopOrFuelMizer
@@ -123,7 +123,7 @@
     - aiPartBeamPreferStreamingPulverizer
     - aiPartBeamPreferStreamingPulverizer
 
-- name: cyberOffsetPrivateerTorpedo
+- name: cyberRecipePrivateerTorpedo
   hull: ihuldefPrivateer
   parts:
     - aiPartEngineScoopOrFuelMizer
@@ -132,7 +132,7 @@
     - aiPartTorpedo
     - aiPartTorpedo
 
-- name: cyberOffsetFrigateScoutMineLayer
+- name: cyberRecipeFrigateScoutMineLayer
   hull: ihuldefFrigate
   parts:
     - aiPartEngineGalaxyScoopOrHydroRamScoop
@@ -140,7 +140,7 @@
     - aiPartStandardMineDispenser
     - aiPartShieldPreferCompletePhase
 
-- name: cyberOffsetB52SmartThenNormal
+- name: cyberRecipeB52SmartThenNormal
   hull: ihuldefB52Bomber
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -151,7 +151,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartShieldPreferCompletePhase
 
-- name: cyberOffsetB52RetroThenSmart
+- name: cyberRecipeB52RetroThenSmart
   hull: ihuldefB52Bomber
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -162,7 +162,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartShieldPreferCompletePhase
 
-- name: cyberOffsetBattleshipMcm
+- name: cyberRecipeBattleshipMcm
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -177,7 +177,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetNubianMcm
+- name: cyberRecipeNubianMcm
   hull: ihuldefNubian
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -194,7 +194,7 @@
     - aiPartMultiContainedMunitionOnly
     - aiPartMultiContainedMunitionOnly
 
-- name: cyberOffsetCruiserStreamingBeams
+- name: cyberRecipeCruiserStreamingBeams
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -205,7 +205,7 @@
     - aiPartSpecialPodThrustCloak
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserMixedBeamsA
+- name: cyberRecipeCruiserMixedBeamsA
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -216,7 +216,7 @@
     - aiPartBeamPreferAntiMatterPulverizer
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserMixedBeamsB
+- name: cyberRecipeCruiserMixedBeamsB
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -227,7 +227,7 @@
     - aiPartShieldPreferCompletePhase
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserTorpedo
+- name: cyberRecipeCruiserTorpedo
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -238,7 +238,7 @@
     - aiPartTorpedo
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserTorpedoThrust
+- name: cyberRecipeCruiserTorpedoThrust
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -249,7 +249,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserTorpedoShield
+- name: cyberRecipeCruiserTorpedoShield
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -260,7 +260,7 @@
     - aiPartShieldPreferCompletePhase
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserMissileComputer
+- name: cyberRecipeCruiserMissileComputer
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -271,7 +271,7 @@
     - aiPartBattleComputer
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserMissileTorpedo
+- name: cyberRecipeCruiserMissileTorpedo
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -282,7 +282,7 @@
     - aiPartTorpedo
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetCruiserMissileShield
+- name: cyberRecipeCruiserMissileShield
   hull: ihuldefCruiser
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -293,7 +293,7 @@
     - aiPartShieldPreferCompletePhase
     - aiPartArmorPreferMegaPolyShell
 
-- name: cyberOffsetBattleshipMixedBeamsThrust
+- name: cyberRecipeBattleshipMixedBeamsThrust
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -308,7 +308,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: cyberOffsetBattleshipMixedBeamsCapacitor
+- name: cyberRecipeBattleshipMixedBeamsCapacitor
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -323,7 +323,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: cyberOffsetBattleshipTorpedoBeam
+- name: cyberRecipeBattleshipTorpedoBeam
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -338,7 +338,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartBattleComputer
 
-- name: cyberOffsetBattleshipMissileTorpedoThrust
+- name: cyberRecipeBattleshipMissileTorpedoThrust
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -353,7 +353,7 @@
     - aiPartBattleComputer
     - aiPartBattleComputer
 
-- name: cyberOffsetBattleshipMissileTorpedoComputer
+- name: cyberRecipeBattleshipMissileTorpedoComputer
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -368,7 +368,7 @@
     - aiPartBattleComputer
     - aiPartBattleComputer
 
-- name: cyberOffsetBattleshipMissileBeam
+- name: cyberRecipeBattleshipMissileBeam
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -383,7 +383,7 @@
     - aiPartBattleComputer
     - aiPartBattleComputer
 
-- name: cyberOffsetBattleshipMissile
+- name: cyberRecipeBattleshipMissile
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -398,7 +398,7 @@
     - aiPartBattleComputer
     - aiPartBattleComputer
 
-- name: cyberOffsetNubianMissileBeam
+- name: cyberRecipeNubianMissileBeam
   hull: ihuldefNubian
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -415,7 +415,7 @@
     - aiPartSpecialDeflectorCapacitorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetNubianMissile
+- name: cyberRecipeNubianMissile
   hull: ihuldefNubian
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -432,7 +432,7 @@
     - aiPartSpecialDeflectorCapacitorFuel
     - aiPartSpecialJammerComputer
 
-- name: cyberOffsetNubianBeam
+- name: cyberRecipeNubianBeam
   hull: ihuldefNubian
   parts:
     - aiPartEnginePreferGalaxyScoop

@@ -2406,7 +2406,7 @@ void EnsureMacintiStarbaseDesigns(uint8_t *rgSB) {
     return;
 }
 
-int16_t FCreateAiStarbase(int16_t ishdef, int16_t iLevel, AiStarbaseRecipeOffset aisb, isbhull isb) {
+int16_t FCreateAiStarbase(int16_t ishdef, int16_t iLevel, AiStarbaseRecipe aisb, isbhull isb) {
     int16_t i;
     SHDEF   shdef;
     HS     *lphs;

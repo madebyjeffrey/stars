@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-extern MacintiRecipeOffset vrgMacIshAip[];
-extern uint8_t             vrgMacAip[];
-extern uint8_t             vrgAiMacintiResOrder[8];
+extern MacintiRecipe vrgMacIshAip[];
+extern uint8_t       vrgMacAip[];
+extern uint8_t       vrgAiMacintiResOrder[8];
 
 void    DoMacintiAiTurn(PROD *rgprod);
 void    EnsureMacintiShdefs();

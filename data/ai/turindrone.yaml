@@ -1,16 +1,16 @@
 # Turindrone ship designs: vrgTDAip, read by DoTurinDroneAiTurn. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
-# its hull; its name becomes a TurinDroneRecipeOffset, the recipe's offset
+# its hull; its name becomes a TurinDroneRecipe, the recipe's offset
 # in vrgTDAip. Code picks recipes by position through vrgTDIshAip, so
 # keep the order; recipes without a hull are unused.
 
-- name: tdOffsetColonizer
+- name: tdRecipeColonizer
   hull: ihuldefColonyShip
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartColonyPreferOrbitalConstruction
 
-- name: tdOffsetFrigateScout
+- name: tdRecipeFrigateScout
   hull: ihuldefFrigate
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -18,7 +18,7 @@
     - aiPartTorpedo
     - aiPartShieldPreferLangstonShell
 
-- name: tdOffsetDestroyerTorpedo
+- name: tdRecipeDestroyerTorpedo
   hull: ihuldefDestroyer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -29,7 +29,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: tdOffsetUnusedSevenSlotMissile
+- name: tdRecipeUnusedSevenSlotMissile
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartMissile
@@ -39,7 +39,7 @@
     - aiPartSpecialThrustDeflectorFuel
     - aiPartBattleComputer
 
-- name: tdOffsetUnusedSevenSlotBeamA
+- name: tdRecipeUnusedSevenSlotBeamA
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartShieldPreferLangstonShell
@@ -49,7 +49,7 @@
     - aiPartBeamPreferBigMuthaCannon
     - aiPartArmorPreferSuperlatanium
 
-- name: tdOffsetUnusedSevenSlotTorpedo
+- name: tdRecipeUnusedSevenSlotTorpedo
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartBattleComputer
@@ -59,7 +59,7 @@
     - aiPartTorpedo
     - aiPartArmorPreferSuperlatanium
 
-- name: tdOffsetUnusedSevenSlotBeamB
+- name: tdRecipeUnusedSevenSlotBeamB
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartShieldPreferLangstonShell
@@ -69,7 +69,7 @@
     - aiPartBeamPreferBigMuthaCannon
     - aiPartArmorPreferMegaPolyShell
 
-- name: tdOffsetUnusedSevenSlotMissileB
+- name: tdRecipeUnusedSevenSlotMissileB
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartBattleComputer
@@ -79,7 +79,7 @@
     - aiPartMissile
     - aiPartArmorPreferMegaPolyShell
 
-- name: tdOffsetBattleshipBeamA
+- name: tdRecipeBattleshipBeamA
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -94,7 +94,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: tdOffsetBattleshipTorpedo
+- name: tdRecipeBattleshipTorpedo
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -109,7 +109,7 @@
     - aiPartSpecialJammerComputer
     - aiPartBattleComputer
 
-- name: tdOffsetBattleshipBeamB
+- name: tdRecipeBattleshipBeamB
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -124,7 +124,7 @@
     - aiPartSpecialCapacitorJammerPodComputer
     - aiPartSpecialCapacitorJammerPodComputer
 
-- name: tdOffsetBattleshipMissile
+- name: tdRecipeBattleshipMissile
   hull: ihuldefBattleship
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -139,7 +139,7 @@
     - aiPartSpecialJammerComputer
     - aiPartBattleComputer
 
-- name: tdOffsetRogueCargoScanner
+- name: tdRecipeRogueCargoScanner
   hull: ihuldefRogue
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -152,7 +152,7 @@
     - aiPartSpecialJammerPodCloak
     - aiPartBattleComputer
 
-- name: tdOffsetStealthBomber
+- name: tdRecipeStealthBomber
   hull: ihuldefStealthBomber
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -161,7 +161,7 @@
     - aiPartSpecialPodJammerDeflectorThrust
     - aiPartSpecialJammerPodCloak
 
-- name: tdOffsetPrivateerMineLayer
+- name: tdRecipePrivateerMineLayer
   hull: ihuldefPrivateer
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -170,7 +170,7 @@
     - aiPartStandardMineDispenser
     - aiPartStandardMineDispenser
 
-- name: tdOffsetGalleonCargoScanner
+- name: tdRecipeGalleonCargoScanner
   hull: ihuldefGalleon
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -182,14 +182,14 @@
     - aiPartCargoPod
     - aiPartScannerPreferRobberBaron
 
-- name: tdOffsetUnusedFourSlotMiner
+- name: tdRecipeUnusedFourSlotMiner
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartSpecialPodThrustCloak
     - aiPartMiningRobot
     - aiPartMiningRobot
 
-- name: tdOffsetMiner
+- name: tdRecipeMiner
   hull: ihuldefMiner
   parts:
     - aiPartEnginePreferGalaxyScoop
@@ -199,7 +199,7 @@
     - aiPartMiningRobot
     - aiPartMiningRobot
 
-- name: tdOffsetUnusedNineSlotUtility
+- name: tdRecipeUnusedNineSlotUtility
   parts:
     - aiPartEnginePreferGalaxyScoop
     - aiPartShieldPreferLangstonShell

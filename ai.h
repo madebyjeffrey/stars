@@ -3,12 +3,12 @@
 
 #include <stdint.h>
 
-extern uint8_t              vrgAiRobotoidResOrder[36];
-extern uint8_t              vrgTDAip[];
-extern uint8_t              vrgRobAip[];
-extern uint8_t              vrgTDIshAip[];
-extern uint8_t              vrgAiTurinDroneResOrder[31];
-extern RobotoidRecipeOffset vrgRobIshAip[];
+extern uint8_t        vrgAiRobotoidResOrder[36];
+extern uint8_t        vrgTDAip[];
+extern uint8_t        vrgRobAip[];
+extern uint8_t        vrgTDIshAip[];
+extern uint8_t        vrgAiTurinDroneResOrder[31];
+extern RobotoidRecipe vrgRobIshAip[];
 
 void    DoAiTurn(int16_t iPlayer, uint16_t wMdPlr);
 void    DoRobotoidAiTurn(PROD *rgprod);

@@ -1294,32 +1294,33 @@ enum AiPartPreference {
 };
 typedef uint16_t AiPartPreference;
 
-// Byte offsets stored in vrgTDIshAip, not indices into that table; generated
-// from data/ai/ (dataids.h).
-typedef uint16_t TurinDroneRecipeOffset;
+// A recipe in vrgTDAip, valued by its byte offset there; vrgTDIshAip lists
+// them in order. Generated from data/ai/ (dataids.h).
+typedef uint16_t TurinDroneRecipe;
 
-// Byte offsets stored in vrgRobIshAip, not indices into that table; generated
-// from data/ai/ (dataids.h).
-typedef uint16_t RobotoidRecipeOffset;
+// A recipe in vrgRobAip, valued by its byte offset there; vrgRobIshAip lists
+// them in order. Generated from data/ai/ (dataids.h).
+typedef uint16_t RobotoidRecipe;
 
-// Byte offsets stored in vrgISIshAip, not indices into that table; generated
-// from data/ai/ (dataids.h).
-typedef uint16_t ISRecipeOffset;
+// A recipe in vrgISAip, valued by its byte offset there; vrgISIshAip lists
+// them in order. Generated from data/ai/ (dataids.h).
+typedef uint16_t ISRecipe;
 
-// Byte offsets stored in vrgMacIshAip, not indices into that table; generated
-// from data/ai/ (dataids.h).
-typedef uint16_t MacintiRecipeOffset;
+// A recipe in vrgMacAip, valued by its byte offset there; vrgMacIshAip lists
+// them in order. Generated from data/ai/ (dataids.h).
+typedef uint16_t MacintiRecipe;
 
-// Byte offsets stored in vrgCyberIshAip, not indices into that table; generated
-// from data/ai/ (dataids.h).
-typedef uint16_t CybertronRecipeOffset;
+// A recipe in vrgCyberAip, valued by its byte offset there; vrgCyberIshAip lists
+// them in order. Generated from data/ai/ (dataids.h).
+typedef uint16_t CybertronRecipe;
 
-// Direct byte offsets into vrgSBAip, generated from data/ai/starbases.yaml
-// (dataids.h); aiSbRecipeAuto asks FCreateAiStarbase to choose.
+// A starbase recipe in vrgSBAip, valued by its byte offset there; generated
+// from data/ai/starbases.yaml (dataids.h). aiSbRecipeAuto asks
+// FCreateAiStarbase to choose.
 enum AiStarbaseRecipeSentinel {
     aiSbRecipeAuto = -1,
 };
-typedef int16_t AiStarbaseRecipeOffset;
+typedef int16_t AiStarbaseRecipe;
 
 // Squared packet attack distance thresholds for one or two mass drivers.
 enum AiPacketDistanceSquared {

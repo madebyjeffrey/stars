@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-extern CybertronRecipeOffset vrgCyberIshAip[];
-extern uint8_t               vrgCyberAip[];
-extern uint8_t               vrgAiCybertronResOrder[42];
+extern CybertronRecipe vrgCyberIshAip[];
+extern uint8_t         vrgCyberAip[];
+extern uint8_t         vrgAiCybertronResOrder[42];
 
 void    DoCyberAiTurn(PROD *rgprod);
 void    DoCyberPackets();

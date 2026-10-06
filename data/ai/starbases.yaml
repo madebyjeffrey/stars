@@ -1,6 +1,6 @@
 # AI starbase designs: vrgSBAip, read by FCreateAiStarbase. data/datagen.py
 # describes the format. Each recipe gives an AiPartPreference per slot of
-# its starbase hull; its name becomes an AiStarbaseRecipeOffset, the
+# its starbase hull; its name becomes an AiStarbaseRecipe, the
 # recipe's offset in vrgSBAip, which code passes by name.
 
 - name: aiSbRecipeSpaceStation

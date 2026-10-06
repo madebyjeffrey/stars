@@ -90,17 +90,17 @@ TABLES = [
 # indexes by position. size keeps the original's zero padding after the last
 # recipe.
 RECIPES = [
-    dict(file="ai/turindrone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipeOffset", prefix="tdOffset",
+    dict(file="ai/turindrone.yaml", array="vrgTDAip", size=141, enum="TurinDroneRecipe", prefix="tdRecipe",
          ish="vrgTDIshAip", ishType="uint8_t"),
-    dict(file="ai/robotoid.yaml", array="vrgRobAip", size=301, enum="RobotoidRecipeOffset", prefix="robOffset",
-         ish="vrgRobIshAip", ishType="RobotoidRecipeOffset"),
-    dict(file="ai/automitron.yaml", array="vrgISAip", size=182, enum="ISRecipeOffset", prefix="isOffset",
+    dict(file="ai/robotoid.yaml", array="vrgRobAip", size=301, enum="RobotoidRecipe", prefix="robRecipe",
+         ish="vrgRobIshAip", ishType="RobotoidRecipe"),
+    dict(file="ai/automitron.yaml", array="vrgISAip", size=182, enum="ISRecipe", prefix="isRecipe",
          ish="vrgISIshAip", ishType="uint8_t"),
-    dict(file="ai/macinti.yaml", array="vrgMacAip", size=248, enum="MacintiRecipeOffset", prefix="macOffset",
-         ish="vrgMacIshAip", ishType="MacintiRecipeOffset"),
-    dict(file="ai/cybertron.yaml", array="vrgCyberAip", size=301, enum="CybertronRecipeOffset", prefix="cyberOffset",
-         ish="vrgCyberIshAip", ishType="CybertronRecipeOffset"),
-    dict(file="ai/starbases.yaml", array="vrgSBAip", size=85, enum="AiStarbaseRecipeOffset", prefix="aiSbRecipe"),
+    dict(file="ai/macinti.yaml", array="vrgMacAip", size=248, enum="MacintiRecipe", prefix="macRecipe",
+         ish="vrgMacIshAip", ishType="MacintiRecipe"),
+    dict(file="ai/cybertron.yaml", array="vrgCyberAip", size=301, enum="CybertronRecipe", prefix="cyberRecipe",
+         ish="vrgCyberIshAip", ishType="CybertronRecipe"),
+    dict(file="ai/starbases.yaml", array="vrgSBAip", size=85, enum="AiStarbaseRecipe", prefix="aiSbRecipe"),
 ]
 
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
