@@ -56,6 +56,8 @@ produce different results from a 2.6j host for the same turn.
 - `IdTargetFreighter` initializes its mineral index before the minimum
   search; the original copied it to an unused local before assigning it.
   These reads could stop MSVC Debug runtime checks.
+- `LDrawGauge` initializes its scale flag for empty gauges; the original
+  skipped the assignment for nonpositive totals but read the flag on return.
 - The scanner no longer leaves a band drawn out of place when it scrolls
   while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
   followed at once by a trackpad scroll. The original drew the pending

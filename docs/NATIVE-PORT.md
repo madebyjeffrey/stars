@@ -87,3 +87,5 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   to zero instead of passing an unset local to `EndDialog`.
 - **Freighter mineral index:** `IdTargetFreighter` starts `iWorst` at zero
   before the minimum search copies it into the unused `iWorst2`.
+- **Empty gauge flag:** `LDrawGauge` starts `fHuge` false because an empty
+  gauge skips the scale calculation but still reads the flag on return.
