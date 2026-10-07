@@ -77,15 +77,14 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 - **Initial pane size:** `CreateChildWindows` initializes the mine pane's
   temporary size before `RefitFrameChildren` lays out the windows. The
   original unset `pt` stopped tutorial startup under MSVC Debug checks.
-- **Tutorial progress tick:** `CommandHandler` starts `dwTickCur` at the
-  sampled base tick before the progress loop reads it.
-- **Tutorial cursor:** `CommandHandler` saves the current cursor on the
-  tutorial path before the shared cleanup restores it.
-- **Score dialog result:** `ScoreXDlg` initializes its unused close result
-  to zero instead of passing an unset local to `EndDialog`.
-- **Battle replay result:** `VCRDlg` initializes its unused close result
-  to zero instead of passing an unset local to `EndDialog`.
-- **Freighter mineral index:** `IdTargetFreighter` starts `iWorst` at zero
-  before the minimum search copies it into the unused `iWorst2`.
-- **Empty gauge flag:** `LDrawGauge` starts `fHuge` false because an empty
-  gauge skips the scale calculation but still reads the flag on return.
+- **Explicit initial values:** `ScoreXDlg` and `VCRDlg` initialize their
+  unused close results to zero. `CommandHandler` starts the tutorial
+  progress tick at the sampled base tick and saves the current cursor on
+  the tutorial path before restoring it. `IdTargetFreighter` starts its
+  mineral index at zero before copying it to the unused `iWorst2` during
+  the minimum search. `LDrawGauge` starts its scale flag false because an
+  empty gauge skips the scale calculation. `DrawShipWayPtOrders` assigns the
+  formatted mine-laying message ID before using it to choose the color.
+  These replace original
+  uninitialized reads that MSVC Debug checks can stop on; they are not an
+  exhaustive audit of every execution path.
