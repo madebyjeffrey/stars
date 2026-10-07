@@ -1237,6 +1237,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                     strcat(szWork, ".x1");
                     remove(szWork);
                     DirtyGame(FALSE);
+                    hcurSav = GetCursor(); // Tutorial generation skips the normal cursor setup.
                     ShowProgressGauge();
                     dwTickBase = GetTickCount();
                     dwTickCur = dwTickBase;

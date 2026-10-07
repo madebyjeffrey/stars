@@ -79,4 +79,6 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   original unset `pt` stopped tutorial startup under MSVC Debug checks.
 - **Tutorial progress tick:** `CommandHandler` starts `dwTickCur` at the
   sampled base tick before the progress loop reads it.
+- **Tutorial cursor:** `CommandHandler` saves the current cursor on the
+  tutorial path before the shared cleanup restores it.
 - **Remaining uninitialized dialog results:** `ScoreXDlg` and `VCRDlg` pass an unset `i` to `EndDialog`.
