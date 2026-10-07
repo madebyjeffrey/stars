@@ -1,9 +1,9 @@
 # Native port
 
 The reconstructed sources build as a native Win32/Win64 executable with
-MinGW, and the game code alone builds as `stars-host` with any C11 compiler
-(see Platforms below). This document covers what the port changes and what
-it must keep.
+MinGW (GCC or MSYS2 Clang) or MSVC, and the game code alone builds as
+`stars-host` with any C11 compiler (see Platforms below). This document
+covers what the port changes and what it must keep.
 Each native-port shim is marked `NATIVE` in the source and described in
 detail in [WIN16-PARITY.md](WIN16-PARITY.md).
 
@@ -51,7 +51,13 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   `long double` is x87 extended precision: x86-64 Linux and macOS (on
   Apple silicon, built for x86_64 and run by Rosetta). ARM's `long double`
   is 64 bits (macOS) or 128 bits (Linux), so the rounding casts round
-  differently; CMake warns about such builds.
+  differently; CMake warns about such builds. MSVC also uses 64-bit double
+  precision for `long double`, so its client and host can generate different
+  turns from MinGW. The `msvc-debug` and `msvc-release` presets build both
+  executables and the Windows unit tests. Tutorial and trace hooks also
+  work with all three compilers through test-only source variants. The unused zero-length `_ctype` CRT placeholder
+  was removed from `globalsui.c`/`globalsui.h` because MSVC rejects
+  zero-length arrays.
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.
