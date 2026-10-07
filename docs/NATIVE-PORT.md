@@ -74,6 +74,7 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   - **Function cast (1):** `shipui.c` `TransferStuff` casts
     `FEnumCalcJettison`. Both signatures come from the debug info and are
     ABI-compatible.
-- **Original uninitialized reads left as is** (harmless): `ScoreXDlg` and
-  `VCRDlg` call `EndDialog(hwnd, i)` with `i` unset, and `CreateChildWindows`
-  creates the mine window with an unset `pt` as its size.
+- **Initial pane size:** `CreateChildWindows` initializes the mine pane's
+  temporary size before `RefitFrameChildren` lays out the windows. The
+  original unset `pt` stopped tutorial startup under MSVC Debug checks.
+- **Remaining uninitialized dialog results:** `ScoreXDlg` and `VCRDlg` pass an unset `i` to `EndDialog`.

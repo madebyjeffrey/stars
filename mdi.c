@@ -111,7 +111,7 @@ int16_t InitMDIApp() {
 
 void CreateChildWindows() {
     char    szData[100];
-    POINT16 pt;
+    POINT16 pt = {10, 10}; // RefitFrameChildren sets the final pane sizes.
     char   *psz;
     char    szGame[15];
 

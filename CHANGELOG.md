@@ -43,6 +43,10 @@ produce different results from a 2.6j host for the same turn.
 
 ### Fixed
 
+- `CreateChildWindows` gives the mine pane a defined temporary size before
+  laying out the windows. The original read an uninitialized `pt`, which
+  stops opening a game or tutorial under MSVC Debug runtime checks.
+  Turn generation and saved files are unchanged.
 - The scanner no longer leaves a band drawn out of place when it scrolls
   while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
   followed at once by a trackpad scroll. The original drew the pending
