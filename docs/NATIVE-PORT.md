@@ -81,4 +81,6 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   sampled base tick before the progress loop reads it.
 - **Tutorial cursor:** `CommandHandler` saves the current cursor on the
   tutorial path before the shared cleanup restores it.
-- **Remaining uninitialized dialog results:** `ScoreXDlg` and `VCRDlg` pass an unset `i` to `EndDialog`.
+- **Score dialog result:** `ScoreXDlg` initializes its unused close result
+  to zero instead of passing an unset local to `EndDialog`.
+- **Remaining uninitialized dialog results:** `VCRDlg` pass an unset `i` to `EndDialog`.

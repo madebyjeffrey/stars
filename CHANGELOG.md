@@ -51,6 +51,8 @@ produce different results from a 2.6j host for the same turn.
   use; the original read it before sampling the clock.
 - `CommandHandler` saves the current cursor on the tutorial generation
   path; the original skipped saving it but restored the unset handle.
+- `ScoreXDlg` initializes its otherwise unused close result; the original
+  passed an unset local to `EndDialog`.
 - The scanner no longer leaves a band drawn out of place when it scrolls
   while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
   followed at once by a trackpad scroll. The original drew the pending
