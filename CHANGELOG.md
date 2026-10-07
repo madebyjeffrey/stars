@@ -53,6 +53,9 @@ produce different results from a 2.6j host for the same turn.
   path; the original skipped saving it but restored the unset handle.
 - `ScoreXDlg` and `VCRDlg` initialize their otherwise unused close results;
   the original passed an unset local to `EndDialog`.
+- `IdTargetFreighter` initializes its mineral index before the minimum
+  search; the original copied it to an unused local before assigning it.
+  These reads could stop MSVC Debug runtime checks.
 - The scanner no longer leaves a band drawn out of place when it scrolls
   while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
   followed at once by a trackpad scroll. The original drew the pending
