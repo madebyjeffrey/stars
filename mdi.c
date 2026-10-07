@@ -1239,6 +1239,7 @@ void CommandHandler(HWND hwnd, WPARAM wParam) {
                     DirtyGame(FALSE);
                     ShowProgressGauge();
                     dwTickBase = GetTickCount();
+                    dwTickCur = dwTickBase;
                     do {
                         UpdateProgressGauge((LOWORD(dwTickCur) - LOWORD(dwTickBase)) * 2);
                         dwTickCur = GetTickCount();
