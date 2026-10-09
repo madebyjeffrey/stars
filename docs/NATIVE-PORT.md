@@ -51,13 +51,13 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   `long double` is x87 extended precision: x86-64 Linux and macOS (on
   Apple silicon, built for x86_64 and run by Rosetta). ARM's `long double`
   is 64 bits (macOS) or 128 bits (Linux), so the rounding casts round
-  differently; CMake warns about such builds. MSVC also uses 64-bit double
-  precision for `long double`, so its client and host can generate different
+  differently; CMake warns about such builds. MSVC's `long double` is also
+  64-bit double precision, so its client and host can generate different
   turns from MinGW. The `msvc-debug` and `msvc-release` presets build both
-  executables and the Windows unit tests. Tutorial and trace hooks also
-  work with all three compilers through test-only source variants. The unused zero-length `_ctype` CRT placeholder
-  was removed from `globalsui.c`/`globalsui.h` because MSVC rejects
-  zero-length arrays.
+  executables and the Windows unit tests, and the tutorial and trace hooks
+  work with all three compilers through test-only source variants. The
+  unused zero-length `_ctype` CRT placeholder was removed from
+  `globalsui.c`/`globalsui.h` because MSVC rejects zero-length arrays.
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.
