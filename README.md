@@ -127,8 +127,7 @@ from the MinGW regression baseline; CMake warns about this. Keep using MinGW
 when matching those turns is required. All Windows compilers build the same
 unit tests by default and support the tutorial observer and regression trace
 hooks. Test-only source variants replace calls without requiring GNU linker
-wrapping. Existing MSVC build caches that disabled tests need
-`cmake --preset msvc-debug -DSTARS_BUILD_TESTS=ON` once.
+wrapping.
 
 Run `ctest --test-dir dist/msvc-debug --output-on-failure` for unit tests.
 The regression runner accepts either MSVC executable with `--exe`; compare
