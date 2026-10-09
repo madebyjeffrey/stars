@@ -13,6 +13,10 @@ There are no changes to disk structures, record sizes or file versions.
 No production `long double` or system `pow`, `sqrt`, `floor`, `hypot`, `atan2`,
 `sin` or `cos` calls remain. The optimized object-code audit checks this
 independently of source spelling and runs in the regression CI workflow.
+It checks both floating instructions and undefined native math symbols,
+including imported functions and addresses stored in data. Compiled negative
+controls verify rejection of direct calls, float/long-double variants,
+imported calls and function pointers; software calls and bit carriers pass.
 
 ## Numerical implementation
 
@@ -114,6 +118,7 @@ in `AGENTS.md`. On x86, additionally run:
 
 ```sh
 python tests/scaffold/check_software_float.py --build dist/mingw-release --objdump x86_64-w64-mingw32-objdump
+python tests/scaffold/test_check_software_float.py --cc x86_64-w64-mingw32-gcc --objdump x86_64-w64-mingw32-objdump
 ```
 
 The new offline oracle can be reproduced separately (MPFR 4.2.2 in this run):
