@@ -43,23 +43,13 @@ produce different results from a 2.6j host for the same turn.
 
 ### Fixed
 
-- `CreateChildWindows` gives the mine pane a defined temporary size before
-  laying out the windows. The original read an uninitialized `pt`, which
-  stops opening a game or tutorial under MSVC Debug runtime checks.
-  Turn generation and saved files are unchanged.
-- `CommandHandler` initializes the tutorial progress tick before its first
-  use; the original read it before sampling the clock.
-- `CommandHandler` saves the current cursor on the tutorial generation
-  path; the original skipped saving it but restored the unset handle.
-- `ScoreXDlg` and `VCRDlg` initialize their otherwise unused close results;
-  the original passed an unset local to `EndDialog`.
-- `IdTargetFreighter` initializes its mineral index before the minimum
-  search; the original copied it to an unused local before assigning it.
-  These reads could stop MSVC Debug runtime checks.
-- `LDrawGauge` initializes its scale flag for empty gauges; the original
-  skipped the assignment for nonpositive totals but read the flag on return.
-- `DrawShipWayPtOrders` sets the mine-laying message ID before choosing its text
-  color; the original formatted the message but tested an unset ID.
+- Eight uninitialized reads from the original no longer stop MSVC Debug
+  builds: the mine pane size in `CreateChildWindows`, the tutorial progress
+  tick and saved cursor in `CommandHandler`, the dialog close results in
+  `ScoreXDlg` and `VCRDlg`, the mineral index in `IdTargetFreighter`, the
+  scale flag for empty gauges in `LDrawGauge`, and the mine-laying message
+  ID that `DrawShipWayPtOrders` uses to choose its text color. Turn
+  generation and saved files are unchanged.
 - The scanner no longer leaves a band drawn out of place when it scrolls
   while a redraw is still pending (`ScrollScanner`), as after a wheel zoom
   followed at once by a trackpad scroll. The original drew the pending
