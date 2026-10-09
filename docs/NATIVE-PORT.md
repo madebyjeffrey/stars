@@ -58,6 +58,8 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   work with all three compilers through test-only source variants. The
   unused zero-length `_ctype` CRT placeholder was removed from
   `globalsui.c`/`globalsui.h` because MSVC rejects zero-length arrays.
+  Regression trace output uses native paths for direct execution and Wine
+  drive paths only for executables launched through Wine.
 - **Toolchain parity (keep):** `qsort16` (`native.c`) reproduces the
   Win16 CRT's tie order, and the x87 rounding casts to `double`/`float` are
   deliberate, so don't simplify them.

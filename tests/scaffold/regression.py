@@ -362,7 +362,7 @@ def generate(work, manifest, scenario, source, turns, timeout, trace=False):
     command, cwd = launch_command(Path(manifest["exe"]), manifest["seed"], directory, end, start)
     env = dict(os.environ)
     if trace:
-        env["STARS_TRACE"] = windows_path(directory) + "\\trace.log"
+        env["STARS_TRACE"] = game_path(Path(manifest["exe"]), directory, "trace.log")
     print(f"{scenario}: turn {start} -> {end} from {source}: {' '.join(command)}", flush=True)
     with (directory / "run.log").open("w") as log:
         process = subprocess.run(command, cwd=cwd, stdout=log, stderr=subprocess.STDOUT,

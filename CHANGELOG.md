@@ -43,6 +43,9 @@ produce different results from a 2.6j host for the same turn.
 
 ### Fixed
 
+- Regression `generate()` uses native paths for trace output on Windows;
+  it previously supplied a Wine drive path that prevented `trace.log` from
+  being created. Turn generation and regression baselines are unchanged.
 - Eight uninitialized reads from the original no longer stop MSVC Debug
   builds: the mine pane size in `CreateChildWindows`, the tutorial progress
   tick and saved cursor in `CommandHandler`, the dialog close results in

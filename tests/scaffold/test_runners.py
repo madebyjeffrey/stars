@@ -38,6 +38,35 @@ class RegressionTests(unittest.TestCase):
                 self.assertEqual(cwd, directory)
 
 
+    def test_trace_environment_uses_platform_path(self):
+        for platform, executable, wine in (("win32", "stars.exe", False),
+                                            ("win32", "stars-host.exe", False),
+                                            ("linux", "stars.exe", True),
+                                            ("darwin", "stars.exe", True),
+                                            ("linux", "stars-host", False)):
+            with self.subTest(platform=platform, executable=executable), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary).resolve()
+                source = root / "source"
+                source.mkdir()
+                (source / "game.hst").write_bytes(b"input host")
+                manifest = {"exe": executable, "exe_sha256": "test", "seed": 12345}
+
+                def launch(command, **kwargs):
+                    directory = kwargs["cwd"]
+                    expected = ("Z:" + str(directory).replace("/", "\\") + "\\trace.log"
+                                if wine else str(directory / "trace.log"))
+                    self.assertEqual(kwargs["env"]["STARS_TRACE"], expected)
+                    (directory / "trace.log").write_text("trace output")
+                    return Mock(returncode=1)
+
+                with patch.object(sys, "platform", platform), \
+                     patch.object(regression, "host_turn", side_effect=[0, 1]), \
+                     patch.object(regression.subprocess, "run", side_effect=launch) as run:
+                    directory = regression.generate(root, manifest, "noai", source, 1, 30, trace=True)
+                run.assert_called_once()
+                self.assertTrue((directory / "crossfeed.json").is_file())
+
+
 class TutorialTests(unittest.TestCase):
     def test_cleanup_checks_executable_before_terminating(self):
         with tempfile.TemporaryDirectory() as temporary:
