@@ -64,7 +64,7 @@ class TutorialTests(unittest.TestCase):
 
     def run_launcher(self, platform, report=True, keep_failure=False):
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
+            root = Path(temporary).resolve()
             exe = root / "stars.exe"
             exe.write_bytes(b"test executable")
             prefix = root / "prefix"
