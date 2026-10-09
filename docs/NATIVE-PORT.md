@@ -74,17 +74,14 @@ detail in [WIN16-PARITY.md](WIN16-PARITY.md).
   - **Function cast (1):** `shipui.c` `TransferStuff` casts
     `FEnumCalcJettison`. Both signatures come from the debug info and are
     ABI-compatible.
-- **Initial pane size:** `CreateChildWindows` initializes the mine pane's
-  temporary size before `RefitFrameChildren` lays out the windows. The
-  original unset `pt` stopped tutorial startup under MSVC Debug checks.
-- **Explicit initial values:** `ScoreXDlg` and `VCRDlg` initialize their
-  unused close results to zero. `CommandHandler` starts the tutorial
-  progress tick at the sampled base tick and saves the current cursor on
-  the tutorial path before restoring it. `IdTargetFreighter` starts its
-  mineral index at zero before copying it to the unused `iWorst2` during
-  the minimum search. `LDrawGauge` starts its scale flag false because an
-  empty gauge skips the scale calculation. `DrawShipWayPtOrders` assigns the
-  formatted mine-laying message ID before using it to choose the color.
-  These replace original
-  uninitialized reads that MSVC Debug checks can stop on; they are not an
-  exhaustive audit of every execution path.
+- **Original uninitialized reads:** eight reads that MSVC Debug checks stop
+  on now have defined values. `CreateChildWindows` gives the mine pane a
+  temporary size before `RefitFrameChildren` lays out the windows.
+  `ScoreXDlg` and `VCRDlg` initialize their unused close results to zero.
+  `CommandHandler` starts the tutorial progress tick at the sampled base
+  tick and saves the current cursor on the tutorial path before restoring
+  it. `IdTargetFreighter` starts its mineral index at zero before copying
+  it to the unused `iWorst2`. `LDrawGauge` starts its scale flag false
+  because an empty gauge skips the scale calculation. `DrawShipWayPtOrders`
+  assigns the mine-laying message ID before using it to choose the color.
+  This is not an exhaustive audit of every execution path.
